@@ -82,9 +82,10 @@ export class SwapKitCore<T = ''> {
       : quoteMode.startsWith('ARC20-')
       ? Chain.Avalanche
       : Chain.BinanceSmartChain;
-
+    console.log('quoteMode', quoteMode);
+    console.log('evmChain', evmChain);
     if (!route.complete) throw new SwapKitError('core_swap_route_not_complete');
-
+    console.log('swap checkpoint1', evmChain);
     try {
       if (AGG_SWAP.includes(quoteMode)) {
         const walletMethods = this.connectedWallets[evmChain];
@@ -109,7 +110,7 @@ export class SwapKitCore<T = ''> {
               }).baseValueBigInt
             : 0n,
         };
-
+        console.log('checkpoint 2 swap params', params);
         return walletMethods.sendTransaction(params, feeOptionKey) as Promise<string>;
       }
 
@@ -123,10 +124,16 @@ export class SwapKitCore<T = ''> {
           contract: router,
           calldata: { amountIn, memo, memoStreamingSwap },
         } = route;
-
+        console.log('checkpoint 3 getInboundDataByChain', recipient);
         const assetValue = asset.add(SwapKitNumber.fromBigInt(BigInt(amountIn), asset.decimal));
         const swapMemo = (streamSwap ? memoStreamingSwap || memo : memo) as string;
-
+        console.log('checkpoint 4 deposit', {
+          assetValue,
+          memo: swapMemo,
+          feeOptionKey,
+          router,
+          recipient,
+        });
         return this.deposit({ assetValue, memo: swapMemo, feeOptionKey, router, recipient });
       }
 
@@ -139,15 +146,15 @@ export class SwapKitCore<T = ''> {
         if (!walletMethods?.sendTransaction || !from) {
           throw new SwapKitError('core_wallet_connection_not_found');
         }
-
+        console.log('checkpoint 5 from', from);
         const { getProvider, toChecksumAddress } = await import('@coinmasters/toolbox-evm');
         const provider = getProvider(evmChain);
         const abi = lowercasedContractAbiMapping[contractAddress.toLowerCase()];
 
         if (!abi) throw new SwapKitError('core_swap_contract_not_supported', { contractAddress });
-
+        console.log('checkpoint 6 abi', abi);
         const contract = await walletMethods.createContract?.(contractAddress, abi, provider);
-
+        console.log('checkpoint 7 contract: ', contract);
         // TODO: (@Towan) Contract evm methods should be generic
         // @ts-expect-error
         const tx = await contract.populateTransaction.swapIn?.(
@@ -160,7 +167,7 @@ export class SwapKitCore<T = ''> {
           }),
           { from },
         );
-
+        console.log('checkpoint 8 tx: ', tx);
         return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
       }
 
@@ -218,7 +225,7 @@ export class SwapKitCore<T = ''> {
     if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
 
     const params = this.#prepareTxParams({ assetValue, recipient, router, ...rest });
-
+    console.log('deposit params: ', params);
     try {
       switch (chain) {
         case Chain.THORChain: {
@@ -238,9 +245,7 @@ export class SwapKitCore<T = ''> {
               ? TCBscDepositABI
               : TCEthereumVaultAbi;
 
-          return (await (
-            walletInstance as EVMWallet<typeof AVAXToolbox | typeof ETHToolbox | typeof BSCToolbox>
-          ).call({
+          let inputs = {
             abi,
             contractAddress:
               router || ((await this.#getInboundDataByChain(chain as EVMChain)).router as string),
@@ -251,10 +256,14 @@ export class SwapKitCore<T = ''> {
               // TODO: (@Towan) Re-Check on that conversion 🙏
               assetValue.baseValueBigInt.toString(),
               params.memo,
-              rest.expiration,
+              rest.expiration || new Date().getTime(),
             ],
-            txOverrides: { from: params.from, value: assetValue.baseValueBigInt },
-          })) as Promise<string>;
+            txOverrides: { from: params.from },
+          }
+          console.log('inputs; ', inputs);
+          let result = await walletInstance.call(inputs)
+          console.log('result; ', result);
+          return result
         }
 
         default: {

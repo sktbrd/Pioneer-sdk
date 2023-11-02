@@ -59,7 +59,6 @@ export class KeepKeySigner extends AbstractSigner {
     gasPrice,
     ...restTx
   }: EVMTxParams | any) => {
-    if (!from) throw new Error('Missing from address');
     if (!to) throw new Error('Missing to address');
     if (!gasLimit) throw new Error('Missing gasLimit');
     if (!nonce) throw new Error('Missing nonce');
@@ -95,6 +94,7 @@ export class KeepKeySigner extends AbstractSigner {
               'gasPrice' in restTx ? toHexString(BigInt(gasPrice?.toString() || '0')) : undefined, // Fixed syntax error and structure here
           }),
     };
+    console.log('Import to KeepKey sign: ', input);
     const responseSign = await this.sdk.eth.ethSignTransaction(input);
     return responseSign.serialized;
   };
