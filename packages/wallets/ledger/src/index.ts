@@ -1,2 +1,2 @@
-export { getDerivationPathFor } from './helpers/derivationPath.ts';
-export { ledgerWallet } from './ledger.ts';
+// @ts-ignore
+export * from './ledger.ts';
