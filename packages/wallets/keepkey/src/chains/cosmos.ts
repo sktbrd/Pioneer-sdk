@@ -1,8 +1,8 @@
-import { StargateClient } from '@cosmjs/stargate';
-import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import type { TransferParams } from '@coinmasters/toolbox-cosmos';
 import { DEFAULT_COSMOS_FEE_MAINNET, GaiaToolbox } from '@coinmasters/toolbox-cosmos';
 import { Chain, ChainId, DerivationPath, RPCUrl } from '@coinmasters/types';
+import { StargateClient } from '@cosmjs/stargate';
+import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 
 import { bip32ToAddressNList } from '../helpers/coins.ts';
 

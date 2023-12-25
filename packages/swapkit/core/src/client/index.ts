@@ -199,7 +199,7 @@ export class SwapKitCore<T = ''> {
     //   pubkeys = await this.getWallet(chain)?.getPubkeys();
     // }
 
-    let balance = []
+    let balance = [];
 
     // console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
     // //for each pubkey iterate and sum the balance

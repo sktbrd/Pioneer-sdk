@@ -7,10 +7,10 @@ import { broadcastUTXOTx } from '../api/rpcApi.ts';
 import { BaseUTXOToolbox } from './BaseUTXOToolbox.ts';
 
 export const ZCASHToolbox = ({
-                              apiKey,
-                              rpcUrl = RPCUrl.Dash,
-                              apiClient,
-                            }: {
+  apiKey,
+  rpcUrl = RPCUrl.Dash,
+  apiClient,
+}: {
   apiKey?: string;
   rpcUrl?: string;
   apiClient?: BlockchairApiType;

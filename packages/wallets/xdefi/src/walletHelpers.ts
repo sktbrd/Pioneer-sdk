@@ -1,8 +1,8 @@
-import type { Keplr } from '@keplr-wallet/types';
 import type { AssetValue } from '@coinmasters/helpers';
 import type { TransferParams } from '@coinmasters/toolbox-cosmos';
 import type { ChainId, FeeOption } from '@coinmasters/types';
 import { Chain, ChainToChainId, RPCUrl } from '@coinmasters/types';
+import type { Keplr } from '@keplr-wallet/types';
 import type { Eip1193Provider } from 'ethers';
 
 type TransactionMethod = 'transfer' | 'deposit';
