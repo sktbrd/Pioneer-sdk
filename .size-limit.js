@@ -8,9 +8,11 @@ const sizeMap = {
   xxl: '5 MB',
 };
 
-const getSizeFor = (packagePath, sizeType) => {
+const getSizeFor = (packagePath, sizeType, isApp = false) => {
   const size = sizeMap[sizeType];
   if (!size) throw new Error(`Unknown size type ${sizeType}`);
+
+  const basePath = isApp ? './apps/' : './packages/';
   const [, packageName] = packagePath.split('/');
 
   const packagePrefix = packagePath.includes('toolboxes') ? 'toolbox-' : packagePath.includes('wallets') ? 'wallet-' : '';
@@ -18,22 +20,23 @@ const getSizeFor = (packagePath, sizeType) => {
   return [
     {
       limit: size,
-      path: `./packages/${packagePath}/dist/*.cjs`,
+      path: `${basePath}${packagePath}/dist/*.cjs`,
       name: `@coinmasters/${packagePrefix}${packageName} - CommonJS`,
     },
     {
       limit: size,
-      path: `./packages/${packagePath}/dist/*.js`,
+      path: `${basePath}${packagePath}/dist/*.js`,
       name: `@coinmasters/${packagePrefix}${packageName} - ES Modules`,
     },
   ];
 };
 
 module.exports = [
-  //Pioneer
-  ...getSizeFor('pioneer-sdk/pioneer-react', 'xxl'),
-  ...getSizeFor('coinmasters/pioneer-sdk', 'xxl'),
+  // Pioneer
+  ...getSizeFor('pioneer/pioneer-react', 'xxl', true),
+  ...getSizeFor('pioneer/pioneer-sdk', 'xxl'),
 
+  // Other packages
   ...getSizeFor('coinmasters/api', 'xxs'),
   ...getSizeFor('coinmasters/core', 'xs'),
   ...getSizeFor('coinmasters/helpers', 'xs'),
