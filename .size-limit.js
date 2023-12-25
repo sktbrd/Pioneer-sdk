@@ -30,18 +30,23 @@ const getSizeFor = (packagePath, sizeType) => {
 };
 
 module.exports = [
-  ...getSizeFor('swapkit/api', 'xxs'),
-  ...getSizeFor('swapkit/core', 'xs'),
-  ...getSizeFor('swapkit/helpers', 'xs'),
-  ...getSizeFor('swapkit/sdk', 'xxl'),
-  ...getSizeFor('swapkit/tokens', 'xl'),
-  ...getSizeFor('swapkit/types', 'xxs'),
+  //Pioneer
+  ...getSizeFor('pioneer-sdk/pioneer-react', 'xxl'),
+  ...getSizeFor('coinmasters/pioneer-sdk', 'xxl'),
+
+  ...getSizeFor('coinmasters/api', 'xxs'),
+  ...getSizeFor('coinmasters/core', 'xs'),
+  ...getSizeFor('coinmasters/helpers', 'xs'),
+  ...getSizeFor('coinmasters/sdk', 'xxl'),
+  ...getSizeFor('coinmasters/tokens', 'xl'),
+  ...getSizeFor('coinmasters/types', 'xxs'),
 
   ...getSizeFor('toolboxes/cosmos', 'l'),
   ...getSizeFor('toolboxes/evm', 'l'),
   ...getSizeFor('toolboxes/utxo', 'l'),
 
   ...getSizeFor('wallets/evm-extensions', 'xxs'),
+  ...getSizeFor('wallets/keepkey', 'm'),
   ...getSizeFor('wallets/keplr', 'xxs'),
   ...getSizeFor('wallets/keystore', 'm'),
   ...getSizeFor('wallets/ledger', 'xl'),

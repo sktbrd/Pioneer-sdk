@@ -34,7 +34,7 @@ import Paths from '../../components/Paths';
 import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
 

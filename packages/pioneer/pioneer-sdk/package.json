@@ -1,6 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-sdk",
+  "version": "4.0.5",
   "dependencies": {
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
@@ -60,6 +61,5 @@
     "test:coverage": "echo 'vitest run --coverage'"
   },
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "version": "4.0.4"
+  "types": "./dist/index.d.ts"
 }

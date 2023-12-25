@@ -1,4 +1,4 @@
-import { AssetValue, RequestClient, postRequest } from '@coinmasters/helpers';
+import { AssetValue, RequestClient } from '@coinmasters/helpers';
 import { ec as EC } from 'elliptic';
 
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/

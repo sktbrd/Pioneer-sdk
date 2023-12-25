@@ -1,13 +1,12 @@
 import { SwapKitCore } from '@coinmasters/core';
 import type { ExtendParams } from '@coinmasters/types';
 import { evmWallet } from '@coinmasters/wallet-evm-extensions';
+import { keepkeyWallet } from '@coinmasters/wallet-keepkey';
 import { keplrWallet } from '@coinmasters/wallet-keplr';
 import { keystoreWallet } from '@coinmasters/wallet-keystore';
-import { keepkeyWallet } from '@coinmasters/wallet-keepkey';
 import { ledgerWallet } from '@coinmasters/wallet-ledger';
 import { okxWallet } from '@coinmasters/wallet-okx';
 import { trezorWallet } from '@coinmasters/wallet-trezor';
-import { metamaskWallet } from '@coinmasters/wallet-metamask';
 import { walletconnectWallet } from '@coinmasters/wallet-wc';
 import { xdefiWallet } from '@coinmasters/wallet-xdefi';
 

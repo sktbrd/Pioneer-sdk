@@ -1,4 +1,3 @@
-import type { DerivationPathArray } from '@coinmasters/types';
 import { Chain } from '@coinmasters/types';
 
 import { AvalancheLedger } from '../clients/avalanche.ts';

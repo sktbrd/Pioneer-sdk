@@ -77,7 +77,7 @@ export const utxoWalletMethods = async ({
   const { toolbox, segwit } = getToolbox({ chain, apiClient, apiKey });
 
   const scriptType = segwit ? 'p2wpkh' : 'p2pkh';
-  if(!ChainToKeepKeyName[chain]) throw Error("ChainToKeepKeyName: unknown chain: "+chain)
+  if (!ChainToKeepKeyName[chain]) throw Error('ChainToKeepKeyName: unknown chain: ' + chain);
   const addressInfo = {
     coin: ChainToKeepKeyName[chain],
     script_type: scriptType,
@@ -213,7 +213,7 @@ export const utxoWalletMethods = async ({
       txid: hash,
       hex: txHex || '',
     }));
-    console.log("transfer inputs: ", inputs)
+    console.log('transfer inputs: ', inputs);
     const txHex = await signTransaction(psbt, inputs, memo);
     console.log('txHex: ', txHex);
     return toolbox.broadcastTx(txHex);
