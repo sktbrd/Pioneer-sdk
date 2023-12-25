@@ -8,12 +8,12 @@ const sizeMap = {
   xxl: '5 MB',
 };
 
-const getSizeFor = (packagePath, sizeType, isApp = false) => {
+const getSizeFor = (packagePath, sizeType, isApp = false, packageNameOverride = null) => {
   const size = sizeMap[sizeType];
   if (!size) throw new Error(`Unknown size type ${sizeType}`);
 
   const basePath = isApp ? './apps/' : './packages/';
-  const [, packageName] = packagePath.split('/');
+  const packageName = packageNameOverride || packagePath.split('/').pop();
 
   const packagePrefix = packagePath.includes('toolboxes') ? 'toolbox-' : packagePath.includes('wallets') ? 'wallet-' : '';
 
@@ -21,19 +21,19 @@ const getSizeFor = (packagePath, sizeType, isApp = false) => {
     {
       limit: size,
       path: `${basePath}${packagePath}/dist/*.cjs`,
-      name: `@coinmasters/${packagePrefix}${packageName} - CommonJS`,
+      name: `@${packagePrefix}${packageName} - CommonJS`,
     },
     {
       limit: size,
       path: `${basePath}${packagePath}/dist/*.js`,
-      name: `@coinmasters/${packagePrefix}${packageName} - ES Modules`,
+      name: `@${packagePrefix}${packageName} - ES Modules`,
     },
   ];
 };
 
 module.exports = [
   // Pioneer
-  ...getSizeFor('pioneer/pioneer-react', 'xxl', true),
+  ...getSizeFor('pioneer', 'xxl', true, 'pioneer-sdk/pioneer-react'),
   ...getSizeFor('pioneer/pioneer-sdk', 'xxl'),
 
   // Other packages
