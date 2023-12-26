@@ -55,7 +55,6 @@ export default function Settings({ onClose }) {
           <Tab>Context</Tab>
           <Tab>blockchains</Tab>
         </TabList>
-
         <TabPanels>
           <TabPanel>
             <Basic />

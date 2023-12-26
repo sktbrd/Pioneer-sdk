@@ -536,6 +536,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           if (action === WalletActions.SET_BALANCES) {
             // @ts-ignore
             console.log('setting balances for context: ', appInit.context);
+            console.log('setting balances: ', data);
             if (appInit.context)
               localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
           }

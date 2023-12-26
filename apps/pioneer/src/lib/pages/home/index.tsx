@@ -21,16 +21,16 @@ import {
 import { useEffect, useState } from 'react';
 
 import AssetSelect from '../../components/AssetSelect';
-// import OutputSelect from "lib/components/OutputSelect";
-// import BlockchainSelect from "lib/components/BlockchainSelect";
-// import WalletSelect from "lib/components/WalletSelect";
-import Pending from '../../components/Pending';
 import Balances from '../../components/Balances';
 import Basic from '../../components/Basic';
 import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
 import Loan from '../../components/Loan';
 import Paths from '../../components/Paths';
+// import OutputSelect from "lib/components/OutputSelect";
+// import BlockchainSelect from "lib/components/BlockchainSelect";
+// import WalletSelect from "lib/components/WalletSelect";
+import Pending from '../../components/Pending';
 import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
@@ -40,7 +40,7 @@ import { initWallets } from './setup';
 
 const Home = () => {
   const { state, onStart } = usePioneer();
-  const { pubkeyContext, balances } = state;
+  const { pubkeyContext, app } = state;
   const [address, setAddress] = useState('');
   const [modalType, setModalType] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,9 +59,19 @@ const Home = () => {
     onOpen();
   };
 
-  const onSelect = (asset: any) => {
-    //select asset
-    console.log('asset: ', asset);
+  const onSelect = async (blockchain: any) => {
+    // select asset
+    console.log('blockchain: ', blockchain);
+    // open blockchain modal
+    // connect wallet with just this blockchain
+    try {
+      await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      await app.getPubkeys();
+      await app.getBalances();
+    } catch (error) {
+      console.error('Error in onSelect:', error);
+      // Handle or report error
+    }
   };
 
   return (
@@ -126,7 +136,7 @@ const Home = () => {
             <Basic />
           </TabPanel>
           <TabPanel>
-            <Blockchains />
+            <Blockchains onSelect={onSelect} />
           </TabPanel>
           <TabPanel>
             <Paths />
@@ -135,7 +145,7 @@ const Home = () => {
             <Pubkeys />
           </TabPanel>
           <TabPanel>
-            <Balances onSelect={onSelect} />
+            <Balances />
           </TabPanel>
           <TabPanel>
             <Pending />

@@ -236,6 +236,18 @@ export class SDK {
         // this.refresh()
         if (!this.pioneer) throw Error('Failed to init pioneer server!');
 
+        //get user info
+        // let userInfo = await this.pioneer.User();
+        // userInfo = userInfo.data;
+        //
+        // if (userInfo) {
+        //   console.log('userInfo: ', userInfo);
+        //   if (userInfo.pubkeys) this.pubkeys = userInfo.pubkeys;
+        //   if (userInfo.context) this.context = userInfo.context;
+        //   if (userInfo.balances) this.balances = userInfo.balances;
+        //   if (userInfo.nfts) this.nfts = userInfo.nfts;
+        // }
+
         return this.pioneer;
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -702,15 +714,15 @@ export class SDK {
           auth: 'lol',
           provider: 'lol',
         };
-        //console.log('register: ', register);
-        //console.log('register: ', JSON.stringify(register));
+        console.log('register: ', register);
+        console.log('register: ', JSON.stringify(register));
         const result = await this.pioneer.Register(register);
-        //console.log('result: ', result);
-        //console.log('result: ', result.data);
-        //console.log('result: ', result.data.balances);
+        console.log('result: ', result);
+        console.log('result: ', result.data);
+        console.log('result: ', result.data.balances);
 
         if (result.data.balances) {
-          //console.log('Setting balances!');
+          console.log('Setting balances!');
           this.balances = result.data.balances;
         }
 

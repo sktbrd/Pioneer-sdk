@@ -29,12 +29,6 @@ export default function Blockchains({ onSelect }) {
       console.log('app?.blockchains: ', app?.blockchains);
     }
   }, [app, app?.blockchains]);
-
-  const handlePubkeyClick = (pubkey) => {
-    setSelectedPubkey(pubkey);
-    onOpen();
-  };
-
   // Function to group and sort blockchains
   const groupAndSortBlockchains = (blockchains) => {
     const UTXO = blockchains.filter((chain) => chain.startsWith('bip122:'));

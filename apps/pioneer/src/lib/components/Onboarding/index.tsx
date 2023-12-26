@@ -119,7 +119,7 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
       </Button>
 
       <Box>
-        <Link isExternal href="https://example.com/deploy-server">
+        <Link isExternal href="https://pioneers.dev">
           Click here to learn how to deploy a pioneer server
         </Link>
       </Box>
