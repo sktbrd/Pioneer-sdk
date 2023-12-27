@@ -5,6 +5,7 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Flex, Box, Input, Button } from '@chakra-ui/react';
 
 import Balances from '../../components/Balances';
 import Basic from '../../components/Basic';
@@ -16,6 +17,7 @@ import Paths from '../../components/Paths';
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
 import Pending from '../../components/Pending';
+import Pioneer from '../../components/Pioneer';
 import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Track from '../../components/Track';
@@ -107,102 +109,34 @@ const Home = () => {
   };
 
   return (
-    <div>
-      {intent && (
-        <div>
-          intent: {intent}
-          {renderComponent()}
-        </div>
-      )}
-      {/*<Modal isOpen={isOpen} onClose={() => onClose()} size="xl">*/}
-      {/*  <ModalOverlay />*/}
-      {/*  <ModalContent>*/}
-      {/*    <ModalHeader>{modalType}</ModalHeader>*/}
-      {/*    <ModalCloseButton />*/}
-      {/*    <ModalBody>*/}
-      {/*      /!* Render content based on modalType *!/*/}
-      {/*      /!* {modalType === "Select wallet" && ( *!/*/}
-      {/*      /!*  <div> *!/*/}
-      {/*      /!*    <WalletSelect onClose={onClose}></WalletSelect> *!/*/}
-      {/*      /!*  </div> *!/*/}
-      {/*      /!* )} *!/*/}
-      {/*      {modalType === 'Select Asset' && (*/}
-      {/*        <div>*/}
-      {/*          <AssetSelect onlyOwned onClose={onClose} />*/}
-      {/*        </div>*/}
-      {/*      )}*/}
-      {/*      /!* {modalType === "Select Blockchain" && ( *!/*/}
-      {/*      /!*  <div> *!/*/}
-      {/*      /!*    <BlockchainSelect onClose={onClose}></BlockchainSelect> *!/*/}
-      {/*      /!*  </div> *!/*/}
-      {/*      /!* )} *!/*/}
-      {/*      /!* {modalType === "View Address" && ( *!/*/}
-      {/*      /!*  <div> *!/*/}
-      {/*      /!*    {JSON.stringify(pubkeyContext)} address: {address} *!/*/}
-      {/*      /!*  </div> *!/*/}
-      {/*      /!* )} *!/*/}
-      {/*      /!* {modalType === "Select Outbound" && ( *!/*/}
-      {/*      /!*  <div> *!/*/}
-      {/*      /!*    <OutputSelect onClose={onClose} onlyOwned={false}></OutputSelect> *!/*/}
-      {/*      /!*  </div> *!/*/}
-      {/*      /!* )} *!/*/}
-      {/*    </ModalBody>*/}
-      {/*    <ModalFooter>*/}
-      {/*      <Button colorScheme="blue" onClick={onClose}>*/}
-      {/*        Close*/}
-      {/*      </Button>*/}
-      {/*    </ModalFooter>*/}
-      {/*  </ModalContent>*/}
-      {/*</Modal>*/}
-      {/*{address}*/}
-      {/*<Tabs>*/}
-      {/*  <TabList>*/}
-      {/*    <Tab>Context</Tab>*/}
-      {/*    <Tab>blockchains</Tab>*/}
-      {/*    <Tab>paths</Tab>*/}
-      {/*    <Tab>pubkeys</Tab>*/}
-      {/*    <Tab>balances</Tab>*/}
-      {/*    <Tab>Pending</Tab>*/}
-      {/*    <Tab>Transfer</Tab>*/}
-      {/*    <Tab>Swaps</Tab>*/}
-      {/*    <Tab>Earn</Tab>*/}
-      {/*    <Tab>Borrow</Tab>*/}
-      {/*  </TabList>*/}
+    <Flex alignItems="center" h="100vh" justifyContent="center">
+      <Box borderRadius="lg" borderWidth="1px" maxW="1200px" p={4} w="full">
+        <Flex>
+          {/* Left 1/3 of the card for the Pioneer element */}
+          <Box p={4} w="33.33%">
+            <Pioneer />
+          </Box>
 
-      {/*  <TabPanels>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Basic />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Blockchains onSelect={onSelect} />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Paths />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Pubkeys />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Balances />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Pending />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Transfer openModal={openModal} />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Swap />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Earn />*/}
-      {/*    </TabPanel>*/}
-      {/*    <TabPanel>*/}
-      {/*      <Loan />*/}
-      {/*    </TabPanel>*/}
-      {/*  </TabPanels>*/}
-      {/*</Tabs>*/}
-    </div>
+          {/* Right 2/3 of the card for search section */}
+          <Box p={4} w="66.66%" maxH="80vh" overflowY="auto">
+            {intent ? (
+              // Render component based on intent
+              <div>
+                {renderComponent()}
+              </div>
+            ) : (
+              // Render search interface
+              <div>
+                <Input placeholder="What are you looking for?" size="lg" />
+                <Button colorScheme="blue" mt={4}>
+                  Search
+                </Button>
+              </div>
+            )}
+          </Box>
+        </Flex>
+      </Box>
+    </Flex>
   );
 };
 

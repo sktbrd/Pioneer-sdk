@@ -56,7 +56,7 @@ const Pending = ({ onClose }: any) => {
     <div>
       {pendingTransactions.map((txId, index) => (
         <div key={index}>
-          <Link as={RouterLink} to={`/txid/${txId}`}>
+          <Link as={RouterLink} to={`/intent/track:${txId}`}>
             View Transaction {txId}
           </Link>
           <Button onClick={() => getTxs()}>refresh</Button>

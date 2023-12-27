@@ -15,7 +15,6 @@ const Footer = () => {
         <Link href="https://pioneers.dev" isExternal>
           Pioneers.dev
         </Link>
-        <br />
         <ThemeToggle />
       </Text>
     </Flex>
