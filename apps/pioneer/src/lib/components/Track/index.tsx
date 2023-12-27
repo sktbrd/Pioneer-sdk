@@ -1,4 +1,4 @@
-import "@fontsource/roboto";
+import '@fontsource/roboto';
 
 import {
   ArrowRightIcon,
@@ -7,7 +7,7 @@ import {
   ExternalLinkIcon,
   LockIcon,
   WarningIcon,
-} from "@chakra-ui/icons";
+} from '@chakra-ui/icons';
 import {
   Accordion,
   AccordionButton,
@@ -55,16 +55,16 @@ import {
   Tr,
   useSteps,
   VStack,
-} from "@chakra-ui/react";
-import axios from "axios";
-import React from "react";
+} from '@chakra-ui/react';
+import axios from 'axios';
+import React from 'react';
 // import Icon from 'react-crypto-icons';
-import { BeatLoader } from "react-spinners";
+import { BeatLoader } from 'react-spinners';
 
 // @ts-ignore
-import completedGif from "../../assets/gif/completed.gif"; // Import the GIF here
+import completedGif from '../../assets/gif/completed.gif'; // Import the GIF here
 // @ts-ignore
-import shiftingGif from "../../assets/gif/shifting.gif";
+import shiftingGif from '../../assets/gif/shifting.gif';
 
 /// /////////////////////////////////////////////////////////////////////////////////////
 // Config
@@ -75,21 +75,21 @@ import shiftingGif from "../../assets/gif/shifting.gif";
 const ProgressBlocks = 1800; // 3h
 
 // URLs
-let ThornodeURL = "https://thornode.ninerealms.com";
-let MidgardURL = "https://midgard.ninerealms.com";
+let ThornodeURL = 'https://thornode.ninerealms.com';
+let MidgardURL = 'https://midgard.ninerealms.com';
 const ShapeshiftAPIURLs: any = {
-  BTC: "https://api.bitcoin.shapeshift.com",
-  BCH: "https://api.bitcoincash.shapeshift.com",
-  LTC: "https://api.litecoin.shapeshift.com",
-  DOGE: "https://api.dogecoin.shapeshift.com",
-  ETH: "https://api.ethereum.shapeshift.com",
-  AVAX: "https://api.avalanche.shapeshift.com",
+  BTC: 'https://api.bitcoin.shapeshift.com',
+  BCH: 'https://api.bitcoincash.shapeshift.com',
+  LTC: 'https://api.litecoin.shapeshift.com',
+  DOGE: 'https://api.dogecoin.shapeshift.com',
+  ETH: 'https://api.ethereum.shapeshift.com',
+  AVAX: 'https://api.avalanche.shapeshift.com',
 };
 const UTXOClientURLs: any = {
-  BTC: "https://bitcoin.ninerealms.com",
-  BCH: "https://bitcoin-cash.ninerealms.com",
-  LTC: "https://litecoin.ninerealms.com",
-  DOGE: "https://dogecoin.ninerealms.com",
+  BTC: 'https://bitcoin.ninerealms.com',
+  BCH: 'https://bitcoin-cash.ninerealms.com',
+  LTC: 'https://litecoin.ninerealms.com',
+  DOGE: 'https://dogecoin.ninerealms.com',
 };
 
 /// /////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ function assetString(asset: any) {
 }
 
 function assetChainSymbol(asset: any) {
-  if (!asset) return "";
+  if (!asset) return '';
   if (asset.synth) {
     return `${asset.chain}/${asset.symbol}`;
   }
@@ -117,77 +117,76 @@ function parseAsset(asset: string, pools?: any) {
   if (!asset) return null;
 
   // asset with / is synth
-  let sep = ".";
+  let sep = '.';
   let synth = false;
-  if (asset.includes("/")) {
+  if (asset.includes('/')) {
     synth = true;
-    sep = "/";
+    sep = '/';
   }
 
   // fuzzy match
-  let chain = "";
-  let symbol = "";
+  let chain = '';
+  let symbol = '';
   if (asset.split(sep).length === 1) {
     switch (asset.split(sep)[0].toLowerCase()) {
-      case "a":
-        chain = "AVAX";
-        symbol = "AVAX";
+      case 'a':
+        chain = 'AVAX';
+        symbol = 'AVAX';
         break;
-      case "b":
-        chain = "BTC";
-        symbol = "BTC";
+      case 'b':
+        chain = 'BTC';
+        symbol = 'BTC';
         break;
-      case "c":
-        chain = "BCH";
-        symbol = "BCH";
+      case 'c':
+        chain = 'BCH';
+        symbol = 'BCH';
         break;
-      case "n":
-        chain = "BNB";
-        symbol = "BNB";
+      case 'n':
+        chain = 'BNB';
+        symbol = 'BNB';
         break;
-      case "s":
-        chain = "BSC";
-        symbol = "BNB";
+      case 's':
+        chain = 'BSC';
+        symbol = 'BNB';
         break;
-      case "d":
-        chain = "DOGE";
-        symbol = "DOGE";
+      case 'd':
+        chain = 'DOGE';
+        symbol = 'DOGE';
         break;
-      case "e":
-        chain = "ETH";
-        symbol = "ETH";
+      case 'e':
+        chain = 'ETH';
+        symbol = 'ETH';
         break;
-      case "g":
-        chain = "GAIA";
-        symbol = "ATOM";
+      case 'g':
+        chain = 'GAIA';
+        symbol = 'ATOM';
         break;
-      case "l":
-        chain = "LTC";
-        symbol = "LTC";
+      case 'l':
+        chain = 'LTC';
+        symbol = 'LTC';
         break;
-      case "r":
-        chain = "THOR";
-        symbol = "RUNE";
+      case 'r':
+        chain = 'THOR';
+        symbol = 'RUNE';
         break;
       default:
-        chain = "";
-        symbol = "";
+        chain = '';
+        symbol = '';
     }
   } else {
     chain = asset.split(sep)[0].toUpperCase();
-    symbol = asset.split(sep)[1].split("-")[0].toUpperCase();
+    symbol = asset.split(sep)[1].split('-')[0].toUpperCase();
   }
 
   const parsedAsset = {
     chain,
     symbol,
-    address: "",
+    address: '',
     synth,
   };
 
-  if (asset.includes("-")) {
-    // eslint-disable-next-line prefer-destructuring
-    parsedAsset.address = asset.split(sep)[1].split("-")[1];
+  if (asset.includes('-')) {
+    parsedAsset.address = asset.split(sep)[1].split('-')[1];
 
     // attempt to fuzzy match address
     if (pools && !(assetString(parsedAsset) in pools)) {
@@ -206,7 +205,7 @@ function parseAsset(asset: string, pools?: any) {
   return parsedAsset;
 }
 // @ts-ignore
-const RuneAsset = parseAsset("THOR.RUNE");
+const RuneAsset = parseAsset('THOR.RUNE');
 /// /////////////////////////////////////////////////////////////////////////////////////
 // Helpers
 /// /////////////////////////////////////////////////////////////////////////////////////
@@ -232,16 +231,16 @@ function millisecondsToDHMS(ms: any, short?: any) {
     components.push(`${days}d`);
   }
   if (hours > 0) {
-    components.push(`${String(hours).padStart(2, "0")}h`);
+    components.push(`${String(hours).padStart(2, '0')}h`);
   }
   if (minutes > 0) {
-    components.push(`${String(minutes).padStart(2, "0")}m`);
+    components.push(`${String(minutes).padStart(2, '0')}m`);
   }
   if (!short || components.length === 0) {
-    components.push(`${String(seconds).padStart(2, "0")}s`);
+    components.push(`${String(seconds).padStart(2, '0')}s`);
   }
 
-  return components.join(" ");
+  return components.join(' ');
 }
 
 function viewblockURL(path: any, network: any) {
@@ -254,10 +253,10 @@ function viewblockURL(path: any, network: any) {
 
 function hashCode(str: any) {
   let hash = 0;
-  // eslint-disable-next-line no-plusplus
+
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    // eslint-disable-next-line no-bitwise
+
     hash = (hash << 5) - hash + char;
   }
   return hash;
@@ -272,16 +271,7 @@ function colorizeVault(vault: any) {
     return vaultColors[vault];
   }
 
-  const allChakraColors = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "blue",
-    "cyan",
-    "purple",
-  ];
+  const allChakraColors = ['red', 'orange', 'yellow', 'green', 'teal', 'blue', 'cyan', 'purple'];
 
   const hash = hashCode(vault);
   let index = Math.abs(hash) % allChakraColors.length;
@@ -316,74 +306,74 @@ function shortAddress(address: any, chain: any) {
   }
 
   switch (chain) {
-    case "ETH":
-    case "BSC":
-    case "AVAX":
-    case "BCH":
-    case "DOGE":
-    case "BTC":
+    case 'ETH':
+    case 'BSC':
+    case 'AVAX':
+    case 'BCH':
+    case 'DOGE':
+    case 'BTC':
       return `${address.slice(0, 2)}...${address.slice(-4)}`;
-    case "LTC":
-    case "BNB":
+    case 'LTC':
+    case 'BNB':
       return `${address.slice(0, 3)}...${address.slice(-4)}`;
-    case "THOR":
+    case 'THOR':
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    case "GAIA":
+    case 'GAIA':
       return `${address.slice(0, 6)}...${address.slice(-4)}`;
     default:
-      return "";
+      return '';
   }
 }
 
 function txExplorerLink(txid: any, asset: any, network: any) {
-  switch (asset?.synth ? "THOR" : asset?.chain) {
-    case "ETH":
+  switch (asset?.synth ? 'THOR' : asset?.chain) {
+    case 'ETH':
       return `https://etherscan.io/tx/0x${txid}`;
-    case "BSC":
+    case 'BSC':
       return `https://bscscan.com/tx/0x${txid}`;
-    case "BNB":
+    case 'BNB':
       return `https://explorer.binance.org/tx/${txid}`;
-    case "AVAX":
+    case 'AVAX':
       return `https://cchain.explorer.avax.network/tx/0x${txid}`;
-    case "LTC":
+    case 'LTC':
       return `https://live.blockcypher.com/ltc/tx/${txid.toLowerCase()}`;
-    case "BTC":
+    case 'BTC':
       return `https://mempool.space/tx/${txid.toLowerCase()}`;
-    case "DOGE":
+    case 'DOGE':
       return `https://live.blockcypher.com/doge/tx/${txid.toLowerCase()}`;
-    case "THOR":
+    case 'THOR':
       return viewblockURL(`thorchain/tx/${txid}`, network);
-    case "GAIA":
+    case 'GAIA':
       return `https://www.mintscan.io/cosmos/txs/${txid}`;
-    case "BCH": // no blockcypher explorer for BCH
+    case 'BCH': // no blockcypher explorer for BCH
       return `https://blockchain.com/bch/tx/${txid}`;
     default:
-      return "";
+      return '';
   }
 }
 
 function addressExplorerLink(address: any, asset: any, network: any) {
-  switch (asset?.synth ? "THOR" : asset?.chain) {
-    case "ETH":
+  switch (asset?.synth ? 'THOR' : asset?.chain) {
+    case 'ETH':
       return `https://etherscan.io/address/${address}`;
-    case "BSC":
+    case 'BSC':
       return `https://bscscan.com/address/${address}`;
-    case "AVAX":
+    case 'AVAX':
       return `https://cchain.explorer.avax.network/address/${address}`;
-    case "LTC":
+    case 'LTC':
       return `https://live.blockcypher.com/ltc/address/${address}`;
-    case "BTC":
+    case 'BTC':
       return `https://mempool.space/address/${address}`;
-    case "BCH":
+    case 'BCH':
       return `https://live.blockcypher.com/bch/address/${address}`;
-    case "DOGE":
+    case 'DOGE':
       return `https://live.blockcypher.com/doge/address/${address}`;
-    case "THOR":
+    case 'THOR':
       return viewblockURL(`thorchain/address/${address}`, network);
-    case "GAIA":
+    case 'GAIA':
       return `https://www.mintscan.io/cosmos/account/${address}`;
     default:
-      return "";
+      return '';
   }
 }
 
@@ -392,11 +382,11 @@ function requiresConfirmations(asset: any) {
     return false;
   }
   switch (asset.chain) {
-    case "BTC":
-    case "ETH":
-    case "BCH":
-    case "LTC":
-    case "DOGE":
+    case 'BTC':
+    case 'ETH':
+    case 'BCH':
+    case 'LTC':
+    case 'DOGE':
       return true;
     default:
       return false;
@@ -407,33 +397,29 @@ function requiresConfirmations(asset: any) {
 // default thornode and midgard endpoints.
 async function nativeTx(txid: any, chain: any) {
   switch (chain) {
-    case "THOR": {
-      const res = await axios.get(
-        `${ThornodeURL}/cosmos/tx/v1beta1/txs/${txid}`
-      );
+    case 'THOR': {
+      const res = await axios.get(`${ThornodeURL}/cosmos/tx/v1beta1/txs/${txid}`);
 
       // the first transfer event is gas
       const gasEvent = atob(
         res.data.tx_response.events
-          .find((e: any) => e.type === "transfer")
-          .attributes.find((a: any) => atob(a.key) === "amount").value
+          .find((e: any) => e.type === 'transfer')
+          .attributes.find((a: any) => atob(a.key) === 'amount').value,
       );
 
       // ensure gas ends in "rune" and remove the "rune" suffix
-      const gas = gasEvent.endsWith("rune") ? gasEvent.slice(0, -4) : null;
+      const gas = gasEvent.endsWith('rune') ? gasEvent.slice(0, -4) : null;
 
       return {
         gas,
         gasAsset: RuneAsset,
       };
     }
-    case "BTC":
-    case "DOGE":
-    case "BCH":
-    case "LTC": {
-      const res = await axios.get(
-        `${ShapeshiftAPIURLs[chain]}/api/v1/tx/${txid}`
-      );
+    case 'BTC':
+    case 'DOGE':
+    case 'BCH':
+    case 'LTC': {
+      const res = await axios.get(`${ShapeshiftAPIURLs[chain]}/api/v1/tx/${txid}`);
 
       const tx: any = {
         // @ts-ignore
@@ -445,18 +431,17 @@ async function nativeTx(txid: any, chain: any) {
       };
 
       // get blockstats rpc
-      if (res.data.blockHash && chain !== "DOGE") {
+      if (res.data.blockHash && chain !== 'DOGE') {
         const blockstats = await axios.post(`${UTXOClientURLs[chain]}`, {
-          jsonrpc: "2.0",
-          id: "1",
-          method: "getblockstats",
-          params: [res.data.blockHash, ["totalfee", "subsidy"]],
+          jsonrpc: '2.0',
+          id: '1',
+          method: 'getblockstats',
+          params: [res.data.blockHash, ['totalfee', 'subsidy']],
         });
-        let feeAndSubsidy =
-          blockstats.data.result.totalfee + blockstats.data.result.subsidy;
+        let feeAndSubsidy = blockstats.data.result.totalfee + blockstats.data.result.subsidy;
 
         // BCH is not in 1e8
-        if (chain === "BCH") {
+        if (chain === 'BCH') {
           feeAndSubsidy *= 1e8;
         }
 
@@ -467,18 +452,14 @@ async function nativeTx(txid: any, chain: any) {
       return tx;
     }
 
-    case "ETH":
-    case "AVAX":
+    case 'ETH':
+    case 'AVAX':
       // eslint-disable-next-line no-case-declarations
-      const res = await axios.get(
-        `${ShapeshiftAPIURLs[chain]}/api/v1/tx/${txid}`
-      );
+      const res = await axios.get(`${ShapeshiftAPIURLs[chain]}/api/v1/tx/${txid}`);
 
       // TODO: handle tokens, this just works for ETH
       // eslint-disable-next-line no-case-declarations
-      const confirmationsRequired = Math.floor(
-        Math.max(2, (parseInt(res.data.value) * 2) / 3e18)
-      );
+      const confirmationsRequired = Math.floor(Math.max(2, (parseInt(res.data.value) * 2) / 3e18));
 
       return {
         gas: parseInt(res.data.fee),
@@ -494,25 +475,25 @@ async function nativeTx(txid: any, chain: any) {
 
 function blockMilliseconds(chain: any) {
   switch (chain) {
-    case "BTC":
+    case 'BTC':
       return 600_000;
-    case "BCH":
+    case 'BCH':
       return 600_000;
-    case "LTC":
+    case 'LTC':
       return 150_000;
-    case "DOGE":
+    case 'DOGE':
       return 60_000;
-    case "ETH":
+    case 'ETH':
       return 12_000;
-    case "THOR":
+    case 'THOR':
       return 6_000;
-    case "GAIA":
+    case 'GAIA':
       return 6_000;
-    case "AVAX":
+    case 'AVAX':
       return 3_000;
-    case "BSC":
+    case 'BSC':
       return 3_000;
-    case "BNB":
+    case 'BNB':
       return 500;
     default:
       return 0;
@@ -527,8 +508,8 @@ function parseMemo(memo: any) {
   if (!memo) return {};
 
   // SWAP:ASSET:DESTADDR:LIM/INTERVAL/QUANTITY:AFFILIATE:FEE
-  const parts = memo.split(":");
-  const [limit, interval, quantity] = parts[3] ? parts[3].split("/") : [];
+  const parts = memo.split(':');
+  const [limit, interval, quantity] = parts[3] ? parts[3].split('/') : [];
 
   return {
     type: parts[0] || null,
@@ -552,10 +533,10 @@ function usdPerRune(pools: any) {
   let rune = 0;
 
   const anchorPools = [
-    "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
-    "ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7",
-    "AVAX.USDC-0XB97EF9EF8734C71904D8002F8B6BC66DD9C48A6E",
-    "BNB.BUSD-BD1",
+    'ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48',
+    'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7',
+    'AVAX.USDC-0XB97EF9EF8734C71904D8002F8B6BC66DD9C48A6E',
+    'BNB.BUSD-BD1',
   ];
   anchorPools.forEach((pool) => {
     if (pools[pool]) {
@@ -571,20 +552,19 @@ function amountToUSD(amount: any, asset: any, pools: any) {
   if (!amount || !asset || !pools) return;
 
   let runeValue = amount;
-  if (asset.chain !== "THOR" || asset.symbol !== "RUNE") {
+  if (asset.chain !== 'THOR' || asset.symbol !== 'RUNE') {
     const pool = pools[assetString(asset)];
     runeValue = pool ? (amount * pool.balance_rune) / pool.balance_asset : 0;
   }
 
-  // eslint-disable-next-line consistent-return
   return runeValue * usdPerRune(pools);
 }
 
 function usdString(usd: any) {
   return usd
-    ? usd.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
+    ? usd.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
       })
     : null;
 }
@@ -610,17 +590,17 @@ function makeState(
   nativeOut: any,
   actions: any,
   inDetails: any,
-  outDetails: any
+  outDetails: any,
 ) {
   if (!status?.tx || !pools) {
     // if this is the outbound prompt to redirect
-    if (inDetails?.tx.tx.memo.startsWith("OUT:")) {
+    if (inDetails?.tx.tx.memo.startsWith('OUT:')) {
       return {
         isOutbound: true,
-        inbound: inDetails.tx.tx.memo.split(":")[1],
+        inbound: inDetails.tx.tx.memo.split(':')[1],
       };
     }
-    // eslint-disable-next-line consistent-return
+
     return;
   }
 
@@ -631,9 +611,7 @@ function makeState(
     status.tx.from_address.toLowerCase(),
     memo.destAddr?.toLowerCase(),
   ]);
-  let outTxs = status.out_txs?.filter((tx: any) =>
-    userAddresses.has(tx.to_address.toLowerCase())
-  );
+  let outTxs = status.out_txs?.filter((tx: any) => userAddresses.has(tx.to_address.toLowerCase()));
   if (!outTxs) {
     outTxs = status.planned_out_txs
       ?.filter((tx: any) => userAddresses.has(tx.to_address.toLowerCase()))
@@ -645,38 +623,25 @@ function makeState(
 
   const inAsset = parseAsset(status.tx.coins[0].asset, pools);
   const inAmount = parseInt(status.tx.coins[0].amount || nativeIn.amount);
-  const outAsset = parseAsset(
-    outTxs?.length > 0 ? outTxs[0].coins[0].asset : memo.asset,
-    pools
-  );
+  const outAsset = parseAsset(outTxs?.length > 0 ? outTxs[0].coins[0].asset : memo.asset, pools);
   const outAmount =
-    outTxs?.length > 0
-      ? parseInt(outTxs[0].coins[0].amount, 10)
-      : nativeOut?.amount;
+    outTxs?.length > 0 ? parseInt(outTxs[0].coins[0].amount, 10) : nativeOut?.amount;
 
   const outboundFee = actions?.actions[0]?.metadata.swap?.networkFees[0].amount;
   const outboundFeeAsset = outboundFee
-    ? parseAsset(
-        actions?.actions[0]?.metadata.swap?.networkFees[0].asset,
-        pools
-      )
+    ? parseAsset(actions?.actions[0]?.metadata.swap?.networkFees[0].asset, pools)
     : null;
 
   const outboundHasRefund = outTxs?.some(
-    (tx: any) => tx.refund || tx.memo?.toLowerCase().startsWith("refund")
+    (tx: any) => tx.refund || tx.memo?.toLowerCase().startsWith('refund'),
   );
-  const outboundHasSuccess = outTxs?.some(
-    (tx: any) => tx.memo?.toLowerCase().startsWith("out")
-  );
-  const outboundRefundReason = actions?.actions.find(
-    (action: any) => action.type === "refund"
-  )?.metadata.refund.reason;
+  const outboundHasSuccess = outTxs?.some((tx: any) => tx.memo?.toLowerCase().startsWith('out'));
+  const outboundRefundReason = actions?.actions.find((action: any) => action.type === 'refund')
+    ?.metadata.refund.reason;
 
   return {
     isSwap:
-      memo.type.toLowerCase() === "swap" ||
-      memo.type.toLowerCase() === "s" ||
-      memo.type === "=",
+      memo.type.toLowerCase() === 'swap' || memo.type.toLowerCase() === 's' || memo.type === '=',
     stage: null,
     inbound: {
       txid: status.tx.id,
@@ -685,9 +650,7 @@ function makeState(
       amount: inAmount,
       usdValue: amountToUSD(inAmount, inAsset, pools),
       gas: status.tx.gas ? status.tx.gas[0].amount : nativeIn?.gas,
-      gasAsset: status.tx.gas
-        ? parseAsset(status.tx.gas[0].asset, pools)
-        : nativeIn?.gasAsset,
+      gasAsset: status.tx.gas ? parseAsset(status.tx.gas[0].asset, pools) : nativeIn?.gasAsset,
       affiliate: memo.affiliate,
       preObservations: status.stages.inbound_observed?.pre_confirmation_count,
       observations: status.stages.inbound_observed?.final_count,
@@ -699,52 +662,39 @@ function makeState(
     },
     swap: {
       limit: memo.limit,
-      affiliateFee:
-        parseInt(actions?.actions[0]?.metadata?.swap?.affiliateFee, 10) || null,
-      liquidityFee:
-        parseInt(actions?.actions[0]?.metadata?.swap?.liquidityFee) || null,
+      affiliateFee: parseInt(actions?.actions[0]?.metadata?.swap?.affiliateFee, 10) || null,
+      liquidityFee: parseInt(actions?.actions[0]?.metadata?.swap?.liquidityFee) || null,
       slip: parseInt(actions?.actions[0]?.metadata?.swap?.swapSlip),
       streaming: {
         count: status.stages.swap_status?.streaming?.count,
-        interval:
-          status.stages.swap_status?.streaming?.interval || memo.interval,
-        quantity:
-          status.stages.swap_status?.streaming?.quantity || memo.quantity,
+        interval: status.stages.swap_status?.streaming?.interval || memo.interval,
+        quantity: status.stages.swap_status?.streaming?.quantity || memo.quantity,
       },
-      done:
-        status.stages.swap_finalised?.completed &&
-        !status.stages.swap_status?.pending,
+      done: status.stages.swap_finalised?.completed && !status.stages.swap_status?.pending,
     },
     outbound: {
-      txid:
-        outTxs?.length > 0 && outTxs[0].chain !== "THOR" ? outTxs[0]?.id : null,
+      txid: outTxs?.length > 0 && outTxs[0].chain !== 'THOR' ? outTxs[0]?.id : null,
       to: (outTxs?.length > 0 && outTxs[0].to_address) || memo.destAddr,
       asset: outAsset,
       amount: parseInt(outAmount),
       usdValue: outAmount ? amountToUSD(outAmount, outAsset, pools) : null,
-      gas:
-        outTxs?.length > 0 && outTxs[0].gas
-          ? outTxs[0].gas[0].amount
-          : nativeOut?.gas,
+      gas: outTxs?.length > 0 && outTxs[0].gas ? outTxs[0].gas[0].amount : nativeOut?.gas,
       gasAsset:
-        outTxs?.length > 0 && outTxs[0].gas
-          ? parseAsset(outTxs[0].gas[0].asset, pools)
-          : null,
+        outTxs?.length > 0 && outTxs[0].gas ? parseAsset(outTxs[0].gas[0].asset, pools) : null,
       fee: outboundFee,
       feeAsset: outboundFeeAsset,
       observations: outDetails?.txs[0].signers.length || 0,
       confirmations: nativeOut?.confirmations,
       finalisedHeight: outDetails?.finalised_height,
       icon: outAsset?.symbol?.toLowerCase(),
-      // eslint-disable-next-line no-unsafe-optional-chaining
+
       delayBlocks: inDetails?.outbound_height - inDetails?.finalised_height,
-      delayBlocksRemaining:
-        status.stages.outbound_delay?.remaining_delay_blocks || 0,
+      delayBlocksRemaining: status.stages.outbound_delay?.remaining_delay_blocks || 0,
       done:
         status.stages?.swap_finalised?.completed &&
         !status.stages?.swap_status?.pending &&
         (status.stages?.outbound_signed?.completed ||
-          outAsset?.chain === "THOR" ||
+          outAsset?.chain === 'THOR' ||
           outAsset?.synth),
       hasRefund: outboundHasRefund,
       hasSuccess: outboundHasSuccess,
@@ -762,7 +712,7 @@ function makeState(
       usdValue: amountToUSD(
         parseInt(tx.coins[0].amount),
         parseAsset(tx.coins[0].asset, pools),
-        pools
+        pools,
       ),
     })),
   };
@@ -772,12 +722,12 @@ function makeState(
 // Track
 /// /////////////////////////////////////////////////////////////////////////////////////
 
-// eslint-disable-next-line sonarjs/cognitive-complexity,react/prop-types
+// eslint-disable-next-line sonarjs/cognitive-complexity
 function Track({ txHash }: any) {
   // ------------------------------ params ------------------------------
   let txid = txHash;
   // strip 0x prefix
-  if (txid.startsWith("0x")) {
+  if (txid.startsWith('0x')) {
     txid = txid.slice(2);
   }
 
@@ -785,22 +735,16 @@ function Track({ txHash }: any) {
 
   // chain can be provided to show status before observation in thorchain
   const params = new URLSearchParams(window.location.search);
-  const queryChain = params.get("chain");
-  const queryNetwork = params.get("network");
-  if (queryNetwork === "stagenet") {
-    MidgardURL = "https://stagenet-midgard.ninerealms.com";
-    ThornodeURL = "https://stagenet-thornode.ninerealms.com";
+  const queryChain = params.get('chain');
+  const queryNetwork = params.get('network');
+  if (queryNetwork === 'stagenet') {
+    MidgardURL = 'https://stagenet-midgard.ninerealms.com';
+    ThornodeURL = 'https://stagenet-thornode.ninerealms.com';
   }
 
   // allow whitelisted logos
-  let queryLogo = params.get("logo");
-  const logoWhitelist = [
-    "9r.png",
-    "asgardex.png",
-    "shapeshift.png",
-    "thorwallet.svg",
-    "trust.svg",
-  ];
+  let queryLogo = params.get('logo');
+  const logoWhitelist = ['9r.png', 'asgardex.png', 'shapeshift.png', 'thorwallet.svg', 'trust.svg'];
   if (queryLogo && !logoWhitelist.includes(queryLogo)) {
     queryLogo = null;
   }
@@ -832,9 +776,7 @@ function Track({ txHash }: any) {
   React.useEffect(() => {
     const updateInboundAddresses = async () => {
       if (txid) return;
-      setInboundAddresses(
-        (await axios.get(`${ThornodeURL}/thorchain/inbound_addresses`)).data
-      );
+      setInboundAddresses((await axios.get(`${ThornodeURL}/thorchain/inbound_addresses`)).data);
     };
     updateInboundAddresses();
   }, [txid]);
@@ -879,21 +821,16 @@ function Track({ txHash }: any) {
 
     const updateOutbounds = async () => {
       const outboundReq = axios.get(`${ThornodeURL}/thorchain/queue/outbound`);
-      const scheduledReq = axios.get(
-        `${ThornodeURL}/thorchain/queue/scheduled`
-      );
-      const streamingReq = axios.get(
-        `${ThornodeURL}/thorchain/swaps/streaming`
-      );
+      const scheduledReq = axios.get(`${ThornodeURL}/thorchain/queue/scheduled`);
+      const streamingReq = axios.get(`${ThornodeURL}/thorchain/swaps/streaming`);
       const [outboundRes, scheduledRes, streamingRes] = await Promise.all([
         outboundReq,
         scheduledReq,
         streamingReq,
       ]);
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const res of [outboundRes, scheduledRes, streamingRes]) {
-        const newHeight = parseInt(res.headers["x-thorchain-height"], 10);
+        const newHeight = parseInt(res.headers['x-thorchain-height'], 10);
         heightRef.current = Math.max(heightRef.current, newHeight);
       }
 
@@ -902,40 +839,40 @@ function Track({ txHash }: any) {
         pendingTransactions = pendingTransactions.concat(
           outboundRes.data.map((item: any) => ({
             ...item,
-            type: "Outbound",
-          }))
+            type: 'Outbound',
+          })),
         );
       }
       if (scheduledRes?.data) {
         pendingTransactions = pendingTransactions.concat(
           scheduledRes.data.map((item: any) => ({
             ...item,
-            type: "Scheduled",
-          }))
+            type: 'Scheduled',
+          })),
         );
       }
       if (streamingRes?.data) {
         pendingTransactions = pendingTransactions.concat(
           streamingRes.data.map((item: any) => ({
             ...item,
-            type: "Streaming",
-          }))
+            type: 'Streaming',
+          })),
         );
       }
 
       pendingTransactions = pendingTransactions.map((item: any) =>
-        item.type === "Streaming"
+        item.type === 'Streaming'
           ? item
           : {
               asset: parseAsset(item.coin.asset, poolsRef.current),
               amount: item.coin.amount,
               to: item.to_address,
               memo: item.memo,
-              source: item.memo.split(":")[1],
+              source: item.memo.split(':')[1],
               type: item.type,
               height: item.height,
               vault: item.vault_pub_key,
-            }
+            },
       );
       setPending(pendingTransactions);
     };
@@ -944,7 +881,7 @@ function Track({ txHash }: any) {
     const intervalId = setInterval(updateOutbounds, 15000);
 
     // Clear interval on component unmount
-    // eslint-disable-next-line consistent-return
+
     return () => clearInterval(intervalId);
   }, [txid]);
 
@@ -974,22 +911,14 @@ function Track({ txHash }: any) {
 
     const update = async () => {
       const res = await axios.get(`${ThornodeURL}/thorchain/tx/status/${txid}`);
-      const newHeight = parseInt(res.headers["x-thorchain-height"], 10);
+      const newHeight = parseInt(res.headers['x-thorchain-height'], 10);
       heightRef.current = Math.max(heightRef.current, newHeight);
-      const partialState: any = makeState(
-        res.data,
-        poolsRef.current,
-        null,
-        null,
-        null,
-        null,
-        null
-      );
+      const partialState: any = makeState(res.data, poolsRef.current, null, null, null, null, null);
 
       // update native inbound until finalized
       if (!partialState?.inbound.done || nativeInboundRef.current === null) {
         const inboundChain =
-          (partialState?.inbound.asset.synth && "THOR") ||
+          (partialState?.inbound.asset.synth && 'THOR') ||
           partialState?.inbound.asset.chain ||
           queryChain;
         if (txid && inboundChain) {
@@ -1000,12 +929,12 @@ function Track({ txHash }: any) {
       // update native outbound until finalized
       if (
         partialState?.outbound.txid &&
-        partialState?.outbound.asset.chain !== "THOR" &&
+        partialState?.outbound.asset.chain !== 'THOR' &&
         (!partialState?.outbound.done || nativeOutboundRef.current === null)
       ) {
         nativeOutboundRef.current = await nativeTx(
           partialState.outbound.txid,
-          partialState.outbound.asset.chain
+          partialState.outbound.asset.chain,
         );
       }
 
@@ -1030,18 +959,11 @@ function Track({ txHash }: any) {
       }
 
       // TODO: should go away after status provides finalized height
-      const inDetails = (
-        await axios.get(`${ThornodeURL}/thorchain/tx/details/${txid}`)
-      ).data;
+      const inDetails = (await axios.get(`${ThornodeURL}/thorchain/tx/details/${txid}`)).data;
       inboundDetailsRef.current = inDetails;
-      if (
-        partialState?.outbound.txid &&
-        partialState?.outbound.asset.chain !== "THOR"
-      ) {
+      if (partialState?.outbound.txid && partialState?.outbound.asset.chain !== 'THOR') {
         const outDetails = (
-          await axios.get(
-            `${ThornodeURL}/thorchain/tx/details/${partialState?.outbound.txid}`
-          )
+          await axios.get(`${ThornodeURL}/thorchain/tx/details/${partialState?.outbound.txid}`)
         ).data;
         outboundDetailsRef.current = outDetails;
       }
@@ -1058,7 +980,6 @@ function Track({ txHash }: any) {
   // ---------- state ----------
 
   React.useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     const state: any = makeState(
       status,
       pools,
@@ -1066,7 +987,7 @@ function Track({ txHash }: any) {
       nativeOutboundRef.current,
       actionsRef.current,
       inboundDetailsRef.current,
-      outboundDetailsRef.current
+      outboundDetailsRef.current,
     );
     setState(state);
 
@@ -1079,30 +1000,27 @@ function Track({ txHash }: any) {
       Math.max(
         (state?.inbound.confirmationsRequired - state?.inbound.confirmations) *
           blockMilliseconds(state?.inbound.asset.chain),
-        0
+        0,
       ) || 0;
     let streamTimeRemaining = 0;
     if (state?.swap.streaming) {
       const { quantity, count, interval } = state?.swap.streaming;
       const streamBlocksRemaining = (quantity - count) * interval;
-      streamTimeRemaining =
-        streamBlocksRemaining * blockMilliseconds("THOR") || 0;
+      streamTimeRemaining = streamBlocksRemaining * blockMilliseconds('THOR') || 0;
     }
     const outboundDelayRemaining =
-      (state?.outbound.delayBlocksRemaining || 0) * blockMilliseconds("THOR");
+      (state?.outbound.delayBlocksRemaining || 0) * blockMilliseconds('THOR');
     setEta(confirmTimeRemaining + streamTimeRemaining + outboundDelayRemaining);
 
     // set the eta at the start for progress circle
     if (!startEtaRef.current) {
-      startEtaRef.current =
-        confirmTimeRemaining + streamTimeRemaining + outboundDelayRemaining;
+      startEtaRef.current = confirmTimeRemaining + streamTimeRemaining + outboundDelayRemaining;
     }
   }, [status, pools]);
 
   // ---------- eta ----------
 
   const decrementEta = () => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     setEta((eta: any) => Math.max(0, eta - 1000));
   };
   React.useEffect(() => {
@@ -1168,10 +1086,7 @@ function Track({ txHash }: any) {
         <HStack justify="space-between" width="full">
           <Text>Inbound</Text>
           <Tooltip label={txid} maxW="none" placement="top">
-            <Link
-              href={txExplorerLink(txid, state?.inbound.asset, queryNetwork)}
-              target="_blank"
-            >
+            <Link href={txExplorerLink(txid, state?.inbound.asset, queryNetwork)} target="_blank">
               <Tag>
                 <HStack>
                   <Text>... {txid.slice(-6)}</Text>
@@ -1184,24 +1099,15 @@ function Track({ txHash }: any) {
       ),
       rows: [
         {
-          label: "From",
+          label: 'From',
           value: state?.inbound && (
             <Tooltip label={state?.inbound.from} maxW="none" placement="top">
               <Link
-                href={addressExplorerLink(
-                  state?.inbound.from,
-                  state?.inbound.asset,
-                  queryNetwork
-                )}
+                href={addressExplorerLink(state?.inbound.from, state?.inbound.asset, queryNetwork)}
                 target="_blank"
               >
                 <Flex justify="right">
-                  <Text>
-                    {shortAddress(
-                      state?.inbound.from,
-                      state?.inbound.asset.chain
-                    )}
-                  </Text>
+                  <Text>{shortAddress(state?.inbound.from, state?.inbound.asset.chain)}</Text>
                   <ExternalLinkIcon ml={2} />
                 </Flex>
               </Link>
@@ -1209,13 +1115,11 @@ function Track({ txHash }: any) {
           ),
         },
         {
-          label: "Gas",
+          label: 'Gas',
           value: (
             <Tooltip
               fontSize="md"
-              label={usdString(
-                amountToUSD(state?.inbound.gas, state?.inbound.gasAsset, pools)
-              )}
+              label={usdString(amountToUSD(state?.inbound.gas, state?.inbound.gasAsset, pools))}
               placement="right"
             >
               <Text>
@@ -1225,13 +1129,11 @@ function Track({ txHash }: any) {
           ),
         },
         state?.swap.affiliateFee > 0 && {
-          label: "Affiliate Fee",
+          label: 'Affiliate Fee',
           value: (
             <Tooltip
               fontSize="md"
-              label={usdString(
-                (state?.swap.affiliateFee / 10000) * state?.inbound.usdValue
-              )}
+              label={usdString((state?.swap.affiliateFee / 10000) * state?.inbound.usdValue)}
               placement="right"
             >
               <Text>{(state?.swap.affiliateFee / 100).toFixed(2)}%</Text>
@@ -1239,28 +1141,19 @@ function Track({ txHash }: any) {
           ),
         },
         state?.inbound.affiliate && {
-          label: "Affiliate",
-          value: (
-            <Text>
-              {shortAddress(
-                state?.inbound.affiliate,
-                state?.inbound.asset.chain
-              )}
-            </Text>
-          ),
+          label: 'Affiliate',
+          value: <Text>{shortAddress(state?.inbound.affiliate, state?.inbound.asset.chain)}</Text>,
         },
-        state?.inbound.asset.chain !== "THOR" &&
+        state?.inbound.asset.chain !== 'THOR' &&
           !state?.inbound.asset.synth &&
           state?.inbound.preObservations && {
-            label: "Pre-Confirm Observations",
+            label: 'Pre-Confirm Observations',
             value:
               !state?.inbound.finalisedHeight ||
-              heightRef.current - state?.inbound.finalisedHeight <
-                ProgressBlocks ? (
+              heightRef.current - state?.inbound.finalisedHeight < ProgressBlocks ? (
                 <HStack justify="right">
                   <Text size="sm">
-                    {state?.inbound.preObservations}/{network?.activeNodeCount}{" "}
-                    nodes
+                    {state?.inbound.preObservations}/{network?.activeNodeCount} nodes
                   </Text>
                 </HStack>
               ) : (
@@ -1268,42 +1161,33 @@ function Track({ txHash }: any) {
               ),
           },
         requiresConfirmations(state?.inbound.asset) && {
-          label: "Confirmations",
+          label: 'Confirmations',
           value:
             state?.inbound.confirmationsRequired >= 0 &&
             (!state?.inbound.finalisedHeight ||
-              heightRef.current - state?.inbound.finalisedHeight <
-                ProgressBlocks) ? (
+              heightRef.current - state?.inbound.finalisedHeight < ProgressBlocks) ? (
               <HStack>
                 <Progress
                   colorScheme={
-                    state?.inbound.confirmations >=
-                    state?.inbound.confirmationsRequired
-                      ? "green"
-                      : "blue"
+                    state?.inbound.confirmations >= state?.inbound.confirmationsRequired
+                      ? 'green'
+                      : 'blue'
                   }
-                  hasStripe={
-                    state?.inbound.confirmations <
-                    state?.inbound.confirmationsRequired
-                  }
+                  hasStripe={state?.inbound.confirmations < state?.inbound.confirmationsRequired}
                   size="sm"
                   value={
-                    (state?.inbound.confirmations /
-                      state?.inbound.confirmationsRequired) *
-                    100
+                    (state?.inbound.confirmations / state?.inbound.confirmationsRequired) * 100
                   }
                   width="full"
                 />
                 <Text size="sm">
-                  {state?.inbound.confirmations}/
-                  {state?.inbound.confirmationsRequired} blocks
+                  {state?.inbound.confirmations}/{state?.inbound.confirmationsRequired} blocks
                 </Text>
               </HStack>
             ) : state?.inbound.confirmations ? (
               <Tooltip
                 label={millisecondsToDHMS(
-                  state?.inbound.confirmations *
-                    blockMilliseconds(state?.inbound.asset.chain)
+                  state?.inbound.confirmations * blockMilliseconds(state?.inbound.asset.chain),
                 )}
                 maxW="none"
                 placement="top"
@@ -1316,27 +1200,20 @@ function Track({ txHash }: any) {
               <Progress isIndeterminate size="sm" width="full" />
             ),
         },
-        state?.inbound.asset.chain !== "THOR" &&
+        state?.inbound.asset.chain !== 'THOR' &&
           !state?.inbound.asset.synth && {
-            label: "Observations",
-            value: (heightRef.current - state?.inbound.finalisedHeight <
-              ProgressBlocks && (
+            label: 'Observations',
+            value: (heightRef.current - state?.inbound.finalisedHeight < ProgressBlocks && (
               <HStack>
                 <Progress
                   colorScheme={
-                    state?.inbound.observations >
-                    (2 / 3) * network?.activeNodeCount
-                      ? "green"
-                      : "blue"
+                    state?.inbound.observations > (2 / 3) * network?.activeNodeCount
+                      ? 'green'
+                      : 'blue'
                   }
-                  hasStripe={
-                    state?.inbound.observations < network?.activeNodeCount
-                  }
+                  hasStripe={state?.inbound.observations < network?.activeNodeCount}
                   size="sm"
-                  value={
-                    (state?.inbound.observations / network?.activeNodeCount) *
-                    100
-                  }
+                  value={(state?.inbound.observations / network?.activeNodeCount) * 100}
                   width="full"
                 />
                 <Text size="sm">
@@ -1351,68 +1228,59 @@ function Track({ txHash }: any) {
     // ------------------------------ swap ------------------------------
 
     {
-      title: "Swap",
+      title: 'Swap',
       rows: [
         state?.swap.streaming.interval && {
-          label: "Interval",
-          value: (
-            <Text size="sm">{state?.swap.streaming.interval} blocks/swap</Text>
-          ),
+          label: 'Interval',
+          value: <Text size="sm">{state?.swap.streaming.interval} blocks/swap</Text>,
         },
         state?.swap.streaming.quantity && {
-          label: "Quantity",
+          label: 'Quantity',
           value: <Text size="sm">{state?.swap.streaming.quantity} swaps</Text>,
         },
         state?.swap.limit && {
-          label: "Limit",
+          label: 'Limit',
           value: (
             <Text size="sm">
-              {(state?.swap.limit / 1e8).toLocaleString()}{" "}
-              {state?.outbound.asset.symbol}
+              {(state?.swap.limit / 1e8).toLocaleString()} {state?.outbound.asset.symbol}
             </Text>
           ),
         },
         state?.inbound.done &&
           state?.swap.streaming.quantity && {
-            label: "Stream",
+            label: 'Stream',
             value: (
               <HStack>
                 <Progress
-                  colorScheme={state?.swap.done ? "green" : "blue"}
+                  colorScheme={state?.swap.done ? 'green' : 'blue'}
                   hasStripe={!state?.swap.done}
                   size="sm"
                   value={
-                    ((state?.swap.streaming.count ||
-                      state?.swap.streaming.quantity) /
+                    ((state?.swap.streaming.count || state?.swap.streaming.quantity) /
                       state?.swap.streaming.quantity) *
                     100
                   }
                   width="full"
                 />
                 <Text size="sm">
-                  {state?.swap.streaming.count ||
-                    state?.swap.streaming.quantity}
-                  /{state?.swap.streaming.quantity}
+                  {state?.swap.streaming.count || state?.swap.streaming.quantity}/
+                  {state?.swap.streaming.quantity}
                 </Text>
               </HStack>
             ),
           },
         state?.swap.liquidityFee && {
-          label: "Liquidity Fee",
+          label: 'Liquidity Fee',
           value: (
             <Tooltip
               fontSize="md"
-              label={usdString(
-                amountToUSD(state?.swap.liquidityFee, RuneAsset, pools)
-              )}
+              label={usdString(amountToUSD(state?.swap.liquidityFee, RuneAsset, pools))}
               placement="right"
             >
               <Text>
                 {`${
                   state?.swap.liquidityFee / 1e8 > 1000
-                    ? `~${Math.round(
-                        state?.swap.liquidityFee / 1e8
-                      ).toLocaleString()}`
+                    ? `~${Math.round(state?.swap.liquidityFee / 1e8).toLocaleString()}`
                     : state?.swap.liquidityFee / 1e8
                   // eslint-disable-next-line no-useless-concat
                 } RUNE` + ` (${(state?.swap.slip / 100).toFixed(2)}%)`}
@@ -1427,10 +1295,7 @@ function Track({ txHash }: any) {
   // ------------------------------ outbounds ------------------------------
 
   const allOutbounds = state?.outbound
-    ? [
-        ...[state.outbound],
-        ...(state.extraOutbounds ? state.extraOutbounds : []),
-      ]
+    ? [...[state.outbound], ...(state.extraOutbounds ? state.extraOutbounds : [])]
     : [];
 
   const consolidatedOutbounds = allOutbounds.reduce((acc, outbound) => {
@@ -1454,11 +1319,7 @@ function Track({ txHash }: any) {
           {activeStep >= 2 && outbound.txid && (
             <Tooltip label={outbound.txid} maxW="none" placement="top">
               <Link
-                href={txExplorerLink(
-                  outbound.txid,
-                  outbound.asset,
-                  queryNetwork
-                )}
+                href={txExplorerLink(outbound.txid, outbound.asset, queryNetwork)}
                 target="_blank"
               >
                 <Tag>
@@ -1474,15 +1335,11 @@ function Track({ txHash }: any) {
       ),
       rows: [
         {
-          label: "Destination",
+          label: 'Destination',
           value: outbound && (
             <Tooltip label={outbound.to} maxW="none" placement="top">
               <Link
-                href={addressExplorerLink(
-                  outbound.to,
-                  outbound.asset,
-                  queryNetwork
-                )}
+                href={addressExplorerLink(outbound.to, outbound.asset, queryNetwork)}
                 target="_blank"
               >
                 {shortAddress(outbound.to, outbound.asset.chain)}
@@ -1492,13 +1349,11 @@ function Track({ txHash }: any) {
           ),
         },
         outbound.fee > 0 && {
-          label: "Outbound Fee",
+          label: 'Outbound Fee',
           value: (
             <Tooltip
               fontSize="md"
-              label={usdString(
-                amountToUSD(outbound.fee, outbound.feeAsset, pools)
-              )}
+              label={usdString(amountToUSD(outbound.fee, outbound.feeAsset, pools))}
               placement="right"
             >
               <Text>
@@ -1508,13 +1363,11 @@ function Track({ txHash }: any) {
           ),
         },
         (outbound.gas > 0 && {
-          label: "Gas",
+          label: 'Gas',
           value: (
             <Tooltip
               fontSize="md"
-              label={usdString(
-                amountToUSD(outbound.gas, outbound.gasAsset, pools)
-              )}
+              label={usdString(amountToUSD(outbound.gas, outbound.gasAsset, pools))}
               placement="right"
             >
               <Text>
@@ -1523,16 +1376,14 @@ function Track({ txHash }: any) {
             </Tooltip>
           ),
         }) ||
-          (outbound.asset.chain !== "THOR" &&
+          (outbound.asset.chain !== 'THOR' &&
             !outbound.asset.synth &&
             outbound.finalisedHeight && {
-              label: "Max Gas",
+              label: 'Max Gas',
               value: (
                 <Tooltip
                   fontSize="md"
-                  label={usdString(
-                    amountToUSD(outbound.maxGas, outbound.gasAsset, pools)
-                  )}
+                  label={usdString(amountToUSD(outbound.maxGas, outbound.gasAsset, pools))}
                   placement="right"
                 >
                   <Text>
@@ -1542,32 +1393,29 @@ function Track({ txHash }: any) {
               ),
             }),
         outbound.delayBlocks > 0 && {
-          label: "Delay",
+          label: 'Delay',
           value: ((outbound.delayBlocksRemaining > 0 ||
             heightRef.current - outbound.finalisedHeight < ProgressBlocks) && (
             <HStack>
               <Progress
-                colorScheme={
-                  outbound.delayBlocksRemaining === 0 ? "green" : "blue"
-                }
+                colorScheme={outbound.delayBlocksRemaining === 0 ? 'green' : 'blue'}
                 hasStripe={outbound.delayBlocksRemaining > 0}
                 size="sm"
                 value={
-                  ((outbound.delayBlocks - outbound.delayBlocksRemaining) /
-                    outbound.delayBlocks) *
+                  ((outbound.delayBlocks - outbound.delayBlocksRemaining) / outbound.delayBlocks) *
                   100
                 }
                 width="full"
               />
               <Tooltip
                 label={millisecondsToDHMS(
-                  outbound.delayBlocksRemaining * blockMilliseconds("THOR")
+                  outbound.delayBlocksRemaining * blockMilliseconds('THOR'),
                 )}
                 placement="top"
               >
                 <Text size="sm">
-                  {outbound.delayBlocks - outbound.delayBlocksRemaining}/
-                  {outbound.delayBlocks} blocks
+                  {outbound.delayBlocks - outbound.delayBlocksRemaining}/{outbound.delayBlocks}{' '}
+                  blocks
                 </Text>
               </Tooltip>
             </HStack>
@@ -1577,25 +1425,20 @@ function Track({ txHash }: any) {
             </HStack>
           ),
         },
-        outbound.asset.chain !== "THOR" &&
+        outbound.asset.chain !== 'THOR' &&
           !outbound.asset.synth &&
           outbound.delayBlocksRemaining === 0 && {
-            label: "Observations",
-            value: (heightRef.current - outbound.finalisedHeight <
-              ProgressBlocks && (
+            label: 'Observations',
+            value: (heightRef.current - outbound.finalisedHeight < ProgressBlocks && (
               <HStack>
                 <Progress
                   colorScheme={
-                    outbound.observations > (2 / 3) * network?.activeNodeCount
-                      ? "green"
-                      : "blue"
+                    outbound.observations > (2 / 3) * network?.activeNodeCount ? 'green' : 'blue'
                   }
                   hasStripe={outbound.observations < network?.activeNodeCount}
                   isIndeterminate={outbound.observations === 0}
                   size="sm"
-                  value={
-                    (outbound.observations / network?.activeNodeCount) * 100
-                  }
+                  value={(outbound.observations / network?.activeNodeCount) * 100}
                   width="full"
                 />
                 <Text size="sm">
@@ -1606,12 +1449,11 @@ function Track({ txHash }: any) {
           },
         outbound.delayBlocksRemaining === 0 &&
           requiresConfirmations(outbound.asset) && {
-            label: "Confirmations",
+            label: 'Confirmations',
             value: (outbound.confirmations && (
               <Tooltip
                 label={millisecondsToDHMS(
-                  outbound.confirmations *
-                    blockMilliseconds(outbound.asset.chain)
+                  outbound.confirmations * blockMilliseconds(outbound.asset.chain),
                 )}
                 maxW="none"
                 placement="top"
@@ -1634,18 +1476,15 @@ function Track({ txHash }: any) {
   if (eta > 0) {
     progress = (
       <HStack>
-        <CircularProgress
-          size="32px"
-          value={100 - (100 * eta) / startEtaRef.current}
-        />
-        <Heading size="md">{eta ? millisecondsToDHMS(eta) : "..."}</Heading>
+        <CircularProgress size="32px" value={100 - (100 * eta) / startEtaRef.current} />
+        <Heading size="md">{eta ? millisecondsToDHMS(eta) : '...'}</Heading>
       </HStack>
     );
   } else if (activeStep < 3) {
     progress = (
       <Button
         isLoading
-        colorScheme={state?.outbound.hasRefund ? "yellow" : "blue"}
+        colorScheme={state?.outbound.hasRefund ? 'yellow' : 'blue'}
         size="sm"
         spinner={<BeatLoader color="white" size={8} />}
         width="33%"
@@ -1712,8 +1551,7 @@ function Track({ txHash }: any) {
                       {mimir &&
                       Object.keys(mimir).some(
                         (key) =>
-                          new RegExp(`.*HALT.*${chain.chain}CHAIN`).test(key) &&
-                          mimir[key] !== 0
+                          new RegExp(`.*HALT.*${chain.chain}CHAIN`).test(key) && mimir[key] !== 0,
                       ) ? (
                         <WarningIcon color="red.400" />
                       ) : (
@@ -1773,7 +1611,7 @@ function Track({ txHash }: any) {
               </Thead>
               <Tbody>
                 {pending
-                  ?.filter((x: any) => x.type === "Streaming")
+                  ?.filter((x: any) => x.type === 'Streaming')
                   .map(
                     (row: any) =>
                       row && (
@@ -1800,13 +1638,13 @@ function Track({ txHash }: any) {
                             </Flex>
                           </Td>
                         </Box>
-                      )
+                      ),
                   )}
               </Tbody>
             </Table>
           </TableContainer>
         </Card>
-        {["Outbound", "Scheduled"].map((type) => (
+        {['Outbound', 'Scheduled'].map((type) => (
           <Card my={3} p={3} variant="outline" width="100%">
             <Flex>
               <Center>
@@ -1842,7 +1680,7 @@ function Track({ txHash }: any) {
                   <Tr>
                     <Th p={1}>TxID</Th>
                     <Th p={1}>Type</Th>
-                    {type === "Scheduled" && <Th p={2}>ETA</Th>}
+                    {type === 'Scheduled' && <Th p={2}>ETA</Th>}
                     <Th p={1}>Amount</Th>
                     <Th p={1}>USD Amount</Th>
                     <Th p={1}>Destination</Th>
@@ -1869,33 +1707,23 @@ function Track({ txHash }: any) {
                             }}
                           >
                             <Td p={1}>{row.source.slice(-6)}</Td>
-                            <Td p={1}>{row.memo.split(":")[0]}</Td>
-                            {type === "Scheduled" && (
+                            <Td p={1}>{row.memo.split(':')[0]}</Td>
+                            {type === 'Scheduled' && (
                               <Td p={1}>
                                 {millisecondsToDHMS(
-                                  (row.height - heightRef.current) *
-                                    blockMilliseconds("THOR"),
-                                  true
+                                  (row.height - heightRef.current) * blockMilliseconds('THOR'),
+                                  true,
                                 )}
                               </Td>
                             )}
                             <Td p={1}>
                               {row.amount / 1e8} {row.asset.symbol}
                             </Td>
-                            <Td p={1}>
-                              {usdString(
-                                amountToUSD(row.amount, row.asset, pools)
-                              )}
-                            </Td>
-                            <Td p={1}>
-                              {shortAddress(row.to, row.asset.chain)}
-                            </Td>
+                            <Td p={1}>{usdString(amountToUSD(row.amount, row.asset, pools))}</Td>
+                            <Td p={1}>{shortAddress(row.to, row.asset.chain)}</Td>
                             <Td flex="1" p={2}>
                               <HStack justifyContent="flex-end">
-                                <Tooltip
-                                  label={row.vault.slice(-4)}
-                                  placement="top"
-                                >
+                                <Tooltip label={row.vault.slice(-4)} placement="top">
                                   <LockIcon
                                     color={colorizeVault(row.vault.slice(-4))}
                                     m={0}
@@ -1907,7 +1735,7 @@ function Track({ txHash }: any) {
                               </HStack>
                             </Td>
                           </Box>
-                        )
+                        ),
                     )}
                 </Tbody>
               </Table>
@@ -1939,9 +1767,7 @@ function Track({ txHash }: any) {
           <AlertTitle fontSize="lg" mb={1} mt={4}>
             Unsupported Transaction
           </AlertTitle>
-          <AlertDescription maxWidth="sm">
-            Tracker only supports swaps.
-          </AlertDescription>
+          <AlertDescription maxWidth="sm">Tracker only supports swaps.</AlertDescription>
         </Alert>
       </Card>
     );
@@ -1957,10 +1783,7 @@ function Track({ txHash }: any) {
           <HStack>
             {progress}
             <Spacer />
-            <Link
-              isExternal
-              href={viewblockURL(`thorchain/tx/${txid}`, queryNetwork)}
-            >
+            <Link isExternal href={viewblockURL(`thorchain/tx/${txid}`, queryNetwork)}>
               <Button colorScheme="gray" fontWeight="normal" size="sm">
                 <HStack>
                   <Text>Viewblock</Text>
@@ -1984,9 +1807,7 @@ function Track({ txHash }: any) {
                     {state?.inbound.amount / 1e8}
                   </Text>
                 </StatNumber>
-                <StatHelpText>
-                  {usdString(state?.inbound?.usdValue)}
-                </StatHelpText>
+                <StatHelpText>{usdString(state?.inbound?.usdValue)}</StatHelpText>
               </Stat>
             </VStack>
             <Box flexGrow={1}>
@@ -2007,11 +1828,11 @@ function Track({ txHash }: any) {
                     </StatLabel>
                     <StatNumber>
                       <Text isTruncated textOverflow="ellipsis">
-                        {activeStep > 1 ? outbound.amount / 1e8 : "..."}
+                        {activeStep > 1 ? outbound.amount / 1e8 : '...'}
                       </Text>
                     </StatNumber>
                     <StatHelpText>
-                      {activeStep > 1 ? usdString(outbound.usdValue) : "..."}
+                      {activeStep > 1 ? usdString(outbound.usdValue) : '...'}
                     </StatHelpText>
                   </Stat>
                 </Box>
@@ -2025,12 +1846,7 @@ function Track({ txHash }: any) {
             </div>
           ) : (
             <div>
-              <img
-                alt="shiftingGif"
-                height="600px"
-                src={shiftingGif}
-                width="600px"
-              />
+              <img alt="shiftingGif" height="600px" src={shiftingGif} width="600px" />
             </div>
           )}
 
@@ -2074,18 +1890,14 @@ function Track({ txHash }: any) {
                           (row) =>
                             row && (
                               <Tr>
-                                <HStack
-                                  fontSize="sm"
-                                  letterSpacing="normal"
-                                  width="full"
-                                >
+                                <HStack fontSize="sm" letterSpacing="normal" width="full">
                                   <Th p={2}>{row.label}</Th>
                                   <Box textAlign="right" width="full">
                                     {row.value}
                                   </Box>
                                 </HStack>
                               </Tr>
-                            )
+                            ),
                         )}
                       </Tbody>
                     </Table>

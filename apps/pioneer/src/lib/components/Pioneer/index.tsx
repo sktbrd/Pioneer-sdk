@@ -24,16 +24,17 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ChainToNetworkId, getChainEnumValue, availableChainsByWallet } from '@coinmasters/types';
 import { useEffect, useState } from 'react';
 import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
 
+import AssetSelect from '../../components/AssetSelect';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
-import Receive from '../../components/Receive';
 import MiddleEllipsis from '../../components/MiddleEllipsis';
 import Onboarding from '../../components/Onboarding';
+import Portfolio from '../../components/Portfolio';
+import Receive from '../../components/Receive';
 import Settings from '../../components/Settings';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
@@ -43,7 +44,7 @@ import {
   pioneerImagePng,
 } from '../../components/WalletIcon';
 import { usePioneer } from '../../context';
-import Portfolio from '../../components/Portfolio';
+import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 
 const Pioneer = () => {
   const { state, hideModal, resetState } = usePioneer();
@@ -103,21 +104,64 @@ const Pioneer = () => {
   const handleWalletClick = async (wallet: string) => {
     setIsSwitchingWallet(true);
     resetState();
-    //clear balances
-    //clear pubkeys
-    //clear context
-    //clear blockchains
-    const AllChainsSupported = availableChainsByWallet[wallet];
-    console.log('AllChainsSupported: ', AllChainsSupported);
-    let allByCaip = AllChainsSupported.map((chainStr) => {
-      const chainEnum = getChainEnumValue(chainStr);
-      return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-    }).filter((x) => x !== undefined);
-    app.setBlockchains(allByCaip);
-    onOpen();
-    setWalletType(wallet);
-    setModalType(wallet);
-    setModalShowClose(false);
+
+    //get cached wallets.
+    // Retrieve and parse paired wallets
+    let pairedWallets = localStorage.getItem('pairedWallets');
+    if (pairedWallets) {
+      pairedWallets = JSON.parse(pairedWallets);
+    } else {
+      pairedWallets = [];
+    }
+    console.log('pairedWallets: ', pairedWallets);
+    //if type found in cache, use it.
+    const foundWallet = pairedWallets.find(pw => pw.toLowerCase().includes(wallet.toLowerCase()));
+    if (foundWallet) {
+      console.log('Wallet found! foundWallet: ', foundWallet);
+      //then load it.
+      console.log('Loading from cache!');
+      await app.setContext(foundWallet);
+      //get wallet type
+      const walletType = foundWallet.split(':')[0];
+      console.log('walletType: ', walletType);
+      //set blockchains
+      let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+      let allByCaip = blockchainsForContext.map((chainStr) => {
+        const chainEnum = getChainEnumValue(chainStr);
+        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+      });
+      console.log('allByCaip: ', allByCaip);
+      await app.setBlockchains(allByCaip);
+
+      // balance cache
+      let balanceCache: any = localStorage.getItem(foundWallet + ':balanceCache');
+      balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+      console.log('balanceCache: ', balanceCache);
+      await app.loadBalanceCache(balanceCache);
+
+      // pubkey cache
+      let pubkeyCache: any = localStorage.getItem(foundWallet + ':pubkeyCache');
+      pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+      console.log('pubkeyCache: ', pubkeyCache);
+      await app.loadPubkeyCache(pubkeyCache);
+    } else {
+      console.log('Wallet not found! needs to pair now!');
+      //clear balances
+      //clear pubkeys
+      //clear context
+      //clear blockchains
+      const AllChainsSupported = availableChainsByWallet[wallet];
+      console.log('AllChainsSupported: ', AllChainsSupported);
+      let allByCaip = AllChainsSupported.map((chainStr) => {
+        const chainEnum = getChainEnumValue(chainStr);
+        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+      }).filter((x) => x !== undefined);
+      app.setBlockchains(allByCaip);
+      onOpen();
+      setWalletType(wallet);
+      setModalType(wallet);
+      setModalShowClose(false);
+    }
   };
 
   const renderWallets = () => {
@@ -230,17 +274,34 @@ const Pioneer = () => {
             )}
             {modalType === 'TRANSFER' && (
               <div>
-                <Transfer openModal={openModal} />
+                <Transfer />
               </div>
             )}
-            {modalType === 'RECEIVE' && <div><Receive></Receive></div>}
-            {modalType === 'PORTFOLIO' && <div><Portfolio></Portfolio></div>}
+            {modalType === 'SELECT' && (
+              <div>
+                <AssetSelect onlyOwned onClose={onClose} />
+              </div>
+            )}
+            {modalType === 'RECEIVE' && (
+              <div>
+                <Receive />
+              </div>
+            )}
+            {modalType === 'PORTFOLIO' && (
+              <div>
+                <Portfolio />
+              </div>
+            )}
             {modalType === 'SWAP' && (
               <div>
                 <Swap />
               </div>
             )}
-            {modalType === 'SETTINGS' && <div><Settings></Settings></div>}
+            {modalType === 'SETTINGS' && (
+              <div>
+                <Settings />
+              </div>
+            )}
             {modalType === 'TREZOR' && <div>Trezor TODO</div>}
             {modalType === 'XDEFI' && <div>Xdefi TODO</div>}
             {modalType === 'ONBOARDING' && (
@@ -265,7 +326,7 @@ const Pioneer = () => {
         </ModalContent>
       </Modal>
       <Menu>
-        <MenuButton as={Button} cursor="pointer" minW={100} rounded="full" variant="link" >
+        <MenuButton as={Button} cursor="pointer" minW={100} rounded="full" variant="link">
           <Avatar size="lg">
             {isSwitchingWallet ? (
               <div>
@@ -333,10 +394,10 @@ const Pioneer = () => {
                   aria-label="Portfolio"
                   colorScheme="green"
                   icon={<FaRegMoneyBillAlt />}
+                  onClick={() => modalSelected('PORTFOLIO')}
                   rounded="full"
                   size="lg"
                   variant="solid"
-                  onClick={() => modalSelected('PORTFOLIO')}
                 />
                 <Text fontSize="xs">Portfolio</Text>
               </Flex>

@@ -63,14 +63,9 @@ export default function SignTransaction({
 
   const approveTransaction = async () => {
     // verify context of input asset
-    const contextSigning = assetContext.context;
-    console.log("contextSigning: ", contextSigning);
+    const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
 
-    // verify is connected
-    const isContextExist = app.wallets.some(
-      (wallet: any) => wallet.context === contextSigning
-    );
-    if (!isContextExist) {
+    if (!walletInfo) {
       setIsPairing(true);
       const contextType = contextSigning.split(":")[0];
       console.log("contextType: ", contextType);

@@ -13,8 +13,9 @@ import { PioneerProvider, usePioneer } from './lib/context';
 // fonts
 import '@fontsource/plus-jakarta-sans/latin.css';
 
+//*****************************
 //Comment for publishing Lib
-
+//*****************************
 import App from './App';
 
 const root = ReactDOM.createRoot(
@@ -26,6 +27,7 @@ root.render(
     <App />
   </React.StrictMode>,
 );
+//*****************************
 
 export {
   // AssetSelect,

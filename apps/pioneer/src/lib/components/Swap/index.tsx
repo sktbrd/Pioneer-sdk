@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -11,38 +11,31 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-} from "@chakra-ui/react";
-import { FeeOption } from "@coinmasters/types";
+} from '@chakra-ui/react';
+import { FeeOption } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import AssetSelect from "../../components/AssetSelect";
-import ErrorQuote from "../../components/ErrorQuote";
-import OutputSelect from "../../components/OutputSelect";
-import Pending from "../../components/Pending";
-import SignTransaction from "../../components/SignTransaction";
-import { usePioneer } from "../../context";
+import AssetSelect from '../../components/AssetSelect';
+import ErrorQuote from '../../components/ErrorQuote';
+import OutputSelect from '../../components/OutputSelect';
+import Pending from '../../components/Pending';
+import SignTransaction from '../../components/SignTransaction';
+import { usePioneer } from '../../context';
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
 // import ForkMeBanner from "lib/components/ForkMe";
-import HistoryPage from "./history";
-import PortfolioPage from "./portfolio";
-import BeginSwap from "./steps/BeginSwap"; // Updated import here
-import CompleteSwap from "./steps/CompleteSwap"; // Updated import here
-import SelectAssets from "./steps/SelectAssets";
+import BeginSwap from './steps/BeginSwap'; // Updated import here
+import CompleteSwap from './steps/CompleteSwap'; // Updated import here
+import SelectAssets from './steps/SelectAssets';
 
 const MODAL_STRINGS = {
-  selectAsset: "Select Asset",
-  selectOutbound: "Select Outbound",
-  confirmTrade: "Confirm Trade",
-  pending: "Show Pending",
-  errorQuote: "Error Quote",
+  selectAsset: 'Select Asset',
+  selectOutbound: 'Select Outbound',
+  confirmTrade: 'Confirm Trade',
+  pending: 'Show Pending',
+  errorQuote: 'Error Quote',
 };
 
 const Swap = () => {
@@ -56,14 +49,14 @@ const Swap = () => {
   const [modalType, setModalType] = useState(null);
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
-  const [quoteId, setQuoteId] = useState("");
+  const [quoteId, setQuoteId] = useState('');
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
   const [txHash, setTxhash] = useState(null);
   const [sliderValue, setSliderValue] = useState(50);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
-  const [selectedButton, setSelectedButton] = useState("quick"); // Initial selected button is "Quick"
+  const [selectedButton, setSelectedButton] = useState('quick'); // Initial selected button is "Quick"
   const [isContinueDisabled, setIsContinueDisabled] = useState(true); // Initial continue button is disabled
 
   // const handleSliderChange = (event) => {
@@ -77,19 +70,12 @@ const Swap = () => {
   const handleClick = (button: any) => {
     setSelectedButton(button);
   };
-  const [continueButtonContent, setContinueButtonContent] =
-    useState("Continue"); // Initial continue button content is "Continue"
+  const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
   // const [assets] = useState([]); // Array to store assets
   const [showGoBack, setShowGoBack] = useState(false);
 
   useEffect(() => {
-    if (
-      app &&
-      app.swapKit &&
-      assetContext &&
-      outboundAssetContext &&
-      step === 0
-    ) {
+    if (app && app.swapKit && assetContext && outboundAssetContext && step === 0) {
       setIsContinueDisabled(false);
     }
   }, [app, assetContext, blockchainContext, outboundAssetContext, step]);
@@ -99,7 +85,7 @@ const Swap = () => {
       setShowGoBack(false);
     }
     if (step === 1) {
-      setContinueButtonContent("Accept Route");
+      setContinueButtonContent('Accept Route');
     }
   }, [step]);
 
@@ -109,14 +95,16 @@ const Swap = () => {
   };
 
   const fetchQuote = async () => {
-    console.log("sliderValue: ", sliderValue);
+    console.log('sliderValue: ', sliderValue);
     const senderAddress = assetContext.address;
     const recipientAddress =
-      outboundAssetContext.address ||
-      app.swapKit.getAddress(outboundAssetContext.chain);
-    console.log("outboundAssetContext: ", outboundAssetContext);
+      outboundAssetContext.address || app.swapKit.getAddress(outboundAssetContext.chain);
+    console.log('outboundAssetContext: ', outboundAssetContext);
 
-    if (!recipientAddress) throw Error("must have recipient address");
+    if (!recipientAddress) {
+      console.log("outboundAssetContext: ", outboundAssetContext);
+      throw Error('must have recipient address');
+    }
 
     let buyAsset;
     if (outboundAssetContext.contract) {
@@ -126,8 +114,7 @@ const Swap = () => {
     }
 
     try {
-      const newAmountIn =
-        (sliderValue / 100) * parseFloat(assetContext?.balance || "0");
+      const newAmountIn = (sliderValue / 100) * parseFloat(assetContext?.balance || '0');
       setInputAmount(newAmountIn);
       const entry = {
         sellAsset: `${assetContext.chain}.${assetContext.symbol}`,
@@ -135,25 +122,22 @@ const Swap = () => {
         buyAsset,
         senderAddress,
         recipientAddress,
-        slippage: "3",
+        slippage: '3',
       };
-      console.log("entry: ", entry);
+      console.log('entry: ', entry);
       try {
         let result = await app.pioneer.Quote(entry);
         result = result.data;
-        console.log("result: ", result);
+        console.log('result: ', result);
 
         if (result && result.routes && result.routes.length > 0) {
           setQuoteId(result?.quoteId);
           setRoutes(result?.routes);
-          console.log("currentRouteIndex: ", currentRouteIndex);
+          console.log('currentRouteIndex: ', currentRouteIndex);
           const routeLocal = result?.routes[currentRouteIndex || 0];
           // phase 3
           if (routeLocal.calldata && routeLocal.calldata.memo) {
-            routeLocal.calldata.memo = routeLocal.calldata.memo.replace(
-              "t:0",
-              "kk:30"
-            );
+            routeLocal.calldata.memo = routeLocal.calldata.memo.replace('t:0', 'kk:30');
           }
           // @ts-ignore
           setRoute(routeLocal);
@@ -161,17 +145,15 @@ const Swap = () => {
 
         // if error, render Error
         if (result && result.error) {
-          // eslint-disable-next-line no-alert
           openModal(MODAL_STRINGS.errorQuote);
           setError(result);
         }
       } catch (e) {
-        // eslint-disable-next-line no-alert
         openModal(MODAL_STRINGS.errorQuote);
         setError(`Invalid request: ${e}`);
       }
     } catch (e: any) {
-      console.error("ERROR: ", e);
+      console.error('ERROR: ', e);
       // alert(`Failed to get quote! ${e.message}`);
     }
   };
@@ -179,18 +161,16 @@ const Swap = () => {
   // start the context provider
   useEffect(() => {
     if (txid) {
-      console.log("Set txid: ", txid);
+      console.log('Set txid: ', txid);
       // set the txid
       // @ts-ignore
       setTxhash(txid);
       setStep(2);
     } else {
       // check pending
-      const pendingTransactions = JSON.parse(
-        localStorage.getItem("pendingTransactions") ?? "[]"
-      );
+      const pendingTransactions = JSON.parse(localStorage.getItem('pendingTransactions') ?? '[]');
 
-      console.log("pendingTransactions: ", pendingTransactions);
+      console.log('pendingTransactions: ', pendingTransactions);
       if (pendingTransactions && pendingTransactions.length > 0) {
         openModal(MODAL_STRINGS.pending);
       }
@@ -210,7 +190,7 @@ const Swap = () => {
           recipient: assetContext.address,
           feeOptionKey: FeeOption.Fast,
         };
-        console.log("swapParams: ", swapParams);
+        console.log('swapParams: ', swapParams);
         fetchQuote();
         openModal(MODAL_STRINGS.confirmTrade);
       }
@@ -253,9 +233,9 @@ const Swap = () => {
           <BeginSwap
             currentRouteIndex={currentRouteIndex}
             routes={routes}
-            setSliderValue={setSliderValue}
             setCurrentRouteIndex={setCurrentRouteIndex}
             setRoute={setRoute}
+            setSliderValue={setSliderValue}
           />
         );
       case 2:
@@ -263,6 +243,11 @@ const Swap = () => {
       default:
         return null;
     }
+  };
+
+  let onSelect = async function () {
+    console.log('onSelect');
+    onClose();
   };
 
   return (
@@ -277,7 +262,7 @@ const Swap = () => {
             {/* Render content based on modalType */}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
-                <AssetSelect onClose={onClose} />
+                <AssetSelect onClose={onClose} onSelect={onSelect} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
@@ -316,17 +301,10 @@ const Swap = () => {
         </ModalContent>
       </Modal>
 
-        <Box bg="black" mx="auto" w="35rem">
-          {renderStepContent()}
-        </Box>
-      <Flex
-        alignItems="center"
-        bg="black"
-        flexDirection="column"
-        mx="auto"
-        p="2rem"
-        w="35rem"
-      >
+      <Box bg="black" mx="auto" w="35rem">
+        {renderStepContent()}
+      </Box>
+      <Flex alignItems="center" bg="black" flexDirection="column" mx="auto" p="2rem" w="35rem">
         <div>
           <Button onClick={goBack}>Go Back</Button>
         </div>

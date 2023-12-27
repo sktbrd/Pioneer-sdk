@@ -67,7 +67,7 @@ export default function AssetSelect({ onSelect }: any) {
         setShowOwnedAssets(true);
         setCurrentPage(balances);
         console.log('balances: ', balances);
-        // setTotalAssets(balances.length);
+        //setTotalAssets(balances.length);
       }
     } catch (e) {
       console.error(e);

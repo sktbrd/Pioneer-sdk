@@ -534,17 +534,38 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         events.on(action, (data: any) => {
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
-            // @ts-ignore
             console.log('setting balances for context: ', appInit.context);
             console.log('setting balances: ', data);
+
+            // Remove duplicates based on .caip property
+            const uniqueBalances = data.reduce((acc, currentItem) => {
+              if (!acc.some((item) => item.caip === currentItem.caip)) {
+                acc.push(currentItem);
+              }
+              return acc;
+            }, []);
+
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
+              localStorage.setItem(
+                appInit.context + ':balanceCache',
+                JSON.stringify(uniqueBalances),
+              );
           }
+
+          // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            // @ts-ignore
-            console.log('setting balances for context: ', appInit.context);
+            console.log('setting pubkeys for context: ', appInit.context);
+
+            // Remove duplicates based on .networkId property
+            const uniquePubkeys = data.reduce((acc, currentItem) => {
+              if (!acc.some((item) => item.networkId === currentItem.networkId)) {
+                acc.push(currentItem);
+              }
+              return acc;
+            }, []);
+
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(uniquePubkeys));
           }
           // @ts-ignore
           dispatch({

@@ -1,4 +1,4 @@
-import { Search2Icon } from "@chakra-ui/icons";
+import { Search2Icon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -7,22 +7,22 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Spinner,
   Stack,
-  Text,
   Tab,
-  Tabs,
   TabList,
   TabPanel,
   TabPanels,
-  Spinner,
-} from "@chakra-ui/react";
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 // @ts-ignore
-import { CoinGeckoList, OneInchList } from "@coinmasters/tokens";
+import { CoinGeckoList, OneInchList } from '@coinmasters/tokens';
 // @ts-ignore
-import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
-import { useEffect, useState } from "react";
+import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
+import { useEffect, useState } from 'react';
 
-import { usePioneer } from "../../context";
+import { usePioneer } from '../../context';
 
 // const CHAINS = {
 //   ARB: { name: "Arbitrum", hasTokens: true },
@@ -50,57 +50,55 @@ import { usePioneer } from "../../context";
 const CHAINS: any = {
   // ARB: { name: "Arbitrum", hasTokens: true, chainId: "eip155:42161" }, // Example format
   AVAX: {
-    name: "Avalanche",
+    name: 'Avalanche',
     hasTokens: true,
-    chainId: "eip155:43114",
+    chainId: 'eip155:43114',
   },
-  BNB: { name: "Binance Chain", chainId: "eip155:56" },
-  BSC: { name: "Binance Smart Chain", hasTokens: true, chainId: "eip155:56" },
-  BTC: { name: "Bitcoin", chainId: "bip122:000000000019d6689c085ae165831e93" },
+  BNB: { name: 'Binance Chain', chainId: 'eip155:56' },
+  BSC: { name: 'Binance Smart Chain', hasTokens: true, chainId: 'eip155:56' },
+  BTC: { name: 'Bitcoin', chainId: 'bip122:000000000019d6689c085ae165831e93' },
   BCH: {
-    name: "Bitcoin Cash",
-    chainId: "bip122:000000000000000000651ef99cb9fcbe",
+    name: 'Bitcoin Cash',
+    chainId: 'bip122:000000000000000000651ef99cb9fcbe',
   },
-  ATOM: { name: "Cosmos", chainId: "cosmos:cosmoshub-4/slip44:118" },
-  GAIA: { name: "Cosmos", chainId: "cosmos:cosmoshub-4/slip44:118" },
-  DASH: { name: "Dash", chainId: "bip122:0000000000000000000" }, // Example format, correct it
+  ATOM: { name: 'Cosmos', chainId: 'cosmos:cosmoshub-4/slip44:118' },
+  GAIA: { name: 'Cosmos', chainId: 'cosmos:cosmoshub-4/slip44:118' },
+  DASH: { name: 'Dash', chainId: 'bip122:0000000000000000000' }, // Example format, correct it
   // KUJI: { name: "Kuji", chainId: "eip155:12345" }, // Example format, correct it
   // MAYA: { name: "maya", chainId: "eip155:12345" }, // Example format, correct it
   DOGE: {
-    name: "Dogecoin",
-    chainId: "bip122:1a91e3dace36e2be3bf030a65679fe82",
+    name: 'Dogecoin',
+    chainId: 'bip122:1a91e3dace36e2be3bf030a65679fe82',
   }, // Example format, correct it
-  ETH: { name: "Ethereum", hasTokens: true, chainId: "eip155:1" },
-  LTC: { name: "Litecoin", chainId: "bip122:12a765e31ffd4059bada1e25190f6e98" }, // Example format, correct it
-  OP: { name: "Optimism", hasTokens: true, chainId: "eip155:10" }, // Example format, correct it
-  MATIC: { name: "Polygon", hasTokens: true, chainId: "eip155:137" },
+  ETH: { name: 'Ethereum', hasTokens: true, chainId: 'eip155:1' },
+  LTC: { name: 'Litecoin', chainId: 'bip122:12a765e31ffd4059bada1e25190f6e98' }, // Example format, correct it
+  OP: { name: 'Optimism', hasTokens: true, chainId: 'eip155:10' }, // Example format, correct it
+  MATIC: { name: 'Polygon', hasTokens: true, chainId: 'eip155:137' },
   THOR: {
-    name: "THORChain",
-    chainId: "cosmos:thorchain-mainnet-v1/slip44:931",
+    name: 'THORChain',
+    chainId: 'cosmos:thorchain-mainnet-v1/slip44:931',
   },
 };
 
 const CHAINS_WITH_TOKENS = [
-  "BTC",
-  ...Object.keys(CHAINS).filter(
-    (chain) => CHAINS[chain].hasTokens && chain !== "BTC"
-  ),
+  'BTC',
+  ...Object.keys(CHAINS).filter((chain) => CHAINS[chain].hasTokens && chain !== 'BTC'),
 ];
 
 const NATIVE_ASSETS = [
-  "BTC",
-  "BCH",
-  "LTC",
-  "DASH",
-  "DOGE",
-  "ETH",
-  "BNB",
-  "BSC",
-  "MATIC",
-  "AVAX",
+  'BTC',
+  'BCH',
+  'LTC',
+  'DASH',
+  'DOGE',
+  'ETH',
+  'BNB',
+  'BSC',
+  'MATIC',
+  'AVAX',
   // "ARB",
-  "THOR",
-  "GAIA",
+  'THOR',
+  'GAIA',
 ];
 
 // const EVMS = [
@@ -111,14 +109,14 @@ const NATIVE_ASSETS = [
 //   "Polygon",
 // ];
 
-export default function OutputSelect({ onClose }: any) {
+export default function OutputSelect({ onClose, onSelect }: any) {
   const { state } = usePioneer();
   const { app, balances } = state;
   const [currentPage, setCurrentPage] = useState<any>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   // const [showOwnedAssets, setShowOwnedAssets] = useState(false);
   const [totalAssets, setTotalAssets] = useState(0);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   // const [sortOrder, setSortOrder] = useState("desc");
   const itemsPerPage = 6;
   const [selectedTab, setSelectedTab] = useState<any>(null);
@@ -126,14 +124,14 @@ export default function OutputSelect({ onClose }: any) {
 
   const handleSelectClick = async (asset: any) => {
     try {
-      console.log("asset: ", asset);
+      console.log('asset: ', asset);
       // console.log("balances: ", balances);
       // get address for asset
       let addressForAsset: string;
       // @TODO this will not work when we add cosmos
       // Think better
       let selectedChain = CHAINS_WITH_TOKENS[selectedTab];
-      if (selectedChain === "BTC") {
+      if (selectedChain === 'BTC') {
         selectedChain = asset.symbol;
       }
       const entry: any = {
@@ -143,18 +141,16 @@ export default function OutputSelect({ onClose }: any) {
         image: asset.image,
       };
 
-      if (selectedTab && selectedTab !== "BTC") {
-        console.log("token detected!");
-        const caipInfo = asset.caip.split("/");
+      if (selectedTab && selectedTab !== 'BTC') {
+        console.log('token detected!');
+        const caipInfo = asset.caip.split('/');
         const chainId = caipInfo[0];
-        const assetInfo = caipInfo[1].split(":");
+        const assetInfo = caipInfo[1].split(':');
         const contract = assetInfo[1];
         // console.log("app.swapKit: ", app.swapKit);
         // console.log("app.swapKit: ", await app.swapKit.getWalletByChain("ETH"));
         // get eth
-        const ethBalance = balances.filter(
-          (balance: any) => balance.symbol === "ETH"
-        );
+        const ethBalance = balances.filter((balance: any) => balance.symbol === 'ETH');
         // console.log("ethBalance!: ", ethBalance);
         addressForAsset = ethBalance[0].address;
         // addressForAsset = await app.swapKit.getWalletByChain("ETH"); //TODO WTF why this no worky
@@ -184,38 +180,38 @@ export default function OutputSelect({ onClose }: any) {
     try {
       setCurrentPage([]);
       setTotalAssets(0);
-      console.log("CHAINS_WITH_TOKENS: ", CHAINS_WITH_TOKENS);
+      console.log('CHAINS_WITH_TOKENS: ', CHAINS_WITH_TOKENS);
       console.log(totalAssets);
-      console.log("selectedTab: ", selectedTab);
+      console.log('selectedTab: ', selectedTab);
       const selectedChain = CHAINS_WITH_TOKENS[selectedTab];
-      console.log("selectedChain: ", selectedChain);
+      console.log('selectedChain: ', selectedChain);
       const selectedChainInfo = CHAINS[selectedChain];
-      console.log("selectedChainInfo: ", selectedChainInfo);
+      console.log('selectedChainInfo: ', selectedChainInfo);
       const selectedChainId = selectedChainInfo.chainId;
-      console.log("selectedChainId: ", selectedChainId);
+      console.log('selectedChainId: ', selectedChainId);
 
       // if has tokens gets tokens
       if (selectedChainInfo.hasTokens) {
-        console.log("CoinGeckoList: ", CoinGeckoList.tokens);
-        console.log("OneInchList: ", OneInchList.tokens.length);
+        console.log('CoinGeckoList: ', CoinGeckoList.tokens);
+        console.log('OneInchList: ', OneInchList.tokens.length);
         // use thorswaps token list
 
         const allTokens = CoinGeckoList.tokens;
-        console.log("allTokens: ", allTokens.length);
+        console.log('allTokens: ', allTokens.length);
 
         // TODO mark thorswap support per asset
         let searchResults = await app.pioneer.SearchByNameAndChainId({
-          name: search || "eth",
+          name: search || 'eth',
           chainId: selectedChainId,
         });
         searchResults = searchResults.data;
-        console.log("searchResults: ", searchResults);
+        console.log('searchResults: ', searchResults);
         setCurrentPage(searchResults);
       }
 
       // Assuming you have a function to make a search query
-      if (selectedChain === "BTC") {
-        console.log("Native tab selected!");
+      if (selectedChain === 'BTC') {
+        console.log('Native tab selected!');
         // puplate all native assets
         const allNativeAssets = [];
         for (let i = 0; i < NATIVE_ASSETS.length; i++) {
@@ -268,25 +264,25 @@ export default function OutputSelect({ onClose }: any) {
   };
 
   const handleSearch = async () => {
-    if (search.trim() !== "") {
+    if (search.trim() !== '') {
       setCurrentPage([]);
       setIsLoading(true);
-      console.log("CHAINS_WITH_TOKENS: ", CHAINS_WITH_TOKENS);
+      console.log('CHAINS_WITH_TOKENS: ', CHAINS_WITH_TOKENS);
       console.log(totalAssets);
-      console.log("selectedTab: ", selectedTab);
+      console.log('selectedTab: ', selectedTab);
       const selectedChain = CHAINS_WITH_TOKENS[selectedTab];
-      console.log("selectedChain: ", selectedChain);
+      console.log('selectedChain: ', selectedChain);
       const selectedChainInfo = CHAINS[selectedChain];
-      console.log("selectedChainInfo: ", selectedChainInfo);
+      console.log('selectedChainInfo: ', selectedChainInfo);
       const selectedChainId = selectedChainInfo.chainId;
-      console.log("selectedChainId: ", selectedChainId);
+      console.log('selectedChainId: ', selectedChainId);
       // Assuming you have a function to make a search query
       let searchResults = await app.pioneer.SearchByNameAndChainId({
         name: search,
         chainId: selectedChainId,
       });
       searchResults = searchResults.data;
-      console.log("searchResults: ", searchResults);
+      console.log('searchResults: ', searchResults);
       setCurrentPage(searchResults);
       setIsLoading(false);
     }
@@ -294,7 +290,7 @@ export default function OutputSelect({ onClose }: any) {
 
   // Call handleSearch whenever search state changes
   useEffect(() => {
-    if (search !== "") {
+    if (search !== '') {
       handleSearch();
     }
   }, [search]);
@@ -302,12 +298,10 @@ export default function OutputSelect({ onClose }: any) {
   const renderChainTabs = () => {
     return Object.keys(CHAINS_WITH_TOKENS).map((chainKey: any, index: any) => (
       <Tab key={index}>
-        {" "}
+        {' '}
         <Avatar
           size="md"
-          src={`https://pioneers.dev/coins/${
-            COIN_MAP_LONG[CHAINS_WITH_TOKENS[chainKey]]
-          }.png`}
+          src={`https://pioneers.dev/coins/${COIN_MAP_LONG[CHAINS_WITH_TOKENS[chainKey]]}.png`}
         />
         <br />
         {/* {CHAINS[CHAINS_WITH_TOKENS[chainKey]]?.name} */}
@@ -329,9 +323,9 @@ export default function OutputSelect({ onClose }: any) {
               <Box key={index}>
                 <Flex
                   alignItems="center"
-                  borderRadius="md"
-                  border="1px solid #fff"
                   bg="black"
+                  border="1px solid #fff"
+                  borderRadius="md"
                   boxShadow="sm"
                   padding={2}
                 >
@@ -339,9 +333,7 @@ export default function OutputSelect({ onClose }: any) {
                     size="md"
                     src={
                       asset?.image ||
-                      `https://pioneers.dev/coins/${
-                        COIN_MAP_LONG[asset?.symbol]
-                      }.png`
+                      `https://pioneers.dev/coins/${COIN_MAP_LONG[asset?.symbol]}.png`
                     }
                   />
                   <Box ml={3}>
@@ -371,12 +363,7 @@ export default function OutputSelect({ onClose }: any) {
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
-        <Input
-          onChange={handleSearchChange}
-          placeholder="Bitcoin..."
-          type="text"
-          value={search}
-        />
+        <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />
       </InputGroup>
       <Box>
         <Tabs maxW="lg" mx="auto" onChange={handleTabChange}>

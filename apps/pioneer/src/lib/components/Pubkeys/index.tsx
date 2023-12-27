@@ -66,7 +66,7 @@ export default function Pubkeys({ onClose }) {
         </Flex>
       ))}
 
-      <Modal isOpen={isOpen} onClose={onModalClose}>
+      <Modal isOpen={isOpen} onClose={onModalClose} size={'xxl'}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Pubkey Details</ModalHeader>

@@ -92,7 +92,7 @@ export default function Balances() {
 
   return (
     <Stack spacing={4}>
-      <Modal isOpen={isOpen} onClose={onModalClose}>
+      <Modal isOpen={isOpen} onClose={onModalClose} size={'xxl'}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Balance Details</ModalHeader>

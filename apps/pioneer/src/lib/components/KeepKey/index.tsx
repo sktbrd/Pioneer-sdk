@@ -22,23 +22,31 @@ export default function KeepKey({ onClose }: any) {
   };
 
   useEffect(() => {
+    if(balances.length > 0) {
+      setIsSyncing(false);
+    }
+  }, [balances]);
+
+  useEffect(() => {
     syncWallet();
   }, []);
 
   // Function to render the success card
   const renderSuccessCard = () => (
-    <Box
-      alignItems="center"
-      backgroundColor="green.700"
-      borderRadius="lg"
-      display="flex"
-      mb={4}
-      p={4}
-    >
-      <CheckIcon color="green.500" h={5} mr={2} w={5} />
-      <Text>Pairing Successful</Text>
+    <div>
+      <Box
+        alignItems="center"
+        backgroundColor="green.700"
+        borderRadius="lg"
+        display="flex"
+        mb={4}
+        p={4}
+      >
+        <CheckIcon color="green.500" h={5} mr={2} w={5} />
+        <Text>Pairing Successful</Text>
+      </Box>
       <Portfolio />
-    </Box>
+    </div>
   );
 
   return (

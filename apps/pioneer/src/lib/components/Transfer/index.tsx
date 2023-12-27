@@ -12,8 +12,16 @@ import {
   Grid,
   Heading,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Text,
+  useDisclosure,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -23,13 +31,15 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';
 import { useCallback, useEffect, useState } from 'react';
 
+import AssetSelect from '../../components/AssetSelect';
 import { usePioneer } from '../../context';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-const Transfer = ({ openModal }: any) => {
+const Transfer = () => {
   const toast = useToast();
   const { state, setIntent, showModal } = usePioneer();
   const { app, assetContext, balances, context } = state;
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Add disclosure for modal
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const [modalType, setModalType] = useState("");
@@ -38,6 +48,7 @@ const Transfer = ({ openModal }: any) => {
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [modalType, setModalType] = useState(''); // Add state for modal type
 
   // Update avatar URL when assetContext changes
   useEffect(() => {
@@ -182,8 +193,46 @@ const Transfer = ({ openModal }: any) => {
     }
   }, [assetContext, inputAmount, app, recipient, sendAmount, toast]);
 
+  // Function to show modal with a specific type
+  const showModalWithType = (type) => {
+    setModalType(type);
+    onOpen();
+  };
+
+  const onSelect = async function (asset: any) {
+    try {
+      console.log('onSelect: ', asset);
+      onClose();
+      setModalType('');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <VStack align="start" borderRadius="md" p={6} spacing={5}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          setModalType('');
+        }}
+        size="xl"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Choose Asset</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {modalType === 'SELECT' && (
+              <div>
+                <AssetSelect onSelect={onSelect} />
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter />
+        </ModalContent>
+      </Modal>
       <Heading as="h1" mb={4} size="lg">
         Send Crypto!
       </Heading>
@@ -211,7 +260,7 @@ const Transfer = ({ openModal }: any) => {
               <Button
                 colorScheme="blue"
                 isDisabled={!balances}
-                onClick={() => openModal('Select Asset')}
+                onClick={() => showModalWithType('SELECT')}
               >
                 Change Asset
               </Button>

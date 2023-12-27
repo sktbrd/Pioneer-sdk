@@ -267,13 +267,19 @@ export class SDK {
     this.loadBalanceCache = async function (balances: any) {
       try {
         if (balances.length === 0) throw Error('No balances to load!');
-        this.balances = [...this.balances, ...balances];
+        const combinedBalances = [...this.balances, ...balances];
+
+        // Remove duplicates based on .caip property
+        this.balances = combinedBalances.reduce((acc, currentItem) => {
+          if (!acc.some((item) => item.caip === currentItem.caip)) {
+            acc.push(currentItem);
+          }
+          return acc;
+        }, []);
+
         this.balances.sort((a, b) => b.valueUsd - a.valueUsd);
-        //console.log('SET BALANCES CALLED!!! balances: ', this.balances);
         this.events.emit('SET_BALANCES', this.balances);
-        //console.log('balance0: ', this.balances[0]);
         if (this.balances.length > 0) {
-          //TODO do this from local storage
           this.setContext(this.balances[0].context);
           this.setAssetContext(this.balances[0]);
           this.setOutboundAssetContext(this.balances[1]);
@@ -285,11 +291,19 @@ export class SDK {
     this.loadPubkeyCache = async function (pubkeys: any) {
       try {
         if (pubkeys.length === 0) throw Error('No pubkeys to load!');
-        this.pubkeys = [...this.pubkeys, ...pubkeys];
-        //console.log('SET pubkeys CALLED!!! balances: ', this.pubkeys);
+        const combinedPubkeys = [...this.pubkeys, ...pubkeys];
+
+        // Remove duplicates based on .networkId property
+        this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
+          if (!acc.some((item) => item.networkId === currentItem.networkId)) {
+            acc.push(currentItem);
+          }
+          return acc;
+        }, []);
+
         this.events.emit('SET_PUBKEYS', this.pubkeys);
       } catch (e) {
-        console.error('Failed to load balances! e: ', e);
+        console.error('Failed to load pubkeys! e: ', e);
       }
     };
     this.verifyWallet = async function () {
@@ -724,16 +738,16 @@ export class SDK {
         if (result.data.balances) {
           console.log('Setting balances!');
           this.balances = result.data.balances;
+
+          this.events.emit('SET_BALANCES', result.data.balances);
+
+          // TODO pick better default assets (last used)
+          this.assetContext = this.balances[0];
+          this.events.emit('SET_ASSET_CONTEXT', this.assetContext);
+
+          this.outboundAssetContext = this.balances[1];
+          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', this.outboundAssetContext);
         }
-
-        // TODO pick better default assets (last used)
-        this.events.emit('SET_BALANCES', result.data.balances);
-
-        this.assetContext = this.balances[0];
-        this.events.emit('SET_ASSET_CONTEXT', this.assetContext);
-
-        this.outboundAssetContext = this.balances[1];
-        this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', this.outboundAssetContext);
 
         return true;
       } catch (e) {

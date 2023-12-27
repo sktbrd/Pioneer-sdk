@@ -1,4 +1,6 @@
 {
+  "name": "@coinmasters/tokens",
+  "version": "3.0.1",
   "author": "swapkit-oss-team",
   "description": "SwapKit Lib tokens",
   "devDependencies": {
@@ -29,7 +31,6 @@
   "license": "Apache-2.0",
   "main": "./dist/index.cjs",
   "module": "./dist/index.es.js",
-  "name": "@coinmasters/tokens",
   "publishConfig": {
     "access": "public"
   },
@@ -45,6 +46,5 @@
     "test:coverage": "echo 'vitest run --coverage'"
   },
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "version": "3.0.1"
+  "types": "./dist/index.d.ts"
 }
