@@ -112,6 +112,63 @@ importers:
       '@chakra-ui/react':
         specifier: ^2.8.2
         version: 2.8.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.21)(framer-motion@10.16.16)(react-dom@18.2.0)(react@18.2.0)
+      '@coinmasters/api':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/api
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/core
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/helpers
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../packages/pioneer/pioneer-sdk
+      '@coinmasters/tokens':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/tokens
+      '@coinmasters/toolbox-cosmos':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/cosmos
+      '@coinmasters/toolbox-evm':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/evm
+      '@coinmasters/toolbox-utxo':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/utxo
+      '@coinmasters/types':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/types
+      '@coinmasters/wallet-evm-extensions':
+        specifier: workspace:*
+        version: link:../../packages/wallets/evm-extensions
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keepkey
+      '@coinmasters/wallet-keplr':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keplr
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keystore
+      '@coinmasters/wallet-ledger':
+        specifier: workspace:*
+        version: link:../../packages/wallets/ledger
+      '@coinmasters/wallet-metamask':
+        specifier: workspace:*
+        version: link:../../packages/wallets/metamask
+      '@coinmasters/wallet-okx':
+        specifier: workspace:*
+        version: link:../../packages/wallets/okx
+      '@coinmasters/wallet-trezor':
+        specifier: workspace:*
+        version: link:../../packages/wallets/trezor
+      '@coinmasters/wallet-wc':
+        specifier: workspace:*
+        version: link:../../packages/wallets/wc
+      '@coinmasters/wallet-xdefi':
+        specifier: workspace:*
+        version: link:../../packages/wallets/xdefi
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.11.1(@types/react@18.2.21)(react@18.2.0)
@@ -206,63 +263,6 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
     devDependencies:
-      '@coinmasters/api':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/api
-      '@coinmasters/core':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/core
-      '@coinmasters/helpers':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/helpers
-      '@coinmasters/pioneer-sdk':
-        specifier: workspace:*
-        version: link:../../packages/pioneer/pioneer-sdk
-      '@coinmasters/tokens':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/tokens
-      '@coinmasters/toolbox-cosmos':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/cosmos
-      '@coinmasters/toolbox-evm':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/evm
-      '@coinmasters/toolbox-utxo':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/utxo
-      '@coinmasters/types':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/types
-      '@coinmasters/wallet-evm-extensions':
-        specifier: workspace:*
-        version: link:../../packages/wallets/evm-extensions
-      '@coinmasters/wallet-keepkey':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keepkey
-      '@coinmasters/wallet-keplr':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keplr
-      '@coinmasters/wallet-keystore':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keystore
-      '@coinmasters/wallet-ledger':
-        specifier: workspace:*
-        version: link:../../packages/wallets/ledger
-      '@coinmasters/wallet-metamask':
-        specifier: workspace:*
-        version: link:../../packages/wallets/metamask
-      '@coinmasters/wallet-okx':
-        specifier: workspace:*
-        version: link:../../packages/wallets/okx
-      '@coinmasters/wallet-trezor':
-        specifier: workspace:*
-        version: link:../../packages/wallets/trezor
-      '@coinmasters/wallet-wc':
-        specifier: workspace:*
-        version: link:../../packages/wallets/wc
-      '@coinmasters/wallet-xdefi':
-        specifier: workspace:*
-        version: link:../../packages/wallets/xdefi
       '@types/react':
         specifier: 18.2.21
         version: 18.2.21
