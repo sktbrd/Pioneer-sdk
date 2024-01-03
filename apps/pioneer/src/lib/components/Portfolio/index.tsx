@@ -144,7 +144,6 @@ export default function Portfolio() {
         <Center mt="20px">
           <Spinner mr="3" />
           <Text>Loading Wallet Balances...</Text>
-          <Button onClick={() => showModal('ONBOARDING')}>Connect A Wallet!</Button>
         </Center>
       ) : (
         <div>

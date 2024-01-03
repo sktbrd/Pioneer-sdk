@@ -7,7 +7,7 @@ import Portfolio from '../Portfolio';
 
 export default function KeepKey({ onClose }: any) {
   const { state, connectWallet } = usePioneer();
-  const { app, balances, pubkeys } = state;
+  const { app, balances, pubkeys, status } = state;
   const [isSyncing, setIsSyncing] = useState(false);
 
   let syncWallet = async function () {
@@ -59,7 +59,7 @@ export default function KeepKey({ onClose }: any) {
         <div>
           <div>
             <Spinner size="xl" />
-            <Text>Syncing...</Text>
+            <Text>Syncing your wallet on all Blockchains...</Text>
           </div>
         </div>
       )}

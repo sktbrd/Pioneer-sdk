@@ -18,7 +18,20 @@ import pioneerImage from '../../assets/png/pioneerMan.png';
 import { getWalletContent } from '../../components/WalletIcon';
 import { usePioneer } from '../../context';
 
-export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
+const checkKeepkeyAvailability = async () => {
+  try {
+    const response = await fetch('http://localhost:1646/spec/swagger.json');
+    if (response.status === 200) {
+      return true;
+    }
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+  return false;
+};
+
+export default function Onboarding({ onClose, setModalType, setWalletType }: any) {
   const { state, connectWallet } = usePioneer();
   const { app } = state;
   const [server, setServer] = useState('https://pioneers.dev/spec/swagger.json');
@@ -40,11 +53,21 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
     onStartApp();
   }, [app, app?.wallets, app?.isPioneer]);
 
-  useEffect(() => {
+  let checkStartup = async function () {
     let pioneerUrl = localStorage.getItem('pioneerUrl');
     if (pioneerUrl) {
-      setShowWalletSelection(true);
+      //check for kkAPI
+      let isKeepkeyAvailable = await checkKeepkeyAvailability();
+      if (isKeepkeyAvailable) {
+        handleWalletClick('KEEPKEY');
+      } else {
+        setShowWalletSelection(true);
+      }
     }
+  };
+
+  useEffect(() => {
+    checkStartup();
   }, []);
 
   const handleWalletClick = async (wallet: string) => {
@@ -64,7 +87,7 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
   const handleSubmit = async () => {
     localStorage.setItem('pioneerUrl', server);
     console.log('Server:', server);
-    setShowWalletSelection(true);
+    checkStartup();
   };
 
   const isDefaultServer = server === 'https://pioneers.dev/spec/swagger.json';
@@ -100,7 +123,7 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
       <Flex alignItems="center">
         <Avatar size="xl" src={pioneerImage} />
         <Text fontStyle="italic" ml={4} textAlign="right">
-          Welcome to the world of pioneer, to start your journey you can select your pioneer server,
+          Welcome to the world of Cryptocurrencies, to start your journey you can select your pioneer server,
           if you have a custom pioneer server you can insert it here. Default is
           <Link isExternal color="blue.500" href="https://pioneers.dev/docs">
             {' '}

@@ -2,10 +2,9 @@
     Pioneer Template
  */
 
-import { useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Flex, Box, Input, Button } from '@chakra-ui/react';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import Balances from '../../components/Balances';
 import Basic from '../../components/Basic';
@@ -96,6 +95,7 @@ const Home = () => {
         return <Pending />;
       case 'transfer':
         return <Transfer openModal={openModal} />;
+      case 'swap':
       case 'swaps':
         return <Swap />;
       case 'earn':
@@ -118,10 +118,15 @@ const Home = () => {
           </Box>
 
           {/* Right 2/3 of the card for search section */}
-          <Box p={4} w="66.66%" maxH="80vh" overflowY="auto">
+          <Box maxH="80vh" overflowY="auto" p={4} w="66.66%">
             {intent ? (
               // Render component based on intent
               <div>
+                <Link as={RouterLink} to="/">
+                  {' '}
+                  {/* Link to close and navigate to base URL */}
+                  <Button>X</Button>
+                </Link>
                 {renderComponent()}
               </div>
             ) : (
