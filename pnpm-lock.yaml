@@ -112,63 +112,6 @@ importers:
       '@chakra-ui/react':
         specifier: ^2.8.2
         version: 2.8.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.21)(framer-motion@10.16.16)(react-dom@18.2.0)(react@18.2.0)
-      '@coinmasters/api':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/api
-      '@coinmasters/core':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/core
-      '@coinmasters/helpers':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/helpers
-      '@coinmasters/pioneer-sdk':
-        specifier: workspace:*
-        version: link:../../packages/pioneer/pioneer-sdk
-      '@coinmasters/tokens':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/tokens
-      '@coinmasters/toolbox-cosmos':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/cosmos
-      '@coinmasters/toolbox-evm':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/evm
-      '@coinmasters/toolbox-utxo':
-        specifier: workspace:*
-        version: link:../../packages/toolboxes/utxo
-      '@coinmasters/types':
-        specifier: workspace:*
-        version: link:../../packages/swapkit/types
-      '@coinmasters/wallet-evm-extensions':
-        specifier: workspace:*
-        version: link:../../packages/wallets/evm-extensions
-      '@coinmasters/wallet-keepkey':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keepkey
-      '@coinmasters/wallet-keplr':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keplr
-      '@coinmasters/wallet-keystore':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keystore
-      '@coinmasters/wallet-ledger':
-        specifier: workspace:*
-        version: link:../../packages/wallets/ledger
-      '@coinmasters/wallet-metamask':
-        specifier: workspace:*
-        version: link:../../packages/wallets/metamask
-      '@coinmasters/wallet-okx':
-        specifier: workspace:*
-        version: link:../../packages/wallets/okx
-      '@coinmasters/wallet-trezor':
-        specifier: workspace:*
-        version: link:../../packages/wallets/trezor
-      '@coinmasters/wallet-wc':
-        specifier: workspace:*
-        version: link:../../packages/wallets/wc
-      '@coinmasters/wallet-xdefi':
-        specifier: workspace:*
-        version: link:../../packages/wallets/xdefi
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.11.1(@types/react@18.2.21)(react@18.2.0)
@@ -263,6 +206,63 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
     devDependencies:
+      '@coinmasters/api':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/api
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/core
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/helpers
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../packages/pioneer/pioneer-sdk
+      '@coinmasters/tokens':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/tokens
+      '@coinmasters/toolbox-cosmos':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/cosmos
+      '@coinmasters/toolbox-evm':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/evm
+      '@coinmasters/toolbox-utxo':
+        specifier: workspace:*
+        version: link:../../packages/toolboxes/utxo
+      '@coinmasters/types':
+        specifier: workspace:*
+        version: link:../../packages/swapkit/types
+      '@coinmasters/wallet-evm-extensions':
+        specifier: workspace:*
+        version: link:../../packages/wallets/evm-extensions
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keepkey
+      '@coinmasters/wallet-keplr':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keplr
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keystore
+      '@coinmasters/wallet-ledger':
+        specifier: workspace:*
+        version: link:../../packages/wallets/ledger
+      '@coinmasters/wallet-metamask':
+        specifier: workspace:*
+        version: link:../../packages/wallets/metamask
+      '@coinmasters/wallet-okx':
+        specifier: workspace:*
+        version: link:../../packages/wallets/okx
+      '@coinmasters/wallet-trezor':
+        specifier: workspace:*
+        version: link:../../packages/wallets/trezor
+      '@coinmasters/wallet-wc':
+        specifier: workspace:*
+        version: link:../../packages/wallets/wc
+      '@coinmasters/wallet-xdefi':
+        specifier: workspace:*
+        version: link:../../packages/wallets/xdefi
       '@types/react':
         specifier: 18.2.21
         version: 18.2.21
@@ -1303,8 +1303,8 @@ importers:
         specifier: ^6.9.0
         version: 6.9.0
       vite:
-        specifier: 4.5.0
-        version: 4.5.0(@types/node@20.10.0)
+        specifier: 4.4.9
+        version: 4.4.9(@types/node@20.10.0)
 
   packages/toolboxes/cosmos:
     dependencies:
@@ -2046,19 +2046,19 @@ importers:
         version: link:../../toolboxes/evm
       '@cosmjs/amino':
         specifier: 0.32.0
-        version: 0.32.0
+        version: 0.31.1
       '@cosmjs/encoding':
         specifier: 0.32.0
-        version: 0.32.0
+        version: 0.31.1
       '@cosmjs/math':
         specifier: 0.32.0
-        version: 0.32.0
+        version: 0.31.1
       '@cosmjs/proto-signing':
         specifier: 0.32.0
-        version: 0.32.0
+        version: 0.31.1
       '@cosmjs/stargate':
         specifier: 0.32.0
-        version: 0.32.0
+        version: 0.31.1
       '@internal/config':
         specifier: workspace:*
         version: link:../../../internal/config
@@ -2070,7 +2070,7 @@ importers:
         version: 2.10.5
       cosmjs-types:
         specifier: 0.9.0
-        version: 0.9.0
+        version: 0.8.0
       vite:
         specifier: 4.5.0
         version: 4.5.0(@types/node@20.5.9)
@@ -2409,7 +2409,7 @@ packages:
     dependencies:
       bech32: 1.1.4
       big-integer: 1.6.51
-      bip174: 2.1.0
+      bip174: 2.1.1
       bip32: 2.0.6
       bip66: 1.1.5
       bitcoin-ops: 1.4.1
@@ -4360,7 +4360,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm@0.18.20:
@@ -4387,7 +4386,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-x64@0.18.20:
@@ -4414,7 +4412,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-arm64@0.18.20:
@@ -4441,7 +4438,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-x64@0.18.20:
@@ -4468,7 +4464,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-arm64@0.18.20:
@@ -4495,7 +4490,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-x64@0.18.20:
@@ -4522,7 +4516,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm64@0.18.20:
@@ -4549,7 +4542,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm@0.18.20:
@@ -4576,7 +4568,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ia32@0.18.20:
@@ -4603,7 +4594,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-loong64@0.18.20:
@@ -4630,7 +4620,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-mips64el@0.18.20:
@@ -4657,7 +4646,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ppc64@0.18.20:
@@ -4684,7 +4672,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-riscv64@0.18.20:
@@ -4711,7 +4698,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-s390x@0.18.20:
@@ -4738,7 +4724,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-x64@0.18.20:
@@ -4765,7 +4750,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/netbsd-x64@0.18.20:
@@ -4792,7 +4776,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/openbsd-x64@0.18.20:
@@ -4819,7 +4802,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/sunos-x64@0.18.20:
@@ -4846,7 +4828,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-arm64@0.18.20:
@@ -4873,7 +4854,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-ia32@0.18.20:
@@ -4900,7 +4880,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-x64@0.18.20:
@@ -4927,7 +4906,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.54.0):
@@ -7235,7 +7213,7 @@ packages:
     dependencies:
       bech32: 1.1.4
       big-integer: 1.6.51
-      bip174: 2.1.0
+      bip174: 2.1.1
       bip32: 2.0.6
       bip66: 1.1.5
       bitcoin-ops: 1.4.1
@@ -10371,14 +10349,9 @@ packages:
     dependencies:
       file-uri-to-path: 1.0.0
 
-  /bip174@2.1.0:
-    resolution: {integrity: sha512-lkc0XyiX9E9KiVAS1ZiOqK1xfiwvf4FXDDdkDq5crcDzOq+xGytY+14qCsqz7kCiy8rpN1CRNfacRhf9G3JNSA==}
-    engines: {node: '>=8.0.0'}
-
   /bip174@2.1.1:
     resolution: {integrity: sha512-mdFV5+/v0XyNYXjBS6CQPLo9ekCx4gtKZFnJm5PMto7Fs9hTTDpkkzOB7/FtluRI6JbUUAu+snTYfJRgHLZbZQ==}
     engines: {node: '>=8.0.0'}
-    dev: false
 
   /bip32-path@0.4.2:
     resolution: {integrity: sha512-ZBMCELjJfcNMkz5bDuJ1WrYvjlhEF5k6mQ8vUr4N7MbVRsXei7ZOg8VhhwMfNiW68NWmLkgkc6WvTickrLGprQ==}
@@ -10425,7 +10398,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       bech32: 1.1.4
-      bip174: 2.1.0
+      bip174: 2.1.1
       bip32: 2.0.6
       bip66: 1.1.5
       bitcoin-ops: 1.4.1
@@ -12124,7 +12097,6 @@ packages:
       '@esbuild/win32-arm64': 0.19.9
       '@esbuild/win32-ia32': 0.19.9
       '@esbuild/win32-x64': 0.19.9
-    dev: false
 
   /escalade@3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -18886,6 +18858,42 @@ packages:
       fsevents: 2.3.3
     dev: true
 
+  /vite@4.4.9(@types/node@20.10.0):
+    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 20.10.0
+      esbuild: 0.18.20
+      postcss: 8.4.32
+      rollup: 3.29.4
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
   /vite@4.4.9(@types/node@20.10.4):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -18916,8 +18924,8 @@ packages:
     dependencies:
       '@types/node': 20.10.4
       esbuild: 0.18.20
-      postcss: 8.4.30
-      rollup: 3.29.2
+      postcss: 8.4.32
+      rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
@@ -18952,8 +18960,8 @@ packages:
     dependencies:
       '@types/node': 20.5.9
       esbuild: 0.18.20
-      postcss: 8.4.30
-      rollup: 3.29.2
+      postcss: 8.4.32
+      rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
@@ -19131,7 +19139,7 @@ packages:
         optional: true
     dependencies:
       '@types/node': 20.10.4
-      esbuild: 0.19.3
+      esbuild: 0.19.9
       postcss: 8.4.32
       rollup: 4.6.1
     optionalDependencies:
