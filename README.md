@@ -1,4 +1,4 @@
-# SwapKit
+# Pioneer SDK
 
 ### _Integrate Blockchains easily_
 
