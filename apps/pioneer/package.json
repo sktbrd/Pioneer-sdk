@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/pioneer-react",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -39,7 +39,7 @@
     "url": "0.11.2",
     "uuid": "^9.0.1"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
@@ -58,7 +58,9 @@
     "@coinmasters/wallet-okx": "workspace:*",
     "@coinmasters/wallet-trezor": "workspace:*",
     "@coinmasters/wallet-wc": "workspace:*",
-    "@coinmasters/wallet-xdefi": "workspace:*",
+    "@coinmasters/wallet-xdefi": "workspace:*"
+  },
+  "devDependencies": {
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@vitejs/plugin-react": "4.0.4",

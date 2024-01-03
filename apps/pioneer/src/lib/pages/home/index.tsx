@@ -5,8 +5,11 @@
 import { Box, Button, Flex, Input, Link, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+import { AutocompleteInput } from '../../components/AutocompleteInput'; // Import or define this component
 import Balances from '../../components/Balances';
+import Portfolio from '../../components/Portfolio';
 import Basic from '../../components/Basic';
 import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
@@ -30,9 +33,26 @@ const Home = () => {
   const { intent } = useParams<{ intent?: string }>();
   const { state, onStart } = usePioneer();
   const { pubkeyContext, app } = state;
+  const [searchInput, setSearchInput] = useState('portfolio');
+  const [filteredOptions, setFilteredOptions] = useState([
+    'portfolio',
+    'track',
+    'basic',
+    'blockchains',
+    'paths',
+    'pubkeys',
+    'balances',
+    'pending',
+    'transfer',
+    'swap',
+    'swaps',
+    'earn',
+    'loan'
+  ]);
   const [address, setAddress] = useState('');
   const [modalType, setModalType] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate(); // Add this line to use the useHistory hook
 
   // start the context provider
   useEffect(() => {}, [intent]);
@@ -71,6 +91,63 @@ const Home = () => {
   
    */
 
+
+  // Handle input change for autocomplete
+  const handleInputChange = (inputValue) => {
+    setSearchInput(inputValue);
+    setFilteredOptions(options.filter(option =>
+      option.toLowerCase().includes(inputValue.toLowerCase())
+    ));
+  };
+
+// Handle selection from autocomplete options
+  const handleOptionSelect = (option) => {
+    console.log("option: ", option)
+    switch (option) {
+      case 'portfolio':
+        navigate('/intent/portfolio');
+        break;
+      case 'track':
+        navigate('/intent/track');
+        break;
+      case 'basic':
+        navigate('/intent/basic');
+        break;
+      case 'blockchains':
+        navigate('/intent/blockchains');
+        break;
+      case 'paths':
+        navigate('/intent/paths');
+        break;
+      case 'pubkeys':
+        navigate('/intent/pubkeys');
+        break;
+      case 'balances':
+        navigate('/intent/balances');
+        break;
+      case 'pending':
+        navigate('/intent/pending');
+        break;
+      case 'transfer':
+        navigate('/intent/transfer');
+        break;
+      case 'swap':
+        navigate('/intent/swap');
+        break;
+      case 'swaps':
+        navigate('/intent/swaps');
+        break;
+      case 'earn':
+        navigate('/intent/earn');
+        break;
+      case 'loan':
+        navigate('/intent/loan');
+        break;
+      default:
+        console.log("No route for this option");
+    }
+  };
+
   // Function to determine which component to render based on intent
   const renderComponent = () => {
     console.log('intent: ', intent);
@@ -81,6 +158,8 @@ const Home = () => {
     switch (intentType) {
       case 'track':
         return <Track txHash={txHash} />;
+      case 'portfolio':
+        return <Portfolio />;
       case 'basic':
         return <Basic />;
       case 'blockchains':
@@ -132,7 +211,25 @@ const Home = () => {
             ) : (
               // Render search interface
               <div>
-                <Input placeholder="What are you looking for?" size="lg" />
+                <Input
+                  placeholder="What are you looking for?"
+                  size="lg"
+                  value={searchInput}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                />
+                {filteredOptions.length > 0 && (
+                  <Box>
+                    {filteredOptions.map((option, index) => (
+                      <Button
+                        key={index}
+                        onClick={() => handleOptionSelect(option)}
+                        variant="ghost"
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </Box>
+                )}
                 <Button colorScheme="blue" mt={4}>
                   Search
                 </Button>
