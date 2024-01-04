@@ -33,12 +33,17 @@ const getTransferFee = async () => {
 };
 
 const getBalance = async (address: string) => {
-  const balances = (await getAccount(address[0].address))?.balances || [];
-
-  return balances.map(
-    ({ symbol, free }) =>
-      new AssetValue({ chain: Chain.Binance, symbol: symbol, value: free, decimal: 8 }),
-  );
+  try {
+    const balances = (await getAccount(address[0].address))?.balances || [];
+    console.log('toolbox binance getBalance: ', balances);
+    return balances.map(
+      ({ symbol, free }) =>
+        new AssetValue({ chain: Chain.Binance, symbol: symbol, value: free, decimal: 8 }),
+    );
+  } catch (e) {
+    //NOTE bnb nodes throw 404 if address has not exist on chain
+    return [];
+  }
 };
 
 const getFees = async () => {

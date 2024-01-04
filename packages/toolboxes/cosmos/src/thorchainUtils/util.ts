@@ -109,6 +109,7 @@ export const checkBalances = async (
   const zeroValue = new SwapKitNumber({ value: 0, decimal: BaseDecimal.THOR });
 
   const runeBalance = balances.find(({ symbol }) => symbol === 'RUNE') ?? zeroValue;
+  console.log('thorchain checkBalances runeBalance: ', runeBalance);
   const assetBalance =
     balances.find(
       ({ chain, symbol }) => `${chain}.${symbol}` === `${assetValue.chain}.${assetValue.symbol}`,

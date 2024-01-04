@@ -116,6 +116,7 @@ const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: B
         console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
         // eslint-disable-next-line no-case-declarations
         const xpubBalance = await apiClient.getBalanceXpub(pubkey.pubkey.xpub || pubkey.xpub);
+        console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
         return xpubBalance;
       case 'address':
         // eslint-disable-next-line no-case-declarations
@@ -151,7 +152,7 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
-  console.log(`BaseUTXO totalBalance:`, totalBalance.toString());
+  console.log(`BaseUTXO totalBalance:`, totalBalance);
 
   console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
