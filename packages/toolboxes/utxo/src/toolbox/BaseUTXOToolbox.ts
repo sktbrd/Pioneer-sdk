@@ -148,7 +148,8 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     if (pubkey.pubkey) type = 'pubkey';
     else type = 'address';
     console.log('pubkey: ', pubkey);
-    const balance = await getPubkeyBalance(pubkey, type, apiClient);
+    let balance = await getPubkeyBalance(pubkey, type, apiClient);
+    if (typeof balance === 'object') balance = 0;
     console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
