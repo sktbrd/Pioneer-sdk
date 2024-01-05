@@ -1,4 +1,4 @@
-# SwapKit
+# Pioneer SDK
 
 ## Upstream Additions
 * KeepKey Wallet
