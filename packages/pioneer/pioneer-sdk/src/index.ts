@@ -578,10 +578,11 @@ export class SDK {
               }
             } else {
               console.log('path type pubkey detected: ');
-              let walletForChain = await this.swapKit?.getWalletByChain(chain);
-              console.log('walletForChain: ', walletForChain);
-              if (walletForChain) {
-                const pubkeyForPath = walletForChain.pubkeys.find(
+              //let walletForChain = await this.swapKit?.getWalletByChain(chain);
+              let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+              console.log('pubkeys: ', pubkeys);
+              if (pubkeys) {
+                const pubkeyForPath = pubkeys.find(
                   (pubkeyObj: any) =>
                     pubkeyObj?.addressNList?.toString() === path?.addressNList?.toString(),
                 );

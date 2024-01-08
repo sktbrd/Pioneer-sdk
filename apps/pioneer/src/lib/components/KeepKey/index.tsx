@@ -1,5 +1,5 @@
 import { CheckIcon } from '@chakra-ui/icons'; // Make sure to import the icons you need
-import { Box, Button, Spinner, Text } from '@chakra-ui/react';
+import { Box, Spinner, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import { usePioneer } from '../../context';
@@ -14,22 +14,22 @@ export default function KeepKey({ onClose }: any) {
     try {
       setIsSyncing(true);
       await connectWallet('KEEPKEY');
-      await app.getPubkeys()
-      await app.getBalances()
+      await app.getPubkeys();
+      await app.getBalances();
     } catch (e) {
       console.error(e);
     }
   };
 
   useEffect(() => {
-    if(balances.length > 0) {
+    if (balances.length > 0) {
       setIsSyncing(false);
     }
   }, [balances]);
 
   useEffect(() => {
     syncWallet();
-  }, []);
+  }, [app]);
 
   // Function to render the success card
   const renderSuccessCard = () => (
@@ -52,9 +52,7 @@ export default function KeepKey({ onClose }: any) {
   return (
     <div>
       {!isSyncing ? (
-        <div>
-          {balances.length > 0 && renderSuccessCard()}
-        </div>
+        <div>{balances.length > 0 && renderSuccessCard()}</div>
       ) : (
         <div>
           <div>

@@ -12,7 +12,8 @@ import type {
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
 
 const baseUrl = (chain: Chain) => `https://api.blockchair.com/${mapChainToBlockchairChain(chain)}`;
-const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
+const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
+// const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
 
 const getDefaultTxFeeByChain = (chain: Chain) => {
   switch (chain) {
@@ -122,7 +123,11 @@ const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: strin
     //const response = await blockchairRequest<any>(`${baseUrlPioneer()}${url}`);
     let response = await RequestClient.get<any>(`${baseUrlPioneer()}${url}`);
     console.log('getXpubData: response: ', response);
-    if (!response) response = 0;
+    if (!response) {
+      response = 0;
+    } else {
+      response = response / 100000000;
+    }
     return response;
   } catch (error) {
     return {

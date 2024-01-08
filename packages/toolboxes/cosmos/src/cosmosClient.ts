@@ -49,14 +49,18 @@ export class CosmosClient {
   };
 
   getBalance = async (address: string) => {
-    const client = await createStargateClient(this.rpcUrl);
+    try {
+      const client = await createStargateClient(this.rpcUrl);
+      const allBalances = await client.getAllBalances(address);
 
-    const allBalances = await client.getAllBalances(address);
-
-    return allBalances.map((balance) => ({
-      ...balance,
-      denom: balance.denom.includes('/') ? balance.denom.toUpperCase() : balance.denom,
-    }));
+      return allBalances.map((balance) => ({
+        ...balance,
+        denom: balance.denom.includes('/') ? balance.denom.toUpperCase() : balance.denom,
+      }));
+    } catch (error) {
+      console.error('An error occurred:', error);
+      return [];
+    }
   };
 
   getAccount = async (address: string) => {
