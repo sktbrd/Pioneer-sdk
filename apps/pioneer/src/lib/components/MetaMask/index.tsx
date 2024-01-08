@@ -92,9 +92,6 @@ export default function MetaMask({ onClose, setIsOpenSide }: any) {
 
       {hasConfirmed && balances.length > 0 && (
         <Box alignItems="flex-end" display="flex" flexDirection="column">
-          <Button mb={2} onClick={() => setIsOpenSide(true)}>
-            Pair More Wallets
-          </Button>
           <Button colorScheme="blue" onClick={onClose}>
             Continue
           </Button>

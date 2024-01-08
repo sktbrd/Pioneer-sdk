@@ -1,4 +1,4 @@
-import { Search2Icon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon, Search2Icon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -84,12 +84,7 @@ export default function AssetSelect({ onSelect }: any) {
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
-        <Input
-          value={search}
-          onChange={handleSearchChange}
-          placeholder="Bitcoin..."
-          type="text"
-        />
+        <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />
       </InputGroup>
       <Box>
         {/* <Text fontSize="2xl">Total Assets: {totalAssets}</Text> */}
@@ -100,8 +95,7 @@ export default function AssetSelect({ onSelect }: any) {
         {/*  Show only owned assets */}
         {/* </Checkbox> */}
         <Button onClick={toggleSortOrder} size="sm">
-          Sort by Value{' '}
-          {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          Sort by Value {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </Button>
         <br />
         <br />
@@ -110,17 +104,15 @@ export default function AssetSelect({ onSelect }: any) {
           <Box key={index}>
             <Flex
               alignItems="center"
-              borderRadius="md"
-              border="1px solid #fff"
               bg="black"
+              border="1px solid #fff"
+              borderRadius="md"
               boxShadow="sm"
               padding={2}
             >
               <Avatar
                 size="md"
-                src={`https://pioneers.dev/coins/${
-                  COIN_MAP_LONG[asset?.chain]
-                }.png`}
+                src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset?.chain]}.png`}
               />
               <Box ml={3}>
                 <Text fontSize="sm">Asset: {asset?.caip}</Text>

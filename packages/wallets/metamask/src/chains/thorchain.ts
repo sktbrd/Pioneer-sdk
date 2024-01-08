@@ -165,7 +165,7 @@ export const thorChainWalletMethods: any = async function (params: MetaMaskParam
       signTransactionDeposit({
         memo,
         asset: assetValue.symbol,
-        amount: assetValue.baseValue.toString(),
+        amount: assetValue.getBaseValue('string'),
         from: await getAddress(),
       });
 

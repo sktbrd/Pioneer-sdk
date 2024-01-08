@@ -67,7 +67,8 @@ export default function SignTransaction({
 
     if (!walletInfo) {
       setIsPairing(true);
-      const contextType = contextSigning.split(":")[0];
+      console.log("assetContext: ", assetContext);
+      const contextType = assetContext.context.split(":")[0];
       console.log("contextType: ", contextType);
       // connect it
       connectWallet(contextType.toUpperCase());

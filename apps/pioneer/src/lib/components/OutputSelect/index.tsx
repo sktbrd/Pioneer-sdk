@@ -24,29 +24,6 @@ import { useEffect, useState } from 'react';
 
 import { usePioneer } from '../../context';
 
-// const CHAINS = {
-//   ARB: { name: "Arbitrum", hasTokens: true },
-//   AVAX: { name: "Avalanche", hasTokens: true },
-//   BNB: { name: "Binance Chain" }, // Assuming Binance and BinanceSmartChain are the same for this context
-//   BSC: { name: "Binance Smart Chain", hasTokens: true }, // Assuming Binance and BinanceSmartChain are the same for this context
-//   BTC: { name: "Bitcoin" },
-//   BCH: { name: "Bitcoin Cash" },
-//   ATOM: { name: "Cosmos" },
-//   GAIA: { name: "Cosmos" },
-//   DASH: { name: "Dash" },
-//   KUJI: { name: "Kuji" },
-//   MAYA: { name: "maya" },
-//   // 'DASH': { name: 'Dash' }, // Uncomment if needed
-//   DOGE: { name: "Dogecoin" },
-//   ETH: { name: "Ethereum", hasTokens: true },
-//   // 'KUJI': { name: 'Kujira' }, // Uncomment if needed
-//   LTC: { name: "Litecoin" },
-//   // 'MAYA': { name: 'Maya' }, // Uncomment if needed
-//   OP: { name: "Optimism", hasTokens: true },
-//   MATIC: { name: "Polygon", hasTokens: true },
-//   THOR: { name: "THORChain" },
-// };
-
 const CHAINS: any = {
   // ARB: { name: "Arbitrum", hasTokens: true, chainId: "eip155:42161" }, // Example format
   AVAX: {
@@ -111,7 +88,7 @@ const NATIVE_ASSETS = [
 
 export default function OutputSelect({ onClose, onSelect }: any) {
   const { state } = usePioneer();
-  const { app, balances } = state;
+  const { app, balances, pubkeys, blockchains } = state;
   const [currentPage, setCurrentPage] = useState<any>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   // const [showOwnedAssets, setShowOwnedAssets] = useState(false);
@@ -125,47 +102,71 @@ export default function OutputSelect({ onClose, onSelect }: any) {
   const handleSelectClick = async (asset: any) => {
     try {
       console.log('asset: ', asset);
+      console.log('pubkeys: ', pubkeys);
+      console.log('balances: ', balances);
+
+      let pubkeyForContext = pubkeys.find((pubkey) => pubkey.networkId === asset.chainId);
+      console.log('pubkeyForContext: ', pubkeyForContext);
+
+      if (pubkeyForContext) {
+        console.log('FOUND PUBKEY FOR ASSET! ');
+        asset.address = pubkeyForContext.address;
+        asset.caip = asset.chainId;
+        asset.network = pubkeyForContext.symbol;
+        asset.asset = pubkeyForContext.symbol;
+        asset.symbol = pubkeyForContext.symbol;
+        asset.chain = asset.symbol;
+        asset.ticker = asset.symbol;
+        asset.image = asset.image;
+        //   symbol: asset.symbol,
+        //   chain: selectedChain,
+        //   ticker: asset.symbol,
+        //   image: asset.image,
+        console.log('asset: ', asset);
+        app.setOutboundAssetContext(asset);
+        onClose();
+      }
+
       // console.log("balances: ", balances);
       // get address for asset
-      let addressForAsset: string;
-      // @TODO this will not work when we add cosmos
-      // Think better
-      let selectedChain = CHAINS_WITH_TOKENS[selectedTab];
-      if (selectedChain === 'BTC') {
-        selectedChain = asset.symbol;
-      }
-      const entry: any = {
-        symbol: asset.symbol,
-        chain: selectedChain,
-        ticker: asset.symbol,
-        image: asset.image,
-      };
+      // let addressForAsset: string;
+      // // @TODO this will not work when we add cosmos
+      // // Think better
+      // let selectedChain = CHAINS_WITH_TOKENS[selectedTab];
+      // if (selectedChain === 'BTC') {
+      //   selectedChain = asset.symbol;
+      // }
+      // const entry: any = {
+      //   symbol: asset.symbol,
+      //   chain: selectedChain,
+      //   ticker: asset.symbol,
+      //   image: asset.image,
+      // };
+      //
+      // if (selectedTab && selectedTab !== 'BTC') {
+      //   console.log('token detected!');
+      //   const caipInfo = asset.caip.split('/');
+      //   const networkId = caipInfo[0];
+      //   const assetInfo = caipInfo[1].split(':');
+      //   const contract = assetInfo[1];
+      //   // console.log("app.swapKit: ", app.swapKit);
+      //   // console.log("app.swapKit: ", await app.swapKit.getWalletByChain("ETH"));
+      //   // get eth
+      //   const ethBalance = balances.filter((balance: any) => balance.symbol === 'ETH');
+      //   // console.log("ethBalance!: ", ethBalance);
+      //   addressForAsset = ethBalance[0].address;
+      //   // addressForAsset = await app.swapKit.getWalletByChain("ETH"); //TODO WTF why this no worky
+      //
+      //   //
+      //   entry.address = addressForAsset;
+      //   entry.networkId = networkId;
+      //   entry.contract = contract;
+      //
+      //   let pubkeyForContext = pubkeys.find(pubkey => pubkey.networkId === networkId);
+      //   console.log("pubkeyForContext: ", pubkeyForContext);
+      // }
 
-      if (selectedTab && selectedTab !== 'BTC') {
-        console.log('token detected!');
-        const caipInfo = asset.caip.split('/');
-        const chainId = caipInfo[0];
-        const assetInfo = caipInfo[1].split(':');
-        const contract = assetInfo[1];
-        // console.log("app.swapKit: ", app.swapKit);
-        // console.log("app.swapKit: ", await app.swapKit.getWalletByChain("ETH"));
-        // get eth
-        const ethBalance = balances.filter((balance: any) => balance.symbol === 'ETH');
-        // console.log("ethBalance!: ", ethBalance);
-        addressForAsset = ethBalance[0].address;
-        // addressForAsset = await app.swapKit.getWalletByChain("ETH"); //TODO WTF why this no worky
-
-        //
-        entry.address = addressForAsset;
-        entry.chainId = chainId;
-        entry.contract = contract;
-      }
-      // console.log("caipInfo: ", caipInfo);
-      // console.log("assetInfo: ", assetInfo);
-      // console.log("contract: ", contract);
-
-      app.setOutboundAssetContext(entry);
-      onClose();
+      //get pubkey for asset
     } catch (e) {
       console.error(e);
     }
