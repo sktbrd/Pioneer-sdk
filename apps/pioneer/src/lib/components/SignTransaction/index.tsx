@@ -72,6 +72,10 @@ export default function SignTransaction({
       console.log("contextType: ", contextType);
       // connect it
       connectWallet(contextType.toUpperCase());
+      setTimeout(() => {
+        console.log("Retrying wallet connection...");
+        approveTransaction();
+      }, 3000);
     } else {
       console.log("Approving TX");
       setIsApproved(true);
