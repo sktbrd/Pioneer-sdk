@@ -154,8 +154,6 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     totalBalance = totalBalance + balance;
   }
   console.log(`BaseUTXO totalBalance:`, totalBalance);
-
-  console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
   console.log('BaseUTXO asset: ', asset);
   return [asset];
