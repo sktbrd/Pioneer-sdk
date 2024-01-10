@@ -302,6 +302,7 @@ export enum RPCUrl {
   Optimism = 'https://mainnet.optimism.io',
   Osmosis = 'https://lcd-osmosis.keplr.app',
   Polygon = 'https://polygon-rpc.com',
+  Ripple = 'https://xrplcluster.com',
   THORChain = 'https://rpc.thorswap.net',
   THORChainStagenet = 'https://stagenet-rpc.ninerealms.com',
 }

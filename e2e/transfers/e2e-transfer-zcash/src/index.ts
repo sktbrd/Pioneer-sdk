@@ -28,9 +28,9 @@ let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_BCH_ADDRESS = process.env['FAUCET_BCH_ADDRESS']
-if(!FAUCET_BCH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_BCH_ADDRESS
+let FAUCET_ZEC_ADDRESS = process.env['FAUCET_ZEC_ADDRESS']
+if(!FAUCET_ZEC_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_ZEC_ADDRESS
 
 
 console.log("spec: ",spec)
