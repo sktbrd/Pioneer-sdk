@@ -107,61 +107,60 @@ const Pioneer = () => {
 
     //get cached wallets.
     // Retrieve and parse paired wallets
-    let pairedWallets = localStorage.getItem('pairedWallets');
-    if (pairedWallets) {
-      pairedWallets = JSON.parse(pairedWallets);
-    } else {
-      pairedWallets = [];
-    }
-    console.log('pairedWallets: ', pairedWallets);
-    //if type found in cache, use it.
-    const foundWallet = pairedWallets.find(pw => pw.toLowerCase().includes(wallet.toLowerCase()));
-    if (foundWallet) {
-      console.log('Wallet found! foundWallet: ', foundWallet);
-      //then load it.
-      console.log('Loading from cache!');
-      await app.setContext(foundWallet);
-      //get wallet type
-      const walletType = foundWallet.split(':')[0];
-      console.log('walletType: ', walletType);
-      //set blockchains
-      let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-      let allByCaip = blockchainsForContext.map((chainStr) => {
-        const chainEnum = getChainEnumValue(chainStr);
-        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-      });
-      console.log('allByCaip: ', allByCaip);
-      await app.setBlockchains(allByCaip);
-
-      // balance cache
-      let balanceCache: any = localStorage.getItem(foundWallet + ':balanceCache');
-      balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-      console.log('balanceCache: ', balanceCache);
-      await app.loadBalanceCache(balanceCache);
-
-      // pubkey cache
-      let pubkeyCache: any = localStorage.getItem(foundWallet + ':pubkeyCache');
-      pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-      console.log('pubkeyCache: ', pubkeyCache);
-      await app.loadPubkeyCache(pubkeyCache);
-    } else {
-      console.log('Wallet not found! needs to pair now!');
-      //clear balances
-      //clear pubkeys
-      //clear context
-      //clear blockchains
-      const AllChainsSupported = availableChainsByWallet[wallet];
-      console.log('AllChainsSupported: ', AllChainsSupported);
-      let allByCaip = AllChainsSupported.map((chainStr) => {
-        const chainEnum = getChainEnumValue(chainStr);
-        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-      }).filter((x) => x !== undefined);
-      app.setBlockchains(allByCaip);
-      onOpen();
-      setWalletType(wallet);
-      setModalType(wallet);
-      setModalShowClose(false);
-    }
+    // let pairedWallets = localStorage.getItem('pairedWallets');
+    // if (pairedWallets) {
+    //   pairedWallets = JSON.parse(pairedWallets);
+    // } else {
+    //   pairedWallets = [];
+    // }
+    // console.log('pairedWallets: ', pairedWallets);
+    // //if type found in cache, use it.
+    // const foundWallet = pairedWallets.find(pw => pw.toLowerCase().includes(wallet.toLowerCase()));
+    // if (foundWallet && false) {
+    //   console.log('Wallet found! foundWallet: ', foundWallet);
+    //   //then load it.
+    //   console.log('Loading from cache!');
+    //   await app.setContext(foundWallet);
+    //   //get wallet type
+    //   const walletType = foundWallet.split(':')[0];
+    //   console.log('walletType: ', walletType);
+    //   //set blockchains
+    //   let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+    //   let allByCaip = blockchainsForContext.map((chainStr) => {
+    //     const chainEnum = getChainEnumValue(chainStr);
+    //     return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+    //   });
+    //   console.log('allByCaip: ', allByCaip);
+    //   await app.setBlockchains(allByCaip);
+    //
+    //   // balance cache
+    //   let balanceCache: any = localStorage.getItem(foundWallet + ':balanceCache');
+    //   balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+    //   console.log('balanceCache: ', balanceCache);
+    //   await app.loadBalanceCache(balanceCache);
+    //
+    //   // pubkey cache
+    //   let pubkeyCache: any = localStorage.getItem(foundWallet + ':pubkeyCache');
+    //   pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+    //   console.log('pubkeyCache: ', pubkeyCache);
+    //   await app.loadPubkeyCache(pubkeyCache);
+    // }
+    console.log('Wallet not found! needs to pair now!');
+    //clear balances
+    //clear pubkeys
+    //clear context
+    //clear blockchains
+    const AllChainsSupported = availableChainsByWallet[wallet];
+    console.log('AllChainsSupported: ', AllChainsSupported);
+    let allByCaip = AllChainsSupported.map((chainStr) => {
+      const chainEnum = getChainEnumValue(chainStr);
+      return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+    }).filter((x) => x !== undefined);
+    app.setBlockchains(allByCaip);
+    onOpen();
+    setWalletType(wallet);
+    setModalType(wallet);
+    setModalShowClose(false);
   };
 
   const renderWallets = () => {

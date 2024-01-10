@@ -15,20 +15,21 @@ export type SignTransactionTransferParams = {
 };
 
 const DEFAULT_OSMO_FEE_MAINNET = {
-  amount: [{ denom: 'uatom', amount: '500' }],
-  gas: '200000',
+  amount: [{ denom: 'uosmo', amount: '3500' }],
+  gas: '500000',
 };
 
 export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; api: string }) => {
+  let tag = ' | osmosisWalletMethods | ';
   try {
-    const { address: fromAddress } = (await sdk.address.cosmosGetAddress({
+    const { address: fromAddress } = (await sdk.address.osmosisGetAddress({
       address_n: bip32ToAddressNList(DerivationPath[Chain.Osmosis]),
     })) as { address: string };
 
     const toolbox = OsmosisToolbox({ server: api });
     DEFAULT_OSMO_FEE_MAINNET.amount[0].amount = String(
       //@ts-ignore
-      '500',
+      '3500',
     );
 
     const signTransactionTransfer = async ({
@@ -38,8 +39,10 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       memo = '',
     }: SignTransactionTransferParams) => {
       try {
+        console.log(tag, 'fromAddress: ', fromAddress);
         let accountInfo = await toolbox.getAccount(fromAddress);
-        let { sequence, account_number } = accountInfo?.result?.value;
+        console.log('accountInfo: ', accountInfo);
+        let { sequence, account_number } = accountInfo.account; // Corrected path
         console.log('sequence: ', sequence);
         console.log('account_number: ', account_number);
 
@@ -62,18 +65,13 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
         console.log('unSignedTx: ', unSignedTx);
         console.log('unSignedTx: ', JSON.stringify(unSignedTx));
         const keepKeySignedTx = await sdk.osmosis.osmosisSignAmino(unSignedTx);
+        console.log('keepKeySignedTx: ', keepKeySignedTx);
+        console.log('keepKeySignedTx: ', JSON.stringify(keepKeySignedTx));
 
-        const decodedBytes = atob(keepKeySignedTx.serialized);
-        const uint8Array = new Uint8Array(decodedBytes.length);
+        let resultBroadcast = await toolbox.sendRawTransaction(keepKeySignedTx.serialized);
+        console.log('resultBroadcast: ', resultBroadcast);
 
-        for (let i = 0; i < decodedBytes.length; i++) {
-          uint8Array[i] = decodedBytes.charCodeAt(i);
-        }
-
-        const client = await StargateClient.connect(RPCUrl.Cosmos);
-        const response = await client.broadcastTx(uint8Array);
-
-        return response.transactionHash;
+        return resultBroadcast.txid;
       } catch (e) {
         console.error(e);
         throw e;

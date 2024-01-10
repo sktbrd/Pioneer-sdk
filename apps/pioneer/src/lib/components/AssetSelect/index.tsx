@@ -13,7 +13,11 @@ import {
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
-
+import {
+  getWalletBadgeContent,
+  getWalletContent,
+  pioneerImagePng,
+} from '../../components/WalletIcon';
 import { usePioneer } from '../../context';
 
 export default function AssetSelect({ onSelect }: any) {
@@ -113,7 +117,9 @@ export default function AssetSelect({ onSelect }: any) {
               <Avatar
                 size="md"
                 src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset?.chain]}.png`}
-              />
+              >
+                {getWalletBadgeContent(asset?.context.split(':')[0])}
+              </Avatar>
               <Box ml={3}>
                 <Text fontSize="sm">Asset: {asset?.caip}</Text>
                 <Text fontSize="sm">symbol: {asset?.symbol}</Text>

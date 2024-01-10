@@ -39,7 +39,6 @@ console.log("wss: ",wss)
 let txid:string
 let IS_SIGNED: boolean
 
-
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {

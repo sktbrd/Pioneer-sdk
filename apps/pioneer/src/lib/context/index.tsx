@@ -590,18 +590,27 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('allByCaip: ', allByCaip);
         await appInit.setBlockchains(allByCaip);
 
-        // balance cache
-        let balanceCache: any = localStorage.getItem(lastConnectedWallet + ':balanceCache');
-        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-        console.log('balanceCache: ', balanceCache);
-        await appInit.loadBalanceCache(balanceCache);
-
-        // pubkey cache
-        let pubkeyCache: any = localStorage.getItem(lastConnectedWallet + ':pubkeyCache');
-        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-        console.log('pubkeyCache: ', pubkeyCache);
-        await appInit.loadPubkeyCache(pubkeyCache);
       }
+
+      //add to local storage of connected wallets
+      // Retrieve paired wallets from local storage
+      const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
+
+      // Loop over each wallet and load balance and pubkey into cache
+      for (const wallet of pairedWallets) {
+        // Load balance cache
+        let balanceCache = localStorage.getItem(wallet + ':balanceCache');
+        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+        console.log('balanceCache for', wallet, ':', balanceCache);
+        await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
+
+        // Load pubkey cache
+        let pubkeyCache = localStorage.getItem(wallet + ':pubkeyCache');
+        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+        console.log('pubkeyCache for', wallet, ':', pubkeyCache);
+        await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
+      }
+
     } catch (e) {
       console.error(e);
     }

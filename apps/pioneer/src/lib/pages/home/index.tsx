@@ -16,6 +16,7 @@ import Paths from '../../components/Paths';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
+import Wallets from '../../components/Wallets';
 import Pending from '../../components/Pending';
 import Pioneer from '../../components/Pioneer';
 import Portfolio from '../../components/Portfolio';
@@ -35,6 +36,7 @@ const Home = () => {
   const [searchInput, setSearchInput] = useState('portfolio');
   const [filteredOptions, setFilteredOptions] = useState([
     'portfolio',
+    'wallets',
     'track',
     'basic',
     'blockchains',
@@ -101,6 +103,9 @@ const Home = () => {
   const handleOptionSelect = (option) => {
     console.log('option: ', option);
     switch (option) {
+      case 'wallets':
+        navigate('/intent/wallets');
+        break;
       case 'portfolio':
         navigate('/intent/portfolio');
         break;
@@ -155,6 +160,8 @@ const Home = () => {
     switch (intentType) {
       case 'track':
         return <Track txHash={txHash} />;
+      case 'wallets':
+        return <Wallets />;
       case 'portfolio':
         return <Portfolio />;
       case 'basic':

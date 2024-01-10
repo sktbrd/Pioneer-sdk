@@ -1616,6 +1616,9 @@ importers:
       '@keepkey/keepkey-sdk':
         specifier: ^0.2.52
         version: 0.2.52
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
         specifier: 9.0.14
         version: 9.0.14
@@ -2046,19 +2049,19 @@ importers:
         version: link:../../toolboxes/evm
       '@cosmjs/amino':
         specifier: 0.32.0
-        version: 0.31.1
+        version: 0.32.0
       '@cosmjs/encoding':
         specifier: 0.32.0
-        version: 0.31.1
+        version: 0.32.0
       '@cosmjs/math':
         specifier: 0.32.0
-        version: 0.31.1
+        version: 0.32.0
       '@cosmjs/proto-signing':
         specifier: 0.32.0
-        version: 0.31.1
+        version: 0.32.0
       '@cosmjs/stargate':
         specifier: 0.32.0
-        version: 0.31.1
+        version: 0.32.0
       '@internal/config':
         specifier: workspace:*
         version: link:../../../internal/config
@@ -2070,7 +2073,7 @@ importers:
         version: 2.10.5
       cosmjs-types:
         specifier: 0.9.0
-        version: 0.8.0
+        version: 0.9.0
       vite:
         specifier: 4.5.0
         version: 4.5.0(@types/node@20.5.9)
@@ -6149,7 +6152,7 @@ packages:
     peerDependencies:
       '@nomicfoundation/hardhat-ethers': ^3.0.0
       chai: ^4.2.0
-      ethers: ^6.1.0
+      ethers: ^6.9.0
       hardhat: ^2.9.4
     dependencies:
       '@nomicfoundation/hardhat-ethers': 3.0.5(ethers@6.9.0)(hardhat@2.19.1)
@@ -6165,7 +6168,7 @@ packages:
   /@nomicfoundation/hardhat-ethers@3.0.5(ethers@6.9.0)(hardhat@2.19.1):
     resolution: {integrity: sha512-RNFe8OtbZK6Ila9kIlHp0+S80/0Bu/3p41HUpaRIoHLm6X3WekTd83vob3rE54Duufu1edCiBDxspBzi2rxHHw==}
     peerDependencies:
-      ethers: ^6.1.0
+      ethers: ^6.9.0
       hardhat: ^2.0.0
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
@@ -6198,13 +6201,13 @@ packages:
       '@types/mocha': '>=9.1.0'
       '@types/node': '>=16.0.0'
       chai: ^4.2.0
-      ethers: ^6.4.0
+      ethers: ^6.9.0
       hardhat: ^2.11.0
       hardhat-gas-reporter: ^1.0.8
       solidity-coverage: ^0.8.1
       ts-node: '>=8.0.0'
       typechain: ^8.3.0
-      typescript: '>=4.5.0'
+      typescript: 5.2.2
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers': 2.0.2(@nomicfoundation/hardhat-ethers@3.0.5)(chai@4.3.10)(ethers@6.9.0)(hardhat@2.19.1)
       '@nomicfoundation/hardhat-ethers': 3.0.5(ethers@6.9.0)(hardhat@2.19.1)
@@ -8461,9 +8464,9 @@ packages:
   /@typechain/ethers-v6@0.5.1(ethers@6.9.0)(typechain@8.3.2)(typescript@5.2.2):
     resolution: {integrity: sha512-F+GklO8jBWlsaVV+9oHaPh5NJdd6rAKN4tklGfInX1Q7h0xPgVLP39Jl3eCulPB5qexI71ZFHwbljx4ZXNfouA==}
     peerDependencies:
-      ethers: 6.x
+      ethers: ^6.9.0
       typechain: ^8.3.2
-      typescript: '>=4.7.0'
+      typescript: 5.2.2
     dependencies:
       ethers: 6.9.0
       lodash: 4.17.21
@@ -8476,7 +8479,7 @@ packages:
     resolution: {integrity: sha512-mtaUlzLlkqTlfPwB3FORdejqBskSnh+Jl8AIJGjXNAQfRQ4ofHADPl1+oU7Z3pAJzmZbUXII8MhOLQltcHgKnA==}
     peerDependencies:
       '@typechain/ethers-v6': ^0.5.1
-      ethers: ^6.1.0
+      ethers: ^6.9.0
       hardhat: ^2.9.9
       typechain: ^8.3.2
     dependencies:
@@ -9271,7 +9274,7 @@ packages:
   /@vue/language-core@1.8.8(typescript@5.2.2):
     resolution: {integrity: sha512-i4KMTuPazf48yMdYoebTkgSOJdFraE4pQf0B+FTOFkbB+6hAfjrSou/UmYWRsWyZV6r4Rc6DDZdI39CJwL0rWw==}
     peerDependencies:
-      typescript: '*'
+      typescript: 5.2.2
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -13458,7 +13461,7 @@ packages:
     hasBin: true
     peerDependencies:
       ts-node: '*'
-      typescript: '*'
+      typescript: 5.2.2
     peerDependenciesMeta:
       ts-node:
         optional: true
@@ -15321,7 +15324,7 @@ packages:
     dependencies:
       hosted-git-info: 2.8.9
       resolve: 1.22.4
-      semver: 5.7.2
+      semver: 7.5.4
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -17914,7 +17917,7 @@ packages:
     resolution: {integrity: sha512-wNMeqtMz5NtwpT/UZGY5alT+VoKdSsOOP/kqHFcUW1P/VRhH2wJ48+DN2WwUliNbQ976ETwDL0Ifd2VVvgonvg==}
     engines: {node: '>=16.13.0'}
     peerDependencies:
-      typescript: '>=4.2.0'
+      typescript: 5.2.2
     dependencies:
       typescript: 5.2.2
 
@@ -17931,7 +17934,7 @@ packages:
   /ts-essentials@7.0.3(typescript@5.2.2):
     resolution: {integrity: sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==}
     peerDependencies:
-      typescript: '>=3.7.0'
+      typescript: 5.2.2
     dependencies:
       typescript: 5.2.2
     dev: true
@@ -17943,7 +17946,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: 5.2.2
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -17974,7 +17977,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: 5.2.2
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -18004,7 +18007,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: 5.2.2
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -18035,7 +18038,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: 5.2.2
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -18107,7 +18110,7 @@ packages:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
     engines: {node: '>= 6'}
     peerDependencies:
-      typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
+      typescript: 5.2.2
     dependencies:
       tslib: 1.14.1
       typescript: 5.2.2
@@ -18273,7 +18276,7 @@ packages:
     resolution: {integrity: sha512-x/sQYr5w9K7yv3es7jo4KTX05CLxOf7TRWwoHlrjRh8H82G64g+k7VuWPJlgMo6qrjfCulOdfBjiaDtmhFYD/Q==}
     hasBin: true
     peerDependencies:
-      typescript: '>=4.3.0'
+      typescript: 5.2.2
     dependencies:
       '@types/prettier': 2.7.3
       debug: 4.3.4(supports-color@8.1.1)
@@ -18766,7 +18769,7 @@ packages:
     resolution: {integrity: sha512-h94j/+SR1PhLR9jnEtcjZILagE2QZBAV8V1y3T2Ujcet1VI0Et4dZSU1W8fbnp6obB7B3/b8hArqdi2/9HuH+w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      typescript: '*'
+      typescript: 5.2.2
       vite: '*'
     peerDependenciesMeta:
       vite:
@@ -19356,7 +19359,7 @@ packages:
     resolution: {integrity: sha512-bSydNFQsF7AMvwWsRXD7cBIXaNs/KSjvzWLymq/UtKE36697sboX4EccSHFVxvgdBlI1frYPc/VMKJNB7DFeDQ==}
     hasBin: true
     peerDependencies:
-      typescript: '*'
+      typescript: 5.2.2
     dependencies:
       '@vue/language-core': 1.8.8(typescript@5.2.2)
       '@vue/typescript': 1.8.8(typescript@5.2.2)

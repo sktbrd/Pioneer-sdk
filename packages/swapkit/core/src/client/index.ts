@@ -244,7 +244,7 @@ export class SwapKitCore<T = ''> {
           pubkeyBalance = 0;
         }
         //TODO get string balance
-        pubkeys[i].balance = pubkeyBalance
+        pubkeys[i].balance = pubkeyBalance;
         console.log('pubkeyBalance: ', pubkeyBalance);
         console.log('pubkeyBalance: ', parseFloat(pubkeyBalance));
         balanceTotal += parseFloat(pubkeyBalance);

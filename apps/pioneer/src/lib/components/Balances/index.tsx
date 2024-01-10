@@ -24,6 +24,7 @@ import React, { useEffect, useState } from 'react';
 import Balance from '../Balance';
 
 import { usePioneer } from '../../context';
+import { getWalletBadgeContent } from '../WalletIcon';
 
 export default function Balances() {
   const { state } = usePioneer();
@@ -135,7 +136,9 @@ export default function Balances() {
               <Avatar
                 size="md"
                 src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset?.chain]}.png`}
-              />
+              >
+                {getWalletBadgeContent(asset?.context.split(':')[0])}
+              </Avatar>
               <Box ml={3}>
                 <Text fontSize="sm">Asset: {asset?.ticker}</Text>
                 {/*<Text fontSize="sm">Asset: {asset?.caip}</Text>*/}

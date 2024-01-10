@@ -293,9 +293,9 @@ export class SDK {
         if (pubkeys.length === 0) throw Error('No pubkeys to load!');
         const combinedPubkeys = [...this.pubkeys, ...pubkeys];
 
-        // Remove duplicates based on .networkId property
+        // Remove duplicates based on .pubkey property
         this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
-          if (!acc.some((item) => item.networkId === currentItem.networkId)) {
+          if (!acc.some((item) => item.pubkey === currentItem.pubkey)) {
             acc.push(currentItem);
           }
           return acc;
@@ -518,7 +518,7 @@ export class SDK {
         //console.log('ethAddress: ', ethAddress);
         if (this.context.indexOf(ethAddress) === -1) {
           //console.log('Clearing Wallet state!');
-          this.clearWalletState();
+          //this.clearWalletState();
         }
         // Verify if pubkeys match context
         if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {

@@ -2,6 +2,7 @@
   "author": "thorswap",
   "dependencies": {
     "@keepkey/keepkey-sdk": "^0.2.52",
+    "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "9.0.14",
     "@pioneer-platform/pioneer-coins": "^9.0.8",
     "ethers": "^6.7.1"
@@ -42,9 +43,9 @@
   "module": "./dist/index.es.js",
   "name": "@coinmasters/wallet-keepkey",
   "peerDependencies": {
-    "@coinmasters/toolbox-ripple": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
+    "@coinmasters/toolbox-ripple": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
     "@keepkey/keepkey-sdk": "0.2.41",
     "bitcoinjs-lib": "5.2.0"
