@@ -28,10 +28,10 @@ export default function Pubkey({ onClose, pubkey }: any) {
           </Tr>
         </Thead>
         <Tbody>
-          {Object.entries(data).map(([key, value]) => (
+          {Object.entries(data).map(([key]: any) => (
             <Tr key={key}>
               <Td>{key}</Td>
-              <Td>{value}</Td>
+              {/*<Td>{value}</Td>*/}
             </Tr>
           ))}
         </Tbody>

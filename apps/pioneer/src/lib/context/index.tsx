@@ -469,6 +469,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const paths: any = [];
       const spec =
         localStorage.getItem('pioneerUrl') ||
+        // @ts-ignore
         import.meta.env.VITE_PIONEER_URL_SPEC ||
         'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
@@ -538,8 +539,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             console.log('setting balances: ', data);
 
             // Remove duplicates based on .caip property
-            const uniqueBalances = data.reduce((acc, currentItem) => {
-              if (!acc.some((item) => item.caip === currentItem.caip)) {
+            const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
+              if (!acc.some((item: any) => item.caip === currentItem.caip)) {
                 acc.push(currentItem);
               }
               return acc;
@@ -557,8 +558,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             console.log('setting pubkeys for context: ', appInit.context);
 
             // Remove duplicates based on .networkId property
-            const uniquePubkeys = data.reduce((acc, currentItem) => {
-              if (!acc.some((item) => item.networkId === currentItem.networkId)) {
+            const uniquePubkeys = data.reduce((acc: any, currentItem: any) => {
+              if (!acc.some((item: any) => item.networkId === currentItem.networkId)) {
                 acc.push(currentItem);
               }
               return acc;
@@ -583,7 +584,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('walletType: ', walletType);
         //set blockchains
         let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        let allByCaip = blockchainsForContext.map((chainStr) => {
+        let allByCaip = blockchainsForContext.map((chainStr: any) => {
           const chainEnum = getChainEnumValue(chainStr);
           return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
         });

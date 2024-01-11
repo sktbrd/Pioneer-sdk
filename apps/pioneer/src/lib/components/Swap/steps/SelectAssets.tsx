@@ -1,3 +1,4 @@
+'use client';
 import { ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Avatar, Box, Button, Flex, HStack, Spinner, Text } from '@chakra-ui/react';
 // @ts-ignore

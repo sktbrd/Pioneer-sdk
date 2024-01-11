@@ -81,7 +81,7 @@ export default function Portfolio() {
   useEffect(() => {
     if (balances && balances.length > 0) {
       const largestBalance = balances.reduce(
-        (max, balance) => (balance.valueUsd > max.valueUsd ? balance : max),
+        (max: any, balance: any) => (balance.valueUsd > max.valueUsd ? balance : max),
         balances[0],
       );
       setLastClickedBalance(largestBalance);
@@ -149,7 +149,7 @@ export default function Portfolio() {
         <div>
           {/* Doughnut Chart */}
           <Box height="300px" width="300px" position="relative">
-            <Doughnut data={chartData} options={options} type="doughnut" />
+            <Doughnut data={chartData} options={options} />
             <Center bottom="0" left="0" position="absolute" right="0" top="0">
               <Text fontSize="lg" fontWeight="bold" textAlign="center">
                 Total Value: {totalValueUsd.toFixed(2)}
@@ -157,7 +157,7 @@ export default function Portfolio() {
             </Center>
           </Box>
           <Box width="100%" maxHeight="300px" overflowY="auto" mt="20px">
-            <Balances onSelect={onSelect} />
+            <Balances />
           </Box>
         </div>
       )}

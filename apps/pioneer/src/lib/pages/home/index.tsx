@@ -13,10 +13,6 @@ import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
 import Loan from '../../components/Loan';
 import Paths from '../../components/Paths';
-// import OutputSelect from "lib/components/OutputSelect";
-// import BlockchainSelect from "lib/components/BlockchainSelect";
-// import WalletSelect from "lib/components/WalletSelect";
-import Wallets from '../../components/Wallets';
 import Pending from '../../components/Pending';
 import Pioneer from '../../components/Pioneer';
 import Portfolio from '../../components/Portfolio';
@@ -24,6 +20,10 @@ import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
+// import OutputSelect from "lib/components/OutputSelect";
+// import BlockchainSelect from "lib/components/BlockchainSelect";
+// import WalletSelect from "lib/components/WalletSelect";
+import Wallets from '../../components/Wallets';
 import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
@@ -92,15 +92,15 @@ const Home = () => {
    */
 
   // Handle input change for autocomplete
-  const handleInputChange = (inputValue) => {
+  const handleInputChange = (inputValue: any) => {
     setSearchInput(inputValue);
-    setFilteredOptions(
-      options.filter((option) => option.toLowerCase().includes(inputValue.toLowerCase())),
-    );
+    // setFilteredOptions(
+    //   options.filter((option: any) => option.toLowerCase().includes(inputValue.toLowerCase())),
+    // );
   };
 
   // Handle selection from autocomplete options
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option: any) => {
     console.log('option: ', option);
     switch (option) {
       case 'wallets':
@@ -153,40 +153,42 @@ const Home = () => {
   // Function to determine which component to render based on intent
   const renderComponent = () => {
     console.log('intent: ', intent);
-    let params = intent.split(':');
-    let intentType = params[0];
-    //parse intent and get props
-    let txHash = params[1];
-    switch (intentType) {
-      case 'track':
-        return <Track txHash={txHash} />;
-      case 'wallets':
-        return <Wallets />;
-      case 'portfolio':
-        return <Portfolio />;
-      case 'basic':
-        return <Basic />;
-      case 'blockchains':
-        return <Blockchains onSelect={onSelect} />;
-      case 'paths':
-        return <Paths />;
-      case 'pubkeys':
-        return <Pubkeys />;
-      case 'balances':
-        return <Balances />;
-      case 'pending':
-        return <Pending />;
-      case 'transfer':
-        return <Transfer openModal={openModal} />;
-      case 'swaps':
-        return <Swap />;
-      case 'earn':
-        return <Earn />;
-      case 'loan':
-        return <Loan />;
-      // Add additional cases as necessary
-      default:
-        return <div>No valid intent selected</div>;
+    if (intent) {
+      let params = intent.split(':');
+      let intentType = params[0];
+      //parse intent and get props
+      let txHash = params[1];
+      switch (intentType) {
+        case 'track':
+          return <Track txHash={txHash} />;
+        case 'wallets':
+          return <Wallets/>;
+        case 'portfolio':
+          return <Portfolio />;
+        case 'basic':
+          return <Basic />;
+        case 'blockchains':
+          return <Blockchains onSelect={onSelect} />;
+        case 'paths':
+          return <Paths/>;
+        case 'pubkeys':
+          return <Pubkeys />;
+        case 'balances':
+          return <Balances />;
+        case 'pending':
+          return <Pending />;
+        case 'transfer':
+          return <Transfer />;
+        case 'swaps':
+          return <Swap />;
+        case 'earn':
+          return <Earn openModal={openModal} />;
+        case 'loan':
+          return <Loan />;
+        // Add additional cases as necessary
+        default:
+          return <div>No valid intent selected</div>;
+      }
     }
   };
 

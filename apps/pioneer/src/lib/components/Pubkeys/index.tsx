@@ -19,7 +19,7 @@ import { usePioneer } from '../../context';
 import Pubkey from '../../components/Pubkey'; // Adjust the import path as needed
 import { getWalletContent } from '../../components/WalletIcon';
 
-export default function Pubkeys({ onClose }) {
+export default function Pubkeys() {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
@@ -32,12 +32,12 @@ export default function Pubkeys({ onClose }) {
     }
   }, [app, app?.pubkeys]);
 
-  const handlePubkeyClick = (pubkey) => {
+  const handlePubkeyClick = (pubkey: any) => {
     setSelectedPubkey(pubkey);
     onOpen();
   };
 
-  const handleCopy = (address) => {
+  const handleCopy = (address: any) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(''), 3000);
@@ -45,7 +45,7 @@ export default function Pubkeys({ onClose }) {
 
   return (
     <div>
-      {app?.pubkeys?.map((key, index) => (
+      {app?.pubkeys?.map((key: any, index: any) => (
         <Flex key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
           <Box>
             <Text fontWeight="bold">{key.networkId}: {key.address}</Text>

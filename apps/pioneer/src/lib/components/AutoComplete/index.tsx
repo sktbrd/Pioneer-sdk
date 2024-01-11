@@ -1,7 +1,7 @@
 import { Box, Input, List, ListItem } from '@chakra-ui/react';
 import React from 'react';
 
-const AutocompleteInput = ({ inputValue, onInputChange, options, onOptionSelect }) => {
+const AutocompleteInput = ({ inputValue, onInputChange, options, onOptionSelect }: any) => {
   return (
     <Box position="relative">
       <Input
@@ -22,7 +22,7 @@ const AutocompleteInput = ({ inputValue, onInputChange, options, onOptionSelect 
           w="full"
           zIndex="dropdown"
         >
-          {options.map((option, index) => (
+          {options.map((option: any, index: any) => (
             <ListItem
               _hover={{ bg: 'gray.100' }}
               cursor="pointer"

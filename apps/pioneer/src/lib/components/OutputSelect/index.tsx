@@ -105,7 +105,7 @@ export default function OutputSelect({ onClose, onSelect }: any) {
       console.log('pubkeys: ', pubkeys);
       console.log('balances: ', balances);
 
-      let pubkeyForContext = pubkeys.find((pubkey) => pubkey.networkId === asset.chainId);
+      let pubkeyForContext = pubkeys.find((pubkey: any) => pubkey.networkId === asset.chainId);
       console.log('pubkeyForContext: ', pubkeyForContext);
 
       if (pubkeyForContext) {

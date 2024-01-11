@@ -27,15 +27,20 @@ const getAccount = (address: string): Promise<any> => {
 const getBalance = async (address: any[]) => {
   //console.log(address)
   try {
+    console.log('address: ', address[0].address);
+    console.log(
+      'URL: ',
+      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/osmosis/${address[0].address}`,
+    );
     const balanceOsmo = await RequestClient.get(
       `${PIONEER_API_URI}/api/v1/getPubkeyBalance/osmosis/${address[0].address}`,
     );
     console.log('balanceOsmo: ', balanceOsmo);
     await AssetValue.loadStaticAssets();
     const assetValueNativeOsmo = AssetValue.fromStringSync('OSMO.OSMO', balanceOsmo);
-    //console.log("assetValueNativeOsmo: ", assetValueNativeOsmo)
+    console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
     let balances = [assetValueNativeOsmo];
-    //console.log("balances: ", balances)
+    console.log('balances: ', balances);
     //TODO get token balances
 
     return balances;

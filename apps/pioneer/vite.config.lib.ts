@@ -14,7 +14,10 @@ export default defineConfig(({}) => {
   // const env = loadEnv(mode, process.cwd(), '')
   return {
     // vite config
-    define: {},
+    define: {
+      'process.env.VITE_BLOCKCHAIR_API_KEY': JSON.stringify(process.env.VITE_BLOCKCHAIR_API_KEY),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    },
     plugins: [react()],
     resolve: {
       alias: {
@@ -96,7 +99,7 @@ export default defineConfig(({}) => {
       lib: {
         entry: resolve(__dirname, 'src/lib/index.tsx'), // Set the entry file of your library
         name: 'PioneerLib', // Set the name of your library
-        fileName: (format) => `pioneer.${format}.js`, // Set the fileName of your library
+        fileName: (format) => `my-library.${format}.js`, // Set the fileName of your library
       },
       rollupOptions: {
         input: {

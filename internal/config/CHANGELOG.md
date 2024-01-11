@@ -1,5 +1,11 @@
 # @internal/config
 
+## 2.1.0
+
+### Minor Changes
+
+- bump
+
 ## 0.0.0-rc.9
 
 ### Patch Changes

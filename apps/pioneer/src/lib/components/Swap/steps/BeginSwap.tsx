@@ -1,3 +1,4 @@
+'use client';
 import { StarIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Avatar,

@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { Box, Stack, Avatar, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
+import { Avatar, Box, Stack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import React from 'react';
+
 import { usePioneer } from '../../context';
 
 export default function Balance({ onClose, balance }: any) {
@@ -7,12 +8,13 @@ export default function Balance({ onClose, balance }: any) {
   const { app } = state;
 
   // Checking if pubkey is already an object, if not, parse it.
-  const data = (typeof balance === 'object' && balance !== null) ? balance : JSON.parse(balance || '{}');
+  const data =
+    typeof balance === 'object' && balance !== null ? balance : JSON.parse(balance || '{}');
 
   return (
     <Stack>
       <Box>
-        <Avatar size="xl" name="Placeholder Icon" /> {/* Placeholder for avatar icon */}
+        <Avatar name="Placeholder Icon" size="xl" /> {/* Placeholder for avatar icon */}
       </Box>
       <Table variant="simple">
         <Thead>
@@ -22,10 +24,22 @@ export default function Balance({ onClose, balance }: any) {
           </Tr>
         </Thead>
         <Tbody>
-          {Object.entries(data).map(([key, value]) => (
+          {Object.entries(data as Record<string, unknown>).map(([key, value]) => (
             <Tr key={key}>
               <Td>{key}</Td>
-              <Td>{value}</Td>
+              <Td>
+                {typeof value === 'string'
+                  ? value
+                  : typeof value === 'number'
+                    ? value.toString()
+                    : typeof value === 'boolean'
+                      ? value.toString()
+                      : value === null
+                        ? 'null'
+                        : typeof value === 'object'
+                          ? JSON.stringify(value)
+                          : 'Unsupported Type'}
+              </Td>
             </Tr>
           ))}
         </Tbody>

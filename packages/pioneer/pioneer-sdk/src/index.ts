@@ -141,8 +141,8 @@ export class SDK {
   public setBlockchains: (blockchains: any) => Promise<void>;
   public appName: string;
   public appIcon: any;
-  private init: (walletsVerbose: any, setup: any) => Promise<any>;
-  private verifyWallet: () => Promise<void>;
+  public init: (walletsVerbose: any, setup: any) => Promise<any>;
+  public verifyWallet: () => Promise<void>;
   constructor(spec: string, config: PioneerSDKConfig) {
     this.status = 'preInit';
     this.appName = 'pioneer-sdk';

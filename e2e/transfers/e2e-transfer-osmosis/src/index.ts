@@ -143,8 +143,13 @@ const test_service = async function (this: any) {
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
         assert(balance.length > 0)
-        //verify balances
 
+        //verify balances
+        let balanceAsset = balance[0].balance
+        if(balanceAsset < TEST_AMOUNT) {
+            log.error("NO MONIES! NEED TO FUND ACCOUNT! balanceAsset: ",balance[0])
+            throw Error("NO MONIES! NEED TO FUND ACCOUNT!")
+        }
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);

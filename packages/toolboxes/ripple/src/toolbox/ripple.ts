@@ -1,8 +1,8 @@
 import { AssetValue, RequestClient } from '@coinmasters/helpers';
 import { Chain, RPCUrl } from '@coinmasters/types';
 
-//const PIONEER_API_URI = 'https://pioneers.dev';
-const PIONEER_API_URI = 'http://127.0.0.1:9001';
+const PIONEER_API_URI = 'https://pioneers.dev';
+// const PIONEER_API_URI = 'http://127.0.0.1:9001';
 
 const getAccount = (address: string): Promise<any> =>
   RequestClient.get<any>(`${PIONEER_API_URI}/api/v1/getAccountInfo/ripple/${address}`);

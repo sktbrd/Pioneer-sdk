@@ -5,6 +5,7 @@ export const getExplorerTxUrl = ({ chain, txHash }: { txHash: string; chain: Cha
 
   switch (chain) {
     case Chain.Binance:
+    case Chain.Dash:
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
     case Chain.Maya:

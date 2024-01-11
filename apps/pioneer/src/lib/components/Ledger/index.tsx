@@ -19,15 +19,15 @@ import Blockchains from '../Blockchains';
 
 import { usePioneer } from '../../context';
 
-export default function Ledger({ onClose }) {
+export default function Ledger() {
   const { state, connectWallet, clearHardwareError, hideModal } = usePioneer();
   const { app, intent, hardwareError } = state;
   const [webUsbSupported, setWebUsbSupported] = useState(true);
   const [isLocked, setIsLocked] = useState(false);
   const [isWrongApp, setIsWrongApp] = useState(false);
   const [isAlreadyClaimed, setIsAlreadyClaimed] = useState(false);
-  const [connectedChains, setConnectedChains] = useState([]);
-  const [hiddenChains, setHiddenChains] = useState(new Set());
+  // const [connectedChains, setConnectedChains] = useState([]);
+  // const [hiddenChains, setHiddenChains] = useState(new Set());
   const [intentBlockchain, setIntentBlockchain] = useState(null);
 
   const toast = useToast();
@@ -43,25 +43,25 @@ export default function Ledger({ onClose }) {
         hideModal();
       } else {
         if (parts[0] === 'transfer' && parts.length >= 3) {
-          console.log('Setting Intent Blockchain: ', ChainToNetworkId[parts[2]]);
+          //console.log('Setting Intent Blockchain: ', ChainToNetworkId[parts[2]]);
           //get caip
-          setIntentBlockchain(ChainToNetworkId[parts[2]]); // Assuming the third part is the blockchain identifier
-          let allChains = app.blockchains.map((blockchain) => {
-            let pubkeysForChain = app.pubkeys.filter((pubkey) => pubkey.networkId === blockchain);
-            let balancesForChain = app.balances.filter(
-              (balance) => balance.networkId === blockchain,
-            );
-            let status = pubkeysForChain.length > 0 ? 'connected' : 'disconnected';
-
-            return {
-              blockchain,
-              pubkeys: pubkeysForChain,
-              balances: balancesForChain,
-              status,
-            };
-          });
-          allChains = allChains.filter((chain) => chain.blockchain === intentBlockchain);
-          setConnectedChains(allChains);
+          //setIntentBlockchain(ChainToNetworkId[parts[2]]); // Assuming the third part is the blockchain identifier
+          // let allChains = app.blockchains.map((blockchain) => {
+          //   let pubkeysForChain = app.pubkeys.filter((pubkey: any) => pubkey.networkId === blockchain);
+          //   let balancesForChain = app.balances.filter(
+          //     (balance: any) => balance.networkId === blockchain,
+          //   );
+          //   let status = pubkeysForChain.length > 0 ? 'connected' : 'disconnected';
+          //
+          //   return {
+          //     blockchain,
+          //     pubkeys: pubkeysForChain,
+          //     balances: balancesForChain,
+          //     status,
+          //   };
+          // });
+          // allChains = allChains.filter((chain) => chain.blockchain === intentBlockchain);
+          // setConnectedChains(allChains);
         }
       }
     } catch (e) {
@@ -113,9 +113,9 @@ export default function Ledger({ onClose }) {
     setWebUsbSupported('usb' in navigator);
   }, []);
 
-  const attemptConnect = async (blockchain) => {
+  const attemptConnect = async (blockchain: any) => {
     try {
-      const result = await connectWallet('LEDGER', NetworkIdToChain[blockchain]);
+      const result: any = await connectWallet('LEDGER', NetworkIdToChain[blockchain]);
       if (result && result.error) {
         toast({
           title: 'Connection Error',
@@ -126,11 +126,11 @@ export default function Ledger({ onClose }) {
         });
       } else {
         // Update connection status
-        setConnectedChains((prev) =>
-          prev.map((chain) =>
-            chain.blockchain === blockchain ? { ...chain, status: 'connected' } : chain,
-          ),
-        );
+        // setConnectedChains((prev: any) =>
+        //   prev.map((chain: any) =>
+        //     chain.blockchain === blockchain ? { ...chain, status: 'connected' } : chain,
+        //   ),
+        // );
         await app.getPubkeys();
         app.getBalances();
       }
@@ -146,7 +146,7 @@ export default function Ledger({ onClose }) {
     setIsAlreadyClaimed(false);
   };
 
-  let onSelect = (blockchain) => {
+  let onSelect = (blockchain: any) => {
     console.log('onSelect', blockchain);
     attemptConnect(blockchain);
   };
