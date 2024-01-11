@@ -1,13 +1,5 @@
 import { KeepKeySdk } from '@keepkey/keepkey-sdk';
-import {
-  ARBToolbox,
-  AVAXToolbox,
-  BSCToolbox,
-  ETHToolbox,
-  getProvider,
-  MATICToolbox,
-  OPToolbox,
-} from '@swapkit/toolbox-evm';
+import { getProvider, getToolboxByChain } from '@swapkit/toolbox-evm';
 import type { ConnectWalletParams, DerivationPathArray, EVMChain } from '@swapkit/types';
 import { Chain, WalletOption } from '@swapkit/types';
 
@@ -45,42 +37,10 @@ type KeepKeyOptions = {
   blockchairApiKey?: string;
   covalentApiKey?: string;
   chain: Chain;
-  derivationPath?: any;
+  derivationPath?: DerivationPathArray;
 };
 
-const getEVMWalletMethods = async ({
-  api,
-  sdk,
-  chain,
-  ethplorerApiKey,
-  covalentApiKey,
-  rpcUrl,
-  derivationPath,
-}: any) => {
-  const provider = getProvider(chain as EVMChain, rpcUrl);
-  const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
-  const address = await signer.getAddress();
-  const evmParams = { api, signer, provider };
-
-  switch (chain) {
-    case Chain.Ethereum:
-      return { ...ETHToolbox({ ...evmParams, ethplorerApiKey }), getAddress: () => address };
-    case Chain.BinanceSmartChain:
-      return { ...BSCToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-    case Chain.Arbitrum:
-      return { ...ARBToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-    case Chain.Optimism:
-      return { ...OPToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-    case Chain.Polygon:
-      return { ...MATICToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-    case Chain.Avalanche:
-      return { ...AVAXToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-    default:
-      throw new Error('Chain not supported');
-  }
-};
-
-const getToolbox = async ({
+const getWalletMethods = async ({
   sdk,
   apiClient,
   rpcUrl,
@@ -101,48 +61,49 @@ const getToolbox = async ({
         throw new Error('Ethplorer API key not found');
       if (chain !== Chain.Ethereum && !covalentApiKey)
         throw new Error('Covalent API key not found');
-      const walletMethods = await getEVMWalletMethods({
-        sdk,
-        apiClient,
-        chain,
-        covalentApiKey,
-        derivationPath,
-        ethplorerApiKey,
-        rpcUrl,
-      });
-      return { address: walletMethods.getAddress(), walletMethods };
+
+      const provider = getProvider(chain as EVMChain, rpcUrl);
+      const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
+      const address = await signer.getAddress();
+      const evmParams = {
+        api: apiClient,
+        signer,
+        provider,
+        covalentApiKey: covalentApiKey!,
+        ethplorerApiKey: ethplorerApiKey!,
+      };
+
+      return { ...getToolboxByChain(chain)(evmParams), getAddress: () => address };
     }
     case Chain.Binance: {
-      const walletMethods = await binanceWalletMethods({ sdk, derivationPath });
-      return { address: await walletMethods.getAddress(), walletMethods };
+      return binanceWalletMethods({ sdk, derivationPath });
     }
     case Chain.Cosmos: {
-      const walletMethods = await cosmosWalletMethods({ sdk, derivationPath });
-      return { address: await walletMethods.getAddress(), walletMethods };
+      return cosmosWalletMethods({ sdk, derivationPath, api: apiClient });
     }
     case Chain.THORChain: {
-      const walletMethods = await thorchainWalletMethods({ sdk, derivationPath });
-      return { address: await walletMethods.getAddress(), walletMethods };
+      return thorchainWalletMethods({ sdk, derivationPath });
     }
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const walletMethods = await utxoWalletMethods({
+      return utxoWalletMethods({
         apiKey: blockchairApiKey,
         apiClient,
         sdk,
         chain,
         derivationPath,
       });
-      return { address: walletMethods.getAddress(), walletMethods };
     }
     default:
       throw new Error('Chain not supported ' + chain);
   }
 };
 
-export const checkKeepkeyAvailability = async (spec: string) => {
+export const checkKeepkeyAvailability = async (
+  spec: string = 'http://localhost:1646/spec/swagger.json',
+) => {
   try {
     const response = await fetch(spec);
     if (response.status === 200) {
@@ -157,19 +118,15 @@ export const checkKeepkeyAvailability = async (spec: string) => {
 
 // kk-sdk docs: https://medium.com/@highlander_35968/building-on-the-keepkey-sdk-2023fda41f38
 // test spec: if offline, launch keepkey-bridge
-let attempt = 0;
-const checkAndLaunch = async () => {
-  attempt++;
-  if (!(await checkKeepkeyAvailability('http://localhost:1646/spec/swagger.json'))) {
-    if (attempt === 3) {
-      alert(
-        'KeepKey desktop is required for keepkey-sdk, please go to https://keepkey.com/get-started',
-      );
-    } else {
-      window.location.assign('keepkey://launch');
-      await new Promise((resolve) => setTimeout(resolve, 30000));
-      checkAndLaunch();
-    }
+const checkAndLaunch = async (attempts: number) => {
+  if (attempts === 0)
+    alert(
+      'KeepKey desktop is required for keepkey-sdk, please go to https://keepkey.com/get-started',
+    );
+  if (!(await checkKeepkeyAvailability())) {
+    window.location.assign('keepkey://launch');
+    await new Promise((resolve) => setTimeout(resolve, 30000));
+    checkAndLaunch(attempts - 1);
   }
 };
 
@@ -180,17 +137,17 @@ const connectKeepkey =
     addChain,
     config: { keepkeyConfig, covalentApiKey, ethplorerApiKey = 'freekey', blockchairApiKey },
   }: ConnectWalletParams) =>
-  async (chains: typeof KEEPKEY_SUPPORTED_CHAINS, derivationPaths?: DerivationPathArray) => {
+  async (chains: typeof KEEPKEY_SUPPORTED_CHAINS, derivationPaths?: DerivationPathArray[]) => {
     if (!keepkeyConfig) throw new Error('KeepKey config not found');
 
-    await checkAndLaunch();
+    await checkAndLaunch(3);
 
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
 
-    const toolboxPromises = chains.map((chain, i) => {
+    const toolboxPromises = chains.map(async (chain, i) => {
       const derivationPath = derivationPaths ? derivationPaths[i] : undefined;
-      return getToolbox({
+      const walletMethods = await getWalletMethods({
         sdk: keepKeySdk,
         apiClient: apis[chain],
         rpcUrl: rpcUrls[chain],
@@ -199,12 +156,16 @@ const connectKeepkey =
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,
-      }).then(({ address, walletMethods }) => {
-        addChain({
-          chain,
-          walletMethods,
-          wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-        });
+      });
+
+      addChain({
+        chain,
+        walletMethods,
+        wallet: {
+          address: walletMethods.getAddress(),
+          balance: [],
+          walletType: WalletOption.KEEPKEY,
+        },
       });
     });
 
@@ -216,5 +177,5 @@ const connectKeepkey =
 export const keepkeyWallet = {
   connectMethodName: 'connectKeepkey' as const,
   connect: connectKeepkey,
-  isDetected: () => checkKeepkeyAvailability('http://localhost:1646/spec/swagger.json'),
+  isDetected: () => checkKeepkeyAvailability(),
 };

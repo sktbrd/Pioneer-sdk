@@ -2,7 +2,7 @@ import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import { derivationPathToString } from '@swapkit/helpers';
 import type { EVMTxParams } from '@swapkit/toolbox-evm';
 import type { Chain, DerivationPathArray } from '@swapkit/types';
-import { ChainToChainId, DerivationPath } from '@swapkit/types';
+import { ChainToChainId } from '@swapkit/types';
 import { AbstractSigner, type JsonRpcProvider, type Provider } from 'ethers';
 
 import { bip32ToAddressNList } from '../helpers/coins.ts';
@@ -10,7 +10,7 @@ import { bip32ToAddressNList } from '../helpers/coins.ts';
 interface KeepKeyEVMSignerParams {
   sdk: KeepKeySdk;
   chain: Chain;
-  derivationPath: DerivationPathArray;
+  derivationPath?: DerivationPathArray;
   provider: Provider | JsonRpcProvider;
 }
 
@@ -25,26 +25,19 @@ export class KeepKeySigner extends AbstractSigner {
     super();
     this.sdk = sdk;
     this.chain = chain;
-    this.derivationPath = derivationPath;
+    this.derivationPath = derivationPath || [44, 60, 0, 0, 0];
     this.address = '';
     this.provider = provider;
   }
 
   signTypedData(): Promise<string> {
-    throw new Error('this method is not implemented');
+    throw new Error('this method is not impmented');
   }
 
   getAddress = async () => {
     if (this.address) return this.address;
-    let derivationPath;
-    if (!this.derivationPath) {
-      derivationPath = DerivationPath['GAIA'];
-    } else {
-      //convert to bip32 format
-      derivationPath = `m/${derivationPathToString(this.derivationPath)}`;
-    }
     const { address } = await this.sdk.address.ethereumGetAddress({
-      address_n: bip32ToAddressNList(derivationPath),
+      address_n: bip32ToAddressNList(`m/${derivationPathToString(this.derivationPath)}`),
     });
 
     this.address = address;
@@ -75,7 +68,7 @@ export class KeepKeySigner extends AbstractSigner {
     if (!nonce) throw new Error('Missing nonce');
     if (!data) throw new Error('Missing data');
 
-    const isEIP1559 = maxFeePerGas && maxPriorityFeePerGas;
+    const isEIP1559 = (maxFeePerGas || maxPriorityFeePerGas) && !gasPrice;
     if (isEIP1559 && !maxFeePerGas) throw new Error('Missing maxFeePerGas');
     if (isEIP1559 && !maxPriorityFeePerGas) throw new Error('Missing maxFeePerGas');
     if (!isEIP1559 && !gasPrice) throw new Error('Missing gasPrice');
@@ -85,7 +78,6 @@ export class KeepKeySigner extends AbstractSigner {
     const nonceValue = nonce
       ? BigInt(nonce)
       : BigInt(await this.provider.getTransactionCount(await this.getAddress(), 'pending'));
-    const nonceHex = '0x' + nonceValue.toString(16);
 
     const input = {
       gas: toHexString(BigInt(gasLimit)),
@@ -94,7 +86,7 @@ export class KeepKeySigner extends AbstractSigner {
       chainId: toHexString(BigInt(ChainToChainId[this.chain])),
       to,
       value: toHexString(BigInt(value || 0)),
-      nonce: nonceHex,
+      nonce: toHexString(nonceValue),
       data,
       ...(isEIP1559
         ? {
