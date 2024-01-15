@@ -15,7 +15,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@pioneer-platform/pioneer-caip": "^9.0.10",
     "@pioneer-platform/pioneer-client": "^9.0.19",
-    "@pioneer-platform/pioneer-coins": "^9.0.6",
+    "@pioneer-platform/pioneer-coins": "^9.2.2",
     "@types/react-helmet": "^6.1.11",
     "@types/uuid": "^9.0.6",
     "axios": "^1.5.1",

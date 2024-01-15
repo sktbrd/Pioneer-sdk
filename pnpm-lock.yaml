@@ -112,6 +112,36 @@ importers:
       '@chakra-ui/react':
         specifier: ^2.8.2
         version: 2.8.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.21)(framer-motion@10.16.16)(react-dom@18.2.0)(react@18.2.0)
+      '@coinmasters/wallet-evm-extensions':
+        specifier: workspace:*
+        version: link:../../packages/wallets/evm-extensions
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keepkey
+      '@coinmasters/wallet-keplr':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keplr
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../packages/wallets/keystore
+      '@coinmasters/wallet-ledger':
+        specifier: workspace:*
+        version: link:../../packages/wallets/ledger
+      '@coinmasters/wallet-metamask':
+        specifier: workspace:*
+        version: link:../../packages/wallets/metamask
+      '@coinmasters/wallet-okx':
+        specifier: workspace:*
+        version: link:../../packages/wallets/okx
+      '@coinmasters/wallet-trezor':
+        specifier: workspace:*
+        version: link:../../packages/wallets/trezor
+      '@coinmasters/wallet-wc':
+        specifier: workspace:*
+        version: link:../../packages/wallets/wc
+      '@coinmasters/wallet-xdefi':
+        specifier: workspace:*
+        version: link:../../packages/wallets/xdefi
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.11.1(@types/react@18.2.21)(react@18.2.0)
@@ -137,8 +167,8 @@ importers:
         specifier: ^9.0.19
         version: 9.0.19
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.0.6
-        version: 9.0.6(@types/node@20.10.4)
+        specifier: ^9.2.2
+        version: 9.2.2(@types/node@20.10.4)
       '@types/react-helmet':
         specifier: ^6.1.11
         version: 6.1.11
@@ -236,36 +266,6 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../packages/swapkit/types
-      '@coinmasters/wallet-evm-extensions':
-        specifier: workspace:*
-        version: link:../../packages/wallets/evm-extensions
-      '@coinmasters/wallet-keepkey':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keepkey
-      '@coinmasters/wallet-keplr':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keplr
-      '@coinmasters/wallet-keystore':
-        specifier: workspace:*
-        version: link:../../packages/wallets/keystore
-      '@coinmasters/wallet-ledger':
-        specifier: workspace:*
-        version: link:../../packages/wallets/ledger
-      '@coinmasters/wallet-metamask':
-        specifier: workspace:*
-        version: link:../../packages/wallets/metamask
-      '@coinmasters/wallet-okx':
-        specifier: workspace:*
-        version: link:../../packages/wallets/okx
-      '@coinmasters/wallet-trezor':
-        specifier: workspace:*
-        version: link:../../packages/wallets/trezor
-      '@coinmasters/wallet-wc':
-        specifier: workspace:*
-        version: link:../../packages/wallets/wc
-      '@coinmasters/wallet-xdefi':
-        specifier: workspace:*
-        version: link:../../packages/wallets/xdefi
       '@types/react':
         specifier: 18.2.21
         version: 18.2.21
@@ -6555,6 +6555,18 @@ packages:
       - '@types/node'
     dev: false
 
+  /@pioneer-platform/loggerdog@8.3.1(@types/node@20.10.4):
+    resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
+    dependencies:
+      os: 0.1.2
+      ts-node: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
   /@pioneer-platform/pioneer-caip@9.0.10:
     resolution: {integrity: sha512-x4mBgI8JcMRxDHx/etK2doPjzD8UBCWJ6VZ3SMJwgvpR3HDLmt6tH7sqpLaFmc3awAswwsi+OJcZA10gmC/Sug==}
     dependencies:
@@ -6805,6 +6817,17 @@ packages:
       - '@types/node'
       - bufferutil
       - utf-8-validate
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.2(@types/node@20.10.4):
+    resolution: {integrity: sha512-icvp0bI9r+6UYXvoZ3Kp7YDS8i76iNC7svQkRhoFgLrRALsCmhQgLhIjGrIgMM0SWGwQdL7XkoupkdWbPQ0fog==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
     dev: false
 
   /@pkgr/utils@2.4.2:

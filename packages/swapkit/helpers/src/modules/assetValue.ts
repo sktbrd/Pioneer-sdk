@@ -128,7 +128,8 @@ export class AssetValue extends BigIntArithmetics {
   }
 
   static fromStringSync(assetString: string, value: NumberPrimitives = 0) {
-    const { isSynthetic } = getAssetInfo(assetString);
+    const { isSynthetic, symbol, chain, isGasAsset, ticker, address } = getAssetInfo(assetString);
+    console.log("isSynthetic: ", { isSynthetic, symbol, chain, isGasAsset, ticker, address })
     const {
       tax,
       decimal,

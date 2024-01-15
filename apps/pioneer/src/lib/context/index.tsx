@@ -494,7 +494,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // @ts-ignore
           import.meta.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
         // @ts-ignore
-        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || setup?.blockchairApiKey,
+        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || setup?.blockchairApiKey || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
         // @ts-ignore
         walletConnectProjectId:
           // @ts-ignore
