@@ -41,6 +41,16 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@coinmasters/wallet-evm-extensions": "workspace:*",
+    "@coinmasters/wallet-keepkey": "workspace:*",
+    "@coinmasters/wallet-keplr": "workspace:*",
+    "@coinmasters/wallet-keystore": "workspace:*",
+    "@coinmasters/wallet-ledger": "workspace:*",
+    "@coinmasters/wallet-metamask": "workspace:*",
+    "@coinmasters/wallet-okx": "workspace:*",
+    "@coinmasters/wallet-trezor": "workspace:*",
+    "@coinmasters/wallet-wc": "workspace:*",
+    "@coinmasters/wallet-xdefi": "workspace:*",
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
     "@coinmasters/helpers": "workspace:*",
@@ -56,18 +66,6 @@
     "react-router-dom": "^6.16.0",
     "typescript": "5.2.2",
     "vite": "4.4.9"
-  },
-  "peerDependencies": {
-    "@coinmasters/wallet-evm-extensions": "workspace:*",
-    "@coinmasters/wallet-keepkey": "workspace:*",
-    "@coinmasters/wallet-keplr": "workspace:*",
-    "@coinmasters/wallet-keystore": "workspace:*",
-    "@coinmasters/wallet-ledger": "workspace:*",
-    "@coinmasters/wallet-metamask": "workspace:*",
-    "@coinmasters/wallet-okx": "workspace:*",
-    "@coinmasters/wallet-trezor": "workspace:*",
-    "@coinmasters/wallet-wc": "workspace:*",
-    "@coinmasters/wallet-xdefi": "workspace:*"
   },
   "eslintConfig": {
     "extends": "../../internal/eslint-config"
