@@ -10,7 +10,7 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
+import { WalletOption, availableChainsByWallet, getChainEnumValue } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
 console.log(process.env['BLOCKCHAIR_API_KEY'])
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
@@ -22,24 +22,12 @@ let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
-let BLOCKCHAIN = ChainToNetworkId['DASH']
-console.log("BLOCKCHAIN: ",BLOCKCHAIN)
-let ASSET = 'DASH'
-let MIN_BALANCE = process.env['MIN_BALANCE_DASH'] || "0.004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
-let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
-let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_DASH_ADDRESS = process.env['FAUCET_DASH_ADDRESS']
-if(!FAUCET_DASH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_DASH_ADDRESS
-
+let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 
 console.log("spec: ",spec)
-console.log("wss: ",wss)
 
 let txid:string
 let IS_SIGNED: boolean
-
 
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
@@ -52,7 +40,6 @@ const test_service = async function (this: any) {
         //if force new user
         const queryKey = "sdk:pair-keepkey:"+Math.random();
         log.info(tag,"queryKey: ",queryKey)
-        // const queryKey = "key:66fefdd6-7ea9-48cf-8e69-fc74afb9c45412"
         assert(queryKey)
 
         const username = "user:"+Math.random()
@@ -67,7 +54,6 @@ const test_service = async function (this: any) {
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
-            wss,
             paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
@@ -105,7 +91,11 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        let blockchains = AllChainsSupported.map(
+          // @ts-ignore
+          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        );
 
         // //connect
         // assert(blockchains)
@@ -120,51 +110,18 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
-        let paths = app.paths
-        assert(paths)
-        assert(paths[0])
-        let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"osmoPath: ",osmoPath)
-        assert(osmoPath)
-
         //
         await app.getPubkeys()
         log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
-        let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"pubkey: ",pubkey)
-        assert(pubkey.length > 0)
-        //verify pubkeys
 
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
-        //verify balances
+        log.info(tag,"balances: ",app.balances)
 
-        // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+
+        console.timeEnd('start2end');
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

@@ -4,13 +4,13 @@ import type {
   PancakeswapETHList,
   PancakeswapList,
   PangolinList,
+  PioneerList,
   StargateARBList,
   SushiswapList,
   ThorchainList,
   TraderjoeList,
   UniswapList,
   WoofiList,
-  PioneerList,
 } from '@coinmasters/tokens';
 import { BaseDecimal, Chain } from '@coinmasters/types';
 
@@ -162,7 +162,7 @@ export class AssetValue extends BigIntArithmetics {
 
   static fromChainOrSignature(assetString: CommonAssetString, value: NumberPrimitives = 0) {
     const { decimal, identifier } = getCommonAssetInfo(assetString);
-    if(!decimal || !identifier) throw Error("unknown coin! "+assetString)
+    if (!decimal || !identifier) throw Error('unknown coin! ' + assetString);
     const parsedValue = safeValue(value, decimal);
 
     return new AssetValue({ value: parsedValue, decimal, identifier });

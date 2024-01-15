@@ -2,48 +2,60 @@
     Pioneer Template
  */
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
-import AssetSelect from '../../components/AssetSelect';
-// import OutputSelect from "lib/components/OutputSelect";
-// import BlockchainSelect from "lib/components/BlockchainSelect";
-// import WalletSelect from "lib/components/WalletSelect";
-import Pending from '../../components/Pending';
+// Import or define this component
 import Balances from '../../components/Balances';
 import Basic from '../../components/Basic';
 import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
 import Loan from '../../components/Loan';
 import Paths from '../../components/Paths';
+// import OutputSelect from "lib/components/OutputSelect";
+// import BlockchainSelect from "lib/components/BlockchainSelect";
+// import WalletSelect from "lib/components/WalletSelect";
+import Wallets from '../../components/Wallets';
+import Pending from '../../components/Pending';
+import Pioneer from '../../components/Pioneer';
+import Portfolio from '../../components/Portfolio';
 import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
+import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
 
 const Home = () => {
+  const { txid } = useParams<{ txid?: string }>();
+  const { intent } = useParams<{ intent?: string }>();
   const { state, onStart } = usePioneer();
-  const { pubkeyContext, balances } = state;
+  const { pubkeyContext, app } = state;
+  const [searchInput, setSearchInput] = useState('portfolio');
+  const [filteredOptions, setFilteredOptions] = useState([
+    'portfolio',
+    'wallets',
+    'track',
+    'basic',
+    'blockchains',
+    'paths',
+    'pubkeys',
+    'balances',
+    'pending',
+    'transfer',
+    'swaps',
+    'earn',
+    'loan',
+  ]);
   const [address, setAddress] = useState('');
   const [modalType, setModalType] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate(); // Add this line to use the useHistory hook
+
+  // start the context provider
+  useEffect(() => {}, [intent]);
 
   // start the context provider
   useEffect(() => {
@@ -59,102 +71,177 @@ const Home = () => {
     onOpen();
   };
 
-  const onSelect = (asset: any) => {
-    //select asset
-    console.log('asset: ', asset);
+  const onSelect = async (blockchain: any) => {
+    // select asset
+    console.log('blockchain: ', blockchain);
+    // open blockchain modal
+    // connect wallet with just this blockchain
+    try {
+      await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      await app.getPubkeys();
+      await app.getBalances();
+    } catch (error) {
+      console.error('Error in onSelect:', error);
+      // Handle or report error
+    }
+  };
+
+  /*
+      Pioneer Intent Format
+  
+   */
+
+  // Handle input change for autocomplete
+  const handleInputChange = (inputValue) => {
+    setSearchInput(inputValue);
+    setFilteredOptions(
+      options.filter((option) => option.toLowerCase().includes(inputValue.toLowerCase())),
+    );
+  };
+
+  // Handle selection from autocomplete options
+  const handleOptionSelect = (option) => {
+    console.log('option: ', option);
+    switch (option) {
+      case 'wallets':
+        navigate('/intent/wallets');
+        break;
+      case 'portfolio':
+        navigate('/intent/portfolio');
+        break;
+      case 'track':
+        navigate('/intent/track');
+        break;
+      case 'basic':
+        navigate('/intent/basic');
+        break;
+      case 'blockchains':
+        navigate('/intent/blockchains');
+        break;
+      case 'paths':
+        navigate('/intent/paths');
+        break;
+      case 'pubkeys':
+        navigate('/intent/pubkeys');
+        break;
+      case 'balances':
+        navigate('/intent/balances');
+        break;
+      case 'pending':
+        navigate('/intent/pending');
+        break;
+      case 'transfer':
+        navigate('/intent/transfer');
+        break;
+      case 'swap':
+        navigate('/intent/swap');
+        break;
+      case 'swaps':
+        navigate('/intent/swaps');
+        break;
+      case 'earn':
+        navigate('/intent/earn');
+        break;
+      case 'loan':
+        navigate('/intent/loan');
+        break;
+      default:
+        console.log('No route for this option');
+    }
+  };
+
+  // Function to determine which component to render based on intent
+  const renderComponent = () => {
+    console.log('intent: ', intent);
+    let params = intent.split(':');
+    let intentType = params[0];
+    //parse intent and get props
+    let txHash = params[1];
+    switch (intentType) {
+      case 'track':
+        return <Track txHash={txHash} />;
+      case 'wallets':
+        return <Wallets />;
+      case 'portfolio':
+        return <Portfolio />;
+      case 'basic':
+        return <Basic />;
+      case 'blockchains':
+        return <Blockchains onSelect={onSelect} />;
+      case 'paths':
+        return <Paths />;
+      case 'pubkeys':
+        return <Pubkeys />;
+      case 'balances':
+        return <Balances />;
+      case 'pending':
+        return <Pending />;
+      case 'transfer':
+        return <Transfer openModal={openModal} />;
+      case 'swaps':
+        return <Swap />;
+      case 'earn':
+        return <Earn />;
+      case 'loan':
+        return <Loan />;
+      // Add additional cases as necessary
+      default:
+        return <div>No valid intent selected</div>;
+    }
   };
 
   return (
-    <div>
-      <Modal isOpen={isOpen} onClose={() => onClose()} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{modalType}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* Render content based on modalType */}
-            {/* {modalType === "Select wallet" && ( */}
-            {/*  <div> */}
-            {/*    <WalletSelect onClose={onClose}></WalletSelect> */}
-            {/*  </div> */}
-            {/* )} */}
-            {modalType === 'Select Asset' && (
+    <Flex alignItems="center" h="100vh" justifyContent="center">
+      <Box borderRadius="lg" borderWidth="1px" maxW="1200px" p={4} w="full">
+        <Flex>
+          {/* Left 1/3 of the card for the Pioneer element */}
+          <Box p={4} w="33.33%">
+            <Pioneer />
+          </Box>
+
+          {/* Right 2/3 of the card for search section */}
+          <Box maxH="80vh" overflowY="auto">
+            {intent ? (
+              // Render component based on intent
               <div>
-                <AssetSelect onlyOwned onClose={onClose} />
+                <Link as={RouterLink} to="/">
+                  {' '}
+                  {/* Link to close and navigate to base URL */}
+                  <Button>X</Button>
+                </Link>
+                {renderComponent()}
+              </div>
+            ) : (
+              // Render search interface
+              <div>
+                <Input
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  placeholder="What are you looking for?"
+                  size="lg"
+                  value={searchInput}
+                />
+                {filteredOptions.length > 0 && (
+                  <Box>
+                    {filteredOptions.map((option, index) => (
+                      <Button
+                        key={index}
+                        onClick={() => handleOptionSelect(option)}
+                        variant="ghost"
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </Box>
+                )}
+                <Button colorScheme="blue" mt={4}>
+                  Search
+                </Button>
               </div>
             )}
-            {/* {modalType === "Select Blockchain" && ( */}
-            {/*  <div> */}
-            {/*    <BlockchainSelect onClose={onClose}></BlockchainSelect> */}
-            {/*  </div> */}
-            {/* )} */}
-            {/* {modalType === "View Address" && ( */}
-            {/*  <div> */}
-            {/*    {JSON.stringify(pubkeyContext)} address: {address} */}
-            {/*  </div> */}
-            {/* )} */}
-            {/* {modalType === "Select Outbound" && ( */}
-            {/*  <div> */}
-            {/*    <OutputSelect onClose={onClose} onlyOwned={false}></OutputSelect> */}
-            {/*  </div> */}
-            {/* )} */}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {address}
-      <Tabs>
-        <TabList>
-          <Tab>Context</Tab>
-          <Tab>blockchains</Tab>
-          <Tab>paths</Tab>
-          <Tab>pubkeys</Tab>
-          <Tab>balances</Tab>
-          <Tab>Pending</Tab>
-          <Tab>Transfer</Tab>
-          <Tab>Swaps</Tab>
-          <Tab>Earn</Tab>
-          <Tab>Borrow</Tab>
-        </TabList>
-
-        <TabPanels>
-          <TabPanel>
-            <Basic />
-          </TabPanel>
-          <TabPanel>
-            <Blockchains />
-          </TabPanel>
-          <TabPanel>
-            <Paths />
-          </TabPanel>
-          <TabPanel>
-            <Pubkeys />
-          </TabPanel>
-          <TabPanel>
-            <Balances onSelect={onSelect} />
-          </TabPanel>
-          <TabPanel>
-            <Pending />
-          </TabPanel>
-          <TabPanel>
-            <Transfer openModal={openModal} />
-          </TabPanel>
-          <TabPanel>
-            <Swap />
-          </TabPanel>
-          <TabPanel>
-            <Earn />
-          </TabPanel>
-          <TabPanel>
-            <Loan />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </div>
+          </Box>
+        </Flex>
+      </Box>
+    </Flex>
   );
 };
 

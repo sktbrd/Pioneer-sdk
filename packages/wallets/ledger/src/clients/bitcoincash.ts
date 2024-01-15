@@ -1,5 +1,4 @@
 import { derivationPathToString } from '@coinmasters/helpers';
-import type { DerivationPathArray } from '@coinmasters/types';
 import { NetworkDerivationPath } from '@coinmasters/types';
 // @ts-expect-error
 import coininfo from 'coininfo';

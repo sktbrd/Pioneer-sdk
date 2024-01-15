@@ -1,4 +1,4 @@
-import { Search2Icon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon, Search2Icon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -13,8 +13,12 @@ import {
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
-
-import { usePioneer } from '../../context/Pioneer';
+import {
+  getWalletBadgeContent,
+  getWalletContent,
+  pioneerImagePng,
+} from '../../components/WalletIcon';
+import { usePioneer } from '../../context';
 
 export default function AssetSelect({ onSelect }: any) {
   const { state } = usePioneer();
@@ -67,7 +71,7 @@ export default function AssetSelect({ onSelect }: any) {
         setShowOwnedAssets(true);
         setCurrentPage(balances);
         console.log('balances: ', balances);
-        // setTotalAssets(balances.length);
+        //setTotalAssets(balances.length);
       }
     } catch (e) {
       console.error(e);
@@ -84,12 +88,7 @@ export default function AssetSelect({ onSelect }: any) {
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
-        <Input
-          value={search}
-          onChange={handleSearchChange}
-          placeholder="Bitcoin..."
-          type="text"
-        />
+        <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />
       </InputGroup>
       <Box>
         {/* <Text fontSize="2xl">Total Assets: {totalAssets}</Text> */}
@@ -100,8 +99,7 @@ export default function AssetSelect({ onSelect }: any) {
         {/*  Show only owned assets */}
         {/* </Checkbox> */}
         <Button onClick={toggleSortOrder} size="sm">
-          Sort by Value{' '}
-          {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          Sort by Value {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </Button>
         <br />
         <br />
@@ -110,18 +108,18 @@ export default function AssetSelect({ onSelect }: any) {
           <Box key={index}>
             <Flex
               alignItems="center"
-              borderRadius="md"
-              border="1px solid #fff"
               bg="black"
+              border="1px solid #fff"
+              borderRadius="md"
               boxShadow="sm"
               padding={2}
             >
               <Avatar
                 size="md"
-                src={`https://pioneers.dev/coins/${
-                  COIN_MAP_LONG[asset?.chain]
-                }.png`}
-              />
+                src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset?.chain]}.png`}
+              >
+                {getWalletBadgeContent(asset?.context.split(':')[0])}
+              </Avatar>
               <Box ml={3}>
                 <Text fontSize="sm">Asset: {asset?.caip}</Text>
                 <Text fontSize="sm">symbol: {asset?.symbol}</Text>

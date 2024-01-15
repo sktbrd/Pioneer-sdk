@@ -493,7 +493,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // @ts-ignore
           import.meta.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
         // @ts-ignore
-        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY,
+        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || setup?.blockchairApiKey,
         // @ts-ignore
         walletConnectProjectId:
           // @ts-ignore
@@ -534,16 +534,38 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         events.on(action, (data: any) => {
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
-            // @ts-ignore
             console.log('setting balances for context: ', appInit.context);
+            console.log('setting balances: ', data);
+
+            // Remove duplicates based on .caip property
+            const uniqueBalances = data.reduce((acc, currentItem) => {
+              if (!acc.some((item) => item.caip === currentItem.caip)) {
+                acc.push(currentItem);
+              }
+              return acc;
+            }, []);
+
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
+              localStorage.setItem(
+                appInit.context + ':balanceCache',
+                JSON.stringify(uniqueBalances),
+              );
           }
+
+          // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            // @ts-ignore
-            console.log('setting balances for context: ', appInit.context);
+            console.log('setting pubkeys for context: ', appInit.context);
+
+            // Remove duplicates based on .networkId property
+            const uniquePubkeys = data.reduce((acc, currentItem) => {
+              if (!acc.some((item) => item.networkId === currentItem.networkId)) {
+                acc.push(currentItem);
+              }
+              return acc;
+            }, []);
+
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(uniquePubkeys));
           }
           // @ts-ignore
           dispatch({
@@ -568,18 +590,27 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('allByCaip: ', allByCaip);
         await appInit.setBlockchains(allByCaip);
 
-        // balance cache
-        let balanceCache: any = localStorage.getItem(lastConnectedWallet + ':balanceCache');
-        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-        console.log('balanceCache: ', balanceCache);
-        await appInit.loadBalanceCache(balanceCache);
-
-        // pubkey cache
-        let pubkeyCache: any = localStorage.getItem(lastConnectedWallet + ':pubkeyCache');
-        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-        console.log('pubkeyCache: ', pubkeyCache);
-        await appInit.loadPubkeyCache(pubkeyCache);
       }
+
+      //add to local storage of connected wallets
+      // Retrieve paired wallets from local storage
+      const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
+
+      // Loop over each wallet and load balance and pubkey into cache
+      for (const wallet of pairedWallets) {
+        // Load balance cache
+        let balanceCache = localStorage.getItem(wallet + ':balanceCache');
+        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+        console.log('balanceCache for', wallet, ':', balanceCache);
+        await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
+
+        // Load pubkey cache
+        let pubkeyCache = localStorage.getItem(wallet + ':pubkeyCache');
+        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+        console.log('pubkeyCache for', wallet, ':', pubkeyCache);
+        await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
+      }
+
     } catch (e) {
       console.error(e);
     }

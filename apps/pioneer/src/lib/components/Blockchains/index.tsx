@@ -16,7 +16,7 @@ import { NetworkIdToChain } from '@coinmasters/types';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 
 export default function Blockchains({ onSelect }) {
   const { state } = usePioneer();
@@ -29,12 +29,6 @@ export default function Blockchains({ onSelect }) {
       console.log('app?.blockchains: ', app?.blockchains);
     }
   }, [app, app?.blockchains]);
-
-  const handlePubkeyClick = (pubkey) => {
-    setSelectedPubkey(pubkey);
-    onOpen();
-  };
-
   // Function to group and sort blockchains
   const groupAndSortBlockchains = (blockchains) => {
     const UTXO = blockchains.filter((chain) => chain.startsWith('bip122:'));

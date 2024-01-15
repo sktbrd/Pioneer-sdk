@@ -1,9 +1,7 @@
-import type { SwapKitCore } from '@coinmasters/core';
-import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/core';
-import { Chain, EVMChainList, WalletOption } from '@coinmasters/types';
-import { decryptFromKeystore } from '@coinmasters/wallet-keystore';
-import { getDerivationPathFor } from '@coinmasters/wallet-ledger';
-import { getPaths } from '@pioneer-platform/pioneer-coins';
+import type { SwapKitCore } from '@swapkit/core';
+import { Chain, EVMChainList, WalletOption } from '@swapkit/types';
+import { decryptFromKeystore } from '@swapkit/wallet-keystore';
+import { getDerivationPathFor } from '@swapkit/wallet-ledger';
 import { useCallback, useState } from 'react';
 
 import type { WalletDataType } from './types';
@@ -23,26 +21,24 @@ const AllChainsSupported = [
   Chain.BinanceSmartChain,
   Chain.Bitcoin,
   Chain.BitcoinCash,
-  Chain.Osmosis,
-  Chain.Ripple,
   Chain.Cosmos,
   Chain.Dogecoin,
   Chain.Ethereum,
   Chain.Litecoin,
   Chain.Optimism,
   Chain.Polygon,
-  Chain.Dash,
   Chain.Maya,
   Chain.Kujira,
   Chain.THORChain,
-  Chain.Zcash,
 ] as Chain[];
 
 export const availableChainsByWallet: Record<WalletOption, Chain[]> = {
   [WalletOption.BRAVE]: EVMChainList,
+  [WalletOption.OKX_MOBILE]: EVMChainList,
   [WalletOption.COINBASE_WEB]: EVMChainList,
   [WalletOption.KEPLR]: [Chain.Cosmos],
-  [WalletOption.KEYSTORE]: [
+  [WalletOption.KEYSTORE]: AllChainsSupported,
+  [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.Binance,
@@ -55,27 +51,9 @@ export const availableChainsByWallet: Record<WalletOption, Chain[]> = {
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
-    Chain.Maya,
-    Chain.Kujira,
     Chain.THORChain,
   ],
-  [WalletOption.LEDGER]: [
-    Chain.Arbitrum,
-    Chain.Avalanche,
-    Chain.Binance,
-    Chain.BinanceSmartChain,
-    Chain.Bitcoin,
-    Chain.BitcoinCash,
-    Chain.Cosmos,
-    Chain.Dogecoin,
-    Chain.Ethereum,
-    Chain.Litecoin,
-    Chain.Optimism,
-    Chain.Polygon,
-    Chain.Maya,
-    Chain.Kujira,
-    Chain.THORChain,
-  ],
+  [WalletOption.LEDGER]: AllChainsSupported,
   [WalletOption.TREZOR]: [
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -88,41 +66,7 @@ export const availableChainsByWallet: Record<WalletOption, Chain[]> = {
     Chain.Arbitrum,
     Chain.Polygon,
   ],
-  [WalletOption.METAMASK]: [
-    Chain.Arbitrum,
-    Chain.Avalanche,
-    Chain.Binance,
-    Chain.BinanceSmartChain,
-    Chain.Bitcoin,
-    Chain.BitcoinCash,
-    Chain.Cosmos,
-    Chain.Dogecoin,
-    Chain.Ethereum,
-    Chain.Litecoin,
-    Chain.Optimism,
-    Chain.Polygon,
-    Chain.Dash,
-    Chain.THORChain,
-  ],
-  [WalletOption.KEEPKEY]: [
-    Chain.Arbitrum,
-    Chain.Avalanche,
-    Chain.Binance,
-    Chain.BinanceSmartChain,
-    Chain.Bitcoin,
-    Chain.BitcoinCash,
-    Chain.Cosmos,
-    Chain.Dash,
-    Chain.Dogecoin,
-    Chain.Ethereum,
-    Chain.Litecoin,
-    Chain.Optimism,
-    Chain.Osmosis,
-    Chain.Polygon,
-    Chain.Ripple,
-    Chain.THORChain,
-    Chain.Zcash,
-  ],
+  [WalletOption.METAMASK]: EVMChainList,
   [WalletOption.TRUSTWALLET_WEB]: EVMChainList,
   [WalletOption.XDEFI]: AllChainsSupported,
   [WalletOption.WALLETCONNECT]: [
@@ -148,9 +92,29 @@ export const availableChainsByWallet: Record<WalletOption, Chain[]> = {
   ],
 };
 
+// Updated ConfirmationModal component
+const ConfirmationModal = ({ isOpen, paths, onConfirm, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div style={{ /* Your Modal Styling Here */ }}>
+      <h2>Confirm Paths</h2>
+      {paths.map((path, index) => (
+        <div key={index}>{path}</div>
+      ))}
+      <button onClick={onConfirm}>Confirm</button>
+      <button onClick={onClose}>Cancel</button>
+    </div>
+  );
+};
+
 export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
   const [loading, setLoading] = useState(false);
   const [chains, setChains] = useState<Chain[]>([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [walletOption, setWalletOption] = useState("");
+  const [derivationPaths, setDerivationPaths] = useState([]);
+
   const connectWallet = useCallback(
     async (option: WalletOption) => {
       if (!skClient) return alert('client is not ready');
@@ -159,31 +123,21 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           return skClient.connectXDEFI(chains);
         case WalletOption.OKX:
           return skClient.connectOkx(chains);
+        case WalletOption.COINBASE_WEB:
+        case WalletOption.METAMASK:
         case WalletOption.TRUSTWALLET_WEB:
           return skClient.connectEVMWallet(chains, option);
-
-        case WalletOption.LEDGER: {
-          //const derivationPath = getDerivationPathFor({ chain: chains[0], index: 0 });
-          let allByCaip = AllChainsSupported.map((chainStr) => {
-            const chainEnum = getChainEnumValue(chainStr);
-            return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-          }).filter((x) => x !== undefined); // This will filter out any undefined values
-          let paths = getPaths(allByCaip);
-          return skClient.connectLedger(chains[0], paths);
-        }
-        case WalletOption.METAMASK: {
-          let responsePair = await skClient.connectMetaMask(chains);
-          return responsePair;
-        }
         case WalletOption.KEEPKEY: {
-          console.log('chains: ', chains);
-          let allByCaip = chains.map((chainStr) => ChainToNetworkId[getChainEnumValue(chainStr)]);
-          console.log('allByCaip: ', allByCaip);
-          let allPaths = getPaths(allByCaip);
-          console.log('allPaths: ', allPaths);
-          let apiKey: string = await skClient.connectKeepkey(chains, allPaths);
-          localStorage.setItem('keepkeyApiKey', apiKey);
-          return true;
+          const derivationPaths = []; // Ensure derivationPaths is defined
+          for (let chain of chains) { // Use 'let' for iteration variable
+            const derivationPath = getDerivationPathFor({ chain: chain, index: 0 });
+            derivationPaths.push(derivationPath);
+          }
+          return skClient.connectKeepkey(chains, derivationPaths);
+        }
+        case WalletOption.LEDGER: {
+          const derivationPath = getDerivationPathFor({ chain: chains[0], index: 0 });
+          return skClient.connectLedger(chains[0], derivationPath);
         }
 
         case WalletOption.TREZOR: {
@@ -235,17 +189,33 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     async (option: WalletOption) => {
       if (!skClient) return alert('client is not ready');
       setLoading(true);
-      connectWallet(option);
+      console.log("Open Modal!")
+      setWalletOption(option);
+      const paths = chains.map((chain, index) => getDerivationPathFor({ chain, index: 0 }));
+      setDerivationPaths(paths);
+      setModalOpen(true);
 
-      const walletDataArray = await Promise.all(
-        chains.map((chain) => skClient.getWalletByChain(chain, true)),
-      );
-
-      setWallet(walletDataArray.filter(Boolean));
-      setLoading(false);
     },
     [chains, connectWallet, setWallet, skClient],
   );
+
+  // Function to handle path confirmation
+  const handleConfirmPaths = async () => {
+    await connectWallet(walletOption);
+
+    const walletDataArray = await Promise.all(
+      chains.map((chain) => skClient.getWalletByChain(chain, true)),
+    );
+
+    setWallet(walletDataArray.filter(Boolean));
+    setLoading(false);
+
+    setModalOpen(false);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   const isWalletDisabled = useCallback(
     (wallet: WalletOption) =>
@@ -281,7 +251,24 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           style={{ width: 50, height: 400 }}
           value={chains}
         >
-          {AllChainsSupported.map((chain) => (
+          {[
+            Chain.Avalanche,
+            Chain.Binance,
+            Chain.BinanceSmartChain,
+            Chain.Bitcoin,
+            Chain.BitcoinCash,
+            Chain.Cosmos,
+            Chain.Dogecoin,
+            Chain.Ethereum,
+            Chain.Litecoin,
+
+            Chain.THORChain,
+            Chain.Arbitrum,
+            Chain.Kujira,
+            Chain.Maya,
+            Chain.Optimism,
+            Chain.Polygon,
+          ].map((chain) => (
             <option key={chain} onClick={() => handleChainSelect(chain)} value={chain}>
               {chain}
             </option>
@@ -319,6 +306,12 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           </div>
         ))}
       </div>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        paths={derivationPaths}
+        onConfirm={handleConfirmPaths}
+        onClose={closeModal}
+      />
     </div>
   );
 };

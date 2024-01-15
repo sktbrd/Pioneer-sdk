@@ -1,11 +1,11 @@
 import {
   ARBToolbox,
   AVAXToolbox,
+  BASEToolbox,
   BSCToolbox,
   ETHToolbox,
   getProvider,
   MATICToolbox,
-  BASEToolbox,
   OPToolbox,
 } from '@coinmasters/toolbox-evm';
 import type { ConnectWalletParams, EVMChain } from '@coinmasters/types';

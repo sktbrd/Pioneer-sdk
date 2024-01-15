@@ -101,17 +101,18 @@ const test_service = async function (this: any) {
         walletsVerbose.push(walletKeepKey);
 
         let resultInit = await app.init(walletsVerbose, {})
-        // log.info(tag,"resultInit: ",resultInit)
+        log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
 
-        // //connect
-        // assert(blockchains)
-        // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
         resultInit = await app.pairWallet('KEEPKEY',blockchains)
         log.info(tag,"resultInit: ",resultInit)
+        assert(app.keepkeyApiKey)
+        if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){
+            log.alert("SET THIS IN YOUR ENV AS KEEPKEY_API_KEY: ",app.keepkeyApiKey)
+        }
 
         //check pairing
         // //context should match first account
@@ -119,13 +120,13 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
+        //get asset paths
         let paths = app.paths
         assert(paths)
         assert(paths[0])
-        let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"osmoPath: ",osmoPath)
-        assert(osmoPath)
+        let assetPath = paths.filter((e:any) => e.symbol === ASSET)
+        log.info(tag,"assetPath: ",assetPath)
+        assert(assetPath)
 
         //
         await app.getPubkeys()
@@ -134,13 +135,13 @@ const test_service = async function (this: any) {
         assert(app.pubkeys[0])
         let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"pubkey: ",pubkey)
+        log.info(tag,"pubkey: ",pubkey.length)
         assert(pubkey.length > 0)
         //verify pubkeys
 
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
+        log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
         assert(balance.length > 0)

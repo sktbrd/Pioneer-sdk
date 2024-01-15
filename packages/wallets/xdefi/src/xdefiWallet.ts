@@ -162,10 +162,10 @@ const getWalletMethodsForChain = async ({
         chain === Chain.Bitcoin
           ? BTCToolbox(params)
           : chain === Chain.BitcoinCash
-          ? BCHToolbox(params)
-          : chain === Chain.Dogecoin
-          ? DOGEToolbox(params)
-          : LTCToolbox(params);
+            ? BCHToolbox(params)
+            : chain === Chain.Dogecoin
+              ? DOGEToolbox(params)
+              : LTCToolbox(params);
 
       return { ...toolbox, transfer: walletTransfer };
     }

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 import Portfolio from '../Portfolio';
 
 // @ts-ignore
@@ -27,8 +27,8 @@ export default function MetaMask({ onClose, setIsOpenSide }: any) {
     try {
       setIsSyncing(true);
       await connectWallet('METAMASK');
-      // await app.getPubkeys();
-      // await app.getBalances();
+      await app.getPubkeys();
+      await app.getBalances();
     } catch (e) {
       console.error(e);
     }
@@ -92,9 +92,6 @@ export default function MetaMask({ onClose, setIsOpenSide }: any) {
 
       {hasConfirmed && balances.length > 0 && (
         <Box alignItems="flex-end" display="flex" flexDirection="column">
-          <Button mb={2} onClick={() => setIsOpenSide(true)}>
-            Pair More Wallets
-          </Button>
           <Button colorScheme="blue" onClick={onClose}>
             Continue
           </Button>

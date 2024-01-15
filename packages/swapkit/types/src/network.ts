@@ -300,8 +300,9 @@ export enum RPCUrl {
   Maya = 'https://tendermint.mayachain.info',
   MayaStagenet = 'https://stagenet.tendermint.mayachain.info',
   Optimism = 'https://mainnet.optimism.io',
-  Osmosis = 'https://rpc-osmosis.keplr.app',
+  Osmosis = 'https://lcd-osmosis.keplr.app',
   Polygon = 'https://polygon-rpc.com',
+  Ripple = 'https://xrplcluster.com',
   THORChain = 'https://rpc.thorswap.net',
   THORChainStagenet = 'https://stagenet-rpc.ninerealms.com',
 }

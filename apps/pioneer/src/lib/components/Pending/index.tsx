@@ -2,7 +2,7 @@ import { Button, Link } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 
 const Pending = ({ onClose }: any) => {
   const { createTx, readTx } = usePioneer();
@@ -56,7 +56,7 @@ const Pending = ({ onClose }: any) => {
     <div>
       {pendingTransactions.map((txId, index) => (
         <div key={index}>
-          <Link as={RouterLink} to={`/txid/${txId}`}>
+          <Link as={RouterLink} to={`/intent/track:${txId}`}>
             View Transaction {txId}
           </Link>
           <Button onClick={() => getTxs()}>refresh</Button>

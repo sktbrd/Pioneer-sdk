@@ -10,7 +10,7 @@ import { Doughnut } from 'react-chartjs-2';
 
 // import { Balances } from '../Balances';
 import Balances from '../../components/Balances';
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 // Adjust the import path according to your file structure
 
 // Register the necessary plugins for Chart.js
@@ -144,7 +144,6 @@ export default function Portfolio() {
         <Center mt="20px">
           <Spinner mr="3" />
           <Text>Loading Wallet Balances...</Text>
-          <Button onClick={() => showModal('ONBOARDING')}>Connect A Wallet!</Button>
         </Center>
       ) : (
         <div>

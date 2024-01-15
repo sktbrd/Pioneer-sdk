@@ -1,7 +1,7 @@
-import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import type { EVMTxParams } from '@coinmasters/toolbox-evm';
 import type { Chain, DerivationPathArray } from '@coinmasters/types';
 import { ChainToChainId } from '@coinmasters/types';
+import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import { AbstractSigner, type JsonRpcProvider, type Provider } from 'ethers';
 
 interface KeepKeyEVMSignerParams {

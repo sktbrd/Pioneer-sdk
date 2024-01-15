@@ -1,7 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
 
-import Pioneer from '../components/Pioneer';
-
 const Header = () => {
   return (
     <Flex
@@ -13,7 +11,6 @@ const Header = () => {
       gridGap={2}
     >
       <Box marginLeft="auto">
-        <Pioneer />
       </Box>
     </Flex>
   );

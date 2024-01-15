@@ -1,4 +1,6 @@
 {
+  "name": "@coinmasters/tokens",
+  "version": "3.0.1",
   "author": "swapkit-oss-team",
   "description": "SwapKit Lib tokens",
   "devDependencies": {
@@ -29,7 +31,6 @@
   "license": "Apache-2.0",
   "main": "./dist/index.cjs",
   "module": "./dist/index.es.js",
-  "name": "@coinmasters/tokens",
   "publishConfig": {
     "access": "public"
   },
@@ -37,6 +38,7 @@
   "repository": "https://github.com/thorswap/SwapKit.git",
   "scripts": {
     "build": "vite build",
+    "build:watch": "nodemon --watch src --exec 'pnpm run build'",
     "generate-tokens": "node ./scripts/fetchTokenLists.js",
     "clean": "rm -rf dist vite.config.ts.* .turbo node_modules",
     "lint": "prettier --check --write .",
@@ -44,6 +46,5 @@
     "test:coverage": "echo 'vitest run --coverage'"
   },
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "version": "3.0.1"
+  "types": "./dist/index.d.ts"
 }

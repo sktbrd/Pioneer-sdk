@@ -8,40 +8,48 @@ const sizeMap = {
   xxl: '5 MB',
 };
 
-const getSizeFor = (packagePath, sizeType) => {
+const getSizeFor = (packagePath, sizeType, isApp = false, packageNameOverride = null) => {
   const size = sizeMap[sizeType];
   if (!size) throw new Error(`Unknown size type ${sizeType}`);
-  const [, packageName] = packagePath.split('/');
+
+  const basePath = isApp ? './apps/' : './packages/';
+  const packageName = packageNameOverride || packagePath.split('/').pop();
 
   const packagePrefix = packagePath.includes('toolboxes') ? 'toolbox-' : packagePath.includes('wallets') ? 'wallet-' : '';
 
   return [
     {
       limit: size,
-      path: `./packages/${packagePath}/dist/*.cjs`,
-      name: `@coinmasters/${packagePrefix}${packageName} - CommonJS`,
+      path: `${basePath}${packagePath}/dist/*.cjs`,
+      name: `@${packagePrefix}${packageName} - CommonJS`,
     },
     {
       limit: size,
-      path: `./packages/${packagePath}/dist/*.js`,
-      name: `@coinmasters/${packagePrefix}${packageName} - ES Modules`,
+      path: `${basePath}${packagePath}/dist/*.js`,
+      name: `@${packagePrefix}${packageName} - ES Modules`,
     },
   ];
 };
 
 module.exports = [
-  ...getSizeFor('swapkit/api', 'xxs'),
-  ...getSizeFor('swapkit/core', 'xs'),
-  ...getSizeFor('swapkit/helpers', 'xs'),
-  ...getSizeFor('swapkit/sdk', 'xxl'),
-  ...getSizeFor('swapkit/tokens', 'xl'),
-  ...getSizeFor('swapkit/types', 'xxs'),
+  // Pioneer
+  ...getSizeFor('pioneer', 'xxl', true, 'pioneer-sdk/pioneer-react'),
+  ...getSizeFor('pioneer/pioneer-sdk', 'xxl'),
+
+  // Other packages
+  ...getSizeFor('coinmasters/api', 'xxs'),
+  ...getSizeFor('coinmasters/core', 'xs'),
+  ...getSizeFor('coinmasters/helpers', 'xs'),
+  ...getSizeFor('coinmasters/sdk', 'xxl'),
+  ...getSizeFor('coinmasters/tokens', 'xl'),
+  ...getSizeFor('coinmasters/types', 'xxs'),
 
   ...getSizeFor('toolboxes/cosmos', 'l'),
   ...getSizeFor('toolboxes/evm', 'l'),
   ...getSizeFor('toolboxes/utxo', 'l'),
 
   ...getSizeFor('wallets/evm-extensions', 'xxs'),
+  ...getSizeFor('wallets/keepkey', 'm'),
   ...getSizeFor('wallets/keplr', 'xxs'),
   ...getSizeFor('wallets/keystore', 'm'),
   ...getSizeFor('wallets/ledger', 'xl'),

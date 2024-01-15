@@ -278,7 +278,7 @@ export const getBalance = async ({
   chain: EVMChain;
   potentialScamFilter?: boolean;
 }) => {
-  console.log("EVM toolbox getBalance: ",address[0].address)
+  console.log('EVM toolbox getBalance: ', address[0].address);
   const tokenBalances = await api.getBalance(address[0].address);
   const evmGasTokenBalance = await provider.getBalance(address[0].address);
   //console.log('tokenBalances: ', tokenBalances);
@@ -289,12 +289,12 @@ export const getBalance = async ({
   );
   gasTokenBalance.address = address[0].address;
   let balances = [gasTokenBalance];
-  await AssetValue.loadStaticAssets()
+  await AssetValue.loadStaticAssets();
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < tokenBalances.length; i++) {
     let tokenBalance = tokenBalances[i];
     let formatedBalance = AssetValue.fromIdentifierSync(
-      chain.toString()+'.'+tokenBalance.symbol,
+      chain.toString() + '.' + tokenBalance.symbol,
       formatBigIntToSafeValue({ value: tokenBalance.value, decimal: tokenBalance.decimal }),
     );
     formatedBalance.address = address[0].address;

@@ -20,7 +20,7 @@ import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
 import { useState, useEffect } from "react";
 
 // @ts-ignore
-import { usePioneer } from "../../context/Pioneer";
+import { usePioneer } from "../../context";
 // Adjust the import path according to your file structure
 
 export default function SignTransaction({
@@ -63,19 +63,19 @@ export default function SignTransaction({
 
   const approveTransaction = async () => {
     // verify context of input asset
-    const contextSigning = assetContext.context;
-    console.log("contextSigning: ", contextSigning);
+    const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
 
-    // verify is connected
-    const isContextExist = app.wallets.some(
-      (wallet: any) => wallet.context === contextSigning
-    );
-    if (!isContextExist) {
+    if (!walletInfo) {
       setIsPairing(true);
-      const contextType = contextSigning.split(":")[0];
+      console.log("assetContext: ", assetContext);
+      const contextType = assetContext.context.split(":")[0];
       console.log("contextType: ", contextType);
       // connect it
       connectWallet(contextType.toUpperCase());
+      setTimeout(() => {
+        console.log("Retrying wallet connection...");
+        approveTransaction();
+      }, 3000);
     } else {
       console.log("Approving TX");
       setIsApproved(true);

@@ -1,11 +1,19 @@
-import { AssetValue, RequestClient, postRequest } from '@coinmasters/helpers';
+import { AssetValue, RequestClient } from '@coinmasters/helpers';
+import { RPCUrl } from '@coinmasters/types';
 import { ec as EC } from 'elliptic';
-
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 const PIONEER_API_URI = 'https://pioneers.dev';
+const TAG = ' | osmosis-toolbox | ';
+const getAccount = (address: string): Promise<any> => {
+  // Construct the URL
+  const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
 
-const getAccount = (address: string): Promise<any> =>
-  RequestClient.get<any>(`${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`);
+  // Log the URL
+  console.log(`Requesting URL: ${url}`);
+
+  // Make the request
+  return RequestClient.get<any>(url);
+};
 
 // const getTransferFee = async () => {
 //   const feesArray = await getRequest<BNBFees>(`${BINANCE_MAINNET_API_URI}/api/v1/fees`);
@@ -18,19 +26,22 @@ const getAccount = (address: string): Promise<any> =>
 
 const getBalance = async (address: any[]) => {
   //console.log(address)
+  try {
+    const balanceOsmo = await RequestClient.get(
+      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/osmosis/${address[0].address}`,
+    );
+    console.log('balanceOsmo: ', balanceOsmo);
+    await AssetValue.loadStaticAssets();
+    const assetValueNativeOsmo = AssetValue.fromStringSync('OSMO.OSMO', balanceOsmo);
+    //console.log("assetValueNativeOsmo: ", assetValueNativeOsmo)
+    let balances = [assetValueNativeOsmo];
+    //console.log("balances: ", balances)
+    //TODO get token balances
 
-  const balanceOsmo = await RequestClient.get(
-    `${PIONEER_API_URI}/api/v1/getPubkeyBalance/osmosis/${address[0].address}`,
-  );
-  //console.log("balanceOsmo: ", balanceOsmo);
-  await AssetValue.loadStaticAssets();
-  const assetValueNativeOsmo = AssetValue.fromStringSync('OSMO.OSMO', balanceOsmo);
-  //console.log("assetValueNativeOsmo: ", assetValueNativeOsmo)
-  let balances = [assetValueNativeOsmo];
-  //console.log("balances: ", balances)
-  //TODO get token balances
-
-  return balances;
+    return balances;
+  } catch (e) {
+    return [];
+  }
 };
 
 // const getFees = async () => {
@@ -71,13 +82,46 @@ const getBalance = async (address: any[]) => {
 //   return Number(chainData?.gas_rate || 0);
 // };
 
-const sendRawTransaction = (signedBz: string, sync = true) =>
-  RequestClient.post<any>(`${BINANCE_MAINNET_API_URI}/api/v1/broadcast?sync=${sync}`, {
-    body: signedBz,
-    headers: {
-      'content-type': 'text/plain',
-    },
-  });
+const sendRawTransaction = async (tx, sync = true) => {
+  let tag = TAG + ' | sendRawTransaction | ';
+  let output = {};
+
+  try {
+    // Construct payload
+    let payload = {
+      tx_bytes: tx,
+      mode: sync ? 'BROADCAST_MODE_SYNC' : 'BROADCAST_MODE_ASYNC',
+    };
+
+    // Define the URL for broadcasting transactions
+    let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
+    console.log(tag, 'urlRemote: ', urlRemote);
+
+    // Sending the transaction using RequestClient
+    let result = await RequestClient.post(urlRemote, {
+      body: JSON.stringify(payload),
+      headers: {
+        'content-type': 'application/json', // Assuming JSON content type is required
+      },
+    });
+    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+
+    // Handle the response
+    if (result.tx_response.txhash) {
+      output.txid = result.tx_response.txhash;
+      output.success = true;
+    } else {
+      output.success = false;
+      output.error = 'No txhash found in response';
+    }
+  } catch (error) {
+    console.error(tag, 'Error in broadcasting transaction: ', error);
+    output.success = false;
+    output.error = error.toString();
+  }
+
+  return output;
+};
 
 // const prepareTransaction = async (
 //   msg: any,

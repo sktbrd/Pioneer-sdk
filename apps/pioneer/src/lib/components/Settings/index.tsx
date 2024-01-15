@@ -19,7 +19,7 @@ import {
   Tabs,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
-import { usePioneer } from '../../context/Pioneer';
+import { usePioneer } from '../../context';
 import Path from '../../components/Path';
 import Basic from '..//Basic';
 import Blockchains from '../Blockchains';
@@ -55,7 +55,6 @@ export default function Settings({ onClose }) {
           <Tab>Context</Tab>
           <Tab>blockchains</Tab>
         </TabList>
-
         <TabPanels>
           <TabPanel>
             <Basic />

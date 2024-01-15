@@ -49,11 +49,12 @@
   "react-native": "./src/index.ts",
   "repository": "https://github.com/thorswap/SwapKit.git",
   "scripts": {
-    "build": "NODE_OPTIONS=--max_old_space_size=7000 vite build",
+    "build": "vite build",
+    "build:watch": "nodemon --watch src --exec 'pnpm run build'",
     "clean": "rm -rf dist vite.config.ts.* .turbo node_modules",
     "lint": "eslint ./ --ext .ts,.tsx --fix; tsc --noEmit"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.2"
+  "version": "3.0.3"
 }

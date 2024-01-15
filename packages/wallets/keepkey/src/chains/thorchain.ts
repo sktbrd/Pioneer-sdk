@@ -1,9 +1,9 @@
-import { StargateClient } from '@cosmjs/stargate';
-import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import type { DepositParam, TransferParams } from '@coinmasters/toolbox-cosmos';
 import { ThorchainToolbox } from '@coinmasters/toolbox-cosmos';
 import type {} from '@coinmasters/types';
 import { Chain, ChainId, DerivationPath, RPCUrl } from '@coinmasters/types';
+import { StargateClient } from '@cosmjs/stargate';
+import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 
 import { bip32ToAddressNList } from '../helpers/coins.ts';
 
@@ -96,7 +96,7 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit({
           signerAddress: fromAddress,
           signDoc: {
-            memo:memo || '',
+            memo: memo || '',
             sequence: accountInfo?.sequence.toString() ?? '0',
             source: addressInfo?.source?.toString() ?? '0',
             account_number: accountInfo?.accountNumber?.toString() ?? '0',

@@ -68,7 +68,7 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
 
         //Unsigned TX
         let unsignedTx = {
-          addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
+          addressNList: [2147483692, 2147483792, 2147483648, 0, 0],
           tx: tx,
           flags: undefined,
           lastLedgerSequence: parseInt(ledgerIndexCurrent + 1000000000).toString(),
@@ -82,11 +82,22 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         //push tx to api
         console.log('unsignedTx: ', JSON.stringify(unsignedTx));
         let responseSign = await sdk.xrp.xrpSignTransaction(unsignedTx);
+        responseSign = JSON.parse(responseSign);
         console.log('responseSign: ', responseSign);
+        console.log('responseSign: ', typeof responseSign);
+        console.log('responseSign.value: ', responseSign.value);
+        console.log('responseSign.value: ', responseSign.value.signatures[0]);
+        console.log(
+          'responseSign.value.signatures[0].serializedTx: ',
+          responseSign.value.signatures[0].serializedTx,
+        );
+        //broadcast
+        const resultBroadcast = await toolbox.sendRawTransaction(
+          responseSign.value.signatures[0].serializedTx,
+        );
+        console.log('resultBroadcast: ', resultBroadcast);
 
-        //broadcast TODO
-
-        return responseSign.transactionHash;
+        return resultBroadcast?.result?.tx_json?.hash;
       } catch (e) {
         console.error(e);
         throw e;
