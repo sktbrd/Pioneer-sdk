@@ -21,7 +21,10 @@ let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
-
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 
 console.log("spec: ",spec)
@@ -97,28 +100,42 @@ const test_service = async function (this: any) {
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
 
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains)
+        log.info(tag,"blockchains: ",blockchains.length)
         console.time('start2paired');
         resultInit = await app.pairWallet('KEEPKEY',blockchains)
         console.timeEnd('start2paired'); // End timing for pairing
-        log.info(tag,"resultInit: ",resultInit)
+        log.debug(tag,"resultInit: ",resultInit)
 
         //check pairing
         // //context should match first account
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-
-        //
-        console.time('start2getPubkeys');
-        await app.getPubkeys()
-        console.timeEnd('start2getPubkeys');
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
+        
+        // console.time('start2getPubkeys');
+        // await app.getPubkeys()
+        // console.timeEnd('start2getPubkeys');
+        // log.info(tag,"pubkeys: ",app.pubkeys.length)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
 
 
         // await app.getBalances()

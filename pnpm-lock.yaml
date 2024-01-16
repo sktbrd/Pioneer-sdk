@@ -756,6 +756,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.0.14
         version: 9.0.14
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.2
+        version: 9.2.2(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1017,6 +1020,9 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../swapkit/types
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.0.14
         version: 9.0.14
@@ -6477,30 +6483,6 @@ packages:
       '@parcel/watcher-win32-x64': 2.3.0
     dev: true
 
-  /@pioneer-platform/loggerdog@8.1.31(@types/node@15.14.9):
-    resolution: {integrity: sha512-6YtaAD6avWjhodX6hKtgUG2kZdVNbMXBYbl9ous4V/hht0CRHJxkHYpHo6nzDpD947sR0e03rpvQO/eCBo2mxA==}
-    dependencies:
-      os: 0.1.2
-      ts-node: 10.9.2(@types/node@15.14.9)(typescript@5.2.2)
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-    dev: false
-
-  /@pioneer-platform/loggerdog@8.1.31(@types/node@20.10.0):
-    resolution: {integrity: sha512-6YtaAD6avWjhodX6hKtgUG2kZdVNbMXBYbl9ous4V/hht0CRHJxkHYpHo6nzDpD947sR0e03rpvQO/eCBo2mxA==}
-    dependencies:
-      os: 0.1.2
-      ts-node: 10.9.2(@types/node@20.10.0)(typescript@5.2.2)
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-    dev: false
-
   /@pioneer-platform/loggerdog@8.1.31(@types/node@20.10.4):
     resolution: {integrity: sha512-6YtaAD6avWjhodX6hKtgUG2kZdVNbMXBYbl9ous4V/hht0CRHJxkHYpHo6nzDpD947sR0e03rpvQO/eCBo2mxA==}
     dependencies:
@@ -6513,11 +6495,23 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/loggerdog@8.1.31(@types/node@20.5.9):
-    resolution: {integrity: sha512-6YtaAD6avWjhodX6hKtgUG2kZdVNbMXBYbl9ous4V/hht0CRHJxkHYpHo6nzDpD947sR0e03rpvQO/eCBo2mxA==}
+  /@pioneer-platform/loggerdog@8.3.1(@types/node@15.14.9):
+    resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
     dependencies:
       os: 0.1.2
-      ts-node: 10.9.2(@types/node@20.5.9)(typescript@5.2.2)
+      ts-node: 10.9.2(@types/node@15.14.9)(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/loggerdog@8.3.1(@types/node@20.10.0):
+    resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
+    dependencies:
+      os: 0.1.2
+      ts-node: 10.9.2(@types/node@20.10.0)(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - '@swc/core'
@@ -6530,6 +6524,18 @@ packages:
     dependencies:
       os: 0.1.2
       ts-node: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/loggerdog@8.3.1(@types/node@20.5.9):
+    resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
+    dependencies:
+      os: 0.1.2
+      ts-node: 10.9.2(@types/node@20.5.9)(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - '@swc/core'
@@ -6636,7 +6642,7 @@ packages:
   /@pioneer-platform/pioneer-coins@8.1.90(@types/node@15.14.9):
     resolution: {integrity: sha512-78FqMZTQ3irrjQw19weyUzG3ot+sDD0DFvYwMGR6Fk7BZlTBn3Y/ge3xPxElG5/YaXAhWOAzH7uM7YoY9w7Zyw==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@15.14.9)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -6662,7 +6668,7 @@ packages:
   /@pioneer-platform/pioneer-coins@9.0.6(@types/node@20.10.0):
     resolution: {integrity: sha512-OkJpVVG2T6bZ1QctxvSVVdTiH3JTMc3MH9Tm/k80u7e9wM2VKXGDpXuhI2/Hid/PlDUASS4wapROHL4jsh9EUg==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@20.10.0)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -6688,7 +6694,7 @@ packages:
   /@pioneer-platform/pioneer-coins@9.0.6(@types/node@20.10.4):
     resolution: {integrity: sha512-OkJpVVG2T6bZ1QctxvSVVdTiH3JTMc3MH9Tm/k80u7e9wM2VKXGDpXuhI2/Hid/PlDUASS4wapROHL4jsh9EUg==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@20.10.4)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -6714,7 +6720,7 @@ packages:
   /@pioneer-platform/pioneer-coins@9.0.6(@types/node@20.5.9):
     resolution: {integrity: sha512-OkJpVVG2T6bZ1QctxvSVVdTiH3JTMc3MH9Tm/k80u7e9wM2VKXGDpXuhI2/Hid/PlDUASS4wapROHL4jsh9EUg==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@20.5.9)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.5.9)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -6740,7 +6746,7 @@ packages:
   /@pioneer-platform/pioneer-coins@9.0.8(@types/node@20.10.4):
     resolution: {integrity: sha512-vL2jRqSzZ8MxG4JLEteqEReyiZPIyZTB4ogU6dnfVvf1bLc06EgPjdt7o45h76kGaJ11wreL4oc5KNn1QJpiVQ==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@20.10.4)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -6766,7 +6772,7 @@ packages:
   /@pioneer-platform/pioneer-coins@9.0.9(@types/node@20.10.0):
     resolution: {integrity: sha512-ElN4xB66UJVovUebB2pzdBv+8AXovNtrM2t27vIajLYiHk4XwLcKOAHKaaXKPuwysJHkh3kdsgefjDinjA17tg==}
     dependencies:
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@20.10.0)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
       bech32: 1.1.4
       bignumber.js: 9.1.2
       bitcoin-regex: 2.0.0
@@ -17628,7 +17634,7 @@ packages:
     resolution: {integrity: sha512-QooHyd5BeyoqruneSzmDUUpyD1/U877mEDMLPRk/e2SvobZuALJWijQReny0hqTkukseQpIZNKMD4ypMa1pCaQ==}
     dependencies:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
-      '@pioneer-platform/loggerdog': 8.1.31(@types/node@15.14.9)
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
       '@shapeshiftoss/hdwallet-core': 1.52.14
       '@types/node': 15.14.9

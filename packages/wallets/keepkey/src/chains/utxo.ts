@@ -83,16 +83,17 @@ export const utxoWalletMethods = async ({
     script_type: scriptType,
     address_n: bip32ToAddressNList(DerivationPath[chain]),
   };
-  console.log('addressInfo: ', addressInfo);
+  //console.log('addressInfo: ', addressInfo);
   const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
 
-  //getAddress
-  const _getPubkeys = async (paths) => {
+  // @ts-ignore
+  const _getPubkeys = async (paths:any) => {
     try {
-      console.log('paths: ', paths);
+      //console.log('paths: ', paths);
 
+      console.time('getPubkeys Duration'+chain); // Starts the timer
       const pubkeys = await Promise.all(
-        paths.map((path) => {
+        paths.map((path:any) => {
           // Create the path query from the original path object
           const pathQuery = {
             symbol: 'BTC',
@@ -102,30 +103,33 @@ export const utxoWalletMethods = async ({
             showDisplay: false,
           };
 
-          console.log('pathQuery: ', pathQuery);
-          return sdk.system.info.getPublicKey(pathQuery).then((response) => {
-            console.log('response: ', response);
+          //console.log('pathQuery: ', pathQuery);
+          return sdk.system.info.getPublicKey(pathQuery).then((response: any) => {
+            //console.log('response: ', response);
             // Combine the original path object with the xpub from the response
             const combinedResult = {
               ...path, // Contains all fields from the original path
               xpub: response.xpub, // Adds the xpub field from the response
             };
-            console.log('combinedResult: ', combinedResult);
+            //console.log('combinedResult: ', combinedResult);
             return combinedResult;
           });
         }),
       );
+      console.timeEnd('getPubkeys Duration'+chain); // Ends the timer and logs the duration
+
       return pubkeys;
     } catch (e) {
       console.error(e);
+      console.timeEnd('getPubkeys Duration'+chain); // Ensure the timer is ended in case of error
     }
   };
   const pubkeys = await _getPubkeys(paths);
   const getPubkeys = async () => pubkeys;
-  console.log('pubkeys: ', pubkeys);
+  //console.log('pubkeys: ', pubkeys);
 
   const signTransaction = async (psbt: Psbt, inputs: KeepKeyInputObject[], memo: string = '') => {
-    console.log('psbt.txOutputs: ', psbt.txOutputs);
+    //console.log('psbt.txOutputs: ', psbt.txOutputs);
     const outputs = psbt.txOutputs
       .map((output) => {
         const { value, address, change } = output as psbtTxOutput;
@@ -158,13 +162,13 @@ export const utxoWalletMethods = async ({
         (item) => item !== null && typeof item === 'object' && Object.keys(item).length !== 0,
       );
     }
-    console.log({
-      coin: ChainToKeepKeyName[chain],
-      inputs,
-      outputs: removeNullAndEmptyObjectsFromArray(outputs),
-      version: 1,
-      locktime: 0,
-    });
+    // console.log({
+    //   coin: ChainToKeepKeyName[chain],
+    //   inputs,
+    //   outputs: removeNullAndEmptyObjectsFromArray(outputs),
+    //   version: 1,
+    //   locktime: 0,
+    // });
     try {
       const responseSign = await sdk.utxo.utxoSignTransaction({
         coin: ChainToKeepKeyName[chain],
@@ -174,7 +178,7 @@ export const utxoWalletMethods = async ({
         locktime: 0,
         opReturnData: memo,
       });
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (e) {
       console.error(e);
@@ -213,9 +217,9 @@ export const utxoWalletMethods = async ({
       txid: hash,
       hex: txHex || '',
     }));
-    console.log('transfer inputs: ', inputs);
+    //console.log('transfer inputs: ', inputs);
     const txHex = await signTransaction(psbt, inputs, memo);
-    console.log('txHex: ', txHex);
+    //console.log('txHex: ', txHex);
     return toolbox.broadcastTx(txHex);
   };
 

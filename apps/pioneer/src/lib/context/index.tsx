@@ -28,7 +28,10 @@ import {
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
+import {
+  getPaths,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 import transactionDB from './txDb';
 
 const eventEmitter = new EventEmitter();
@@ -366,6 +369,18 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // @ts-ignore
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
+
+        //get paths for wallet
+        let paths = getPaths(allByCaip)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized: any[] = AllChainsSupported.map(network =>
+          paths.filter((path: any) => path.network === network).slice(-1)[0]
+        ).filter((path: any) => path !== undefined);
+        //
+        state.app.setPaths(optimized);
+
         //TODO get from localstorage disabled chains
         //TODO get from localStorage added chains!
         console.log('allByCaip: ', allByCaip);
