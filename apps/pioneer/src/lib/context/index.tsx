@@ -454,15 +454,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
-      const blockchains = [
-        'bitcoin',
-        'ethereum',
-        'thorchain',
-        'bitcoincash',
-        'litecoin',
-        'binance',
-        'cosmos',
-        'dogecoin',
+      const blockchains:any = [
       ];
 
       // @TODO add custom paths from localstorage

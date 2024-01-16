@@ -168,6 +168,7 @@ const Transfer = () => {
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
         console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
+        // @ts-ignore
         const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(inputAmount));
 
         console.log('assetValue: ', assetValue);

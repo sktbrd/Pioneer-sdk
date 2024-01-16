@@ -33,7 +33,6 @@ const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
         //(tag,' CHECKPOINT 1');
-        console.time('start2paired');
         console.time('start2build');
         console.time('start2broadcast');
         console.time('start2end');
@@ -86,8 +85,9 @@ const test_service = async function (this: any) {
             isConnected: false,
         };
         walletsVerbose.push(walletKeepKey);
-
+        console.time('start2init');
         let resultInit = await app.init(walletsVerbose, {})
+        console.timeEnd('start2init');
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
@@ -101,7 +101,9 @@ const test_service = async function (this: any) {
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
+        console.time('start2paired');
         resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        console.timeEnd('start2paired'); // End timing for pairing
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -111,14 +113,16 @@ const test_service = async function (this: any) {
         assert(context)
 
         //
+        console.time('start2getPubkeys');
         await app.getPubkeys()
+        console.timeEnd('start2getPubkeys');
         log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
 
 
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
+        // await app.getBalances()
+        // log.info(tag,"balances: ",app.balances)
 
 
         console.timeEnd('start2end');

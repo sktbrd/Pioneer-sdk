@@ -17,7 +17,6 @@ import { thorchainToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
-  COIN_MAP_LONG,
   getPaths,
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
@@ -271,7 +270,7 @@ export class SDK {
 
         // Remove duplicates based on .caip property
         this.balances = combinedBalances.reduce((acc, currentItem) => {
-          if (!acc.some((item) => item.caip === currentItem.caip)) {
+          if (!acc.some((item: { caip: any; }) => item.caip === currentItem.caip)) {
             acc.push(currentItem);
           }
           return acc;
@@ -295,7 +294,7 @@ export class SDK {
 
         // Remove duplicates based on .pubkey property
         this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
-          if (!acc.some((item) => item.pubkey === currentItem.pubkey)) {
+          if (!acc.some((item: { pubkey: any; }) => item.pubkey === currentItem.pubkey)) {
             acc.push(currentItem);
           }
           return acc;
@@ -357,7 +356,7 @@ export class SDK {
         //chain by networkId
         //console.log(tag, 'blockchains: ', blockchains);
         let AllChainsSupported = blockchains.map(
-          (caip) =>
+          (caip: string | number) =>
             NetworkIdToChain[caip] ||
             (() => {
               throw new Error(`Missing CAIP: ${caip}`);
@@ -512,117 +511,162 @@ export class SDK {
       try {
         if (this.paths.length === 0) throw Error('No paths found!');
         if (!this.swapKit) throw Error('this.swapKit not initialized!');
-        //verify context
-        //TODO handle ledger contexts
-        const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
-        //console.log('ethAddress: ', ethAddress);
-        if (this.context.indexOf(ethAddress) === -1) {
-          //console.log('Clearing Wallet state!');
-          //this.clearWalletState();
-        }
-        // Verify if pubkeys match context
-        if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
-          //console.log('Invalid pubkeys found!');
-          this.pubkeys = [];
-        }
-        // Verify if balances match context
-        if (this.balances.some((balance) => balance.context !== this.context)) {
-          //console.log('Invalid balances found!');
-          this.balances = [];
-        }
-        //console.log('paths: ', this.paths);
-        //TODO if wallet doesn't support blockchains, throw error
-        let pubkeysNew = [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < this.blockchains.length; i++) {
-          const blockchain = this.blockchains[i];
-          let chain: Chain = NetworkIdToChain[blockchain];
-          let paths = [];
-          //console.log('blockchain: ', blockchain);
-          if (blockchain.indexOf('eip155') > -1) {
-            //console.log('ETH like detected!');
-            //all eip155 blockchains use the same path
-            paths = this.paths.filter((path) => path.network === 'eip155:1');
-            chain = Chain.Ethereum;
-          } else {
-            //get paths for each blockchain
-            paths = this.paths.filter((path) => path.network === blockchain);
+        console.log(tag, 'this.blockchains: ', this.blockchains);
+        console.log(tag, 'this.paths: ', this.paths);
+        let pubkeysNew: any = [];
+        for (let i = 0; i < this.paths.length; i++) {
+          let path = this.paths[i];
+          let pubkey: any = {}
+          let chain: Chain = NetworkIdToChain[path.network];
+          console.log(tag, 'path: ', path);
+          pubkey.type = path.type;
+          //get all blockchains on path
+          let address = this.swapKit?.getAddress(chain);
+          if (!address) throw Error('Failed to get address!' + chain);
+          pubkey.master = address;
+          if (path.type === 'address') {
+            pubkey.address = address;
+            pubkey.pubkey = address;
+          } else if (path.type === 'xpub' || path.type === 'zpub') {
+            let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+            if (!pubkeys) throw Error('Failed to get pubkeys!' + chain);
+            //get pubkey for path
+            let pubkeyForPath = pubkeys.find((p: any) => p.addressNList.toString() === path.addressNList.toString());
+            if (!pubkeyForPath) throw Error('Failed to get pubkey for path!' + chain);
+            pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
           }
-          if (paths.length === 0) throw Error('Missing Path for blockchain: ' + blockchain);
-
-          // eslint-disable-next-line @typescript-eslint/prefer-for-of
-          for (let j = 0; j < paths.length; j++) {
-            const path = paths[j];
-            let pubkey;
-            //console.log('Attemtping to get pubkeys for path: ', path);
-            //get pubkey on path
-            if (path.type === 'address') {
-              console.log('path type address detected: ');
-              let address = this.swapKit?.getAddress(chain);
-              console.log('address: ', address);
-              if (address) {
-                pubkey = {
-                  context: this.context, // TODO this is not right?
-                  // wallet:walletSelected.type,
-                  symbolSwapKit: chain,
-                  symbol: chain,
-                  blockchain: COIN_MAP_LONG[chain] || 'unknown',
-                  type: 'address',
-                  networkId: blockchain,
-                  master: address,
-                  pubkey: address,
-                  address,
-                };
-                console.log('pubkey: ', pubkey);
-                pubkeysNew.push(pubkey);
-              }
-            } else {
-              console.log('path type pubkey detected: ');
-              //let walletForChain = await this.swapKit?.getWalletByChain(chain);
-              let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-              console.log('pubkeys: ', pubkeys);
-              if (pubkeys) {
-                const pubkeyForPath = pubkeys.find(
-                  (pubkeyObj: any) =>
-                    pubkeyObj?.addressNList?.toString() === path?.addressNList?.toString(),
-                );
-                //console.log('pubkeyForPath: ', pubkeyForPath);
-                let address = this.swapKit?.getAddress(chain);
-                //TODO fix paths so metamask doesnt throw this on 84!
-                // if (!pubkeyForPath)
-                //   throw Error(
-                //     chain +
-                //       'Failed to get pubkey for path: ' +
-                //       path.addressNList +
-                //       ' chain: ' +
-                //       blockchain,
-                //   );
-                if (pubkeyForPath) {
-                  pubkey = {
-                    context: this.context, // TODO this is not right?
-                    networkId: blockchain,
-                    symbol: pubkeyForPath.symbol,
-                    symbolSwapKit: chain,
-                    type: pubkeyForPath.type,
-                    blockchain: COIN_MAP_LONG[chain] || 'unknown',
-                    master: address, //TODO this is probally wrong, get address for path
-                    address, //TODO get next unused address and save it here!
-                    pubkey: pubkeyForPath.xpub,
-                    xpub: pubkeyForPath.xpub,
-                  };
-                  pubkeysNew.push(pubkey);
-                }
-              }
-            }
-            //get balances for each pubkey
+          //save pubkey
+          (pubkey.context = this.context), // TODO this is not right?
+            (pubkey.networks = [path.network]);
+          //if ETH then add ALL EIP:155 networks
+          if (path.network === 'eip155:1') {
+            pubkey.networks = [
+              path.network,
+              ...(path.network === 'eip155:1'
+                ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
+                : []),
+            ];
           }
+          console.log(tag, 'pubkey: ', pubkey);
+          pubkeysNew.push(pubkey);
         }
-        //console.log('pubkeysNew: ', pubkeysNew);
+        console.log('pubkeysNew: ', pubkeysNew);
         this.pubkeys = pubkeysNew;
         //load pubkeys into cache
         this.events.emit('SET_PUBKEYS', pubkeysNew);
 
-        //TODO verify atleast 1 pubkey per blockchain
+        //OLD
+        //verify context
+        //TODO handle ledger contexts
+        // const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
+        // //console.log('ethAddress: ', ethAddress);
+        // if (this.context.indexOf(ethAddress) === -1) {
+        //   //console.log('Clearing Wallet state!');
+        //   //this.clearWalletState();
+        // }
+        // // Verify if pubkeys match context
+        // if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
+        //   //console.log('Invalid pubkeys found!');
+        //   this.pubkeys = [];
+        // }
+        // // Verify if balances match context
+        // if (this.balances.some((balance) => balance.context !== this.context)) {
+        //   //console.log('Invalid balances found!');
+        //   this.balances = [];
+        // }
+        // //console.log('paths: ', this.paths);
+        // //TODO if wallet doesn't support blockchains, throw error
+        // let pubkeysNew = [];
+        // // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        // for (let i = 0; i < this.blockchains.length; i++) {
+        //   const blockchain = this.blockchains[i];
+        //   let chain: Chain = NetworkIdToChain[blockchain];
+        //   let paths = [];
+        //   //console.log('blockchain: ', blockchain);
+        //   if (blockchain.indexOf('eip155') > -1) {
+        //     //console.log('ETH like detected!');
+        //     //all eip155 blockchains use the same path
+        //     paths = this.paths.filter((path) => path.network === 'eip155:1');
+        //     chain = Chain.Ethereum;
+        //   } else {
+        //     //get paths for each blockchain
+        //     paths = this.paths.filter((path) => path.network === blockchain);
+        //   }
+        //   if (paths.length === 0) throw Error('Missing Path for blockchain: ' + blockchain);
+        //
+        //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        //   for (let j = 0; j < paths.length; j++) {
+        //     const path = paths[j];
+        //     let pubkey;
+        //     //console.log('Attemtping to get pubkeys for path: ', path);
+        //     //get pubkey on path
+        //     if (path.type === 'address') {
+        //       console.log('path type address detected: ');
+        //       let address = this.swapKit?.getAddress(chain);
+        //       console.log('address: ', address);
+        //       if (address) {
+        //         pubkey = {
+        //           context: this.context, // TODO this is not right?
+        //           // wallet:walletSelected.type,
+        //           symbolSwapKit: chain,
+        //           symbol: chain,
+        //           blockchain: COIN_MAP_LONG[chain] || 'unknown',
+        //           type: 'address',
+        //           networkId: blockchain,
+        //           master: address,
+        //           pubkey: address,
+        //           address,
+        //         };
+        //         console.log('pubkey: ', pubkey);
+        //         pubkeysNew.push(pubkey);
+        //       }
+        //     } else {
+        //       console.log('path type pubkey detected: ');
+        //       //let walletForChain = await this.swapKit?.getWalletByChain(chain);
+        //       let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+        //       console.log('pubkeys: ', pubkeys);
+        //       if (pubkeys) {
+        //         const pubkeyForPath = pubkeys.find(
+        //           (pubkeyObj: any) =>
+        //             pubkeyObj?.addressNList?.toString() === path?.addressNList?.toString(),
+        //         );
+        //         //console.log('pubkeyForPath: ', pubkeyForPath);
+        //         let address = this.swapKit?.getAddress(chain);
+        //         //TODO fix paths so metamask doesnt throw this on 84!
+        //         // if (!pubkeyForPath)
+        //         //   throw Error(
+        //         //     chain +
+        //         //       'Failed to get pubkey for path: ' +
+        //         //       path.addressNList +
+        //         //       ' chain: ' +
+        //         //       blockchain,
+        //         //   );
+        //         if (pubkeyForPath) {
+        //           pubkey = {
+        //             context: this.context, // TODO this is not right?
+        //             networkId: blockchain,
+        //             symbol: pubkeyForPath.symbol,
+        //             symbolSwapKit: chain,
+        //             type: pubkeyForPath.type,
+        //             blockchain: COIN_MAP_LONG[chain] || 'unknown',
+        //             master: address, //TODO this is probally wrong, get address for path
+        //             address, //TODO get next unused address and save it here!
+        //             pubkey: pubkeyForPath.xpub,
+        //             xpub: pubkeyForPath.xpub,
+        //           };
+        //           pubkeysNew.push(pubkey);
+        //         }
+        //       }
+        //     }
+        //     //get balances for each pubkey
+        //   }
+        // }
+        // //console.log('pubkeysNew: ', pubkeysNew);
+        // this.pubkeys = pubkeysNew;
+        // //load pubkeys into cache
+        // this.events.emit('SET_PUBKEYS', pubkeysNew);
+        //
+        // //TODO verify atleast 1 pubkey per blockchain
 
         return true;
       } catch (e) {

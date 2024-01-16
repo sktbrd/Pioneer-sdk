@@ -48,7 +48,9 @@ export default function Pubkeys() {
       {app?.pubkeys?.map((key: any, index: any) => (
         <Flex key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
           <Box>
-            <Text fontWeight="bold">{key.networkId}: {key.address}</Text>
+            <Text fontWeight="bold">caip: {key.networkId}</Text>
+            <Text fontWeight="bold">address: {key.address}</Text>
+            <Text fontWeight="bold">pubkey: {key.pubkey}</Text>
             {getWalletContent(key.context.split(':')[0])}
           </Box>
           <Box>

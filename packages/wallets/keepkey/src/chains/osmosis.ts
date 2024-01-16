@@ -1,7 +1,6 @@
 import type { TransferParams } from '@coinmasters/toolbox-cosmos';
 import { OsmosisToolbox } from '@coinmasters/toolbox-cosmos';
-import { Chain, ChainId, DerivationPath, RPCUrl } from '@coinmasters/types';
-import { StargateClient } from '@cosmjs/stargate';
+import { Chain, ChainId, DerivationPath } from '@coinmasters/types';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 
 import { bip32ToAddressNList } from '../helpers/coins.ts';
