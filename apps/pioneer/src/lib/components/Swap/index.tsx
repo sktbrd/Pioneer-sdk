@@ -312,9 +312,13 @@ const Swap = () => {
         {renderStepContent()}
       </Box>
       <Flex alignItems="center" bg="black" flexDirection="column" mx="auto" p="2rem" w="35rem">
-        <div>
-          <Button onClick={goBack}>Go Back</Button>
-        </div>
+        {showGoBack && (
+          <div>
+            <Button onClick={goBack}>Go Back</Button>
+          </div>
+        )}
+
+
         <Button
           colorScheme="blue"
           isDisabled={isContinueDisabled}
