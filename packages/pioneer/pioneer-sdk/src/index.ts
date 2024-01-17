@@ -8,12 +8,15 @@
 // @ts-ignore
 // import * as Events from "@pioneer-platform/pioneer-events";
 // @ts-ignore
-const log = require("@pioneer-platform/loggerdog")()
+// @ts-ignore
+import * as LoggerModule from "@pioneer-platform/loggerdog";
+const log = LoggerModule.default();
+
 import type { AssetValue } from '@coinmasters/core';
 import { EVMChainList, SwapKitCore } from '@coinmasters/core';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { thorchainToCaip } from '@pioneer-platform/pioneer-caip';
+import { thorchainToCaip, ChainToNetworkId, tokenToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
@@ -21,6 +24,21 @@ import {
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 import EventEmitter from 'events';
+
+import  { NativeList } from '@coinmasters/tokens';
+import  { MayaList } from '@coinmasters/tokens';
+import  { CoinGeckoList } from '@coinmasters/tokens';
+import  { OneInchList } from '@coinmasters/tokens';
+import  { PancakeswapETHList } from '@coinmasters/tokens';
+import  { PancakeswapList } from '@coinmasters/tokens';
+import  { PangolinList } from '@coinmasters/tokens';
+import  { PioneerList } from '@coinmasters/tokens';
+import  { StargateARBList } from '@coinmasters/tokens';
+import  { SushiswapList } from '@coinmasters/tokens';
+import  { ThorchainList } from '@coinmasters/tokens';
+import  { TraderjoeList } from '@coinmasters/tokens';
+import  { UniswapList } from '@coinmasters/tokens';
+import  { WoofiList } from '@coinmasters/tokens';
 
 // @ts-ignore
 // @ts-ignore
@@ -142,7 +160,8 @@ export class SDK {
   public appIcon: any;
   public init: (walletsVerbose: any, setup: any) => Promise<any>;
   public verifyWallet: () => Promise<void>;
-  setPaths: (blockchains: any) => Promise<void>;
+  public setPaths: (blockchains: any) => Promise<void>;
+  public getAssets: (filter: string) => Promise<any>;
   constructor(spec: string, config: PioneerSDKConfig) {
     this.status = 'preInit';
     this.appName = 'pioneer-sdk';
@@ -517,6 +536,66 @@ export class SDK {
         throw e;
       }
     };
+    //@ts-ignore
+    this.getAssets = function(filter) {
+      try {
+        const tag = `${TAG} | getAssets | `;
+        log.info(tag, "filter: ", filter);
+
+        let tokenMap: any = {};
+        let chains = new Set();
+        let chainTokenCounts:any = {};
+
+        // Function to add tokens with their source list
+        const addTokens = (tokens: any, sourceList: any) => {
+          tokens.forEach((token: any) => {
+            chains.add(token.chain);
+            chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
+            log.info("token PRE: ",token)
+            let expandedInfo = tokenToCaip(token)
+            expandedInfo.sourceList = sourceList;
+            log.info("expandedInfo: ",expandedInfo)
+            tokenMap[token.identifier] = expandedInfo;
+          });
+        };
+
+        // Add tokens from each list with their source
+        addTokens(NativeList.tokens, 'NativeList');
+        addTokens(MayaList.tokens, 'MayaList');
+        addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
+        addTokens(OneInchList.tokens, 'OneInchList');
+        addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
+        addTokens(PancakeswapList.tokens, 'PancakeswapList');
+        addTokens(PangolinList.tokens, 'PangolinList');
+        addTokens(PioneerList.tokens, 'PioneerList');
+        addTokens(StargateARBList.tokens, 'StargateARBList');
+        addTokens(SushiswapList.tokens, 'SushiswapList');
+        addTokens(ThorchainList.tokens, 'ThorchainList');
+        addTokens(TraderjoeList.tokens, 'TraderjoeList');
+        addTokens(UniswapList.tokens, 'UniswapList');
+        addTokens(WoofiList.tokens, 'WoofiList');
+
+        // Convert the tokenMap back to an array
+        let allAssets = Object.values(tokenMap);
+
+        // Convert chains set to array
+        let chainsArray = Array.from(chains);
+
+        log.info("Combined Asset List: ", allAssets.length);
+        log.info("Combined Asset List: ", allAssets[0]);
+        log.info("Chains: ", chainsArray);
+
+        // Log the number of tokens on each chain
+        for (const [chain, count] of Object.entries(chainTokenCounts)) {
+          log.info(`Number of tokens on ${chain}: `, count);
+        }
+
+        return allAssets;
+      } catch (e) {
+        log.error(e);
+        throw e;
+      }
+    };
     this.getPubkeys = async function () {
       const tag = `${TAG} | getPubkeys | `;
       try {
@@ -565,120 +644,6 @@ export class SDK {
         this.pubkeys = pubkeysNew;
         //load pubkeys into cache
         this.events.emit('SET_PUBKEYS', pubkeysNew);
-
-        //OLD
-        //verify context
-        //TODO handle ledger contexts
-        // const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
-        // //log.debug('ethAddress: ', ethAddress);
-        // if (this.context.indexOf(ethAddress) === -1) {
-        //   //log.debug('Clearing Wallet state!');
-        //   //this.clearWalletState();
-        // }
-        // // Verify if pubkeys match context
-        // if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
-        //   //log.debug('Invalid pubkeys found!');
-        //   this.pubkeys = [];
-        // }
-        // // Verify if balances match context
-        // if (this.balances.some((balance) => balance.context !== this.context)) {
-        //   //log.debug('Invalid balances found!');
-        //   this.balances = [];
-        // }
-        // //log.debug('paths: ', this.paths);
-        // //TODO if wallet doesn't support blockchains, throw error
-        // let pubkeysNew = [];
-        // // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        // for (let i = 0; i < this.blockchains.length; i++) {
-        //   const blockchain = this.blockchains[i];
-        //   let chain: Chain = NetworkIdToChain[blockchain];
-        //   let paths = [];
-        //   //log.debug('blockchain: ', blockchain);
-        //   if (blockchain.indexOf('eip155') > -1) {
-        //     //log.debug('ETH like detected!');
-        //     //all eip155 blockchains use the same path
-        //     paths = this.paths.filter((path) => path.network === 'eip155:1');
-        //     chain = Chain.Ethereum;
-        //   } else {
-        //     //get paths for each blockchain
-        //     paths = this.paths.filter((path) => path.network === blockchain);
-        //   }
-        //   if (paths.length === 0) throw Error('Missing Path for blockchain: ' + blockchain);
-        //
-        //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        //   for (let j = 0; j < paths.length; j++) {
-        //     const path = paths[j];
-        //     let pubkey;
-        //     //log.debug('Attemtping to get pubkeys for path: ', path);
-        //     //get pubkey on path
-        //     if (path.type === 'address') {
-        //       log.debug('path type address detected: ');
-        //       let address = this.swapKit?.getAddress(chain);
-        //       log.debug('address: ', address);
-        //       if (address) {
-        //         pubkey = {
-        //           context: this.context, // TODO this is not right?
-        //           // wallet:walletSelected.type,
-        //           symbolSwapKit: chain,
-        //           symbol: chain,
-        //           blockchain: COIN_MAP_LONG[chain] || 'unknown',
-        //           type: 'address',
-        //           networkId: blockchain,
-        //           master: address,
-        //           pubkey: address,
-        //           address,
-        //         };
-        //         log.debug('pubkey: ', pubkey);
-        //         pubkeysNew.push(pubkey);
-        //       }
-        //     } else {
-        //       log.debug('path type pubkey detected: ');
-        //       //let walletForChain = await this.swapKit?.getWalletByChain(chain);
-        //       let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-        //       log.debug('pubkeys: ', pubkeys);
-        //       if (pubkeys) {
-        //         const pubkeyForPath = pubkeys.find(
-        //           (pubkeyObj: any) =>
-        //             pubkeyObj?.addressNList?.toString() === path?.addressNList?.toString(),
-        //         );
-        //         //log.debug('pubkeyForPath: ', pubkeyForPath);
-        //         let address = this.swapKit?.getAddress(chain);
-        //         //TODO fix paths so metamask doesnt throw this on 84!
-        //         // if (!pubkeyForPath)
-        //         //   throw Error(
-        //         //     chain +
-        //         //       'Failed to get pubkey for path: ' +
-        //         //       path.addressNList +
-        //         //       ' chain: ' +
-        //         //       blockchain,
-        //         //   );
-        //         if (pubkeyForPath) {
-        //           pubkey = {
-        //             context: this.context, // TODO this is not right?
-        //             networkId: blockchain,
-        //             symbol: pubkeyForPath.symbol,
-        //             symbolSwapKit: chain,
-        //             type: pubkeyForPath.type,
-        //             blockchain: COIN_MAP_LONG[chain] || 'unknown',
-        //             master: address, //TODO this is probally wrong, get address for path
-        //             address, //TODO get next unused address and save it here!
-        //             pubkey: pubkeyForPath.xpub,
-        //             xpub: pubkeyForPath.xpub,
-        //           };
-        //           pubkeysNew.push(pubkey);
-        //         }
-        //       }
-        //     }
-        //     //get balances for each pubkey
-        //   }
-        // }
-        // //log.debug('pubkeysNew: ', pubkeysNew);
-        // this.pubkeys = pubkeysNew;
-        // //load pubkeys into cache
-        // this.events.emit('SET_PUBKEYS', pubkeysNew);
-        //
-        // //TODO verify atleast 1 pubkey per blockchain
-
         return true;
       } catch (e) {
         console.error(tag, 'e: ', e);

@@ -130,17 +130,17 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
         
-        // console.time('start2getPubkeys');
-        // await app.getPubkeys()
-        // console.timeEnd('start2getPubkeys');
-        // log.info(tag,"pubkeys: ",app.pubkeys.length)
-        // assert(app.pubkeys)
-        // assert(app.pubkeys[0])
+        console.time('start2getPubkeys');
+        await app.getPubkeys()
+        console.timeEnd('start2getPubkeys');
+        log.info(tag,"pubkeys: ",app.pubkeys.length)
+        assert(app.pubkeys)
+        assert(app.pubkeys[0])
 
-
-        // await app.getBalances()
-        // log.info(tag,"balances: ",app.balances)
-
+        console.time('start2getBalances');
+        await app.getBalances()
+        log.info(tag,"balances: ",app.balances.length)
+        console.timeEnd('start2getBalances');
 
         console.timeEnd('start2end');
 

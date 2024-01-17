@@ -710,6 +710,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.0.14
         version: 9.0.14
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.2
+        version: 9.2.2(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1024,8 +1027,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.14
-        version: 9.0.14
+        specifier: ^9.2.6
+        version: 9.2.6
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -6629,6 +6632,10 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: false
+
+  /@pioneer-platform/pioneer-caip@9.2.6:
+    resolution: {integrity: sha512-27gTo3DfTbXZ6TJSMIcYyuxn5wd4DD+pha98qaSb4UmWC/HRG1niYHJPK5yy7IjVVI6W77UY4/2hcJorUEIb4g==}
     dev: false
 
   /@pioneer-platform/pioneer-client@9.0.19:
