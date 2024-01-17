@@ -137,24 +137,24 @@ const BeginSwap: React.FC<BeginSwapProps> = ({ openModal, handleClick, selectedB
           </Box>
         </HStack>
       </Flex>
-      <Flex alignItems="center" bg="black" justifyContent="center" mx="auto" p="2rem">
-        <Button
-          colorScheme={selectedButton === 'quick' ? 'blue' : 'gray'}
-          onClick={() => handleClick('quick')}
-          variant="outline"
-          width="48%"
-        >
-          Quick
-        </Button>
-        <Button
-          colorScheme={selectedButton === 'precise' ? 'blue' : 'gray'}
-          onClick={() => handleClick('precise')}
-          variant="outline"
-          width="48%"
-        >
-          Precise
-        </Button>
-      </Flex>
+      {/*<Flex alignItems="center" bg="black" justifyContent="center" mx="auto" p="2rem">*/}
+      {/*  <Button*/}
+      {/*    colorScheme={selectedButton === 'quick' ? 'blue' : 'gray'}*/}
+      {/*    onClick={() => handleClick('quick')}*/}
+      {/*    variant="outline"*/}
+      {/*    width="48%"*/}
+      {/*  >*/}
+      {/*    Quick*/}
+      {/*  </Button>*/}
+      {/*  <Button*/}
+      {/*    colorScheme={selectedButton === 'precise' ? 'blue' : 'gray'}*/}
+      {/*    onClick={() => handleClick('precise')}*/}
+      {/*    variant="outline"*/}
+      {/*    width="48%"*/}
+      {/*  >*/}
+      {/*    Precise*/}
+      {/*  </Button>*/}
+      {/*</Flex>*/}
     </div>
   );
 };

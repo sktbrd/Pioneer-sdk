@@ -246,6 +246,12 @@ const Swap = () => {
     }
   };
 
+  let onSelectOutput = async function (asset:any) {
+    console.log('onSelectOutput');
+    await app.setOutboundAssetContext(asset);
+    onClose();
+  }
+
   let onSelect = async function () {
     console.log('onSelect');
     onClose();
@@ -268,7 +274,7 @@ const Swap = () => {
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
-                <OutputSelect onClose={onClose} onlyOwned={false} />
+                <OutputSelect onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.confirmTrade && (

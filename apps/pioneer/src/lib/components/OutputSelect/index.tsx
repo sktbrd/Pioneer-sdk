@@ -1,7 +1,8 @@
 import { Search2Icon } from '@chakra-ui/icons';
 import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement,
-  Spinner, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, AvatarBadge, Image
+  Spinner, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, AvatarBadge, Image,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, ModalFooter
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '../../context';
@@ -17,13 +18,15 @@ const CHAINS_WITH_TOKENS = [
 
 export default function OutputSelect({ onClose, onSelect }) {
   const { state } = usePioneer();
-  const { app, balances } = state;
+  const { app, balances, pubkeys } = state;
   const [assets, setAssets] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const itemsPerPage = 6;
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [isSubmitAddressModalOpen, setIsSubmitAddressModalOpen] = useState(false);
 
   const fetchAssets = async () => {
     setIsLoading(true);
@@ -66,8 +69,21 @@ export default function OutputSelect({ onClose, onSelect }) {
     setCurrentPageIndex(0);
   };
 
-  const handleSelectClick = (asset) => {
-    // handle asset selection logic
+  const handleSelectClick = (asset: any) => {
+    console.log("clicked: ", asset);
+    console.log("pubkeys: ", pubkeys);
+    // Find a pubkey whose networks array includes the asset's networkId
+    let pubkey = pubkeys.find(pk => pk.networks.includes(asset.networkId));
+    console.log("pubkey: ", pubkey);
+    if (pubkey) {
+      // handle asset selection logic
+      asset.address = pubkey.address || pubkey.master; // or pubkey.pubkey based on what you need
+      onSelect(asset); // onSelect function to handle the selected asset
+    } else {
+      // If NOT found, force the user to add pubkey for networkId
+      setSelectedAsset(asset);
+      setIsSubmitAddressModalOpen(true);
+    }
   };
 
   const renderChainTabs = () => {
@@ -111,6 +127,26 @@ export default function OutputSelect({ onClose, onSelect }) {
 
   return (
     <Stack spacing={4}>
+      {/* Submit Address Modal */}
+      <Modal isOpen={isSubmitAddressModalOpen} onClose={() => setIsSubmitAddressModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Submit Custom Address</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Please submit the address for {selectedAsset?.name}:</Text>
+            <Input placeholder="Enter address..." />
+            <Text mt={4} color="red.500">
+              Warning: This address is NOT controlled by Pioneer. You must verify that you can manage these funds outside of Pioneer.
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={() => setIsSubmitAddressModalOpen(false)}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />

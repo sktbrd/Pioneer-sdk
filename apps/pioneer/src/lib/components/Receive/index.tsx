@@ -42,6 +42,8 @@ export default function Receive({ onClose }: any) {
 
   let onSelect = async function(asset: any) {
     console.log("onSelect: ", asset);
+    await app.setAssetContext(asset);
+    closeModal();
   }
 
   useEffect(() => {
@@ -101,7 +103,7 @@ export default function Receive({ onClose }: any) {
           <ModalHeader>Output Selection</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <OutputSelect onClose={closeModal} onlyOwned={false} onSelect={onSelect}/>
+            <OutputSelect onClose={closeModal} onSelect={onSelect}/>
           </ModalBody>
         </ModalContent>
       </Modal>
