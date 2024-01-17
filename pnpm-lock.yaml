@@ -1027,8 +1027,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.6
-        version: 9.2.6
+        specifier: ^9.2.7
+        version: 9.2.7
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -6634,8 +6634,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@pioneer-platform/pioneer-caip@9.2.6:
-    resolution: {integrity: sha512-27gTo3DfTbXZ6TJSMIcYyuxn5wd4DD+pha98qaSb4UmWC/HRG1niYHJPK5yy7IjVVI6W77UY4/2hcJorUEIb4g==}
+  /@pioneer-platform/pioneer-caip@9.2.7:
+    resolution: {integrity: sha512-WKHTzkZIMSehfVy49IB4xMVwvGb4bFjEh85f0z+8ltIjDgfBkKbmWGzPloJF9xJVGlnZhw2rHP4MAGdUh5P1QQ==}
     dev: false
 
   /@pioneer-platform/pioneer-client@9.0.19:

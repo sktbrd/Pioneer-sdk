@@ -1,7 +1,7 @@
 import { Search2Icon } from '@chakra-ui/icons';
 import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement,
-  Spinner, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text,
+  Spinner, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, AvatarBadge, Image
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '../../context';
@@ -47,11 +47,11 @@ export default function OutputSelect({ onClose, onSelect }) {
     const selectedChain = CHAINS_WITH_TOKENS[selectedTab];
     return assets.filter(asset => {
       const isBTC = selectedChain === 'BTC';
-      const isFromMayaOrNative = asset.sourceList === 'MayaList' || asset.sourceList === 'NativeList';
+      const isNative = asset.type === 'native';
       const matchesChain = asset.chain === selectedChain;
       const matchesSearch = !search || (asset.symbol && asset.symbol.toLowerCase().includes(search.toLowerCase()));
 
-      return (isBTC && isFromMayaOrNative) || (matchesChain && matchesSearch);
+      return (isBTC && isNative) || (matchesChain && matchesSearch);
     }).slice(currentPageIndex * itemsPerPage, (currentPageIndex + 1) * itemsPerPage);
   };
 
@@ -88,7 +88,11 @@ export default function OutputSelect({ onClose, onSelect }) {
             <Box key={index}>
               <Flex alignItems="center" bg="black" border="1px solid #fff"
                     borderRadius="md" boxShadow="sm" padding={2}>
-                <Avatar size="md" src={asset?.image} />
+                <Avatar size="md" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.ticker]}.png`}>
+                  <AvatarBadge boxSize={'1.25em'}>
+                    <Image rounded="full" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.chain]}.png`} />
+                  </AvatarBadge>
+                </Avatar>
                 <Box ml={3}>
                   <Text fontSize="sm">Asset: {asset?.identifier}</Text>
                   <Text fontSize="sm">{asset?.name}</Text>
