@@ -13,7 +13,7 @@
     "@esbuild-plugins/node-modules-polyfill": "0.2.2",
     "@fontsource/plus-jakarta-sans": "^5.0.15",
     "@fontsource/roboto": "^5.0.8",
-    "@pioneer-platform/pioneer-caip": "^9.0.10",
+    "@pioneer-platform/pioneer-caip": "^9.2.8",
     "@pioneer-platform/pioneer-client": "^9.0.19",
     "@pioneer-platform/pioneer-coins": "^9.2.2",
     "@types/react-helmet": "^6.1.11",
@@ -41,7 +41,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
     "@coinmasters/helpers": "workspace:*",
@@ -51,6 +50,7 @@
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
     "@coinmasters/types": "workspace:*",
+    "@coinmasters/wallet-keepkey": "workspace:*",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@vitejs/plugin-react": "4.0.4",

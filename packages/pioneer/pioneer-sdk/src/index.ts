@@ -16,7 +16,7 @@ import type { AssetValue } from '@coinmasters/core';
 import { EVMChainList, SwapKitCore } from '@coinmasters/core';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { thorchainToCaip, ChainToNetworkId, tokenToCaip } from '@pioneer-platform/pioneer-caip';
+import { thorchainToCaip, ChainToNetworkId, tokenToCaip, caipToThorchain } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
@@ -680,7 +680,7 @@ export class SDK {
             for (let j = 0; j < walletForChain.balance.length; j++) {
               // @ts-ignore
               let balance: AssetValue = walletForChain?.balance[j];
-              //log.debug('balance: ', balance);
+              log.info('balance: ', balance);
 
               //log.debug('balance: ', balance);
               let balanceString: any = {};
@@ -704,9 +704,11 @@ export class SDK {
                   //log.debug('caip: ', caip);
                   //if (!caip) throw Error('Failed to get caip for balance: ' + JSON.stringify(balance));
                   if (caip) {
+                    log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
                     balanceString.context = this.context;
                     balanceString.caip = caip;
+                    balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.address = balance.address;
                     balanceString.symbol = balance.symbol;
                     balanceString.chain = balance.chain;

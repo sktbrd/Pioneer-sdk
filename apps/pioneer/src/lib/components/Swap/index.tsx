@@ -117,10 +117,13 @@ const Swap = () => {
     try {
       const newAmountIn = (sliderValue / 100) * parseFloat(assetContext?.balance || '0');
       setInputAmount(newAmountIn);
+      
+      
+      
       const entry = {
-        sellAsset: `${assetContext.chain}.${assetContext.symbol}`,
+        sellAsset: assetContext,
         sellAmount: parseFloat(String(newAmountIn)).toPrecision(3),
-        buyAsset,
+        buyAsset:outboundAssetContext,
         senderAddress,
         recipientAddress,
         slippage: '3',

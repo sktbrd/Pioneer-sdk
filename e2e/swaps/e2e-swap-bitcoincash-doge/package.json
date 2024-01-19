@@ -1,5 +1,5 @@
 {
-  "name": "@coinmasters/e2e-transfer-osmosis",
+  "name": "@coinmasters/e2e-swap-bitcoincash-doge",
   "version": "1.1.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -17,14 +17,15 @@
     "docker:push:all": "npm run docker:build && npm run docker:tag && npm run docker:push"
   },
   "dependencies": {
-    "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/core": "workspace:*",
+    "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/types": "workspace:^",
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
     "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "^9.0.10",
+    "@pioneer-platform/pioneer-coins": "^9.2.2",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",
