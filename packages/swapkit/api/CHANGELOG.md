@@ -1,5 +1,16 @@
 # @swapkit/api
 
+## 3.2.0
+
+### Minor Changes
+
+- swap work
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.0
+
 ## 3.1.0
 
 ### Minor Changes

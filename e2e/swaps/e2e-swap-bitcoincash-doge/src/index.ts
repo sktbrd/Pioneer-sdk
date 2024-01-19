@@ -193,7 +193,7 @@ const test_service = async function (this: any) {
 
         //quote
         let result = await app.pioneer.Quote(entry);
-        result = result?.data;
+        result = result?.data[0].quote;
         log.info(tag,"result: ",result)
         let route = result?.routes[0]
 

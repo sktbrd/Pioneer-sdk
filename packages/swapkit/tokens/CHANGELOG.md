@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 3.2.0
+
+### Minor Changes
+
+- swap work
+
 ## 3.1.0
 
 ### Minor Changes

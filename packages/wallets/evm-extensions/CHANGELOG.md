@@ -1,5 +1,17 @@
 # @coinmasters/wallet-evm-extensions
 
+## 6.0.0
+
+### Minor Changes
+
+- swap work
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.0
+  - @coinmasters/toolbox-evm@6.0.0
+
 ## 5.0.0
 
 ### Minor Changes

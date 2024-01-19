@@ -1,5 +1,22 @@
 # @coinmasters/core
 
+## 6.0.0
+
+### Minor Changes
+
+- swap work
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.0
+  - @coinmasters/helpers@6.0.0
+  - @coinmasters/tokens@3.2.0
+  - @coinmasters/toolbox-utxo@6.0.0
+  - @coinmasters/types@4.2.0
+  - @coinmasters/toolbox-evm@6.0.0
+  - @coinmasters/api@3.2.0
+
 ## 5.0.0
 
 ### Minor Changes

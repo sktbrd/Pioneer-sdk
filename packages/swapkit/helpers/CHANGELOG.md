@@ -1,5 +1,17 @@
 # @swapkit/helpers
 
+## 6.0.0
+
+### Minor Changes
+
+- swap work
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.2.0
+  - @coinmasters/types@4.2.0
+
 ## 5.0.0
 
 ### Minor Changes
