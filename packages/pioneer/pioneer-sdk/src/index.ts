@@ -19,10 +19,6 @@ import { Chain, NetworkIdToChain } from '@coinmasters/types';
 import { thorchainToCaip, ChainToNetworkId, tokenToCaip, caipToThorchain } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
-import {
-  getPaths,
-  // @ts-ignore
-} from '@pioneer-platform/pioneer-coins';
 import EventEmitter from 'events';
 
 import  { NativeList } from '@coinmasters/tokens';

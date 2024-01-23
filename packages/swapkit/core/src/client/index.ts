@@ -1,3 +1,9 @@
+/*
+    Core Swapkit
+
+
+ */
+const TAG = ' | TAG | '
 import type { Keys, ThornameRegisterParam } from '@coinmasters/helpers';
 import {
   AssetValue,
@@ -17,19 +23,21 @@ import type {
   ExtendParams,
   WalletOption,
 } from '@coinmasters/types';
+
+import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
+
 import {
-  AGG_SWAP,
   Chain,
   ChainToChainId,
   FeeOption,
   MemoType,
-  SWAP_IN,
-  SWAP_OUT,
   TCAvalancheDepositABI,
   TCBscDepositABI,
   TCEthereumVaultAbi,
+  classifySwap,
 } from '@coinmasters/types';
-
+import * as LoggerModule from "@pioneer-platform/loggerdog";
+const log = LoggerModule.default();
 import type { AGG_CONTRACT_ADDRESS } from '../aggregator/contracts/index.ts';
 import { lowercasedContractAbiMapping } from '../aggregator/contracts/index.ts';
 import { getSwapInParams } from '../aggregator/getSwapParams.ts';
@@ -94,97 +102,193 @@ export class SwapKitCore<T = ''> {
   };
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
+    const tag = TAG + " | swap | "
+    log.info(tag,"route: ",route)
     const { quoteMode } = route.meta;
-    const evmChain = quoteMode.startsWith('ERC20-')
-      ? Chain.Ethereum
-      : quoteMode.startsWith('ARC20-')
-        ? Chain.Avalanche
-        : Chain.BinanceSmartChain;
+    log.info(tag,"quoteMode: ",quoteMode)
+
+    let evmChain;
+
+    switch (quoteMode.split('-')[0]) {
+      case 'ERC20':
+        evmChain = Chain.Ethereum;
+        break;
+      case 'ARC20':
+        evmChain = Chain.Avalanche;
+        break;
+      default:
+        evmChain = Chain.BinanceSmartChain;
+    }
 
     if (!route.complete) throw new SwapKitError('core_swap_route_not_complete');
 
     try {
-      if (AGG_SWAP.includes(quoteMode)) {
-        const walletMethods = this.connectedWallets[evmChain];
-        if (!walletMethods?.sendTransaction) {
-          throw new SwapKitError('core_wallet_connection_not_found');
+      const swapType = classifySwap(quoteMode);
+      log.info(tag,"swapType: ",swapType)
+      
+      switch (swapType) {
+        case 'AGG_SWAP': {
+          const walletMethods = this.connectedWallets[evmChain];
+          if (!walletMethods?.sendTransaction) {
+            throw new SwapKitError('core_wallet_connection_not_found');
+          }
+
+          const transaction = streamSwap ? route?.streamingSwap?.transaction : route?.transaction;
+          if (!transaction) throw new SwapKitError('core_swap_route_transaction_not_found');
+
+          const { data, from, to, value } = route.transaction;
+
+          const params = {
+            data,
+            from,
+            to: to.toLowerCase(),
+            chainId: BigInt(ChainToChainId[evmChain]),
+            value: value ? BigInt(value) : 0n,
+          };
+
+          return walletMethods.sendTransaction(params, feeOptionKey) as Promise<string>;
         }
 
-        const transaction = streamSwap ? route?.streamingSwap?.transaction : route?.transaction;
-        if (!transaction) throw new SwapKitError('core_swap_route_transaction_not_found');
+        case 'SWAP_OUT': {
+          if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
+          const asset = await AssetValue.fromString(route.calldata.fromAsset);
+          if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
 
-        const { data, from, to, value } = route.transaction;
+          const { address: recipient } = await this.#getInboundDataByChain(asset.chain);
+          const {
+            contract: router,
+            calldata: { expiration, amountIn, memo, memoStreamingSwap },
+          } = route;
 
-        const params = {
-          data,
-          from,
-          to: to.toLowerCase(),
-          chainId: BigInt(ChainToChainId[evmChain]),
-          value: value ? BigInt(value) : 0n,
-        };
+          const assetValue = asset.add(SwapKitNumber.fromBigInt(BigInt(amountIn), asset.decimal));
+          const swapMemo = (streamSwap ? memoStreamingSwap || memo : memo) as string;
 
-        return walletMethods.sendTransaction(params, feeOptionKey) as Promise<string>;
-      }
-
-      if (SWAP_OUT.includes(quoteMode)) {
-        if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
-        const asset = await AssetValue.fromString(route.calldata.fromAsset);
-        if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
-
-        const { address: recipient } = await this.#getInboundDataByChain(asset.chain);
-        const {
-          contract: router,
-          calldata: { expiration, amountIn, memo, memoStreamingSwap },
-        } = route;
-
-        const assetValue = asset.add(SwapKitNumber.fromBigInt(BigInt(amountIn), asset.decimal));
-        const swapMemo = (streamSwap ? memoStreamingSwap || memo : memo) as string;
-
-        return this.deposit({
-          expiration,
-          assetValue,
-          memo: swapMemo,
-          feeOptionKey,
-          router,
-          recipient,
-        });
-      }
-
-      if (SWAP_IN.includes(quoteMode)) {
-        const { calldata, contract: contractAddress } = route;
-        if (!contractAddress) throw new SwapKitError('core_swap_contract_not_found');
-
-        const walletMethods = this.connectedWallets[evmChain];
-        const from = this.getAddress(evmChain);
-        if (!walletMethods?.sendTransaction || !from) {
-          throw new SwapKitError('core_wallet_connection_not_found');
-        }
-
-        const { getProvider, toChecksumAddress } = await import('@coinmasters/toolbox-evm');
-        const provider = getProvider(evmChain);
-        const abi = lowercasedContractAbiMapping[contractAddress.toLowerCase()];
-
-        if (!abi) throw new SwapKitError('core_swap_contract_not_supported', { contractAddress });
-
-        const contract = await walletMethods.createContract?.(contractAddress, abi, provider);
-
-        const tx = await contract.getFunction('swapIn').populateTransaction(
-          ...getSwapInParams({
-            streamSwap,
-            toChecksumAddress,
-            contractAddress: contractAddress as AGG_CONTRACT_ADDRESS,
+          return this.deposit({
+            expiration,
+            assetValue,
+            memo: swapMemo,
+            feeOptionKey,
+            router,
             recipient,
-            calldata,
-          }),
-          { from },
-        );
+          });
+        }
 
-        return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
+        case 'SWAP_IN': {
+          const { calldata, contract: contractAddress } = route;
+          if (!contractAddress) throw new SwapKitError('core_swap_contract_not_found');
+
+          const walletMethods = this.connectedWallets[evmChain];
+          const from = this.getAddress(evmChain);
+          if (!walletMethods?.sendTransaction || !from) {
+            throw new SwapKitError('core_wallet_connection_not_found');
+          }
+
+          const { getProvider, toChecksumAddress } = await import('@coinmasters/toolbox-evm');
+          // @ts-ignore
+          const provider = getProvider(evmChain);
+          const abi = lowercasedContractAbiMapping[contractAddress.toLowerCase()];
+
+          if (!abi) throw new SwapKitError('core_swap_contract_not_supported', { contractAddress });
+
+          const contract = await walletMethods.createContract?.(contractAddress, abi, provider);
+
+          const tx = await contract.getFunction('swapIn').populateTransaction(
+            ...getSwapInParams({
+              streamSwap,
+              toChecksumAddress,
+              contractAddress: contractAddress as AGG_CONTRACT_ADDRESS,
+              recipient,
+              calldata,
+            }),
+            { from },
+          );
+
+          return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
+        }
+        case 'OSMOSIS_SWAP': {
+          log.info(tag,"OSMOSIS_SWAP route: ",route)
+          log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          /*
+             Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
+           */
+          return await this.performTx(route.txs[0])
+        }
+        case 'CENTRALIZED_SWAPPER': {
+          log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
+          /*
+            Centralized swappers just need a normal tranfer into their deposit address
+           */
+          const from = this.getAddress(NetworkIdToChain[route.tx.chain]);
+          //build assetValue
+          // create assetValue
+          const assetString = `${NetworkIdToChain[route.tx.chain]}.${NetworkIdToChain[route.tx.chain]}`; //TODO caip to identifier
+          console.log('assetString: ', assetString);
+          await AssetValue.loadStaticAssets();
+          // @ts-ignore
+          const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(route.tx.txParams.amount));
+          if(!route.tx.txParams.memo && NetworkIdToChain[route.tx.chain] === 'XRP') throw Error("Dest tag is required for centralized swapper for XRP")
+          let params = {
+            from,
+            assetValue,
+            memo: route.tx.txParams.memo || "",
+            recipient: route.tx.txParams.address,
+          }
+          let resultSend = await this.transfer(params)
+          log.info(tag,"CENTRALIZED_SWAPPER resultSend: ",resultSend)
+          return resultSend
+        }
+        default:
+          throw new SwapKitError('core_swap_quote_mode_not_supported', { quoteMode });
       }
-
-      throw new SwapKitError('core_swap_quote_mode_not_supported', { quoteMode });
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);
+    }
+  };
+
+  performTx = async function(tx:any) {
+    const tag = TAG + " | performTx | ";
+    try {
+        log.info(tag, "Transaction: ", tx);
+
+        if (!tx.chain) throw Error("Invalid tx missing chain!");
+        if (!tx.type) throw Error("Invalid tx missing type!");
+
+        log.info(tag, "tx.chain: ", tx.chain);
+
+        // @ts-ignore
+        let chain = NetworkIdToChain[tx.chain];
+        log.info(tag, "chain: ", chain);
+
+        if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
+
+        log.info(tag, "chain: ", chain);
+        log.info(tag, "tx.type: ", tx.type);
+
+        // @ts-ignore
+      let walletMethods = this.connectedWallets[chain];
+        if (!walletMethods || !walletMethods[tx.type]) {
+          // @ts-ignore
+          throw new SwapKitError(`core_wallet_tx_type_not_implemented for chain ${chain}`);
+        }
+
+        await walletMethods[tx.type](tx.txParams);
+    } catch (error) {
+      // Handle or log the error as per requirement
+      log.error(tag, 'Error occurred:', error);
+      // Optionally rethrow or handle the error
+    }
+  }
+
+  waitForConfirmation = async (chain: any, tx: any, invocationId: string) => {
+    try{
+      // Placeholder logic for waiting for transaction confirmation
+      // This should be replaced with chain-specific confirmation logic
+      log.info(TAG, `Waiting for confirmation of transaction on ${chain}`);
+      // Implement actual wait/check logic here
+
+
+    }catch(e){
+      log.error(e)
     }
   };
 

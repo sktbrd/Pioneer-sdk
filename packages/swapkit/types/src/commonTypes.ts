@@ -118,6 +118,8 @@ export enum QuoteMode {
   BSC_TO_ETH = 'BEP20-ERC20',
   BSC_TO_AVAX = 'BEP20-ARC20',
   BSC_TO_BSC = 'BEP20-BEP20',
+  GAIA_TO_OSMO = 'OSMOSIS-IBC',
+  CHANGELLY = 'CHANGELLY',
 }
 
 export type Asset = {
@@ -126,6 +128,10 @@ export type Asset = {
   ticker: string;
   synth?: boolean;
 };
+
+export const OSMOSIS_SWAP = [QuoteMode.GAIA_TO_OSMO];
+
+export const CENTRALIZED_SWAPPER = [QuoteMode.CHANGELLY]
 
 export const AGG_SWAP = [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC];
 
@@ -147,3 +153,22 @@ export const SWAP_OUT = [
   QuoteMode.TC_SUPPORTED_TO_AVAX,
   QuoteMode.TC_SUPPORTED_TO_BSC,
 ];
+
+export function classifySwap(quoteMode:QuoteMode) {
+  if (AGG_SWAP.includes(quoteMode)) {
+    return 'AGG_SWAP';
+  }
+  if (SWAP_IN.includes(quoteMode)) {
+    return 'SWAP_IN';
+  }
+  if (SWAP_OUT.includes(quoteMode)) {
+    return 'SWAP_OUT';
+  }
+  if (OSMOSIS_SWAP.includes(quoteMode)) {
+    return 'OSMOSIS_SWAP';
+  }
+  if (CENTRALIZED_SWAPPER.includes(quoteMode)) {
+    return 'CENTRALIZED_SWAPPER';
+  }
+  return null;
+}

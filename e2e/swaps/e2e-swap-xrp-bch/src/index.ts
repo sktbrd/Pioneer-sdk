@@ -25,17 +25,17 @@ import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['OSMO']
-let BLOCKCHAIN_OUT = ChainToNetworkId['GAIA']
-let ASSET = 'OSMO'
+let BLOCKCHAIN_IN = ChainToNetworkId['XRP']
+let BLOCKCHAIN_OUT = ChainToNetworkId['BCH']
+let ASSET = 'XRP'
 let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "80"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
-let TRADE_PAIR  = "OSMO_ATOM"
+let TRADE_PAIR  = "XRP_BCH"
 let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "ATOM"
+let OUTPUT_ASSET = "BCH"
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -139,7 +139,7 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        await app.getPubkeys()
+
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
@@ -147,14 +147,15 @@ const test_service = async function (this: any) {
         assert(balance.length > 0)
         //verify balances
 
-        //get asset context
-        await app.setAssetContext(balance[0])
-
-        let balanceOut = app.balances.filter((e:any) => e.symbol === OUTPUT_ASSET)
-        await app.setOutboundAssetContext(balanceOut[0]);
-        //set outbound asset context
-        log.info(tag,"app.assetContext: ",app.assetContext)
-
+        // create assetValue
+        const assetString = `${ASSET}.${ASSET}`;
+        // @ts-ignore
+        console.log('assetString: ', assetString);
+        await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        log.info("assetValue: ",assetValue)
 
         assert(app.assetContext)
         assert(app.assetContext.address)
@@ -188,7 +189,6 @@ const test_service = async function (this: any) {
         };
 
         //quote
-        log.info(tag,"entry: ",entry)
         let result = await app.pioneer.Quote(entry);
         result = result?.data;
         log.info(tag,"result: ",result)
@@ -206,7 +206,7 @@ const test_service = async function (this: any) {
             let route = result[i]
             console.log("route: ", route)
             //detect if erroed
-            if(route.integration === 'osmosis'){
+            if(route.integration === 'changelly'){
                 selected = route.quote
                 break;
             }
@@ -215,20 +215,15 @@ const test_service = async function (this: any) {
             //log fee
         }
 
-        //perform tx 1
-
         //send
-        // const txHash = await app?.swapKit.swap({
-        //     route:selected,
-        //     recipient: address,
-        //     feeOptionKey: FeeOption.Fast,
-        // });
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
-
-        //wait for confirmation
-
-        //perform tx 2
+        const txHash = await app?.swapKit.swap({
+            route:selected,
+            recipient: address,
+            feeOptionKey: FeeOption.Fast,
+        });
+        log.info("txHash: ",txHash)
+        assert(txHash)
+        
         //TODO monitor TX untill complete
         
         //TODO check balance

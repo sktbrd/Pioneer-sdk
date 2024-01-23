@@ -25,17 +25,17 @@ import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['OSMO']
-let BLOCKCHAIN_OUT = ChainToNetworkId['GAIA']
-let ASSET = 'OSMO'
-let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
+let BLOCKCHAIN_IN = ChainToNetworkId['ETH']
+let BLOCKCHAIN_OUT = ChainToNetworkId['XRP']
+let ASSET = 'ETH'
+let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.02"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.019"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
-let TRADE_PAIR  = "OSMO_ATOM"
+let TRADE_PAIR  = "ETH_XRP"
 let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "ATOM"
+let OUTPUT_ASSET = "XRP"
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -139,6 +139,7 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
+
         await app.getPubkeys()
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
@@ -154,11 +155,30 @@ const test_service = async function (this: any) {
         await app.setOutboundAssetContext(balanceOut[0]);
         //set outbound asset context
         log.info(tag,"app.assetContext: ",app.assetContext)
-
-
         assert(app.assetContext)
         assert(app.assetContext.address)
         assert(app.assetContext.address)
+
+        //get pubkey for outbound
+        log.info(tag,"pubkeysOut: ",app.pubkeys)
+        let pubkeysOut = app.pubkeys.filter((e:any) => e.networks.includes(BLOCKCHAIN_OUT));
+        log.info(tag, "pubkeysOut: ", pubkeysOut);
+
+        if (pubkeysOut.length > 0) {
+            //cool
+        } else {
+            // Handle the case where no XRP public key is found
+            log.error(tag, "No public key found for XRP network");
+            throw Error("Missing pubkey for outbound asset!")
+        }
+
+        //set outbound asset context
+        log.info(tag,"app.outboundAssetContext: ",app.outboundAssetContext)
+        assert(app.outboundAssetContext)
+        assert.equal(app.outboundAssetContext.ticker, OUTPUT_ASSET);
+        assert(app.outboundAssetContext.address)
+
+
 
         //get sender context
         const senderAddress = app.assetContext.address;
@@ -206,7 +226,7 @@ const test_service = async function (this: any) {
             let route = result[i]
             console.log("route: ", route)
             //detect if erroed
-            if(route.integration === 'osmosis'){
+            if(route.integration === 'changelly'){
                 selected = route.quote
                 break;
             }
@@ -215,20 +235,15 @@ const test_service = async function (this: any) {
             //log fee
         }
 
-        //perform tx 1
-
         //send
-        // const txHash = await app?.swapKit.swap({
-        //     route:selected,
-        //     recipient: address,
-        //     feeOptionKey: FeeOption.Fast,
-        // });
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
-
-        //wait for confirmation
-
-        //perform tx 2
+        const txHash = await app?.swapKit.swap({
+            route:selected,
+            recipient: address,
+            feeOptionKey: FeeOption.Fast,
+        });
+        log.info("txHash: ",txHash)
+        assert(txHash)
+        
         //TODO monitor TX untill complete
         
         //TODO check balance

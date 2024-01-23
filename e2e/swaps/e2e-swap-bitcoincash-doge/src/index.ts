@@ -193,18 +193,36 @@ const test_service = async function (this: any) {
 
         //quote
         let result = await app.pioneer.Quote(entry);
-        result = result?.data[0].quote;
+        result = result?.data;
         log.info(tag,"result: ",result)
-        let route = result?.routes[0]
+
+        //
+        let selected
+        //user selects route
+        for(let i = 0; i < result?.length; i++){
+            let route = result[i]
+            console.log("route: ", route)
+            //detect if erroed
+            if(route.integration === 'thorswap'){
+                selected = route.quote.routes[0]
+                break;
+            }
+            //log amountOut
+
+            //log fee
+        }
 
         const outputChain = app.outboundAssetContext?.chain;
 
         const address = app?.swapKit.getAddress(outputChain);
         log.info("address: ", address);
 
+
+        log.info("selected: ", selected);
+
         //send
         const txHash = await app?.swapKit.swap({
-            route,
+            route:selected,
             recipient: address,
             feeOptionKey: FeeOption.Fast,
         });
@@ -214,7 +232,6 @@ const test_service = async function (this: any) {
         //TODO monitor TX untill complete
 
         //TODO check balance
-
 
 
         console.log("************************* TEST PASS *************************")

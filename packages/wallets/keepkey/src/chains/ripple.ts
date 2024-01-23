@@ -24,7 +24,7 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
       amount,
       to,
       from,
-      memo = '',
+      memo,
     }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
