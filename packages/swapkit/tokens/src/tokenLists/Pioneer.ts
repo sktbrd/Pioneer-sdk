@@ -5,6 +5,7 @@ export const list = {
   keywords: ['Pioneer'],
   tokens: [
     { chain: 'OSMO', identifier: 'OSMO.OSMO', decimals: 6 },
+    { chain: 'OSMO', identifier: 'OSMO.ATOM', decimals: 6 },
     { chain: 'XRP', identifier: 'XRP.XRP', decimals: 8 },
   ],
   count: 34,

@@ -1235,8 +1235,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.9
-        version: 9.2.9
+        specifier: ^9.2.15
+        version: 9.2.15
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -7119,16 +7119,16 @@ packages:
     resolution: {integrity: sha512-UAc6ufxe4W4gCjDQVImsHBtRzo8O7cd02qg5+cDIHC+SkjdYQYh5jikoJmtkMv0ocdaPVcvO6HRj+6UKjWgqqQ==}
     dev: false
 
+  /@pioneer-platform/pioneer-caip@9.2.15:
+    resolution: {integrity: sha512-3o+qFCq3tLBJrKPDXdO+wLE2dWIspy20IbOhBWsxHF+ggt+vH83zgrNQsZYItvtgAozDyKiauY28UuZiYZ/foQ==}
+    dev: false
+
   /@pioneer-platform/pioneer-caip@9.2.7:
     resolution: {integrity: sha512-WKHTzkZIMSehfVy49IB4xMVwvGb4bFjEh85f0z+8ltIjDgfBkKbmWGzPloJF9xJVGlnZhw2rHP4MAGdUh5P1QQ==}
     dev: false
 
   /@pioneer-platform/pioneer-caip@9.2.8:
     resolution: {integrity: sha512-XpzbPKm2ltoXU4xcn+7ZHYLU/k3Qa8wBLj7U+Lsv5XRw4sS7WJGCyobTO7W50o5xPFDccvUUetwk4Nt1L8mwJg==}
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.9:
-    resolution: {integrity: sha512-9uxnOD30nOy7AyzHNo1l4frL8Q68QYBaUERT8W72ENvrWFzQtyH47WRs5RByKOZjYFQYzXLQrm5JeqwjFWPLyA==}
     dev: false
 
   /@pioneer-platform/pioneer-client@9.0.19:
@@ -7832,8 +7832,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@shapeshiftoss/hdwallet-core@1.52.14:
-    resolution: {integrity: sha512-P+jUfZixdoJ147ZcK28R/Q0W9epALfJYRs/T+WQz1Zu2ZR0APeVFZwjto6B1ThkERstdgALrekRvwOU9NeIf5g==}
+  /@shapeshiftoss/hdwallet-core@1.53.1:
+    resolution: {integrity: sha512-+0Ji0KO55YwQ8k6Ms29auIJHdqsqIDwLopxPjvYKlBBPHmll90G01ByIR7MOwWsNKibkThVTJdpB/Pc5XAZXFg==}
     dependencies:
       '@shapeshiftoss/proto-tx-builder': 0.8.0
       eip-712: 1.0.0
@@ -18260,7 +18260,7 @@ packages:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
-      '@shapeshiftoss/hdwallet-core': 1.52.14
+      '@shapeshiftoss/hdwallet-core': 1.53.1
       '@types/node': 15.14.9
       bip39: 3.1.0
       codeclimate-test-reporter: 0.5.1

@@ -8,8 +8,8 @@ import { OsmosisToolbox } from '@coinmasters/toolbox-cosmos';
 import { Chain, ChainId, DerivationPath } from '@coinmasters/types';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 // @ts-ignore
-import * as LoggerModule from "@pioneer-platform/loggerdog";
-const log = LoggerModule.default();
+// import * as LoggerModule from "@pioneer-platform/loggerdog";
+// const log = LoggerModule.default();
 // @ts-ignore
 import { bip32ToAddressNList } from '../helpers/coins.ts';
 
@@ -47,10 +47,10 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       try{
         //get account info
         let accountInfo = await toolbox.getAccount(fromAddress);
-        log.info(tag,'accountInfo: ', accountInfo);
+        //log.info(tag,'accountInfo: ', accountInfo);
         let { sequence, account_number } = accountInfo.account; // Corrected path
-        log.info(tag,'sequence: ', sequence);
-        log.info(tag,'account_number: ', account_number);
+        //log.info(tag,'sequence: ', sequence);
+        //log.info(tag,'account_number: ', account_number);
         if(!sequence) throw new Error("missing sequence")
         if(!account_number) throw new Error("missing account_number")
         const amountInBaseUnits = Number(amountIn) * Math.pow(10, 6); // Assuming amountIn is in OSMO which has 6 decimal places
@@ -97,7 +97,7 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
 
         return tx
       }catch(e){
-        log.error(e)
+        //log.error(e)
       }
     }
 

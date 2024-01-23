@@ -9,8 +9,8 @@
 // import * as Events from "@pioneer-platform/pioneer-events";
 // @ts-ignore
 // @ts-ignore
-import * as LoggerModule from "@pioneer-platform/loggerdog";
-const log = LoggerModule.default();
+// import * as LoggerModule from "@pioneer-platform/loggerdog";
+// const log = LoggerModule.default();
 
 import type { AssetValue } from '@coinmasters/core';
 import { EVMChainList, SwapKitCore } from '@coinmasters/core';
@@ -272,7 +272,7 @@ export class SDK {
     this.setPaths = async function (paths: any) {
       try {
         if (!paths) throw Error('paths required!');
-        log.debug('setPaths called! paths: ', paths);
+        //log.debug('setPaths called! paths: ', paths);
         this.paths = paths;
         this.events.emit('SET_PATHS', this.paths);
       } catch (e) {
@@ -336,10 +336,10 @@ export class SDK {
         if (this.paths.length === 0) throw Error('No paths to verify!');
         if (this.blockchains.length === 0) throw Error('No blockchains to verify!');
 
-        log.debug('Verifying paths for blockchains...');
+        //log.debug('Verifying paths for blockchains...');
         for (let i = 0; i < this.blockchains.length; i++) {
           let blockchain = this.blockchains[i];
-          log.debug(`Checking paths for blockchain: ${blockchain}`);
+          //log.debug(`Checking paths for blockchain: ${blockchain}`);
           let pathsForChain;
           if (blockchain.indexOf('eip155') > -1) {
             //log.debug('ETH like detected!');
@@ -355,7 +355,7 @@ export class SDK {
             throw Error(`No paths for blockchain: ${blockchain}`);
           }
         }
-        log.debug('All blockchains have paths.');
+        //log.debug('All blockchains have paths.');
       } catch (e) {
         console.error('Failed to verify wallet: ', e);
         throw e;
@@ -368,12 +368,12 @@ export class SDK {
         if (!wallet) throw Error('Must have wallet to pair!');
         if (!this.swapKit) throw Error('SwapKit not initialized!');
         if (!blockchains) throw Error('Must have blockchains to pair!');
-        log.debug('blockchains: ', blockchains);
+        //log.debug('blockchains: ', blockchains);
         this.blockchains = blockchains;
         //get paths by blockchains, this allows pre-loaded paths to be inited beforehand
         //this.paths = [...getPaths(blockchains), ...this.paths];
         //verify at least one path per blockchain
-        log.debug('this.paths: ', this.paths);
+        //log.debug('this.paths: ', this.paths);
 
         // filter wallets by type
         const walletSelected = this.wallets.find((w: any) => w.type === wallet);
@@ -535,8 +535,8 @@ export class SDK {
     //@ts-ignore
     this.getAssets = function(filter) {
       try {
-        const tag = `${TAG} | getAssets | `;
-        log.info(tag, "filter: ", filter);
+        // const tag = `${TAG} | getAssets | `;
+        //log.info(tag, "filter: ", filter);
 
         let tokenMap: any = {};
         let chains = new Set();
@@ -547,10 +547,10 @@ export class SDK {
           tokens.forEach((token: any) => {
             chains.add(token.chain);
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            log.info("token PRE: ",token)
+            //log.info("token PRE: ",token)
             let expandedInfo = tokenToCaip(token)
             expandedInfo.sourceList = sourceList;
-            log.info("expandedInfo: ",expandedInfo)
+            //log.info("expandedInfo: ",expandedInfo)
             tokenMap[token.identifier] = expandedInfo;
           });
         };
@@ -575,20 +575,20 @@ export class SDK {
         let allAssets = Object.values(tokenMap);
 
         // Convert chains set to array
-        let chainsArray = Array.from(chains);
+        // let chainsArray = Array.from(chains);
 
-        log.info("Combined Asset List: ", allAssets.length);
-        log.info("Combined Asset List: ", allAssets[0]);
-        log.info("Chains: ", chainsArray);
+        //log.info("Combined Asset List: ", allAssets.length);
+        //log.info("Combined Asset List: ", allAssets[0]);
+        //log.info("Chains: ", chainsArray);
 
         // Log the number of tokens on each chain
-        for (const [chain, count] of Object.entries(chainTokenCounts)) {
-          log.info(`Number of tokens on ${chain}: `, count);
-        }
+        // for (const [chain, count] of Object.entries(chainTokenCounts)) {
+        //   //log.info(`Number of tokens on ${chain}: `, count);
+        // }
 
         return allAssets;
       } catch (e) {
-        log.error(e);
+        //log.error(e);
         throw e;
       }
     };
@@ -597,14 +597,14 @@ export class SDK {
       try {
         if (this.paths.length === 0) throw Error('No paths found!');
         if (!this.swapKit) throw Error('this.swapKit not initialized!');
-        log.debug(tag, 'this.blockchains: ', this.blockchains);
-        log.debug(tag, 'this.paths: ', this.paths);
+        //log.debug(tag, 'this.blockchains: ', this.blockchains);
+        //log.debug(tag, 'this.paths: ', this.paths);
         let pubkeysNew: any = [];
         for (let i = 0; i < this.paths.length; i++) {
           let path = this.paths[i];
           let pubkey: any = {}
           let chain: Chain = NetworkIdToChain[path.network];
-          log.debug(tag, 'path: ', path);
+          //log.debug(tag, 'path: ', path);
           pubkey.type = path.type;
           //get all blockchains on path
           let address = this.swapKit?.getAddress(chain);
@@ -633,10 +633,10 @@ export class SDK {
                 : []),
             ];
           }
-          log.debug(tag, 'pubkey: ', pubkey);
+          //log.debug(tag, 'pubkey: ', pubkey);
           pubkeysNew.push(pubkey);
         }
-        log.debug('pubkeysNew: ', pubkeysNew);
+        //log.debug('pubkeysNew: ', pubkeysNew);
         this.pubkeys = pubkeysNew;
         //load pubkeys into cache
         this.events.emit('SET_PUBKEYS', pubkeysNew);
@@ -662,7 +662,7 @@ export class SDK {
         //   this.balances = [];
         // }
         //TODO if wallet doesn't support blockchains, throw error
-        log.debug('getBalances this.blockchains: ', this.blockchains);
+        //log.debug('getBalances this.blockchains: ', this.blockchains);
         let balances = [];
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
@@ -670,13 +670,13 @@ export class SDK {
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
           let walletForChain = await this.swapKit?.getWalletByChain(chain);
-          log.debug(chain + ' walletForChain: ', walletForChain);
+          //log.debug(chain + ' walletForChain: ', walletForChain);
           if (walletForChain) {
             // @ts-ignore
             for (let j = 0; j < walletForChain.balance.length; j++) {
               // @ts-ignore
               let balance: AssetValue = walletForChain?.balance[j];
-              log.info('balance: ', balance);
+              //log.info('balance: ', balance);
 
               //log.debug('balance: ', balance);
               let balanceString: any = {};
@@ -700,7 +700,7 @@ export class SDK {
                   //log.debug('caip: ', caip);
                   //if (!caip) throw Error('Failed to get caip for balance: ' + JSON.stringify(balance));
                   if (caip) {
-                    log.info("balance: ",balance)
+                    //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
                     balanceString.context = this.context;
                     balanceString.caip = caip;
@@ -747,15 +747,15 @@ export class SDK {
           auth: 'lol',
           provider: 'lol',
         };
-        log.debug('register: ', register);
-        log.debug('register: ', JSON.stringify(register));
+        //log.debug('register: ', register);
+        //log.debug('register: ', JSON.stringify(register));
         const result = await this.pioneer.Register(register);
-        log.debug('result: ', result);
-        log.debug('result: ', result.data);
-        log.debug('result: ', result.data.balances);
+        //log.debug('result: ', result);
+        //log.debug('result: ', result.data);
+        //log.debug('result: ', result.data.balances);
 
         if (result.data.balances) {
-          log.debug('Setting balances!');
+          //log.debug('Setting balances!');
           this.balances = result.data.balances;
 
           this.events.emit('SET_BALANCES', result.data.balances);

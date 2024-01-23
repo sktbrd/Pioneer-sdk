@@ -36,8 +36,8 @@ import {
   TCEthereumVaultAbi,
   classifySwap,
 } from '@coinmasters/types';
-import * as LoggerModule from "@pioneer-platform/loggerdog";
-const log = LoggerModule.default();
+// import * as LoggerModule from "@pioneer-platform/loggerdog";
+// const log = LoggerModule.default();
 import type { AGG_CONTRACT_ADDRESS } from '../aggregator/contracts/index.ts';
 import { lowercasedContractAbiMapping } from '../aggregator/contracts/index.ts';
 import { getSwapInParams } from '../aggregator/getSwapParams.ts';
@@ -103,9 +103,9 @@ export class SwapKitCore<T = ''> {
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
     const tag = TAG + " | swap | "
-    log.info(tag,"route: ",route)
+    //log.info(tag,"route: ",route)
     const { quoteMode } = route.meta;
-    log.info(tag,"quoteMode: ",quoteMode)
+    //log.info(tag,"quoteMode: ",quoteMode)
 
     let evmChain;
 
@@ -124,7 +124,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       const swapType = classifySwap(quoteMode);
-      log.info(tag,"swapType: ",swapType)
+      //log.info(tag,"swapType: ",swapType)
       
       switch (swapType) {
         case 'AGG_SWAP': {
@@ -206,15 +206,15 @@ export class SwapKitCore<T = ''> {
           return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
         }
         case 'OSMOSIS_SWAP': {
-          log.info(tag,"OSMOSIS_SWAP route: ",route)
-          log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          //log.info(tag,"OSMOSIS_SWAP route: ",route)
+          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
           /*
              Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
            */
           return await this.performTx(route.txs[0])
         }
         case 'CENTRALIZED_SWAPPER': {
-          log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
+          //log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
           /*
             Centralized swappers just need a normal tranfer into their deposit address
            */
@@ -234,7 +234,7 @@ export class SwapKitCore<T = ''> {
             recipient: route.tx.txParams.address,
           }
           let resultSend = await this.transfer(params)
-          log.info(tag,"CENTRALIZED_SWAPPER resultSend: ",resultSend)
+          //log.info(tag,"CENTRALIZED_SWAPPER resultSend: ",resultSend)
           return resultSend
         }
         default:
@@ -248,21 +248,21 @@ export class SwapKitCore<T = ''> {
   performTx = async function(tx:any) {
     const tag = TAG + " | performTx | ";
     try {
-        log.info(tag, "Transaction: ", tx);
+        //log.info(tag, "Transaction: ", tx);
 
         if (!tx.chain) throw Error("Invalid tx missing chain!");
         if (!tx.type) throw Error("Invalid tx missing type!");
 
-        log.info(tag, "tx.chain: ", tx.chain);
+        //log.info(tag, "tx.chain: ", tx.chain);
 
         // @ts-ignore
         let chain = NetworkIdToChain[tx.chain];
-        log.info(tag, "chain: ", chain);
+        //log.info(tag, "chain: ", chain);
 
         if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
 
-        log.info(tag, "chain: ", chain);
-        log.info(tag, "tx.type: ", tx.type);
+        //log.info(tag, "chain: ", chain);
+        //log.info(tag, "tx.type: ", tx.type);
 
         // @ts-ignore
       let walletMethods = this.connectedWallets[chain];
@@ -274,7 +274,7 @@ export class SwapKitCore<T = ''> {
         await walletMethods[tx.type](tx.txParams);
     } catch (error) {
       // Handle or log the error as per requirement
-      log.error(tag, 'Error occurred:', error);
+      //log.error(tag, 'Error occurred:', error);
       // Optionally rethrow or handle the error
     }
   }
@@ -283,12 +283,12 @@ export class SwapKitCore<T = ''> {
     try{
       // Placeholder logic for waiting for transaction confirmation
       // This should be replaced with chain-specific confirmation logic
-      log.info(TAG, `Waiting for confirmation of transaction on ${chain}`);
+      //log.info(TAG, `Waiting for confirmation of transaction on ${chain}`);
       // Implement actual wait/check logic here
 
 
     }catch(e){
-      log.error(e)
+      //log.error(e)
     }
   };
 

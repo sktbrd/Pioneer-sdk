@@ -57,6 +57,7 @@ export class CosmosClient {
         ...balance,
         denom: balance.denom.includes('/') ? balance.denom.toUpperCase() : balance.denom,
       }));
+
     } catch (error) {
       console.error("Failed on node: ", this.rpcUrl)
       console.error('An error occurred:', error);

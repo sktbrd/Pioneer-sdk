@@ -4,8 +4,8 @@ import { Chain, ChainId, DerivationPath, RPCUrl, ApiUrl } from '@coinmasters/typ
 import { StargateClient } from '@cosmjs/stargate';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
 // @ts-ignore
-import * as LoggerModule from "@pioneer-platform/loggerdog";
-const log = LoggerModule.default();
+// import * as LoggerModule from "@pioneer-platform/loggerdog";
+// const log = LoggerModule.default();
 import { bip32ToAddressNList } from '../helpers/coins.ts';
 
 const TAG = " | cosmos | ";
@@ -26,13 +26,13 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
       address_n: bip32ToAddressNList(DerivationPath[Chain.Cosmos]),
     })) as { address: string };
 
-    log.info("api: ", api);
+    //log.info("api: ", api);
     const toolbox = GaiaToolbox({ server: api });
     DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await (async () => {
       try {
         return await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
       } catch (error) {
-        log.error("Cosmos Error getting fee rate:", error);
+        //log.error("Cosmos Error getting fee rate:", error);
         return '500';
       }
     })() ?? '500');
@@ -93,10 +93,10 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
     const ibcTransfer = async (from:string, to:string, amount:string, sourceChannel:string) => {
       let tag = TAG+ " | transferIbc | "
       try {
-        log.info("transferIbc: ",{from,to,amount,sourceChannel})
+        //log.info("transferIbc: ",{from,to,amount,sourceChannel})
         const accountInfo = await toolbox.getAccount(fromAddress);
         if (!accountInfo) throw new Error("missing accountInfo");
-        log.info(tag,"accountInfo: ",accountInfo)
+        //log.info(tag,"accountInfo: ",accountInfo)
         // const input = {
         //   signDoc: {
         //     account_number: accountInfo.accountNumber.toString(),
@@ -130,14 +130,14 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         // const signedTx = await signTransaction(input, true);
         // return await broadcastTransaction(signedTx.serialized);
       } catch (e) {
-        log.error(tag, "Error in transferIbc:", e);
+        //log.error(tag, "Error in transferIbc:", e);
         throw e;
       }
     };
 
     return { ...toolbox, getAddress: () => fromAddress, transfer, ibcTransfer };
   } catch (e) {
-    log.error(tag, e);
+    //log.error(tag, e);
     throw e;
   }
 };
