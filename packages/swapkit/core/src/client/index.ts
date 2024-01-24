@@ -279,19 +279,6 @@ export class SwapKitCore<T = ''> {
     }
   }
 
-  waitForConfirmation = async (chain: any, tx: any, invocationId: string) => {
-    try{
-      // Placeholder logic for waiting for transaction confirmation
-      // This should be replaced with chain-specific confirmation logic
-      //log.info(TAG, `Waiting for confirmation of transaction on ${chain}`);
-      // Implement actual wait/check logic here
-
-
-    }catch(e){
-      //log.error(e)
-    }
-  };
-
   getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
     console.log('First Time lookup! lets populate the wallet!');
     const address = this.getAddress(chain);

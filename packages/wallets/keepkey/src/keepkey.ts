@@ -200,9 +200,15 @@ const connectKeepkey = ({
                           apis,
                           rpcUrls,
                           addChain,
-                          config: { keepkeyConfig, covalentApiKey, ethplorerApiKey = 'freekey', utxoApiKey },
+                          config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey }
                         }) => async (chains, paths) => {
   if (!keepkeyConfig) throw new Error('KeepKey config not found');
+  console.log("paths: ", paths)
+  console.log("apis: ", apis)
+  console.log("rpcUrls: ", rpcUrls)
+  console.log("addChain: ", addChain)
+  console.log("config: ", { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey })
+
   console.log('connectKeepkey chains: ', chains);
   await checkAndLaunch();
 
