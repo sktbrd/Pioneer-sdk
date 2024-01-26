@@ -1,5 +1,47 @@
 # @swapkit/types
 
+## 4.2.7
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.6
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.5
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.4
+
+### Patch Changes
+
+- bump hdwallet
+
+## 4.2.3
+
+### Patch Changes
+
+- bump kk wallet
+
+## 4.2.2
+
+### Patch Changes
+
+- deps keepkey wallet
+
+## 4.2.1
+
+### Patch Changes
+
+- y
+
 ## 4.2.0
 
 ### Minor Changes

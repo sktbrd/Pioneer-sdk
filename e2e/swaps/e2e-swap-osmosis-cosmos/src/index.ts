@@ -147,6 +147,10 @@ const test_service = async function (this: any) {
         assert(balance.length > 0)
         //verify balances
 
+        log.info(tag,"pubkeysOut: ",app.pubkeys)
+        let pubkeysOut = app.pubkeys.filter((e:any) => e.networks.includes(BLOCKCHAIN_OUT));
+        log.info(tag, "pubkeysOut: ", pubkeysOut);
+
         //get asset context
         await app.setAssetContext(balance[0])
 

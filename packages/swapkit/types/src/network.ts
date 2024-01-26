@@ -295,7 +295,7 @@ export enum RPCUrl {
   Kujira = 'https://rpc-kujira.synergynodes.com/',
   Dash = 'https://dash.nownodes.io',
   Dogecoin = 'https://node-router.thorswap.net/dogecoin',
-  Ethereum = 'https://node-router.thorswap.net/ethereum',
+  Ethereum = 'https://daemon.ethereum.shapeshift.com',
   Litecoin = 'https://node-router.thorswap.net/litecoin',
   Maya = 'https://tendermint.mayachain.info',
   MayaStagenet = 'https://stagenet.tendermint.mayachain.info',

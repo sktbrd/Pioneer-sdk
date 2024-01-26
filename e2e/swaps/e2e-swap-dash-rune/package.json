@@ -1,5 +1,5 @@
 {
-  "name": "@coinmasters/integration-coins",
+  "name": "@coinmasters/e2e-swap-dash-rune",
   "version": "1.2.7",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -22,8 +22,9 @@
     "@coinmasters/types": "workspace:^",
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
+    "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.0.14",
+    "@pioneer-platform/pioneer-caip": "^9.0.10",
     "@pioneer-platform/pioneer-coins": "^9.2.2",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",

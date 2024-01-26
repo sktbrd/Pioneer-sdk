@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-bitcoin",
-  "version": "1.2.0",
+  "version": "1.2.7",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

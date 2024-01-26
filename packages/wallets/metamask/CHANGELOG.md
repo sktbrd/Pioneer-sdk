@@ -1,5 +1,82 @@
 # @coinmasters/wallet-metamask
 
+## 5.0.7
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.7
+  - @coinmasters/toolbox-utxo@6.0.7
+  - @coinmasters/toolbox-evm@6.0.7
+
+## 5.0.6
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.6
+  - @coinmasters/toolbox-utxo@6.0.6
+  - @coinmasters/toolbox-evm@6.0.6
+
+## 5.0.5
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.5
+  - @coinmasters/toolbox-utxo@6.0.5
+  - @coinmasters/toolbox-evm@6.0.5
+
+## 5.0.4
+
+### Patch Changes
+
+- bump hdwallet
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.4
+  - @coinmasters/toolbox-utxo@6.0.4
+  - @coinmasters/toolbox-evm@6.0.4
+
+## 5.0.3
+
+### Patch Changes
+
+- bump kk wallet
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.3
+  - @coinmasters/toolbox-utxo@6.0.3
+  - @coinmasters/toolbox-evm@6.0.3
+
+## 5.0.2
+
+### Patch Changes
+
+- deps keepkey wallet
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.2
+  - @coinmasters/toolbox-utxo@6.0.2
+  - @coinmasters/toolbox-evm@6.0.2
+
+## 5.0.1
+
+### Patch Changes
+
+- y
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@6.0.1
+  - @coinmasters/toolbox-utxo@6.0.1
+  - @coinmasters/toolbox-evm@6.0.1
+
 ## 5.0.0
 
 ### Minor Changes

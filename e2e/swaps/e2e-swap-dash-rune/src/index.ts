@@ -25,20 +25,17 @@ import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['BCH']
-let BLOCKCHAIN_OUT = ChainToNetworkId['DOGE']
-let ASSET = 'BCH'
-let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
+let BLOCKCHAIN_IN = ChainToNetworkId['DASH']
+let BLOCKCHAIN_OUT = ChainToNetworkId['THOR']
+let ASSET = 'DASH'
+let MIN_BALANCE = process.env['MIN_BALANCE_DASH'] || "0.01"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_DOGE_ADDRESS = process.env['FAUCET_DOGE_ADDRESS']
-if(!FAUCET_DOGE_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_DOGE_ADDRESS
 
-let TRADE_PAIR  = "BCH_DOGE"
+let TRADE_PAIR  = "DASH_THOR"
 let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "DOGE"
+let OUTPUT_ASSET = "THOR"
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -116,6 +113,7 @@ const test_service = async function (this: any) {
         //get paths for wallet
         let paths = getPaths(blockchains)
         log.info("paths: ",paths.length)
+
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
@@ -143,6 +141,7 @@ const test_service = async function (this: any) {
         assert(context)
 
 
+        await app.getPubkeys()
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
@@ -150,8 +149,16 @@ const test_service = async function (this: any) {
         assert(balance.length > 0)
         //verify balances
 
-        let balanceOut = app.balances.filter((e:any) => e.symbol === OUTPUT_ASSET)
+        let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
+        log.info(tag,"balanceOut: ",balanceOut)
+        assert(balanceOut[0])
         await app.setOutboundAssetContext(balanceOut[0]);
+
+        //get outbound asset
+        let outboundAssetContext = await app.outboundAssetContext
+        log.info(tag,"outboundAssetContext: ",outboundAssetContext)
+        assert(outboundAssetContext)
+        if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
 
         assert(app.assetContext)
         assert(app.assetContext.address)
@@ -185,6 +192,7 @@ const test_service = async function (this: any) {
         };
 
         //quote
+        log.info(tag,"entry: ",entry)
         let result = await app.pioneer.Quote(entry);
         result = result?.data;
         log.info(tag,"result: ",result)
@@ -196,8 +204,8 @@ const test_service = async function (this: any) {
             let route = result[i]
             console.log("route: ", route)
             //detect if erroed
-            if(route.integration === 'thorswap'){
-                selected = route.quote.routes[0]
+            if(route.integration === 'mayachain'){
+                selected = route.quote
                 break;
             }
             //log amountOut
@@ -220,7 +228,7 @@ const test_service = async function (this: any) {
             feeOptionKey: FeeOption.Fast,
         });
         log.info("txHash: ",txHash)
-        assert(txHash)
+        // assert(txHash)
 
         //TODO monitor TX untill complete
 

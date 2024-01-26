@@ -15,59 +15,25 @@ let assert = require('assert')
 import { WalletOption, availableChainsByWallet, NetworkIdToChain } from "@coinmasters/types";
 
 const getWalletByChain = async (keepkey:any, chain:any) => {
-    let tag = TAG + " | getWalletByChain | "
-    try{
-        log.info(tag,'Looking up wallet for chain:', chain);
+    if (!keepkey[chain]) return null;
 
-        // Check if the chain exists in the keepkey object
-        if (!keepkey[chain]) {
-            log.info(tag,'Chain not supported:', chain);
-            return null;
+    const walletMethods = keepkey[chain].walletMethods;
+    const address = await walletMethods.getAddress();
+    if (!address) return null;
+
+    let balance = [];
+    if (walletMethods.getPubkeys) {
+        const pubkeys = await walletMethods.getPubkeys();
+        for (const pubkey of pubkeys) {
+            const pubkeyBalance = await walletMethods.getBalance([{ pubkey }]);
+            balance.push(Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0);
         }
-
-        // Extract walletMethods for the given chain
-        const { walletMethods } = keepkey[chain];
-
-        // Get the address for the given chain
-        const address = await walletMethods.getAddress();
-        if (!address) return null;
-
-        let pubkeys = [];
-        if (walletMethods.getPubkeys) {
-            pubkeys = await walletMethods.getPubkeys();
-        }
-        log.info(tag,"address: ",address)
-        log.info(tag,"pubkeys: ",pubkeys)
-        
-        let balance = [];
-        if (pubkeys.length === 0) {
-            // Get balance using address
-            balance = await walletMethods.getBalance(address);
-            balance.forEach((b: { address: any; }) => b.address = address);
-        } else {
-            log.info(tag,"Get balance using xpubs: ")
-            // Get balance using pubkeys
-            let balanceTotal = 0;
-            for (const pubkey of pubkeys) {
-                let pubkeyBalance = await walletMethods.getBalance([{ pubkey }]);
-                pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-                if (isNaN(pubkeyBalance)) {
-                    pubkeyBalance = 0;
-                }
-                log.info(tag,"pubkeyBalance: ",pubkeyBalance)
-                pubkeyBalance = Number(pubkeyBalance);
-                if (!isNaN(pubkeyBalance)) {
-                    balanceTotal += pubkeyBalance;
-                }
-            }
-            let balanceValue = { total: balanceTotal, address };
-            balance = [balanceValue];
-        }
-
-        return { address, pubkeys, balance };
-    }catch(e){
-        log.error(e)
+        balance = [{ total: balance.reduce((a, b) => a + b, 0), address }];
+    } else {
+        balance = await walletMethods.getBalance([{address}]);
     }
+
+    return { address, balance };
 };
 
 
@@ -304,7 +270,7 @@ const test_service = async function (this: any) {
             config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
         }
         let chains =  [
-            'DASH'
+            'ETH'
         ]
         // let chains =  [
         //     'ARB',  'AVAX', 'BNB',
@@ -329,10 +295,12 @@ const test_service = async function (this: any) {
         //got balances
         for(let i = 0; i < chains.length; i++) {
             let chain = chains[i]
-            let walletData = await getWalletByChain(keepkey, chain);
+            let walletData:any = await getWalletByChain(keepkey, chain);
             log.info(chain+ " walletData: ",walletData)
+            // keepkey[chain].wallet.address = walletData.address
+            // keepkey[chain].wallet.balances = walletData.balance
         }
-        
+        log.info(tag,"keepkey: ",keepkey)
         /*
             TODO
             

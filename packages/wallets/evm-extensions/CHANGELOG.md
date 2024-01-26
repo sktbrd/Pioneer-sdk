@@ -1,5 +1,75 @@
 # @coinmasters/wallet-evm-extensions
 
+## 6.0.7
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.7
+  - @coinmasters/toolbox-evm@6.0.7
+
+## 6.0.6
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.6
+  - @coinmasters/toolbox-evm@6.0.6
+
+## 6.0.5
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.5
+  - @coinmasters/toolbox-evm@6.0.5
+
+## 6.0.4
+
+### Patch Changes
+
+- bump hdwallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.4
+  - @coinmasters/toolbox-evm@6.0.4
+
+## 6.0.3
+
+### Patch Changes
+
+- bump kk wallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.3
+  - @coinmasters/toolbox-evm@6.0.3
+
+## 6.0.2
+
+### Patch Changes
+
+- deps keepkey wallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.2
+  - @coinmasters/toolbox-evm@6.0.2
+
+## 6.0.1
+
+### Patch Changes
+
+- y
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.1
+  - @coinmasters/toolbox-evm@6.0.1
+
 ## 6.0.0
 
 ### Minor Changes

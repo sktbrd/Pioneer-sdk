@@ -1,4 +1,4 @@
-import type { AssetValue } from '@coinmasters/helpers';
+// import type { AssetValue } from '@coinmasters/helpers';
 import { BinanceToolbox } from '@coinmasters/toolbox-cosmos';
 import type { WalletTxParams } from '@coinmasters/types';
 import { Chain, ChainId, DerivationPath } from '@coinmasters/types';
@@ -61,7 +61,7 @@ export const binanceWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) =>
       assetValue,
       recipient,
       memo,
-    }: WalletTxParams & { assetValue: AssetValue }) =>
+    }: WalletTxParams & { assetValue: any }) =>
       signTransactionTransfer({
         from: fromAddress,
         to: recipient,

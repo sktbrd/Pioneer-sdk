@@ -547,10 +547,10 @@ export class SDK {
           tokens.forEach((token: any) => {
             chains.add(token.chain);
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            //log.info("token PRE: ",token)
+            console.log("token PRE: ",token)
             let expandedInfo = tokenToCaip(token)
             expandedInfo.sourceList = sourceList;
-            //log.info("expandedInfo: ",expandedInfo)
+            console.log("expandedInfo: ",expandedInfo)
             tokenMap[token.identifier] = expandedInfo;
           });
         };

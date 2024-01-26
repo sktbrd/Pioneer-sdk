@@ -1,5 +1,68 @@
 # @thorswap-lib/swapkit-entities
 
+## 3.2.7
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.7
+
+## 3.2.6
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.6
+
+## 3.2.5
+
+### Patch Changes
+
+- bump kk
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.5
+
+## 3.2.4
+
+### Patch Changes
+
+- bump hdwallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.4
+
+## 3.2.3
+
+### Patch Changes
+
+- bump kk wallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.3
+
+## 3.2.2
+
+### Patch Changes
+
+- deps keepkey wallet
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.2
+
+## 3.2.1
+
+### Patch Changes
+
+- y
+
+- Updated dependencies []:
+  - @coinmasters/types@4.2.1
+
 ## 3.2.0
 
 ### Minor Changes
