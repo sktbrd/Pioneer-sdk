@@ -111,13 +111,6 @@ const Swap = () => {
       throw Error('must have recipient address');
     }
 
-    let buyAsset;
-    if (outboundAssetContext.contract) {
-      buyAsset = `${outboundAssetContext.chain}.${outboundAssetContext.symbol}-${outboundAssetContext.contract}`;
-    } else {
-      buyAsset = `${outboundAssetContext.chain}.${outboundAssetContext.symbol}`;
-    }
-
     try {
       const newAmountIn = (sliderValue / 100) * parseFloat(assetContext?.balance || '0');
       setInputAmount(newAmountIn);
@@ -162,6 +155,7 @@ const Swap = () => {
     console.log('onSelectQuote: ', quote);
     setQuoteId(quote.id);
     setQuote(quote);
+    onClose();
   };
 
   // start the context provider
@@ -232,16 +226,14 @@ const Swap = () => {
             handleClick={handleClick}
             openModal={openModal}
             selectedButton={selectedButton}
+            setSliderValue={setSliderValue}
+            sliderValue={sliderValue}
           />
         );
       case 1:
         return (
           <BeginSwap
-            currentRouteIndex={currentRouteIndex}
-            routes={routes}
-            setCurrentRouteIndex={setCurrentRouteIndex}
-            setRoute={setRoute}
-            setSliderValue={setSliderValue}
+            quote={quote}
           />
         );
       case 2:

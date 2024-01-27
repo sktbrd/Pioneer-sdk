@@ -21,6 +21,7 @@ import Swap from '../../components/Swap';
 import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
 import Receive from '../../components/Receive';
+import Quote from '../../components/Quote';
 import Quotes from '../../components/Quotes';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
@@ -41,6 +42,7 @@ const Home = () => {
     'wallets',
     'receive',
     'track',
+    'quote',
     'quotes',
     'basic',
     'blockchains',
@@ -125,6 +127,9 @@ const Home = () => {
       case 'blockchains':
         navigate('/intent/blockchains');
         break;
+      case 'quote':
+        navigate('/intent/quote');
+        break;
       case 'quotes':
         navigate('/intent/quotes');
         break;
@@ -181,6 +186,8 @@ const Home = () => {
           return <Receive />;
         case 'blockchains':
           return <Blockchains onSelect={onSelect} />;
+        case 'quote':
+          return <Quote/>;
         case 'quotes':
           return <Quotes/>;
         case 'paths':
