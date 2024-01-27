@@ -1,5 +1,18 @@
 # @coinmasters/wallet-wc
 
+## 7.0.0
+
+### Minor Changes
+
+- bump
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@7.0.0
+  - @coinmasters/types@4.3.0
+  - @coinmasters/toolbox-evm@7.0.0
+
 ## 6.0.7
 
 ### Patch Changes

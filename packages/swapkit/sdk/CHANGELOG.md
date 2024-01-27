@@ -1,5 +1,30 @@
 # @coinmasters/sdk
 
+## 3.3.0
+
+### Minor Changes
+
+- bump
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@7.0.0
+  - @coinmasters/toolbox-cosmos@7.0.0
+  - @coinmasters/wallet-keystore@7.0.0
+  - @coinmasters/wallet-keepkey@9.0.0
+  - @coinmasters/toolbox-utxo@7.0.0
+  - @coinmasters/wallet-ledger@7.0.0
+  - @coinmasters/wallet-trezor@7.0.0
+  - @coinmasters/types@4.3.0
+  - @coinmasters/toolbox-evm@7.0.0
+  - @coinmasters/wallet-keplr@7.0.0
+  - @coinmasters/wallet-xdefi@7.0.0
+  - @coinmasters/core@7.0.0
+  - @coinmasters/api@3.3.0
+  - @coinmasters/wallet-okx@7.0.0
+  - @coinmasters/wallet-wc@7.0.0
+
 ## 3.2.7
 
 ### Patch Changes

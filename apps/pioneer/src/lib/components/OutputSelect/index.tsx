@@ -16,7 +16,7 @@ const CHAINS_WITH_TOKENS = [
   'ARB'
 ];
 
-export default function OutputSelect({ onClose, onSelect }) {
+export default function OutputSelect({ onClose, onSelect }:any) {
   const { state } = usePioneer();
   const { app, balances, pubkeys } = state;
   const [assets, setAssets] = useState([]);
@@ -70,10 +70,10 @@ export default function OutputSelect({ onClose, onSelect }) {
   };
 
   const handleSelectClick = (asset: any) => {
-    console.log("clicked: ", asset);
+    console.log("asset: ", asset);
     console.log("pubkeys: ", pubkeys);
     // Find a pubkey whose networks array includes the asset's networkId
-    let pubkey = pubkeys.find(pk => pk.networks.includes(asset.networkId));
+    let pubkey = pubkeys.find((pk: { networks: string | any[]; }) => pk.networks.includes(asset.networkId));
     console.log("pubkey: ", pubkey);
     if (pubkey) {
       // handle asset selection logic

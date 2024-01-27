@@ -20,6 +20,8 @@ import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
+import Receive from '../../components/Receive';
+import Quotes from '../../components/Quotes';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
@@ -37,7 +39,9 @@ const Home = () => {
   const [filteredOptions, setFilteredOptions] = useState([
     'portfolio',
     'wallets',
+    'receive',
     'track',
+    'quotes',
     'basic',
     'blockchains',
     'paths',
@@ -115,8 +119,14 @@ const Home = () => {
       case 'basic':
         navigate('/intent/basic');
         break;
+      case 'receive':
+        navigate('/intent/receive');
+        break;
       case 'blockchains':
         navigate('/intent/blockchains');
+        break;
+      case 'quotes':
+        navigate('/intent/quotes');
         break;
       case 'paths':
         navigate('/intent/paths');
@@ -167,8 +177,12 @@ const Home = () => {
           return <Portfolio />;
         case 'basic':
           return <Basic />;
+        case 'receive':
+          return <Receive />;
         case 'blockchains':
           return <Blockchains onSelect={onSelect} />;
+        case 'quotes':
+          return <Quotes/>;
         case 'paths':
           return <Paths/>;
         case 'pubkeys':
@@ -179,6 +193,7 @@ const Home = () => {
           return <Pending />;
         case 'transfer':
           return <Transfer />;
+        case 'swap':
         case 'swaps':
           return <Swap />;
         case 'earn':

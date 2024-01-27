@@ -162,7 +162,8 @@ export class SDK {
     this.status = 'preInit';
     this.appName = 'pioneer-sdk';
     this.appIcon = 'https://pioneers.dev/coins/pioneerMan.png';
-    this.spec = spec || config.spec || 'https://pioneers.dev/spec/swagger';
+    this.spec = spec || config.spec || 'http://127.0.0.1:9001/spec/swagger.json';
+    // this.spec = spec || config.spec || 'https://pioneers.dev/spec/swagger';
     this.wss = config.wss || 'wss://pioneers.dev';
     this.username = config.username;
     this.queryKey = config.queryKey;

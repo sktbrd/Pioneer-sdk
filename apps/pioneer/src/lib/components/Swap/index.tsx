@@ -22,6 +22,7 @@ import AssetSelect from '../../components/AssetSelect';
 import ErrorQuote from '../../components/ErrorQuote';
 import OutputSelect from '../../components/OutputSelect';
 import Pending from '../../components/Pending';
+import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
 import { usePioneer } from '../../context';
 
@@ -33,6 +34,7 @@ import SelectAssets from './steps/SelectAssets';
 
 const MODAL_STRINGS = {
   selectAsset: 'Select Asset',
+  selectQuote: 'Select Quote',
   selectOutbound: 'Select Outbound',
   confirmTrade: 'Confirm Trade',
   pending: 'Show Pending',
@@ -51,6 +53,7 @@ const Swap = () => {
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
+  const [quote, setQuote] = useState('');
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
   const [txHash, setTxhash] = useState(null);
@@ -59,6 +62,7 @@ const Swap = () => {
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
   const [selectedButton, setSelectedButton] = useState('quick'); // Initial selected button is "Quick"
   const [isContinueDisabled, setIsContinueDisabled] = useState(true); // Initial continue button is disabled
+  const [quotesData, setQuotesData] = useState<Quote[]>([]);
 
   // const handleSliderChange = (event) => {
   //   setTabIndex(parseInt(event.target.value, 10));
@@ -103,7 +107,7 @@ const Swap = () => {
     console.log('outboundAssetContext: ', outboundAssetContext);
 
     if (!recipientAddress) {
-      console.log("outboundAssetContext: ", outboundAssetContext);
+      console.log('outboundAssetContext: ', outboundAssetContext);
       throw Error('must have recipient address');
     }
 
@@ -117,13 +121,13 @@ const Swap = () => {
     try {
       const newAmountIn = (sliderValue / 100) * parseFloat(assetContext?.balance || '0');
       setInputAmount(newAmountIn);
-      
-      
-      
+
+      //get receiver context
       const entry = {
-        sellAsset: assetContext,
-        sellAmount: parseFloat(String(newAmountIn)).toPrecision(3),
-        buyAsset:outboundAssetContext,
+        sellAsset: app.assetContext,
+        // @ts-ignore
+        sellAmount: parseFloat(newAmountIn).toPrecision(3),
+        buyAsset: app.outboundAssetContext,
         senderAddress,
         recipientAddress,
         slippage: '3',
@@ -134,17 +138,9 @@ const Swap = () => {
         result = result.data;
         console.log('result: ', result);
 
-        if (result && result.routes && result.routes.length > 0) {
-          setQuoteId(result?.quoteId);
-          setRoutes(result?.routes);
-          console.log('currentRouteIndex: ', currentRouteIndex);
-          const routeLocal = result?.routes[currentRouteIndex || 0];
-          // phase 3
-          if (routeLocal.calldata && routeLocal.calldata.memo) {
-            routeLocal.calldata.memo = routeLocal.calldata.memo.replace('t:0', 'kk:30');
-          }
-          // @ts-ignore
-          setRoute(routeLocal);
+        if (result) {
+          setQuotesData(result);
+          openModal(MODAL_STRINGS.selectQuote);
         }
 
         // if error, render Error
@@ -160,6 +156,12 @@ const Swap = () => {
       console.error('ERROR: ', e);
       // alert(`Failed to get quote! ${e.message}`);
     }
+  };
+
+  let handleQuoteSelection = function (quote: any) {
+    console.log('onSelectQuote: ', quote);
+    setQuoteId(quote.id);
+    setQuote(quote);
   };
 
   // start the context provider
@@ -249,11 +251,11 @@ const Swap = () => {
     }
   };
 
-  let onSelectOutput = async function (asset:any) {
+  let onSelectOutput = async function (asset: any) {
     console.log('onSelectOutput');
     await app.setOutboundAssetContext(asset);
     onClose();
-  }
+  };
 
   let onSelect = async function () {
     console.log('onSelect');
@@ -278,6 +280,15 @@ const Swap = () => {
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
                 <OutputSelect onClose={onClose} onSelect={onSelectOutput} />
+              </div>
+            )}
+            {modalType === MODAL_STRINGS.selectQuote && (
+              <div>
+                <Quotes
+                  Quotes={quotesData}
+                  onClose={onClose}
+                  onSelectQuote={handleQuoteSelection}
+                />
               </div>
             )}
             {modalType === MODAL_STRINGS.confirmTrade && (
@@ -320,7 +331,6 @@ const Swap = () => {
             <Button onClick={goBack}>Go Back</Button>
           </div>
         )}
-
 
         <Button
           colorScheme="blue"

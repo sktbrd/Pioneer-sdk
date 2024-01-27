@@ -149,11 +149,14 @@ export const SWAP_IN = [
 ];
 
 export const SWAP_OUT = [
-  QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED,
   QuoteMode.TC_SUPPORTED_TO_TC_SUPPORTED,
   QuoteMode.TC_SUPPORTED_TO_ETH,
   QuoteMode.TC_SUPPORTED_TO_AVAX,
   QuoteMode.TC_SUPPORTED_TO_BSC,
+];
+
+export const UXTO_SWAP = [
+  QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED,
 ];
 
 export function classifySwap(quoteMode:QuoteMode) {

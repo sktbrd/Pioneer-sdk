@@ -213,6 +213,14 @@ export class SwapKitCore<T = ''> {
            */
           return await this.performTx(route.txs[0])
         }
+        case 'UXTO_SWAP': {
+          //log.info(tag,"OSMOSIS_SWAP route: ",route)
+          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          /*
+             Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
+           */
+          return await this.performTx(route.txs[0])
+        }
         case 'CENTRALIZED_SWAPPER': {
           //log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
           /*
@@ -371,7 +379,9 @@ export class SwapKitCore<T = ''> {
     if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
 
     try {
-      return await walletInstance.transfer(this.#prepareTxParams(params));
+      let transferParams = await this.#prepareTxParams(params)
+      console.log("transferParams: ", transferParams)
+      return await walletInstance.transfer(transferParams);
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);
     }

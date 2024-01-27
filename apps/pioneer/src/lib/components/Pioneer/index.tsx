@@ -286,7 +286,7 @@ const Pioneer = () => {
             )}
             {modalType === 'PORTFOLIO' && (
               <div>
-                <Portfolio />
+                <Portfolio/>
               </div>
             )}
             {modalType === 'SWAP' && (

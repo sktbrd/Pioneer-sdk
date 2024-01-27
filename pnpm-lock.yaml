@@ -128,8 +128,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.8
-        version: 9.2.8
+        specifier: ^9.2.19
+        version: 9.2.19
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -731,6 +731,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.0.14
         version: 9.0.14
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.8
+        version: 9.2.8(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -7254,12 +7257,12 @@ packages:
     resolution: {integrity: sha512-TsRhNATOrdAoX2VeIImYMdxLn2gCt/2m37h8XjfVurdOv8EI58WeNtAaY+f4dFS17kbG7GjnVl6IXrqc3yxrOA==}
     dev: false
 
-  /@pioneer-platform/pioneer-caip@9.2.7:
-    resolution: {integrity: sha512-WKHTzkZIMSehfVy49IB4xMVwvGb4bFjEh85f0z+8ltIjDgfBkKbmWGzPloJF9xJVGlnZhw2rHP4MAGdUh5P1QQ==}
+  /@pioneer-platform/pioneer-caip@9.2.19:
+    resolution: {integrity: sha512-0dA5wkom/AJQ1p0cfQ6Ze+Zt0G92xucLZDmaRLcafMdDU/hhKuBShlC2huk00ImTHb+iKbqzoIAR8nqwZyfduA==}
     dev: false
 
-  /@pioneer-platform/pioneer-caip@9.2.8:
-    resolution: {integrity: sha512-XpzbPKm2ltoXU4xcn+7ZHYLU/k3Qa8wBLj7U+Lsv5XRw4sS7WJGCyobTO7W50o5xPFDccvUUetwk4Nt1L8mwJg==}
+  /@pioneer-platform/pioneer-caip@9.2.7:
+    resolution: {integrity: sha512-WKHTzkZIMSehfVy49IB4xMVwvGb4bFjEh85f0z+8ltIjDgfBkKbmWGzPloJF9xJVGlnZhw2rHP4MAGdUh5P1QQ==}
     dev: false
 
   /@pioneer-platform/pioneer-client@9.0.19:
@@ -7452,6 +7455,17 @@ packages:
     resolution: {integrity: sha512-icvp0bI9r+6UYXvoZ3Kp7YDS8i76iNC7svQkRhoFgLrRALsCmhQgLhIjGrIgMM0SWGwQdL7XkoupkdWbPQ0fog==}
     dependencies:
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.6)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.8(@types/node@20.10.4):
+    resolution: {integrity: sha512-m+/aywMnq9ah0tQy6RrKuNbvqXVmYdOHpo3T3H37oQNFF6gK+YEucmoKJUV4zum4hwkuuVMHlr7I7Lb+ps0DgA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - '@swc/core'

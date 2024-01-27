@@ -478,7 +478,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
         import.meta.env.VITE_PIONEER_URL_SPEC ||
-        'https://pioneers.dev/spec/swagger.json';
+        'http://127.0.0.1:9001/spec/swagger.json';
+      // const spec =
+      //   localStorage.getItem('pioneerUrl') ||
+      //   // @ts-ignore
+      //   import.meta.env.VITE_PIONEER_URL_SPEC ||
+      //   'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
