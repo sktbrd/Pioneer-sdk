@@ -53,7 +53,7 @@ const Swap = () => {
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
-  const [quote, setQuote] = useState('');
+  const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
   const [txHash, setTxhash] = useState(null);
@@ -154,7 +154,7 @@ const Swap = () => {
   let handleQuoteSelection = function (quote: any) {
     console.log('onSelectQuote: ', quote);
     setQuoteId(quote.id);
-    setQuote(quote);
+    if(quote && quote.quote)setQuote(quote);
     onClose();
   };
 
@@ -231,11 +231,7 @@ const Swap = () => {
           />
         );
       case 1:
-        return (
-          <BeginSwap
-            quote={quote}
-          />
-        );
+        return <BeginSwap onAcceptSign={onAcceptSign} quote={quote} />;
       case 2:
         return <CompleteSwap quoteId={quoteId} route={route} txHash={txHash} />;
       default:
@@ -252,6 +248,11 @@ const Swap = () => {
   let onSelect = async function () {
     console.log('onSelect');
     onClose();
+  };
+
+  let onAcceptSign: any = function () {
+    console.log('onAcceptSign');
+    openModal(MODAL_STRINGS.confirmTrade);
   };
 
   return (
@@ -286,12 +287,8 @@ const Swap = () => {
             {modalType === MODAL_STRINGS.confirmTrade && (
               <div>
                 <SignTransaction
-                  currentRouteIndex={currentRouteIndex}
-                  inputAmount={inputAmount}
                   onClose={onClose}
-                  route={route}
-                  setTxhash={setTxhash}
-                  sliderValue={sliderValue}
+                  quote={quote}
                 />
               </div>
             )}

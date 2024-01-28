@@ -4,13 +4,15 @@ import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import CalculatingComponent from '../../../components/CalculatingComponent';
+import Quote from "../../../components/Quote";
 
-const BeginSwap = ({ quote }: any) => {
+const BeginSwap = ({ quote, onAcceptSign }: any) => {
   const [showGif, setShowGif] = useState(true);
 
   // wait for routes
   useEffect(() => {
-    if (quote) {
+    console.log("Quote changed: ", quote);
+    if (quote && quote.quote) {
       setShowGif(false);
     }
   }, [quote]);
@@ -22,7 +24,9 @@ const BeginSwap = ({ quote }: any) => {
           <CalculatingComponent />
         </Box>
       ) : (
-        <Box>{JSON.stringify(quote)}</Box>
+        <div>
+          <Quote quote={quote} onAcceptSign={onAcceptSign} />
+        </div>
       )}
     </Box>
   );

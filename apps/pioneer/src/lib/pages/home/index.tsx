@@ -23,6 +23,7 @@ import Transfer from '../../components/Transfer';
 import Receive from '../../components/Receive';
 import Quote from '../../components/Quote';
 import Quotes from '../../components/Quotes';
+import Sign from '../../components/SignTransaction';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
@@ -30,6 +31,7 @@ import Wallets from '../../components/Wallets';
 import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
+import SignTransaction from '../../components/SignTransaction';
 
 const Home = () => {
   const { txid } = useParams<{ txid?: string }>();
@@ -42,6 +44,7 @@ const Home = () => {
     'wallets',
     'receive',
     'track',
+    'sign',
     'quote',
     'quotes',
     'basic',
@@ -83,6 +86,7 @@ const Home = () => {
     // open blockchain modal
     // connect wallet with just this blockchain
     try {
+      //TODO set paths
       await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
       await app.getPubkeys();
       await app.getBalances();
@@ -126,6 +130,9 @@ const Home = () => {
         break;
       case 'blockchains':
         navigate('/intent/blockchains');
+        break;
+      case 'sign':
+        navigate('/intent/sign');
         break;
       case 'quote':
         navigate('/intent/quote');
@@ -186,6 +193,8 @@ const Home = () => {
           return <Receive />;
         case 'blockchains':
           return <Blockchains onSelect={onSelect} />;
+        case 'sign':
+          return <SignTransaction/>;
         case 'quote':
           return <Quote/>;
         case 'quotes':

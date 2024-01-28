@@ -26,55 +26,7 @@ import MayachainImage from '../../assets/png/mayachain.png';
 import OsmosisImage from '../../assets/png/osmosis.png';
 import ThorswapImage from '../../assets/png/thorswap.png';
 
-let quote = {
-  integration: 'changelly',
-  quote: {
-    steps: 1,
-    complete: true,
-    meta: { quoteMode: 'CHANGELLY' },
-    id: 'c5ul5u69scltqpom',
-    amountOut: '0.29349565',
-    inboundAddress: 'bc1qzhzlqegga7rwc9xjm8cydcm3g2uhp35gxq48dd',
-    tx: {
-      type: 'transfer',
-      chain: 'bip122:000000000019d6689c085ae165831e93',
-      txParams: {
-        address: 'bc1qzhzlqegga7rwc9xjm8cydcm3g2uhp35gxq48dd',
-        amount: '0.00171',
-        memo: null,
-      },
-    },
-    raw: {
-      id: 'c5ul5u69scltqpom',
-      apiExtraFee: '0.01',
-      changellyFee: '0.4',
-      payinExtraId: null,
-      amountExpectedFrom: '0.00171',
-      status: 'new',
-      currencyFrom: 'btc',
-      currencyTo: 'bch',
-      amountTo: '0.00000000',
-      amountExpectedTo: '0.29349565',
-      payinAddress: 'bc1qzhzlqegga7rwc9xjm8cydcm3g2uhp35gxq48dd',
-      payoutAddress: 'bitcoincash:qzfzukmpry8y4mdp6xz7cy65eagtwhajzvj749257p',
-      createdAt: '2024-01-27T22:37:27.000Z',
-      redirect: null,
-      kycRequired: false,
-      signature: null,
-      binaryPayload: null,
-    },
-    sellAsset: 'bip122:000000000019d6689c085ae165831e93/slip44:0',
-    sellAmount: '0.00171',
-    buyAsset: 'bip122:000000000000000000651ef99cb9fcbe/slip44:145',
-    buyAmount: '0.29349565',
-    proTokenEarned: 7.155153,
-    proTokenEarnedUsd: 7.155153,
-    sellAssetValueUsd: 71.55153,
-    buyAssetValueUsd: 71.430971297,
-  },
-};
-
-export const Quote: React.FC = () => {
+const Quote = ({ quote, onAcceptSign }: any) => {
   // Use actual values and image paths as needed
   const topBarBg = useColorModeValue('gray.100', 'gray.700'); // Change this color to match your design
   const { hasCopied, onCopy } = useClipboard(quote.quote.id);
@@ -129,6 +81,13 @@ export const Quote: React.FC = () => {
 
     return formattedNumber;
   }
+
+  const handleSignTransaction = useCallback(() => {
+    // Placeholder function for signing transaction
+    console.log('Transaction Signing Process Initiated');
+    onAcceptSign();
+    // Implement the actual sign transaction logic here
+  }, []);
 
   const bg = useColorModeValue('white', 'gray.800');
   return (
@@ -207,7 +166,7 @@ export const Quote: React.FC = () => {
             </Badge>
           </Flex>
 
-          <Button isFullWidth colorScheme="blue">
+          <Button isFullWidth colorScheme="blue" onClick={handleSignTransaction}>
             Sign Transaction
           </Button>
         </VStack>
