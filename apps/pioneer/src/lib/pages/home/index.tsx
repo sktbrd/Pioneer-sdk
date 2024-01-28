@@ -23,7 +23,7 @@ import Transfer from '../../components/Transfer';
 import Receive from '../../components/Receive';
 import Quote from '../../components/Quote';
 import Quotes from '../../components/Quotes';
-import Sign from '../../components/SignTransaction';
+import OutputSelect from '../../components/OutputSelect';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
@@ -45,6 +45,7 @@ const Home = () => {
     'receive',
     'track',
     'sign',
+    'assets',
     'quote',
     'quotes',
     'basic',
@@ -131,6 +132,9 @@ const Home = () => {
       case 'blockchains':
         navigate('/intent/blockchains');
         break;
+      case 'assets':
+        navigate('/intent/assets');
+        break;
       case 'sign':
         navigate('/intent/sign');
         break;
@@ -195,6 +199,8 @@ const Home = () => {
           return <Blockchains onSelect={onSelect} />;
         case 'sign':
           return <SignTransaction/>;
+        case 'assets':
+          return <OutputSelect/>;
         case 'quote':
           return <Quote/>;
         case 'quotes':

@@ -14,27 +14,28 @@
 
 import type { AssetValue } from '@coinmasters/core';
 import { EVMChainList, SwapKitCore } from '@coinmasters/core';
+import {
+  // CoinGeckoList,
+  // MayaList,
+  NativeList,
+  // OneInchList,
+  // PancakeswapETHList,
+  // PancakeswapList,
+  // PangolinList,
+  PioneerList,
+  // StargateARBList,
+  // SushiswapList,
+  ThorchainList,
+  // TraderjoeList,
+  // UniswapList,
+  // WoofiList,
+} from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { thorchainToCaip, ChainToNetworkId, tokenToCaip, caipToThorchain } from '@pioneer-platform/pioneer-caip';
+import { caipToThorchain, thorchainToCaip, tokenToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import EventEmitter from 'events';
-
-import  { NativeList } from '@coinmasters/tokens';
-import  { MayaList } from '@coinmasters/tokens';
-import  { CoinGeckoList } from '@coinmasters/tokens';
-import  { OneInchList } from '@coinmasters/tokens';
-import  { PancakeswapETHList } from '@coinmasters/tokens';
-import  { PancakeswapList } from '@coinmasters/tokens';
-import  { PangolinList } from '@coinmasters/tokens';
-import  { PioneerList } from '@coinmasters/tokens';
-import  { StargateARBList } from '@coinmasters/tokens';
-import  { SushiswapList } from '@coinmasters/tokens';
-import  { ThorchainList } from '@coinmasters/tokens';
-import  { TraderjoeList } from '@coinmasters/tokens';
-import  { UniswapList } from '@coinmasters/tokens';
-import  { WoofiList } from '@coinmasters/tokens';
 
 // @ts-ignore
 // @ts-ignore
@@ -297,7 +298,7 @@ export class SDK {
 
         // Remove duplicates based on .caip property
         this.balances = combinedBalances.reduce((acc, currentItem) => {
-          if (!acc.some((item: { caip: any; }) => item.caip === currentItem.caip)) {
+          if (!acc.some((item: { caip: any }) => item.caip === currentItem.caip)) {
             acc.push(currentItem);
           }
           return acc;
@@ -321,7 +322,7 @@ export class SDK {
 
         // Remove duplicates based on .pubkey property
         this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
-          if (!acc.some((item: { pubkey: any; }) => item.pubkey === currentItem.pubkey)) {
+          if (!acc.some((item: { pubkey: any }) => item.pubkey === currentItem.pubkey)) {
             acc.push(currentItem);
           }
           return acc;
@@ -534,43 +535,43 @@ export class SDK {
       }
     };
     //@ts-ignore
-    this.getAssets = function(filter) {
+    this.getAssets = function (filter) {
       try {
         // const tag = `${TAG} | getAssets | `;
         //log.info(tag, "filter: ", filter);
 
         let tokenMap: any = {};
         let chains = new Set();
-        let chainTokenCounts:any = {};
+        let chainTokenCounts: any = {};
 
         // Function to add tokens with their source list
         const addTokens = (tokens: any, sourceList: any) => {
           tokens.forEach((token: any) => {
             chains.add(token.chain);
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            console.log("token PRE: ",token)
-            let expandedInfo = tokenToCaip(token)
+            // console.log('token PRE: ', token);
+            let expandedInfo = tokenToCaip(token);
             expandedInfo.sourceList = sourceList;
-            console.log("expandedInfo: ",expandedInfo)
+            // console.log('expandedInfo: ', expandedInfo);
             tokenMap[token.identifier] = expandedInfo;
           });
         };
 
         // Add tokens from each list with their source
         addTokens(NativeList.tokens, 'NativeList');
-        addTokens(MayaList.tokens, 'MayaList');
-        addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
-        addTokens(OneInchList.tokens, 'OneInchList');
-        addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
-        addTokens(PancakeswapList.tokens, 'PancakeswapList');
-        addTokens(PangolinList.tokens, 'PangolinList');
+        // addTokens(MayaList.tokens, 'MayaList');
+        // addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
+        // addTokens(OneInchList.tokens, 'OneInchList');
+        // addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
+        // addTokens(PancakeswapList.tokens, 'PancakeswapList');
+        // addTokens(PangolinList.tokens, 'PangolinList');
         addTokens(PioneerList.tokens, 'PioneerList');
-        addTokens(StargateARBList.tokens, 'StargateARBList');
-        addTokens(SushiswapList.tokens, 'SushiswapList');
+        // addTokens(StargateARBList.tokens, 'StargateARBList');
+        // addTokens(SushiswapList.tokens, 'SushiswapList');
         addTokens(ThorchainList.tokens, 'ThorchainList');
-        addTokens(TraderjoeList.tokens, 'TraderjoeList');
-        addTokens(UniswapList.tokens, 'UniswapList');
-        addTokens(WoofiList.tokens, 'WoofiList');
+        // addTokens(TraderjoeList.tokens, 'TraderjoeList');
+        // addTokens(UniswapList.tokens, 'UniswapList');
+        // addTokens(WoofiList.tokens, 'WoofiList');
 
         // Convert the tokenMap back to an array
         let allAssets = Object.values(tokenMap);
@@ -603,7 +604,7 @@ export class SDK {
         let pubkeysNew: any = [];
         for (let i = 0; i < this.paths.length; i++) {
           let path = this.paths[i];
-          let pubkey: any = {}
+          let pubkey: any = {};
           let chain: Chain = NetworkIdToChain[path.network];
           //log.debug(tag, 'path: ', path);
           pubkey.type = path.type;
@@ -618,7 +619,9 @@ export class SDK {
             let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
             if (!pubkeys) throw Error('Failed to get pubkeys!' + chain);
             //get pubkey for path
-            let pubkeyForPath = pubkeys.find((p: any) => p.addressNList.toString() === path.addressNList.toString());
+            let pubkeyForPath = pubkeys.find(
+              (p: any) => p.addressNList.toString() === path.addressNList.toString(),
+            );
             if (!pubkeyForPath) throw Error('Failed to get pubkey for path!' + chain);
             pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
           }

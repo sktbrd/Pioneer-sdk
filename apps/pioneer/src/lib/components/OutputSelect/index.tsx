@@ -1,22 +1,37 @@
-import { Search2Icon } from '@chakra-ui/icons';
 import {
-  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement,
-  Spinner, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, AvatarBadge, Image,
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, ModalFooter
+  Avatar,
+  AvatarBadge,
+  Box,
+  Button,
+  Flex,
+  Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
 } from '@chakra-ui/react';
+import { Search2Icon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '../../context';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-const CHAINS_WITH_TOKENS = [
-  'BTC',
-  'ETH',
-  'BSC',
-  'AVAX',
-  'ARB'
-];
+const TOKEN_PLATFORMS = ['ETH', 'BSC', 'AVAX', 'ARB'];
 
-export default function OutputSelect({ onClose, onSelect }:any) {
+export default function OutputSelect({ onClose, onSelect }: any) {
   const { state } = usePioneer();
   const { app, balances, pubkeys } = state;
   const [assets, setAssets] = useState([]);
@@ -31,9 +46,38 @@ export default function OutputSelect({ onClose, onSelect }:any) {
   const fetchAssets = async () => {
     setIsLoading(true);
     try {
-      if(app){
+      if (app) {
+        console.log('app: ', app.pubkeys);
         let allTokens = await app.getAssets();
-        console.log("allTokens: ", allTokens);
+
+        //remove tokens that are not native
+        allTokens = allTokens.filter(token => token.type === 'native');
+
+        for (let i = 0; i < allTokens.length; i++) {
+          let token = allTokens[i];
+          let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
+            pk.networks.includes(token.networkId),
+          );
+          if (pubkey) {
+            // console.log('pubkey: ', pubkey);
+            allTokens[i].pubkey = pubkey.pubkey;
+            allTokens[i].address = pubkey.address || pubkey.master;
+          } else {
+            allTokens[i].needsPubkey = true;
+          }
+          let balance = balances.find((b: { caip: string }) => b.caip === token.caip);
+          if (balance) {
+            allTokens[i].balance = balance.balance;
+          }
+        }
+        allTokens.sort((a, b) => {
+          if (a.balance && !b.balance) return -1;
+          if (!a.balance && b.balance) return 1;
+          if (a.pubkey && !b.pubkey) return -1;
+          if (!a.pubkey && b.pubkey) return 1;
+          return 0;
+        });
+        console.log('allTokens: ', allTokens);
         setAssets(allTokens);
       }
     } catch (e) {
@@ -46,83 +90,28 @@ export default function OutputSelect({ onClose, onSelect }:any) {
     fetchAssets();
   }, [app]);
 
-  const getFilteredAssets = () => {
-    const selectedChain = CHAINS_WITH_TOKENS[selectedTab];
-    return assets.filter(asset => {
-      const isBTC = selectedChain === 'BTC';
-      const isNative = asset.type === 'native';
-      const matchesChain = asset.chain === selectedChain;
-      const matchesSearch = !search || (asset.symbol && asset.symbol.toLowerCase().includes(search.toLowerCase()));
-
-      return (isBTC && isNative) || (matchesChain && matchesSearch);
-    }).slice(currentPageIndex * itemsPerPage, (currentPageIndex + 1) * itemsPerPage);
-  };
-
-  const handleTabChange = (index) => {
+  const handleTabChange = (index: number) => {
     setSelectedTab(index);
     setCurrentPageIndex(0);
     setSearch('');
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
     setCurrentPageIndex(0);
   };
 
   const handleSelectClick = (asset: any) => {
-    console.log("asset: ", asset);
-    console.log("pubkeys: ", pubkeys);
-    // Find a pubkey whose networks array includes the asset's networkId
-    let pubkey = pubkeys.find((pk: { networks: string | any[]; }) => pk.networks.includes(asset.networkId));
-    console.log("pubkey: ", pubkey);
+    let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
+      pk.networks.includes(asset.networkId),
+    );
     if (pubkey) {
-      // handle asset selection logic
-      asset.address = pubkey.address || pubkey.master; // or pubkey.pubkey based on what you need
-      onSelect(asset); // onSelect function to handle the selected asset
+      asset.address = pubkey.address || pubkey.master;
+      onSelect(asset);
     } else {
-      // If NOT found, force the user to add pubkey for networkId
       setSelectedAsset(asset);
       setIsSubmitAddressModalOpen(true);
     }
-  };
-
-  const renderChainTabs = () => {
-    return CHAINS_WITH_TOKENS.map((chain, index) => (
-      <Tab key={index}>
-        <Avatar size="md" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[chain]}.png`} />
-      </Tab>
-    ));
-  };
-
-  const renderChainPanels = () => {
-    return CHAINS_WITH_TOKENS.map((_, index) => (
-      <TabPanel key={index}>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          getFilteredAssets().map((asset, index) => (
-            <Box key={index}>
-              <Flex alignItems="center" bg="black" border="1px solid #fff"
-                    borderRadius="md" boxShadow="sm" padding={2}>
-                <Avatar size="md" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.ticker]}.png`}>
-                  <AvatarBadge boxSize={'1.25em'}>
-                    <Image rounded="full" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.chain]}.png`} />
-                  </AvatarBadge>
-                </Avatar>
-                <Box ml={3}>
-                  <Text fontSize="sm">Asset: {asset?.identifier}</Text>
-                  <Text fontSize="sm">{asset?.name}</Text>
-                </Box>
-                <Button ml="auto" onClick={() => handleSelectClick(asset)}
-                        size="sm" variant="outline">
-                  Select
-                </Button>
-              </Flex>
-            </Box>
-          ))
-        )}
-      </TabPanel>
-    ));
   };
 
   return (
@@ -136,8 +125,9 @@ export default function OutputSelect({ onClose, onSelect }:any) {
           <ModalBody>
             <Text>Please submit the address for {selectedAsset?.name}:</Text>
             <Input placeholder="Enter address..." />
-            <Text mt={4} color="red.500">
-              Warning: This address is NOT controlled by Pioneer. You must verify that you can manage these funds outside of Pioneer.
+            <Text color="red.500" mt={4}>
+              Warning: This address is NOT controlled by Pioneer. You must verify that you can
+              manage these funds outside of Pioneer.
             </Text>
           </ModalBody>
           <ModalFooter>
@@ -151,21 +141,76 @@ export default function OutputSelect({ onClose, onSelect }:any) {
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
-        <Input onChange={handleSearchChange} placeholder="Search assets..." type="text" value={search} />
+        <Input
+          onChange={handleSearchChange}
+          placeholder="Search assets..."
+          type="text"
+          value={search}
+        />
       </InputGroup>
       <Box>
         <Tabs onChange={handleTabChange}>
-          <TabList>{renderChainTabs()}</TabList>
-          <TabPanels>{renderChainPanels()}</TabPanels>
+          <TabList>
+            <Tab>Native Assets</Tab>
+            <Tab>Token Platforms</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              {isLoading ? (
+                <Spinner />
+              ) : (
+                assets.map((asset, index) => (
+                  <Box key={index}>
+                    <Flex
+                      alignItems="center"
+                      justifyContent="space-between" // Added for alignment
+                      bg="black"
+                      border="1px solid #fff"
+                      borderRadius="md"
+                      boxShadow="sm"
+                      padding={2}
+                    >
+                      <Avatar
+                        size="md"
+                        src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.chain]}.png`}
+                      >
+                        <AvatarBadge boxSize="1.25em">
+                          <Image
+                            rounded="full"
+                            src={`https://pioneers.dev/coins/${COIN_MAP_LONG[asset.chain]}.png`}
+                          />
+                        </AvatarBadge>
+                      </Avatar>
+                      <Box ml={3}>
+                        <Text fontSize="sm">Asset: {asset?.identifier}</Text>
+                        <Text fontSize="sm">{asset?.name}</Text>
+                        {asset.address && <Text fontSize="sm">Address: {asset.address}</Text>}
+                        {asset.balance && <Text fontSize="sm">Balance: {asset.balance}</Text>}
+                      </Box>
+                      <Button size='sm' onClick={handleSelectClick}>Select</Button>
+                    </Flex>
+                  </Box>
+                ))
+              )}
+            </TabPanel>
+            <TabPanel>
+              <p>Coming Soon!</p>
+            </TabPanel>
+          </TabPanels>
         </Tabs>
       </Box>
       <Flex justifyContent="space-between" mt={4}>
-        <Button isDisabled={currentPageIndex === 0}
-                onClick={() => setCurrentPageIndex(currentPageIndex - 1)}>
+        <Button
+          isDisabled={currentPageIndex === 0}
+          onClick={() => setCurrentPageIndex(currentPageIndex - 1)}
+        >
           Previous Page
         </Button>
-        <Button isDisabled={getFilteredAssets().length < itemsPerPage}
-                onClick={() => setCurrentPageIndex(currentPageIndex + 1)}>
+        <Button
+          isDisabled={assets.length < itemsPerPage}
+          onClick={() => setCurrentPageIndex(currentPageIndex + 1)}
+        >
           Next Page
         </Button>
       </Flex>
