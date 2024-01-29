@@ -85,7 +85,6 @@ const getEVMWalletMethods = async ({
       return { ...AVAXToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
     case Chain.Base:
       return { ...BASEToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-
     default:
       throw new Error('getEVMWalletMethods Chain not supported');
   }

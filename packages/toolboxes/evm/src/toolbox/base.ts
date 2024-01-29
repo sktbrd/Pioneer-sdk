@@ -1,10 +1,10 @@
+import { AssetValue, formatBigIntToSafeValue } from '@coinmasters/helpers';
 import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl } from '@coinmasters/types';
 import type { BrowserProvider, JsonRpcProvider, Signer } from 'ethers';
 
-import type { CovalentApiType } from '../api/covalentApi.ts';
-import { covalentApi } from '../api/covalentApi.ts';
-import { getBalance } from '../index.ts';
-
+// import type { CovalentApiType } from '../api/covalentApi.ts';
+// import { covalentApi } from '../api/covalentApi.ts';
+// import { getBalance } from '../index.ts';
 import { BaseEVMToolbox } from './BaseEVMToolbox.ts';
 
 export const getNetworkParams = () => ({
@@ -22,18 +22,36 @@ export const BASEToolbox = ({
   signer,
   covalentApiKey,
 }: {
-  api?: CovalentApiType;
+  api?: null;
   covalentApiKey: string;
   signer: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const avaxApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Avalanche });
   const baseToolbox = BaseEVMToolbox({ provider, signer });
 
   return {
     ...baseToolbox,
     getNetworkParams,
-    getBalance: (address: any, potentialScamFilter?: boolean) =>
-      getBalance({ provider, api: avaxApi, address, chain: Chain.Avalanche, potentialScamFilter }),
+    async getBalance(address: any) {
+      try {
+        const evmGasTokenBalance = await provider.getBalance(address[0].address);
+        //console.log('tokenBalances: ', tokenBalances);
+        console.log('evmGasTokenBalance: ', evmGasTokenBalance);
+        let gasTokenBalance = AssetValue.fromChainOrSignature(
+          Chain.Base,
+          formatBigIntToSafeValue({
+            value: evmGasTokenBalance,
+            decimal: 18,
+          }),
+        );
+        gasTokenBalance.address = address[0].address;
+        let balances = [gasTokenBalance];
+        return balances;
+      } catch (e) {
+        console.log('getBalance error: ', e);
+      }
+    },
+    // getBalance: (address: any, potentialScamFilter?: boolean) =>
+    //   getBalance({ provider, api: null, address, chain: Chain.Avalanche, potentialScamFilter }),
   };
 };

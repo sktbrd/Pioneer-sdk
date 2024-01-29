@@ -590,6 +590,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.0.10
         version: 9.0.14
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.8
+        version: 9.2.8(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -20047,8 +20050,8 @@ packages:
     dependencies:
       '@types/node': 20.10.0
       esbuild: 0.18.20
-      postcss: 8.4.32
-      rollup: 3.29.4
+      postcss: 8.4.30
+      rollup: 3.29.2
     optionalDependencies:
       fsevents: 2.3.3
     dev: true

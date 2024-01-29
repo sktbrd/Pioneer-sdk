@@ -240,7 +240,7 @@ const transfer = async (
 ) => {
   const txAmount = assetValue.getBaseValue('bigint');
   const chain = assetValue.chain as EVMChain;
-
+  console.log('isGasAsset: ', isGasAsset(assetValue));
   if (!isGasAsset(assetValue)) {
     const contractAddress = getTokenAddress(assetValue, chain);
     if (!contractAddress) throw new Error('No contract address found');
@@ -267,7 +267,7 @@ const transfer = async (
     value: txAmount,
     data: data || hexlify(toUtf8Bytes(memo || '')),
   };
-
+  console.log('txObject: ', txObject);
   return sendTransaction(provider, txObject, feeOptionKey, signer, isEIP1559Compatible);
 };
 
@@ -390,10 +390,10 @@ const sendTransaction = async (
   signer?: Signer,
   isEIP1559Compatible = true,
 ) => {
-  //console.log("TOOLBOX: checkpoint: ")
+  console.log("TOOLBOX: checkpoint: ")
   if (!signer) throw new Error('Signer is not defined');
   const { from, to, data, value, ...transaction } = tx;
-  //console.log("TOOLBOX: tx: ",tx)
+  console.log("TOOLBOX: tx: ",tx)
   if (!to) throw new Error('No to address provided');
 
   const parsedTxObject = {
@@ -446,23 +446,26 @@ const sendTransaction = async (
       chainId,
       type: isEIP1559 ? 2 : 0,
       gasLimit,
-      nonce,
+      nonce: nonce.toString(),
       ...feeData,
     };
-    //console.log("TOOLBOX: txObject: ",txObject)
+    console.log("TOOLBOX: txObject: ",txObject)
     try {
       const response = await signer.sendTransaction(txObject);
-      //console.log("TOOLBOX: response: ",response)
+      console.log("TOOLBOX: response: ",response)
       return typeof response?.hash === 'string' ? response.hash : response;
     } catch (error) {
       const txHex = await signer.signTransaction({
         ...txObject,
         from: address,
       });
+      console.log("TOOLBOX: txHex: ",txHex)
       const response = await provider.broadcastTransaction(txHex);
+
       return typeof response?.hash === 'string' ? response.hash : response;
     }
   } catch (error) {
+    console.error("sendTransaction: BaseEVMToolbox: ",error)
     throw new Error(`Error sending transaction: ${JSON.stringify(error)}`);
   }
 };
