@@ -47,6 +47,7 @@ export const availableChainsByWallet: any = {
   [WalletOption.KEPLR]: [Chain.Cosmos],
   [WalletOption.KEYSTORE]: [
     Chain.Arbitrum,
+    Chain.Base,
     Chain.Avalanche,
     Chain.Binance,
     Chain.BinanceSmartChain,

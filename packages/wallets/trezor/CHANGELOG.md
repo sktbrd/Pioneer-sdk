@@ -1,5 +1,19 @@
 # @coinmasters/wallet-trezor
 
+## 8.0.0
+
+### Minor Changes
+
+- bump
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/helpers@8.0.0
+  - @coinmasters/toolbox-utxo@8.0.0
+  - @coinmasters/types@4.4.0
+  - @coinmasters/toolbox-evm@8.0.0
+
 ## 7.0.0
 
 ### Minor Changes

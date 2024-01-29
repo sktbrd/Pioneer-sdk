@@ -119,7 +119,7 @@ export class SDK {
   public events: any;
 
   // @ts-ignore
-  public pairWallet: (wallet: any, blockchains: any, ledgerApp?: any) => Promise<any>;
+  public pairWallet: (options: any) => Promise<any>;
 
   // public startSocket: () => Promise<any>;
   // public stopSocket: () => any;
@@ -363,26 +363,25 @@ export class SDK {
         throw e;
       }
     };
-    this.pairWallet = async function (wallet: string, blockchains: any, ledgerApp?: any) {
+    this.pairWallet = async function (options: any) {
       const tag = `${TAG} | pairWallet | `;
       try {
-        // log.debug(tag, "Pairing Wallet");
+        let wallet = options.type;
+        let blockchains = options.blockchains;
         if (!wallet) throw Error('Must have wallet to pair!');
         if (!this.swapKit) throw Error('SwapKit not initialized!');
         if (!blockchains) throw Error('Must have blockchains to pair!');
-        //log.debug('blockchains: ', blockchains);
+        let ledgerApp;
+        if (options.ledgerApp) {
+          ledgerApp = options.ledgerApp;
+        }
+        if (options.type === 'KEYSTORE') {
+          if (!options.seed) throw Error('Must have seed to pair keystore!');
+        }
         this.blockchains = blockchains;
-        //get paths by blockchains, this allows pre-loaded paths to be inited beforehand
-        //this.paths = [...getPaths(blockchains), ...this.paths];
-        //verify at least one path per blockchain
-        //log.debug('this.paths: ', this.paths);
-
-        // filter wallets by type
+        console.log('this.wallets: ', this.wallets);
         const walletSelected = this.wallets.find((w: any) => w.type === wallet);
-        //log.debug(tag, 'walletSelected: ', walletSelected);
-
-        //chain by networkId
-        //log.debug(tag, 'blockchains: ', blockchains);
+        if (!walletSelected) throw Error('Wallet not found!');
         let AllChainsSupported = blockchains.map(
           (caip: string | number) =>
             NetworkIdToChain[caip] ||
@@ -390,87 +389,79 @@ export class SDK {
               throw new Error(`Missing CAIP: ${caip}`);
             })(),
         );
-        //log.debug(tag, 'AllChainsSupported: ', AllChainsSupported);
 
         await this.verifyWallet();
 
         let resultPair: string;
-        if (walletSelected.type === 'KEEPKEY') {
-          resultPair =
-            (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-              AllChainsSupported,
-              this.paths,
-            )) || '';
-          //log.debug('resultPair: ', resultPair);
-          this.keepkeyApiKey = resultPair;
-        } else if (walletSelected.type === 'METAMASK') {
-          resultPair =
-            (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-              AllChainsSupported,
-              this.paths,
-            )) || '';
-        } else if (walletSelected.type === 'LEDGER') {
-          //log.debug('ledgerApp: ', ledgerApp);
-          try {
-            if (!ledgerApp) throw Error('Ledger app required for ledger pairing!');
+        switch (walletSelected.type) {
+          case 'KEEPKEY':
+            this.keepkeyApiKey =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                AllChainsSupported,
+                this.paths,
+              )) || '';
+            resultPair = 'success'
+            break;
+          case 'METAMASK':
+            resultPair =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                AllChainsSupported,
+              )) || '';
+            break;
+          case 'KEYSTORE':
+            resultPair =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                AllChainsSupported,
+                options.seed,
+                0,
+              )) || '';
+            break;
+          case 'LEDGER':
+            try {
+              if (!ledgerApp) throw Error('Ledger app required for ledger pairing!');
 
-            if (ledgerApp === 'ETH') {
-              //log.debug('ETH');
-              //pair all evm chains
-              // eslint-disable-next-line @typescript-eslint/prefer-for-of
-              for (let i = 0; i < EVMChainList.length; i++) {
+              if (ledgerApp === 'ETH') {
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                for (let i = 0; i < EVMChainList.length; i++) {
+                  resultPair =
+                    (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                      EVMChainList[i],
+                      this.paths,
+                    )) || '';
+                }
+              } else {
                 resultPair =
                   (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-                    EVMChainList[i],
+                    ledgerApp,
                     this.paths,
                   )) || '';
-                //log.debug('LEDGER resultPair: ', resultPair);
               }
-            } else {
-              resultPair =
-                (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-                  ledgerApp,
-                  this.paths,
-                )) || '';
-              //log.debug('LEDGER resultPair: ', resultPair);
+            } catch (e: any) {
+              console.error('Failed to pair ledger! e: ', e);
+              if (e.toString().indexOf('LockedDeviceError') > -1) {
+                return { error: 'LockedDeviceError' };
+              }
+              if (e.toString().indexOf('claimInterface') > -1) {
+                return { error: 'claimInterface' };
+              }
+              if (e.toString().indexOf('decorateAppAPIMethods') > -1) {
+                return { error: 'WrongAppError' };
+              }
+              if (e.toString().indexOf('TransportStatusError') > -1) {
+                return { error: 'WrongAppError' };
+              }
+              return { error: 'Unknown Error' };
             }
-          } catch (e: any) {
-            console.error('Failed to pair ledger! e: ', e);
-            // @ts-ignore
-            if (e.toString().indexOf('LockedDeviceError') > -1) {
-              //log.debug('LockedDeviceError...');
-              return {
-                error: 'LockedDeviceError',
-              };
-            }
-            if (e.toString().indexOf('claimInterface')) {
-              return {
-                error: 'claimInterface',
-              };
-            }
-            if (e.toString().indexOf('decorateAppAPIMethods')) {
-              return {
-                error: 'WrongAppError',
-              };
-            }
-            if (e.toString().indexOf('TransportStatusError')) {
-              return {
-                error: 'WrongAppError',
-              };
-            }
-            return {
-              error: 'Unknown Error',
-            };
-            //TODO no device plugged in
-            //TODO wrong browser?
-          }
-        } else {
-          resultPair =
-            (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-              AllChainsSupported,
-            )) || '';
+            break;
+
+          default:
+            resultPair =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                AllChainsSupported,
+              )) || '';
+            break;
         }
-        // @ts-ignore
+
         if (resultPair) {
           // update
           const matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
@@ -510,16 +501,176 @@ export class SDK {
         } else {
           throw Error(`Failed to pair wallet! ${walletSelected.type}`);
         }
+
         return resultPair;
       } catch (e) {
         console.error(tag, 'e: ', e);
-        // response:
-        console.error(tag, 'e: ', JSON.stringify(e));
-        // log.error(tag, "e2: ", e.response)
-        // log.error(tag, "e3: ", e.response.data)
         throw e;
       }
     };
+    // this.pairWallet = async function (wallet: string, blockchains: any, ledgerApp?: any) {
+    //   const tag = `${TAG} | pairWallet | `;
+    //   try {
+    //     // log.debug(tag, "Pairing Wallet");
+    //     if (!wallet) throw Error('Must have wallet to pair!');
+    //     if (!this.swapKit) throw Error('SwapKit not initialized!');
+    //     if (!blockchains) throw Error('Must have blockchains to pair!');
+    //     //log.debug('blockchains: ', blockchains);
+    //     this.blockchains = blockchains;
+    //     //get paths by blockchains, this allows pre-loaded paths to be inited beforehand
+    //     //this.paths = [...getPaths(blockchains), ...this.paths];
+    //     //verify at least one path per blockchain
+    //     //log.debug('this.paths: ', this.paths);
+    //
+    //     // filter wallets by type
+    //     const walletSelected = this.wallets.find((w: any) => w.type === wallet);
+    //     //log.debug(tag, 'walletSelected: ', walletSelected);
+    //
+    //     //chain by networkId
+    //     //log.debug(tag, 'blockchains: ', blockchains);
+    //     let AllChainsSupported = blockchains.map(
+    //       (caip: string | number) =>
+    //         NetworkIdToChain[caip] ||
+    //         (() => {
+    //           throw new Error(`Missing CAIP: ${caip}`);
+    //         })(),
+    //     );
+    //     //log.debug(tag, 'AllChainsSupported: ', AllChainsSupported);
+    //
+    //     await this.verifyWallet();
+    //
+    //     let resultPair: string;
+    //     if (walletSelected.type === 'KEEPKEY') {
+    //       resultPair =
+    //         (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //           AllChainsSupported,
+    //           this.paths,
+    //         )) || '';
+    //       //log.debug('resultPair: ', resultPair);
+    //       this.keepkeyApiKey = resultPair;
+    //     } else if (walletSelected.type === 'METAMASK') {
+    //       resultPair =
+    //         (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //           AllChainsSupported,
+    //           this.paths,
+    //         )) || '';
+    //     } else if (walletSelected.type === 'KEYSTORE') {
+    //       resultPair =
+    //         (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //           AllChainsSupported,
+    //           this.paths,
+    //         )) || '';
+    //     } else if (walletSelected.type === 'LEDGER') {
+    //       //log.debug('ledgerApp: ', ledgerApp);
+    //       try {
+    //         if (!ledgerApp) throw Error('Ledger app required for ledger pairing!');
+    //
+    //         if (ledgerApp === 'ETH') {
+    //           //log.debug('ETH');
+    //           //pair all evm chains
+    //           // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    //           for (let i = 0; i < EVMChainList.length; i++) {
+    //             resultPair =
+    //               (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //                 EVMChainList[i],
+    //                 this.paths,
+    //               )) || '';
+    //             //log.debug('LEDGER resultPair: ', resultPair);
+    //           }
+    //         } else {
+    //           resultPair =
+    //             (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //               ledgerApp,
+    //               this.paths,
+    //             )) || '';
+    //           //log.debug('LEDGER resultPair: ', resultPair);
+    //         }
+    //       } catch (e: any) {
+    //         console.error('Failed to pair ledger! e: ', e);
+    //         // @ts-ignore
+    //         if (e.toString().indexOf('LockedDeviceError') > -1) {
+    //           //log.debug('LockedDeviceError...');
+    //           return {
+    //             error: 'LockedDeviceError',
+    //           };
+    //         }
+    //         if (e.toString().indexOf('claimInterface')) {
+    //           return {
+    //             error: 'claimInterface',
+    //           };
+    //         }
+    //         if (e.toString().indexOf('decorateAppAPIMethods')) {
+    //           return {
+    //             error: 'WrongAppError',
+    //           };
+    //         }
+    //         if (e.toString().indexOf('TransportStatusError')) {
+    //           return {
+    //             error: 'WrongAppError',
+    //           };
+    //         }
+    //         return {
+    //           error: 'Unknown Error',
+    //         };
+    //         //TODO no device plugged in
+    //         //TODO wrong browser?
+    //       }
+    //     } else {
+    //       resultPair =
+    //         (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+    //           AllChainsSupported,
+    //         )) || '';
+    //     }
+    //     // @ts-ignore
+    //     if (resultPair) {
+    //       // update
+    //       const matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
+    //       //log.debug(tag, 'matchingWalletIndex: ', matchingWalletIndex);
+    //       // get balances
+    //       // @ts-ignore
+    //       let context;
+    //       if (wallet === 'LEDGER' && ledgerApp !== 'ETH') {
+    //         context = 'ledger:ledger.wallet'; //placeholder until we know eth address
+    //       } else {
+    //         const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
+    //         if (!ethAddress) throw Error('Failed to get eth address! can not pair wallet');
+    //         context = `${wallet.toLowerCase()}:${ethAddress}.wallet`;
+    //
+    //         // isPioneer?
+    //         // get pioneer status
+    //         let pioneerInfo = await this.pioneer.GetPioneer({
+    //           address: ethAddress,
+    //         });
+    //         pioneerInfo = pioneerInfo.data;
+    //         //log.debug('pioneerInfo: ', pioneerInfo);
+    //         if (pioneerInfo.isPioneer) {
+    //           this.isPioneer = pioneerInfo.image;
+    //         }
+    //       }
+    //
+    //       // log.info(tag, "context: ", context);
+    //       this.events.emit('CONTEXT', context);
+    //       // add context to wallet
+    //       //@ts-ignore
+    //       // this.wallets[matchingWalletIndex].context = context;
+    //       //@ts-ignore
+    //       // this.wallets[matchingWalletIndex].connected = true;
+    //       this.wallets[matchingWalletIndex].status = 'connected';
+    //       this.setContext(context);
+    //       // this.refresh(context);
+    //     } else {
+    //       throw Error(`Failed to pair wallet! ${walletSelected.type}`);
+    //     }
+    //     return resultPair;
+    //   } catch (e) {
+    //     console.error(tag, 'e: ', e);
+    //     // response:
+    //     console.error(tag, 'e: ', JSON.stringify(e));
+    //     // log.error(tag, "e2: ", e.response)
+    //     // log.error(tag, "e3: ", e.response.data)
+    //     throw e;
+    //   }
+    // };
     this.clearWalletState = async function () {
       const tag = `${TAG} | clearWalletState | `;
       try {
@@ -695,12 +846,14 @@ export class SDK {
               } else {
                 //caip
                 try {
+                  console.log("balance: PRE: ",balance)
                   let caip = thorchainToCaip(
                     balance.chain,
                     balance.symbol,
                     balance.ticker,
                     balance.type,
                   );
+                  console.log("caip: PRE: ",caip)
                   //log.debug('caip: ', caip);
                   //if (!caip) throw Error('Failed to get caip for balance: ' + JSON.stringify(balance));
                   if (caip) {

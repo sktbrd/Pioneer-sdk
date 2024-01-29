@@ -1,5 +1,11 @@
 # @internal/playground
 
+## 0.4.0
+
+### Minor Changes
+
+- bump
+
 ## 0.3.0
 
 ### Minor Changes

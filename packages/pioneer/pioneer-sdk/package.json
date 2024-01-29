@@ -1,7 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-sdk",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "dependencies": {
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
@@ -13,7 +13,7 @@
     "@coinmasters/toolbox-utxo": "workspace:*",
     "@coinmasters/types": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.2.16",
+    "@pioneer-platform/pioneer-caip": "^9.2.21",
     "@pioneer-platform/pioneer-client": "^9.0.19",
     "@pioneer-platform/pioneer-coins": "^9.0.9"
   },

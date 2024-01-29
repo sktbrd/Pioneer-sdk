@@ -43,6 +43,15 @@ let txid:string
 let IS_SIGNED: boolean
 
 
+//TEST MODE
+let WALLET_SEED:any
+let TEST_MODE = process.env['TEST_MODE'] || "KEYSTORE"
+if(TEST_MODE == "KEYSTORE"){
+    WALLET_SEED=process.env['WALLET_SEED']
+    if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")
+}
+log.info("TEST_MODE: ",TEST_MODE)
+
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
@@ -92,6 +101,7 @@ const test_service = async function (this: any) {
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+        const { keystoreWallet } = await import("@coinmasters/wallet-keystore");
         //log.info(tag,"walletKeepKey: ",keepkeyWallet)
         const walletKeepKey = {
             type: WalletOption.KEEPKEY,
@@ -101,6 +111,15 @@ const test_service = async function (this: any) {
             status: "offline",
             isConnected: false,
         };
+        const walletKeystore:any = {
+            type: WalletOption.KEYSTORE,
+            icon: "https://pioneers.dev/coins/keepkey.png",
+            chains: availableChainsByWallet[WalletOption.KEYSTORE],
+            wallet: keystoreWallet,
+            status: "offline",
+            isConnected: false,
+        };
+        walletsVerbose.push(walletKeystore);
         walletsVerbose.push(walletKeepKey);
 
         let resultInit = await app.init(walletsVerbose, {})
@@ -127,7 +146,23 @@ const test_service = async function (this: any) {
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject:any
+        if(TEST_MODE == "KEYSTORE"){
+            pairObject = {
+                type: WalletOption.KEYSTORE,
+                seed: WALLET_SEED,
+                blockchains
+            }
+        } else {
+            //assume KK
+            pairObject = {
+                type:WalletOption.KEEPKEY,
+                blockchains
+            }
+        }
+        assert(pairObject)
+        log.info(tag,"pairObject: ",pairObject)
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing

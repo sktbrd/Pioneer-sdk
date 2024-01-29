@@ -128,8 +128,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.19
-        version: 9.2.19
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -279,8 +279,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.2.7
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.10.4)
@@ -331,14 +331,66 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.5)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.2.15
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.11.5)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.5
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/swaps/e2e-swap-eth-base:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.12.2
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.6)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.21
+        version: 9.2.21
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.2
+        version: 9.2.8(@types/node@20.11.6)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.6
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -383,8 +435,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.5)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.2.13
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.11.5)
@@ -435,8 +487,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.2.7
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.10.4)
@@ -487,8 +539,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.5)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.2.13
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.11.5)
@@ -539,8 +591,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.11
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -588,8 +640,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.8
         version: 9.2.8(@types/node@20.10.4)
@@ -637,8 +689,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.14
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -686,8 +738,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.11
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -732,8 +784,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.14
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.8
         version: 9.2.8(@types/node@20.10.4)
@@ -781,8 +833,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.10
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -830,8 +882,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.10
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -879,8 +931,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.13
-        version: 9.0.13
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -928,8 +980,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.10
-        version: 9.0.13
+        specifier: ^9.2.21
+        version: 9.2.21
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1011,8 +1063,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.14
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.10.4)
@@ -1091,14 +1143,63 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.10.4)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.0.14
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.2
         version: 9.2.2(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/wallets/intergration-wallet-keystore:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.6)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.21
+        version: 9.2.21
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.2
+        version: 9.2.8(@types/node@20.11.6)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.6
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -1404,8 +1505,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.16
-        version: 9.2.16
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-client':
         specifier: ^9.0.19
         version: 9.0.19
@@ -1478,8 +1579,8 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.6)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.13
-        version: 9.2.13
+        specifier: ^9.2.21
+        version: 9.2.21
     devDependencies:
       '@coinmasters/api':
         specifier: workspace:*
@@ -2006,8 +2107,8 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.11.6)
       '@pioneer-platform/pioneer-caip':
-        specifier: 9.0.14
-        version: 9.0.14
+        specifier: ^9.2.21
+        version: 9.2.21
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.0.8
         version: 9.0.8(@types/node@20.11.6)
@@ -7039,112 +7140,8 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/pioneer-caip@9.0.10:
-    resolution: {integrity: sha512-x4mBgI8JcMRxDHx/etK2doPjzD8UBCWJ6VZ3SMJwgvpR3HDLmt6tH7sqpLaFmc3awAswwsi+OJcZA10gmC/Sug==}
-    dependencies:
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      bitcoin-regex: 2.0.0
-      bitcoincash-regex: 1.1.9
-      bs58check: 3.0.1
-      crypto-js: 4.2.0
-      dash-regex: 1.0.11
-      dogecoin-regex: 1.0.10
-      ethereum-regex: 1.1.13
-      ethereum-tx-decoder: 3.0.0
-      litecoin-regex: 1.0.9
-      monero-regex: 1.0.9
-      neo-regex: 1.0.8
-      ripple-regex: 1.1.8
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.0.11:
-    resolution: {integrity: sha512-ZSMWPNXo/QwqQwZhigGTMzwWNjDdTT2liJlNCaQPWXxPk7KXTgBzN76M8dZ7tYyeFU/bZplPMPYNYwz75LUC/A==}
-    dependencies:
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      bitcoin-regex: 2.0.0
-      bitcoincash-regex: 1.1.9
-      bs58check: 3.0.1
-      crypto-js: 4.2.0
-      dash-regex: 1.0.11
-      dogecoin-regex: 1.0.10
-      ethereum-regex: 1.1.13
-      ethereum-tx-decoder: 3.0.0
-      litecoin-regex: 1.0.9
-      monero-regex: 1.0.9
-      neo-regex: 1.0.8
-      ripple-regex: 1.1.8
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.0.13:
-    resolution: {integrity: sha512-N1/28Dkr+CN5oXwaieqfcNb+v8T5ksb0++MWpWzHB/NOXleBk1mLdcd++ReqflCoQUdDYMQ/ngY5YKatBc+6SA==}
-    dependencies:
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      bitcoin-regex: 2.0.0
-      bitcoincash-regex: 1.1.9
-      bs58check: 3.0.1
-      crypto-js: 4.2.0
-      dash-regex: 1.0.11
-      dogecoin-regex: 1.0.10
-      ethereum-regex: 1.1.13
-      ethereum-tx-decoder: 3.0.0
-      litecoin-regex: 1.0.9
-      monero-regex: 1.0.9
-      neo-regex: 1.0.8
-      ripple-regex: 1.1.8
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.0.14:
-    resolution: {integrity: sha512-Jh1XXlfeWpy+Wc9OtPtr9AYav6RN/1VvzlQQP1yXjsvcxqOxFy4zsL/d91CLRzfit9HTs/neG9UQSsG0e/19OA==}
-    dependencies:
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      bitcoin-regex: 2.0.0
-      bitcoincash-regex: 1.1.9
-      bs58check: 3.0.1
-      crypto-js: 4.2.0
-      dash-regex: 1.0.11
-      dogecoin-regex: 1.0.10
-      ethereum-regex: 1.1.13
-      ethereum-tx-decoder: 3.0.0
-      litecoin-regex: 1.0.9
-      monero-regex: 1.0.9
-      neo-regex: 1.0.8
-      ripple-regex: 1.1.8
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.13:
-    resolution: {integrity: sha512-UAc6ufxe4W4gCjDQVImsHBtRzo8O7cd02qg5+cDIHC+SkjdYQYh5jikoJmtkMv0ocdaPVcvO6HRj+6UKjWgqqQ==}
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.15:
-    resolution: {integrity: sha512-3o+qFCq3tLBJrKPDXdO+wLE2dWIspy20IbOhBWsxHF+ggt+vH83zgrNQsZYItvtgAozDyKiauY28UuZiYZ/foQ==}
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.16:
-    resolution: {integrity: sha512-TsRhNATOrdAoX2VeIImYMdxLn2gCt/2m37h8XjfVurdOv8EI58WeNtAaY+f4dFS17kbG7GjnVl6IXrqc3yxrOA==}
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.19:
-    resolution: {integrity: sha512-0dA5wkom/AJQ1p0cfQ6Ze+Zt0G92xucLZDmaRLcafMdDU/hhKuBShlC2huk00ImTHb+iKbqzoIAR8nqwZyfduA==}
-    dev: false
-
-  /@pioneer-platform/pioneer-caip@9.2.7:
-    resolution: {integrity: sha512-WKHTzkZIMSehfVy49IB4xMVwvGb4bFjEh85f0z+8ltIjDgfBkKbmWGzPloJF9xJVGlnZhw2rHP4MAGdUh5P1QQ==}
+  /@pioneer-platform/pioneer-caip@9.2.21:
+    resolution: {integrity: sha512-aX+98HoDMJMd99xlem+O0hEQZXjW8T2ps/hkKvrgD23i/BSXHRRgSeBQfcKdrq5WzUYFrDbz4gNiOf2d9zQkxA==}
     dev: false
 
   /@pioneer-platform/pioneer-client@9.0.19:
@@ -7348,6 +7345,17 @@ packages:
     resolution: {integrity: sha512-m+/aywMnq9ah0tQy6RrKuNbvqXVmYdOHpo3T3H37oQNFF6gK+YEucmoKJUV4zum4hwkuuVMHlr7I7Lb+ps0DgA==}
     dependencies:
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.8(@types/node@20.11.6):
+    resolution: {integrity: sha512-m+/aywMnq9ah0tQy6RrKuNbvqXVmYdOHpo3T3H37oQNFF6gK+YEucmoKJUV4zum4hwkuuVMHlr7I7Lb+ps0DgA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.6)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - '@swc/core'

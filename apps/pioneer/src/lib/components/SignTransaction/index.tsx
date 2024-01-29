@@ -11,7 +11,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { FeeOption } from '@coinmasters/types';
+import { FeeOption, WalletOption } from '@coinmasters/types';
 // @ts-ignore
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import {
@@ -82,7 +82,11 @@ export default function SignTransaction({ onClose, quote }: any) {
       });
       app.setPaths(optimized);
       console.log('blockchain: ', blockchain);
-      await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      let pairObj = {
+        type:WalletOption.KEEPKEY,
+        blockchains
+      }
+      resultInit = await app.pairWallet(pairObj)
       await app.getPubkeys();
       await app.getBalances();
       setTimeout(() => {

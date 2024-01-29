@@ -12,18 +12,19 @@ import Basic from '../../components/Basic';
 import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
 import Loan from '../../components/Loan';
+import OutputSelect from '../../components/OutputSelect';
 import Paths from '../../components/Paths';
 import Pending from '../../components/Pending';
 import Pioneer from '../../components/Pioneer';
 import Portfolio from '../../components/Portfolio';
 import Pubkeys from '../../components/Pubkeys';
+import Quote from '../../components/Quote';
+import Quotes from '../../components/Quotes';
+import Receive from '../../components/Receive';
+import SignTransaction from '../../components/SignTransaction';
 import Swap from '../../components/Swap';
 import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
-import Receive from '../../components/Receive';
-import Quote from '../../components/Quote';
-import Quotes from '../../components/Quotes';
-import OutputSelect from '../../components/OutputSelect';
 // import OutputSelect from "lib/components/OutputSelect";
 // import BlockchainSelect from "lib/components/BlockchainSelect";
 // import WalletSelect from "lib/components/WalletSelect";
@@ -31,7 +32,6 @@ import Wallets from '../../components/Wallets';
 import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
-import SignTransaction from '../../components/SignTransaction';
 
 const Home = () => {
   const { txid } = useParams<{ txid?: string }>();
@@ -89,6 +89,11 @@ const Home = () => {
     try {
       //TODO set paths
       await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      let pairObj: any = {
+        type: 'KEEPKEY',
+        blockchains: ['eip155:1', blockchain],
+      };
+      await app.pairWallet(pairObj);
       await app.getPubkeys();
       await app.getBalances();
     } catch (error) {
@@ -188,7 +193,7 @@ const Home = () => {
         case 'track':
           return <Track txHash={txHash} />;
         case 'wallets':
-          return <Wallets/>;
+          return <Wallets />;
         case 'portfolio':
           return <Portfolio />;
         case 'basic':
@@ -198,15 +203,15 @@ const Home = () => {
         case 'blockchains':
           return <Blockchains onSelect={onSelect} />;
         case 'sign':
-          return <SignTransaction/>;
+          return <SignTransaction />;
         case 'assets':
-          return <OutputSelect/>;
+          return <OutputSelect />;
         case 'quote':
-          return <Quote/>;
+          return <Quote />;
         case 'quotes':
-          return <Quotes/>;
+          return <Quotes />;
         case 'paths':
-          return <Paths/>;
+          return <Paths />;
         case 'pubkeys':
           return <Pubkeys />;
         case 'balances':

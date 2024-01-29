@@ -4,7 +4,7 @@
     "@coinmasters/helpers": "workspace:*",
     "@coinmasters/types": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.2.13"
+    "@pioneer-platform/pioneer-caip": "^9.2.21"
   },
   "description": "SwapKit Lib core",
   "devDependencies": {
@@ -62,5 +62,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "7.0.0"
+  "version": "8.0.0"
 }
