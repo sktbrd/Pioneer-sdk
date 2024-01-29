@@ -57,11 +57,7 @@ export const binanceWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) =>
       }
     };
 
-    const transfer = ({
-      assetValue,
-      recipient,
-      memo,
-    }: WalletTxParams & { assetValue: any }) =>
+    const transfer = ({ assetValue, recipient, memo }: WalletTxParams & { assetValue: any }) =>
       signTransactionTransfer({
         from: fromAddress,
         to: recipient,

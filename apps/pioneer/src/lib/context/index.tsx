@@ -570,15 +570,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             console.log('setting pubkeys for context: ', appInit.context);
 
             // Remove duplicates based on .networkId property
-            const uniquePubkeys = data.reduce((acc: any, currentItem: any) => {
-              if (!acc.some((item: any) => item.networkId === currentItem.networkId)) {
-                acc.push(currentItem);
-              }
-              return acc;
-            }, []);
+            // const uniquePubkeys = data.reduce((acc: any, currentItem: any) => {
+            //   if (!acc.some((item: any) => item.networkId === currentItem.networkId)) {
+            //     acc.push(currentItem);
+            //   }
+            //   return acc;
+            // }, []);
 
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(uniquePubkeys));
+              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
           }
           // @ts-ignore
           dispatch({

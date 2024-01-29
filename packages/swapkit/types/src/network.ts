@@ -285,9 +285,11 @@ export enum ChainId {
 //TODO move these to pioneer proxy
 export enum RPCUrl {
   Arbitrum = 'https://arb1.arbitrum.io/rpc',
-  Avalanche = 'https://node-router.thorswap.net/avalanche-c',
+  // Avalanche = 'https://node-router.thorswap.net/avalanche-c',
+  Avalanche = 'https://daemon.avalanche.shapeshift.com/ext/bc/C/rpc',
   Binance = 'https://base.llamarpc.com',
-  BinanceSmartChain = 'https://bsc-dataseed.binance.org',
+  // BinanceSmartChain = 'https://bsc-dataseed.binance.org',
+  BinanceSmartChain = 'https://daemon.bnbsmartchain.shapeshift.com',
   Base = 'https://base.llamarpc.com',
   Bitcoin = 'https://node-router.thorswap.net/bitcoin',
   BitcoinCash = 'https://node-router.thorswap.net/bitcoin-cash',

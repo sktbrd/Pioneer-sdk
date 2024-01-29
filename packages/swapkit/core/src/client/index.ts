@@ -3,7 +3,6 @@
 
 
  */
-const TAG = ' | TAG | '
 import type { Keys, ThornameRegisterParam } from '@coinmasters/helpers';
 import {
   AssetValue,
@@ -23,19 +22,18 @@ import type {
   ExtendParams,
   WalletOption,
 } from '@coinmasters/types';
-
-import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
-
 import {
   Chain,
   ChainToChainId,
+  classifySwap,
   FeeOption,
   MemoType,
   TCAvalancheDepositABI,
   TCBscDepositABI,
   TCEthereumVaultAbi,
-  classifySwap,
 } from '@coinmasters/types';
+import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
+
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 import type { AGG_CONTRACT_ADDRESS } from '../aggregator/contracts/index.ts';
@@ -52,6 +50,7 @@ import type {
   Wallet,
   WalletMethods,
 } from './types.ts';
+const TAG = ' | TAG | ';
 
 const getEmptyWalletStructure = () =>
   (Object.values(Chain) as Chain[]).reduce(
@@ -102,7 +101,7 @@ export class SwapKitCore<T = ''> {
   };
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
-    const tag = TAG + " | swap | "
+    const tag = TAG + ' | swap | ';
     //log.info(tag,"route: ",route)
     const { quoteMode } = route.meta;
     //log.info(tag,"quoteMode: ",quoteMode)
@@ -125,7 +124,7 @@ export class SwapKitCore<T = ''> {
     try {
       const swapType = classifySwap(quoteMode);
       //log.info(tag,"swapType: ",swapType)
-      
+
       switch (swapType) {
         case 'AGG_SWAP': {
           const walletMethods = this.connectedWallets[evmChain];
@@ -211,7 +210,7 @@ export class SwapKitCore<T = ''> {
           /*
              Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
            */
-          return await this.performTx(route.txs[0])
+          return await this.performTx(route.txs[0]);
         }
         case 'UXTO_SWAP': {
           //log.info(tag,"OSMOSIS_SWAP route: ",route)
@@ -219,7 +218,7 @@ export class SwapKitCore<T = ''> {
           /*
              Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
            */
-          return await this.performTx(route.txs[0])
+          return await this.performTx(route.txs[0]);
         }
         case 'CENTRALIZED_SWAPPER': {
           //log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
@@ -229,21 +228,27 @@ export class SwapKitCore<T = ''> {
           const from = this.getAddress(NetworkIdToChain[route.tx.chain]);
           //build assetValue
           // create assetValue
-          const assetString = `${NetworkIdToChain[route.tx.chain]}.${NetworkIdToChain[route.tx.chain]}`; //TODO caip to identifier
+          const assetString = `${NetworkIdToChain[route.tx.chain]}.${
+            NetworkIdToChain[route.tx.chain]
+          }`; //TODO caip to identifier
           console.log('assetString: ', assetString);
           await AssetValue.loadStaticAssets();
           // @ts-ignore
-          const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(route.tx.txParams.amount));
-          if(!route.tx.txParams.memo && NetworkIdToChain[route.tx.chain] === 'XRP') throw Error("Dest tag is required for centralized swapper for XRP")
+          const assetValue = await AssetValue.fromIdentifier(
+            assetString,
+            parseFloat(route.tx.txParams.amount),
+          );
+          if (!route.tx.txParams.memo && NetworkIdToChain[route.tx.chain] === 'XRP')
+            throw Error('Dest tag is required for centralized swapper for XRP');
           let params = {
             from,
             assetValue,
-            memo: route.tx.txParams.memo || "",
+            memo: route.tx.txParams.memo || '',
             recipient: route.tx.txParams.address,
-          }
-          let resultSend = await this.transfer(params)
+          };
+          let resultSend = await this.transfer(params);
           //log.info(tag,"CENTRALIZED_SWAPPER resultSend: ",resultSend)
-          return resultSend
+          return resultSend;
         }
         default:
           throw new SwapKitError('core_swap_quote_mode_not_supported', { quoteMode });
@@ -253,39 +258,39 @@ export class SwapKitCore<T = ''> {
     }
   };
 
-  performTx = async function(tx:any) {
-    const tag = TAG + " | performTx | ";
+  performTx = async function (tx: any) {
+    const tag = TAG + ' | performTx | ';
     try {
-        //log.info(tag, "Transaction: ", tx);
+      //log.info(tag, "Transaction: ", tx);
 
-        if (!tx.chain) throw Error("Invalid tx missing chain!");
-        if (!tx.type) throw Error("Invalid tx missing type!");
+      if (!tx.chain) throw Error('Invalid tx missing chain!');
+      if (!tx.type) throw Error('Invalid tx missing type!');
 
-        //log.info(tag, "tx.chain: ", tx.chain);
+      //log.info(tag, "tx.chain: ", tx.chain);
 
-        // @ts-ignore
-        let chain = NetworkIdToChain[tx.chain];
-        //log.info(tag, "chain: ", chain);
+      // @ts-ignore
+      let chain = NetworkIdToChain[tx.chain];
+      //log.info(tag, "chain: ", chain);
 
-        if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
+      if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
 
-        //log.info(tag, "chain: ", chain);
-        //log.info(tag, "tx.type: ", tx.type);
+      //log.info(tag, "chain: ", chain);
+      //log.info(tag, "tx.type: ", tx.type);
 
-        // @ts-ignore
+      // @ts-ignore
       let walletMethods = this.connectedWallets[chain];
-        if (!walletMethods || !walletMethods[tx.type]) {
-          // @ts-ignore
-          throw new SwapKitError(`core_wallet_tx_type_not_implemented for chain ${chain}`);
-        }
+      if (!walletMethods || !walletMethods[tx.type]) {
+        // @ts-ignore
+        throw new SwapKitError(`core_wallet_tx_type_not_implemented for chain ${chain}`);
+      }
 
-        await walletMethods[tx.type](tx.txParams);
+      await walletMethods[tx.type](tx.txParams);
     } catch (error) {
       // Handle or log the error as per requirement
       //log.error(tag, 'Error occurred:', error);
       // Optionally rethrow or handle the error
     }
-  }
+  };
 
   getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
     console.log('First Time lookup! lets populate the wallet!');
@@ -379,8 +384,8 @@ export class SwapKitCore<T = ''> {
     if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
 
     try {
-      let transferParams = await this.#prepareTxParams(params)
-      console.log("transferParams: ", transferParams)
+      let transferParams = await this.#prepareTxParams(params);
+      console.log('transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);

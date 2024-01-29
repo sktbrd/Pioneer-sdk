@@ -87,13 +87,13 @@ export const utxoWalletMethods = async ({
   const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
 
   // @ts-ignore
-  const _getPubkeys = async (paths:any) => {
+  const _getPubkeys = async (paths: any) => {
     try {
       //console.log('paths: ', paths);
 
-      console.time('getPubkeys Duration'+chain); // Starts the timer
+      console.time('getPubkeys Duration' + chain); // Starts the timer
       const pubkeys = await Promise.all(
-        paths.map((path:any) => {
+        paths.map((path: any) => {
           // Create the path query from the original path object
           const pathQuery = {
             symbol: 'BTC',
@@ -116,12 +116,12 @@ export const utxoWalletMethods = async ({
           });
         }),
       );
-      console.timeEnd('getPubkeys Duration'+chain); // Ends the timer and logs the duration
+      console.timeEnd('getPubkeys Duration' + chain); // Ends the timer and logs the duration
 
       return pubkeys;
     } catch (e) {
       console.error(e);
-      console.timeEnd('getPubkeys Duration'+chain); // Ensure the timer is ended in case of error
+      console.timeEnd('getPubkeys Duration' + chain); // Ensure the timer is ended in case of error
     }
   };
   const pubkeys = await _getPubkeys(paths);

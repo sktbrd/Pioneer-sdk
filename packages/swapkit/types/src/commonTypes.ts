@@ -132,7 +132,7 @@ export type Asset = {
 
 export const OSMOSIS_SWAP = [QuoteMode.GAIA_TO_OSMO];
 
-export const CENTRALIZED_SWAPPER = [QuoteMode.CHANGELLY]
+export const CENTRALIZED_SWAPPER = [QuoteMode.CHANGELLY];
 
 export const AGG_SWAP = [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC];
 
@@ -155,11 +155,9 @@ export const SWAP_OUT = [
   QuoteMode.TC_SUPPORTED_TO_BSC,
 ];
 
-export const UXTO_SWAP = [
-  QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED,
-];
+export const UXTO_SWAP = [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED];
 
-export function classifySwap(quoteMode:QuoteMode) {
+export function classifySwap(quoteMode: QuoteMode) {
   if (AGG_SWAP.includes(quoteMode)) {
     return 'AGG_SWAP';
   }

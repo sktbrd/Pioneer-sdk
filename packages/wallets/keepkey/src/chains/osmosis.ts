@@ -2,16 +2,17 @@
     Osmosis SDK
         -Highlander
  */
-const TAG = " | osmosis | "
 import type { TransferParams } from '@coinmasters/toolbox-cosmos';
 import { OsmosisToolbox } from '@coinmasters/toolbox-cosmos';
 import { Chain, ChainId, DerivationPath } from '@coinmasters/types';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
+
 // @ts-ignore
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 // @ts-ignore
 import { bip32ToAddressNList } from '../helpers/coins.ts';
+const TAG = ' | osmosis | ';
 
 export type SignTransactionTransferParams = {
   asset: string;
@@ -39,78 +40,89 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       //@ts-ignore
       '3500',
     );
-    
+
     //sign tx swap
     // @ts-ignore
-    const build_swap_tx = async function (from:string, tokenIn:string, tokenOut:string, amountIn:string, amountOutMin:string) {
-      let tag = TAG + " | build_swap_tx | "
-      try{
+    const build_swap_tx = async function (
+      from: string,
+      tokenIn: string,
+      tokenOut: string,
+      amountIn: string,
+      amountOutMin: string,
+    ) {
+      let tag = TAG + ' | build_swap_tx | ';
+      try {
         //get account info
         let accountInfo = await toolbox.getAccount(fromAddress);
         //log.info(tag,'accountInfo: ', accountInfo);
         let { sequence, account_number } = accountInfo.account; // Corrected path
         //log.info(tag,'sequence: ', sequence);
         //log.info(tag,'account_number: ', account_number);
-        if(!sequence) throw new Error("missing sequence")
-        if(!account_number) throw new Error("missing account_number")
+        if (!sequence) throw new Error('missing sequence');
+        if (!account_number) throw new Error('missing account_number');
         const amountInBaseUnits = Number(amountIn) * Math.pow(10, 6); // Assuming amountIn is in OSMO which has 6 decimal places
         const amountInBaseUnitsString = amountInBaseUnits.toFixed(0); // Convert to string without decimals
 
         const amountOutMinBaseUnits = Number(amountOutMin) * Math.pow(10, 6); // Assuming amountIn is in OSMO which has 6 decimal places
         const amountOutMinBaseUnitsString = amountOutMinBaseUnits.toFixed(0); // Convert to string without decimals
 
-
         let tx = {
-          "account_number": account_number,
-          "chain_id": 'osmosis-1',
-          "fee": {
-            "amount": [
+          account_number: account_number,
+          chain_id: 'osmosis-1',
+          fee: {
+            amount: [
               {
-                "amount": "2291",
-                "denom": "uatom"
-              }
+                amount: '2291',
+                denom: 'uatom',
+              },
             ],
-            "gas": "100000"
+            gas: '100000',
           },
-          "memo": "memo",
-          "msg": [
+          memo: 'memo',
+          msg: [
             {
-              "type": "osmosis/gamm/swap-exact-amount-in",
-              "value": {
-                "routes": [
+              type: 'osmosis/gamm/swap-exact-amount-in',
+              value: {
+                routes: [
                   {
-                    "pool_id": "1",
-                    "token_out_denom": tokenOut
-                  }
+                    pool_id: '1',
+                    token_out_denom: tokenOut,
+                  },
                 ],
-                "sender": from,
-                "token_in": {
-                  "amount": amountInBaseUnitsString,
-                  "denom": tokenIn
+                sender: from,
+                token_in: {
+                  amount: amountInBaseUnitsString,
+                  denom: tokenIn,
                 },
-                "token_out_min_amount": amountOutMinBaseUnitsString
-              }
-            }
+                token_out_min_amount: amountOutMinBaseUnitsString,
+              },
+            },
           ],
-          "sequence": sequence
-        }
+          sequence: sequence,
+        };
 
-        return tx
-      }catch(e){
+        return tx;
+      } catch (e) {
         //log.error(e)
       }
-    }
+    };
 
     let sendSwapTx = async function (swapParams: any) {
       try {
         console.log('swapParams: ', swapParams);
-        if(!swapParams.senderAddress) throw new Error("missing senderAddress")
-        if(!swapParams.tokenIn) throw new Error("missing tokenIn")
-        if(!swapParams.tokenOut) throw new Error("missing tokenOut")
-        if(!swapParams.amountIn) throw new Error("missing amountIn")
-        if(!swapParams.amountOutMin) throw new Error("missing amountOutMin")
+        if (!swapParams.senderAddress) throw new Error('missing senderAddress');
+        if (!swapParams.tokenIn) throw new Error('missing tokenIn');
+        if (!swapParams.tokenOut) throw new Error('missing tokenOut');
+        if (!swapParams.amountIn) throw new Error('missing amountIn');
+        if (!swapParams.amountOutMin) throw new Error('missing amountOutMin');
         // Build tx
-        let tx:any = await build_swap_tx(swapParams.senderAddress, swapParams.tokenIn, swapParams.tokenOut, swapParams.amountIn, swapParams.amountOutMin);
+        let tx: any = await build_swap_tx(
+          swapParams.senderAddress,
+          swapParams.tokenIn,
+          swapParams.tokenOut,
+          swapParams.amountIn,
+          swapParams.amountOutMin,
+        );
         console.log('Built transaction: ', tx);
 
         // Prepare the transaction for signing
@@ -143,25 +155,21 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       }
     };
 
-    
-    
     //@TODO
     //deleggate
-    
-    //redelegate
-    
-    //undeletegate
-    
-    //withdrrawal
-    
-    //osmo lp add
-    
-    //osmo lp remove
-    
-    //osmo redelegate
-    
 
-    
+    //redelegate
+
+    //undeletegate
+
+    //withdrrawal
+
+    //osmo lp add
+
+    //osmo lp remove
+
+    //osmo redelegate
+
     const signTransactionTransfer = async ({
       amount,
       to,

@@ -201,18 +201,18 @@ export default function OutputSelect({ onClose, onSelect }: any) {
         </Tabs>
       </Box>
       <Flex justifyContent="space-between" mt={4}>
-        <Button
-          isDisabled={currentPageIndex === 0}
-          onClick={() => setCurrentPageIndex(currentPageIndex - 1)}
-        >
-          Previous Page
-        </Button>
-        <Button
-          isDisabled={assets.length < itemsPerPage}
-          onClick={() => setCurrentPageIndex(currentPageIndex + 1)}
-        >
-          Next Page
-        </Button>
+        {/*<Button*/}
+        {/*  isDisabled={currentPageIndex === 0}*/}
+        {/*  onClick={() => setCurrentPageIndex(currentPageIndex - 1)}*/}
+        {/*>*/}
+        {/*  Previous Page*/}
+        {/*</Button>*/}
+        {/*<Button*/}
+        {/*  isDisabled={assets.length < itemsPerPage}*/}
+        {/*  onClick={() => setCurrentPageIndex(currentPageIndex + 1)}*/}
+        {/*>*/}
+        {/*  Next Page*/}
+        {/*</Button>*/}
       </Flex>
     </Stack>
   );

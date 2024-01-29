@@ -8,7 +8,7 @@ import {
   MATICToolbox,
   OPToolbox,
 } from '@coinmasters/toolbox-evm';
-import type { ConnectWalletParams, EVMChain } from '@coinmasters/types';
+import type { EVMChain } from '@coinmasters/types';
 import { Chain, WalletOption } from '@coinmasters/types';
 import { KeepKeySdk } from '@keepkey/keepkey-sdk';
 
@@ -196,62 +196,64 @@ const checkAndLaunch = async () => {
   }
 };
 
-const connectKeepkey = ({
-                          apis,
-                          rpcUrls,
-                          addChain,
-                          config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey }
-                        }) => async (chains, paths) => {
-  if (!keepkeyConfig) throw new Error('KeepKey config not found');
-  console.log("paths: ", paths)
-  console.log("apis: ", apis)
-  console.log("rpcUrls: ", rpcUrls)
-  console.log("addChain: ", addChain)
-  console.log("config: ", { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey })
+const connectKeepkey =
+  ({
+    apis,
+    rpcUrls,
+    addChain,
+    config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
+  }) =>
+  async (chains, paths) => {
+    if (!keepkeyConfig) throw new Error('KeepKey config not found');
+    console.log('paths: ', paths);
+    console.log('apis: ', apis);
+    console.log('rpcUrls: ', rpcUrls);
+    console.log('addChain: ', addChain);
+    console.log('config: ', { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey });
 
-  console.log('connectKeepkey chains: ', chains);
-  await checkAndLaunch();
+    console.log('connectKeepkey chains: ', chains);
+    await checkAndLaunch();
 
-  if (!paths) paths = [];
-  // Only build this once for all assets
-  const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-  console.log('connectKeepkey chains2: ', chains);
+    if (!paths) paths = [];
+    // Only build this once for all assets
+    const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
+    console.log('connectKeepkey chains2: ', chains);
 
-  const chainPromises = chains.map(async (chain) => {
-    if (!chain) return;
+    const chainPromises = chains.map(async (chain) => {
+      if (!chain) return;
 
-    const chainLogLabel = `Chain ${chain} processing time`;
-    console.time(chainLogLabel);
-    console.log('Processing chain: ', chain);
+      const chainLogLabel = `Chain ${chain} processing time`;
+      console.time(chainLogLabel);
+      console.log('Processing chain: ', chain);
 
-    // Get paths for chain
-    const filteredPaths = paths.filter(p => p.symbolSwapKit == chain);
+      // Get paths for chain
+      const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
 
-    const { address, walletMethods } = await getToolbox({
-      sdk: keepKeySdk,
-      apiClient: apis[chain],
-      rpcUrl: rpcUrls[chain],
-      chain,
-      covalentApiKey,
-      ethplorerApiKey,
-      utxoApiKey,
-      paths: filteredPaths,
+      const { address, walletMethods } = await getToolbox({
+        sdk: keepKeySdk,
+        apiClient: apis[chain],
+        rpcUrl: rpcUrls[chain],
+        chain,
+        covalentApiKey,
+        ethplorerApiKey,
+        utxoApiKey,
+        paths: filteredPaths,
+      });
+
+      addChain({
+        chain,
+        walletMethods,
+        wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
+      });
+
+      console.timeEnd(chainLogLabel);
     });
 
-    addChain({
-      chain,
-      walletMethods,
-      wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-    });
+    // Wait for all the promises to resolve
+    await Promise.all(chainPromises);
 
-    console.timeEnd(chainLogLabel);
-  });
-
-  // Wait for all the promises to resolve
-  await Promise.all(chainPromises);
-
-  return keepkeyConfig.apiKey;
-};
+    return keepkeyConfig.apiKey;
+  };
 
 export const keepkeyWallet = {
   connectMethodName: 'connectKeepkey' as const,

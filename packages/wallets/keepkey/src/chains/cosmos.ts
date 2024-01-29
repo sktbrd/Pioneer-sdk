@@ -1,14 +1,15 @@
 import type { TransferParams } from '@coinmasters/toolbox-cosmos';
 import { DEFAULT_COSMOS_FEE_MAINNET, GaiaToolbox } from '@coinmasters/toolbox-cosmos';
-import { Chain, ChainId, DerivationPath, RPCUrl, ApiUrl } from '@coinmasters/types';
+import { ApiUrl, Chain, ChainId, DerivationPath, RPCUrl } from '@coinmasters/types';
 import { StargateClient } from '@cosmjs/stargate';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
+
 // @ts-ignore
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 import { bip32ToAddressNList } from '../helpers/coins.ts';
 
-const TAG = " | cosmos | ";
+const TAG = ' | cosmos | ';
 
 export type SignTransactionTransferParams = {
   asset: string;
@@ -19,7 +20,7 @@ export type SignTransactionTransferParams = {
 };
 
 export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; api: string }) => {
-  let tag = TAG + " | cosmosWalletMethods | ";
+  let tag = TAG + ' | cosmosWalletMethods | ';
   try {
     if (!api) api = ApiUrl.Cosmos;
     const { address: fromAddress } = (await sdk.address.cosmosGetAddress({
@@ -28,17 +29,19 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
 
     //log.info("api: ", api);
     const toolbox = GaiaToolbox({ server: api });
-    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await (async () => {
-      try {
-        return await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
-      } catch (error) {
-        //log.error("Cosmos Error getting fee rate:", error);
-        return '500';
-      }
-    })() ?? '500');
+    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(
+      (await (async () => {
+        try {
+          return await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
+        } catch (error) {
+          //log.error("Cosmos Error getting fee rate:", error);
+          return '500';
+        }
+      })()) ?? '500',
+    );
 
     // Function to sign the transaction
-    const signTransaction = async (input:any, isIbc = false) => {
+    const signTransaction = async (input: any, isIbc = false) => {
       try {
         let responseSign;
         if (isIbc) {
@@ -54,7 +57,7 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
     };
 
     // Function to broadcast the transaction
-    const broadcastTransaction = async (serializedTx:string) => {
+    const broadcastTransaction = async (serializedTx: string) => {
       const decodedBytes = atob(serializedTx);
       const uint8Array = new Uint8Array(decodedBytes.length);
       for (let i = 0; i < decodedBytes.length; i++) {
@@ -77,7 +80,11 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
           account_number: accountInfo?.accountNumber.toString() ?? '',
           msgs: [
             {
-              value: { amount: [{ denom: 'uatom', amount: assetValue.getBaseValue('string') }], to_address: recipient, from_address: fromAddress },
+              value: {
+                amount: [{ denom: 'uatom', amount: assetValue.getBaseValue('string') }],
+                to_address: recipient,
+                from_address: fromAddress,
+              },
               type: 'cosmos-sdk/MsgSend',
             },
           ],
@@ -90,12 +97,12 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
     };
 
     // Transfer IBC function
-    const ibcTransfer = async (from:string, to:string, amount:string, sourceChannel:string) => {
-      let tag = TAG+ " | transferIbc | "
+    const ibcTransfer = async (from: string, to: string, amount: string, sourceChannel: string) => {
+      let tag = TAG + ' | transferIbc | ';
       try {
         //log.info("transferIbc: ",{from,to,amount,sourceChannel})
         const accountInfo = await toolbox.getAccount(fromAddress);
-        if (!accountInfo) throw new Error("missing accountInfo");
+        if (!accountInfo) throw new Error('missing accountInfo');
         //log.info(tag,"accountInfo: ",accountInfo)
         // const input = {
         //   signDoc: {

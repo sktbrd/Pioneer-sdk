@@ -29,29 +29,26 @@ const getBalance = async (address: any[]) => {
   //console.log(address)
   try {
     console.log('address: ', address[0].address);
-    console.log(
-      'URL: ',
+    console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
+    const balancesOsmo: any = await RequestClient.get(
       `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`,
     );
-    const balancesOsmo:any = await RequestClient.get(
-      `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`,
-    );
-    
+
     console.log('balanceOsmo: ', balancesOsmo);
-    let balances:any = []
+    let balances: any = [];
     await AssetValue.loadStaticAssets();
-    for(let i = 0; i < balancesOsmo.length; i++) {
+    for (let i = 0; i < balancesOsmo.length; i++) {
       let balance = balancesOsmo[i];
       console.log('balance: ', balance);
-      let identifier = 'OSMO.'+balance.asset;
+      let identifier = 'OSMO.' + balance.asset;
       const assetValueNativeOsmo = AssetValue.fromStringSync(identifier, balance.balance);
-      
-      if(assetValueNativeOsmo){
+
+      if (assetValueNativeOsmo) {
         console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
-        balances.push(assetValueNativeOsmo)
+        balances.push(assetValueNativeOsmo);
         console.log('balances: ', balances);
       } else {
-        console.error("Failed to get assetValueNative: "+identifier)
+        console.error('Failed to get assetValueNative: ' + identifier);
       }
     }
 
