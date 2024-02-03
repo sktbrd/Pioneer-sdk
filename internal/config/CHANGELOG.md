@@ -1,5 +1,17 @@
 # @internal/config
 
+## 2.4.3
+
+### Patch Changes
+
+- bump
+
+## 2.4.2
+
+### Patch Changes
+
+- bump for maya
+
 ## 2.4.1
 
 ### Patch Changes

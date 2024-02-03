@@ -1,5 +1,25 @@
 # @swapkit/toolbox-utxo
 
+## 8.0.3
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/helpers@8.0.3
+  - @coinmasters/types@4.4.3
+
+## 8.0.2
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/helpers@8.0.2
+  - @coinmasters/types@4.4.2
+
 ## 8.0.1
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @swapkit/tokens
 
+## 3.4.3
+
+### Patch Changes
+
+- bump
+
+## 3.4.2
+
+### Patch Changes
+
+- bump for maya
+
 ## 3.4.1
 
 ### Patch Changes

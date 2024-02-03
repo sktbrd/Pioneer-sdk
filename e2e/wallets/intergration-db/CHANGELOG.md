@@ -1,5 +1,25 @@
 # @coinmasters/integration-coins
 
+## 1.4.3
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-db@4.4.3
+  - @coinmasters/core@8.0.3
+
+## 1.4.2
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-db@4.4.2
+  - @coinmasters/core@8.0.2
+
 ## 1.4.1
 
 ### Patch Changes

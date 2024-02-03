@@ -1,5 +1,31 @@
 # @coinmasters/e2e-swap-osmosis-cosmos
 
+## 1.4.3
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.4.3
+  - @coinmasters/wallet-keystore@8.0.3
+  - @coinmasters/wallet-keepkey@10.0.3
+  - @coinmasters/types@4.4.3
+  - @coinmasters/core@8.0.3
+
+## 1.4.2
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.4.2
+  - @coinmasters/wallet-keystore@8.0.2
+  - @coinmasters/wallet-keepkey@10.0.2
+  - @coinmasters/types@4.4.2
+  - @coinmasters/core@8.0.2
+
 ## 1.4.1
 
 ### Patch Changes

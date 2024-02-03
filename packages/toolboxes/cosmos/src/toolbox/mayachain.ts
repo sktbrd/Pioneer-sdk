@@ -1,5 +1,4 @@
 import { RequestClient } from '@coinmasters/helpers';
-import { RPCUrl } from '@coinmasters/types';
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 // const PIONEER_API_URI = 'https://pioneers.dev';
 const PIONEER_API_URI = 'http://localhost:9001';
@@ -35,7 +34,8 @@ const getBalance = async (address: any[]) => {
 
 const sendRawTransaction = async (tx, sync = true) => {
   let tag = TAG + ' | sendRawTransaction | ';
-  try{
+  try {
+    let output: any = {};
     // Construct payload
     let payload = {
       tx_bytes: tx,
@@ -43,7 +43,8 @@ const sendRawTransaction = async (tx, sync = true) => {
     };
 
     // Define the URL for broadcasting transactions
-    let urlRemote = `${RPCUrl.Mayachain}/cosmos/tx/v1beta1/txs`;
+    //let urlRemote = `${RPCUrl.Mayachain}/cosmos/tx/v1beta1/txs`;
+    let urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
     console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using RequestClient
@@ -63,9 +64,9 @@ const sendRawTransaction = async (tx, sync = true) => {
       output.success = false;
       output.error = 'No txhash found in response';
     }
-  }catch(e){
+  } catch (e) {
     console.log(e);
-    throw e
+    throw e;
   }
 };
 

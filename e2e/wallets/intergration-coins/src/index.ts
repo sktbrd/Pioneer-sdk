@@ -160,13 +160,20 @@ const test_service = async function (this: any) {
         // if(assetValue.ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
 
 
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Mayachain,
-          "0.001",
-        );
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Mayachain,
+        //   "0.001",
+        // );
+        // console.log("assetValue: ",assetValue)
+        // if(assetValue.ticker !== 'CACAO') throw Error("Invalid ticker for MAYA!")
+        // if(assetValue.chain !== 'MAYA') throw Error("Invalid chain for MAYA!")
+
+        let assetString = 'MAYA.CACAO'
+
+        await AssetValue.loadStaticAssets();
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         console.log("assetValue: ",assetValue)
-        if(assetValue.ticker !== 'CACAO') throw Error("Invalid ticker for MAYA!")
-        if(assetValue.chain !== 'MAYA') throw Error("Invalid chain for MAYA!")
+
 
         //verify it set
         

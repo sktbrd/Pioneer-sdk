@@ -1,5 +1,23 @@
 # @thorswap-lib/swapkit-entities
 
+## 3.4.3
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.4.3
+
+## 3.4.2
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/types@4.4.2
+
 ## 3.4.1
 
 ### Patch Changes

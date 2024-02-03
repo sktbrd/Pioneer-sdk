@@ -104,7 +104,7 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             msgs: [
               {
                 value: {
-                  coins: [{ asset: 'THOR.' + asset.toUpperCase(), amount: amount.toString() }],
+                  coins: [{ asset: 'MAYA.' + asset.toUpperCase(), amount: amount.toString() }],
                   memo: memo || '',
                   signer: fromAddress,
                 },

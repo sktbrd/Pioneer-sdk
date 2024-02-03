@@ -1,5 +1,17 @@
 # @swapkit/types
 
+## 4.4.3
+
+### Patch Changes
+
+- bump
+
+## 4.4.2
+
+### Patch Changes
+
+- bump for maya
+
 ## 4.4.1
 
 ### Patch Changes
