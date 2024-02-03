@@ -175,7 +175,7 @@ const test_service = async function (this: any) {
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
+        // await AssetValue.loadStaticAssets();
         log.info("TEST_AMOUNT: ",TEST_AMOUNT)
         log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         let assetValue = AssetValue.fromChainOrSignature(
