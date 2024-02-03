@@ -92,14 +92,14 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        const keepKeyResponse = await sdk.mayachain.mayachainSignAminoDeposit({
+        let payload:any = {
           signerAddress: fromAddress,
           signDoc: {
             memo: memo || '',
             sequence,
             source: '0',
             account_number,
-            chain_id: ChainId.THORChain,
+            chain_id: ChainId.Mayachain,
             fee: { gas: '500000000', amount: [] },
             msgs: [
               {
@@ -112,7 +112,9 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
               },
             ],
           },
-        });
+        }
+        console.log("")
+        const keepKeyResponse = await sdk.mayachain.mayachainSignAminoDeposit(payload);
         console.log('keepKeyResponse.serialized: ', keepKeyResponse.serialized);
         // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);

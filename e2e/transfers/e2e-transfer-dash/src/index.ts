@@ -144,33 +144,6 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
-        // let paths = app.paths
-        // assert(paths)
-        // assert(paths[0])
-        // let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"osmoPath: ",osmoPath)
-        // assert(osmoPath)
-
-        //
-        // await app.getPubkeys()
-        // log.info(tag,"pubkeys: ",app.pubkeys)
-        // assert(app.pubkeys)
-        // assert(app.pubkeys[0])
-        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"pubkey: ",pubkey)
-        // assert(pubkey.length > 0)
-        // //verify pubkeys
-        //
-        //
-        // await app.getBalances()
-        // //log.info(tag,"balances: ",app.balances)
-        // //filter by OSMO caip
-        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"balance: ",balance)
-        // assert(balance.length > 0)
-        // //verify balances
-
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);

@@ -1,5 +1,32 @@
 # @swapkit/api
 
+## 3.4.6
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.4.6
+
+## 3.4.5
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.4.5
+
+## 3.4.4
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.4.4
+
 ## 3.4.3
 
 ### Patch Changes

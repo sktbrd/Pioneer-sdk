@@ -1,5 +1,35 @@
 # @swapkit/helpers
 
+## 8.0.6
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.4.6
+  - @coinmasters/types@4.4.6
+
+## 8.0.5
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.4.5
+  - @coinmasters/types@4.4.5
+
+## 8.0.4
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.4.4
+  - @coinmasters/types@4.4.4
+
 ## 8.0.3
 
 ### Patch Changes

@@ -64,6 +64,7 @@ const sendRawTransaction = async (tx, sync = true) => {
       output.success = false;
       output.error = 'No txhash found in response';
     }
+    return output
   } catch (e) {
     console.log(e);
     throw e;

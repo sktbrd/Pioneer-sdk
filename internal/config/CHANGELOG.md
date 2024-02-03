@@ -1,5 +1,23 @@
 # @internal/config
 
+## 2.4.6
+
+### Patch Changes
+
+- bump
+
+## 2.4.5
+
+### Patch Changes
+
+- bump
+
+## 2.4.4
+
+### Patch Changes
+
+- bump
+
 ## 2.4.3
 
 ### Patch Changes
