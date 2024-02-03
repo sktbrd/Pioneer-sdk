@@ -152,12 +152,22 @@ const test_service = async function (this: any) {
         // }
         //
         //test AssetValue
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Base,
+        //   "0.001",
+        // );
+        // console.log("assetValue: ",assetValue)
+        // if(assetValue.ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
+
+
         let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Base,
+          Chain.Mayachain,
           "0.001",
         );
         console.log("assetValue: ",assetValue)
-        if(assetValue.ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
+        if(assetValue.ticker !== 'CACAO') throw Error("Invalid ticker for MAYA!")
+        if(assetValue.chain !== 'MAYA') throw Error("Invalid chain for MAYA!")
+
         //verify it set
         
         //get all outputs available

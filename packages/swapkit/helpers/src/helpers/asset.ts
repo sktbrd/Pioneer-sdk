@@ -120,7 +120,7 @@ export const getCommonAssetInfo = (
       return { identifier: 'THOR.RUNE', decimal: BaseDecimal[assetString] };
     case Chain.BinanceSmartChain:
       return { identifier: 'BSC.BNB', decimal: BaseDecimal[assetString] };
-    case Chain.Maya:
+    case Chain.Mayachain:
       return { identifier: 'MAYA.CACAO', decimal: BaseDecimal.MAYA };
     case 'MAYA.MAYA':
       return { identifier: 'MAYA.MAYA', decimal: 4 };
@@ -154,7 +154,7 @@ export const getAssetType = ({ chain, symbol }: { chain: Chain; symbol: string }
     case Chain.Dash:
     case Chain.Zcash:
     case Chain.Litecoin:
-    case Chain.Maya:
+    case Chain.Mayachain:
     case Chain.THORChain:
       return 'Native';
     case Chain.Osmosis:

@@ -14,7 +14,7 @@ export enum Chain {
   Ethereum = 'ETH',
   Kujira = 'KUJI',
   Litecoin = 'LTC',
-  Maya = 'MAYA',
+  Mayachain = 'MAYA',
   Optimism = 'OP',
   Osmosis = 'OSMO',
   Polygon = 'MATIC',
@@ -56,7 +56,7 @@ export function getChainEnumValue(chainStr) {
     case 'LTC':
       return Chain.Litecoin;
     case 'MAYA':
-      return Chain.Maya;
+      return Chain.Mayachain;
     case 'OP':
       return Chain.Optimism;
     case 'OSMO':
@@ -90,7 +90,7 @@ export const ChainToNetworkId: Record<Chain, string> = {
   [Chain.EOS]: 'eos:cf057bbfb72640471fd910bcb67639c2',
   [Chain.Ethereum]: 'eip155:1',
   [Chain.Litecoin]: 'bip122:12a765e31ffd4059bada1e25190f6e98',
-  [Chain.Maya]: 'cosmos:maya-mainnet-v1',
+  [Chain.Mayachain]: 'cosmos:maya-mainnet-v1',
   [Chain.Optimism]: 'eip155:10',
   [Chain.Osmosis]: 'cosmos:osmosis-1',
   [Chain.Polygon]: 'eip155:137',
@@ -214,7 +214,14 @@ export const EVMChainList: EVMChain[] = [
   Chain.Polygon,
 ];
 
-export type UTXOChain = Chain.Bitcoin | Chain.BitcoinCash | Chain.Dogecoin | Chain.Litecoin;
+export type UTXOChain =
+  | Chain.Bitcoin
+  | Chain.BitcoinCash
+  | Chain.Dogecoin
+  | Chain.Litecoin
+  | Chain.Dash
+  | Chain.Digibyte
+  | Chain.Zcash;
 
 export const UTXOChainList: UTXOChain[] = [
   Chain.Bitcoin,
@@ -231,7 +238,7 @@ export type CosmosChain =
   | Chain.Osmosis
   | Chain.THORChain
   | Chain.Binance
-  | Chain.Maya
+  | Chain.Mayachain
   | Chain.Kujira;
 
 export const CosmosChainList: CosmosChain[] = [
@@ -272,7 +279,7 @@ export enum ChainId {
   Ethereum = '1',
   EthereumHex = '0x1',
   Litecoin = 'litecoin',
-  Maya = 'mayachain-mainnet-v1',
+  Mayachain = 'mayachain-mainnet-v1',
   MayaStagenet = 'mayachain-stagenet-v1',
   Optimism = '10',
   OptimismHex = '0xa',
@@ -300,7 +307,7 @@ export enum RPCUrl {
   Dogecoin = 'https://node-router.thorswap.net/dogecoin',
   Ethereum = 'https://daemon.ethereum.shapeshift.com',
   Litecoin = 'https://node-router.thorswap.net/litecoin',
-  Maya = 'https://tendermint.mayachain.info',
+  Mayachain = 'https://tendermint.mayachain.info',
   MayaStagenet = 'https://stagenet.tendermint.mayachain.info',
   Optimism = 'https://mainnet.optimism.io',
   Osmosis = 'https://lcd-osmosis.keplr.app',
@@ -379,8 +386,8 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Kujira]: Chain.Kujira,
   [ChainId.Ethereum]: Chain.Ethereum,
   [ChainId.Litecoin]: Chain.Litecoin,
-  [ChainId.MayaStagenet]: Chain.Maya,
-  [ChainId.Maya]: Chain.Maya,
+  [ChainId.MayaStagenet]: Chain.Mayachain,
+  [ChainId.Maya]: Chain.Mayachain,
   [ChainId.OptimismHex]: Chain.Optimism,
   [ChainId.Optimism]: Chain.Optimism,
   [ChainId.Osmosis]: Chain.Osmosis,
@@ -406,7 +413,7 @@ export const ChainToExplorerUrl: Record<Chain, string> = {
   [Chain.EOS]: 'https://eosauthority.com/',
   [Chain.Ethereum]: 'https://etherscan.io',
   [Chain.Litecoin]: 'https://ltc.bitaps.com',
-  [Chain.Maya]: 'https://www.mayascan.org',
+  [Chain.Mayachain]: 'https://www.mayascan.org',
   [Chain.Optimism]: 'https://optimistic.etherscan.io',
   [Chain.Osmosis]: 'https://www.mintscan.io/osmosis',
   [Chain.Polygon]: 'https://polygonscan.com',

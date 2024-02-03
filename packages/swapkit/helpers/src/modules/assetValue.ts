@@ -229,8 +229,8 @@ export const getMinAmountByChain = (chain: Chain) => {
       return asset.set(0.00000001);
 
     case Chain.THORChain:
-    case Chain.Maya:
-      return asset.set(0);
+    case Chain.Mayachain:
+      return asset.set(0.0000000001);
 
     default:
       return asset.set(0.00000001);

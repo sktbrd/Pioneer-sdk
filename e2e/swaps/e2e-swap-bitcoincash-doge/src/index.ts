@@ -129,7 +129,11 @@ const test_service = async function (this: any) {
         log.info("optimized: ", optimized.length);
         app.setPaths(optimized)
 
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
         assert(app.keepkeyApiKey)
         if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){

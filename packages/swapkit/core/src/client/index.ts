@@ -102,9 +102,9 @@ export class SwapKitCore<T = ''> {
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
     const tag = TAG + ' | swap | ';
-    //log.info(tag,"route: ",route)
+    console.log(tag, 'route: ', route);
     const { quoteMode } = route.meta;
-    //log.info(tag,"quoteMode: ",quoteMode)
+    console.log(tag, 'quoteMode: ', quoteMode);
 
     let evmChain;
 
@@ -212,12 +212,14 @@ export class SwapKitCore<T = ''> {
            */
           return await this.performTx(route.txs[0]);
         }
-        case 'UXTO_SWAP': {
-          //log.info(tag,"OSMOSIS_SWAP route: ",route)
-          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
-          /*
-             Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
-           */
+        // case 'UXTO_SWAP': {
+        //   //log.info(tag,"OSMOSIS_SWAP route: ",route)
+        //   //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+        //   return await this.performTx(route.txs[0]);
+        // }
+        case 'RANGO': {
+          console.log(" RANGO  Detected! ")
+          //perform
           return await this.performTx(route.txs[0]);
         }
         case 'CENTRALIZED_SWAPPER': {
@@ -262,7 +264,7 @@ export class SwapKitCore<T = ''> {
     const tag = TAG + ' | performTx | ';
     try {
       //log.info(tag, "Transaction: ", tx);
-
+      console.log(tag, 'Transaction: ', tx);
       if (!tx.chain) throw Error('Invalid tx missing chain!');
       if (!tx.type) throw Error('Invalid tx missing type!');
 
@@ -276,6 +278,11 @@ export class SwapKitCore<T = ''> {
 
       //log.info(tag, "chain: ", chain);
       //log.info(tag, "tx.type: ", tx.type);
+
+      if (tx.type === 'evm') {
+        //TODO do evm stuff
+        console.log(tag, 'EVM Transaction: ', tx);
+      }
 
       // @ts-ignore
       let walletMethods = this.connectedWallets[chain];

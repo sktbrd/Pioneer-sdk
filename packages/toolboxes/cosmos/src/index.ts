@@ -5,6 +5,7 @@ export { GaiaToolbox } from './toolbox/gaia.ts';
 export { getToolboxByChain } from './toolbox/getToolboxByChain.ts';
 export { KujiraToolbox } from './toolbox/kujira.ts';
 export { OsmosisToolbox } from './toolbox/osmosis.ts';
-export { MayaToolbox, ThorchainToolbox } from './toolbox/thorchain.ts';
+export { ThorchainToolbox } from './toolbox/thorchain.ts';
+export { MayachainToolbox } from './toolbox/mayachain.ts';
 export * from './types.ts';
 export * from './util.ts';

@@ -9,8 +9,8 @@ require('dotenv').config({path:"./../../.env"});
 require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
-const TAG  = " | e2e-test | "
-import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
+const TAG  = " | intergration-test | "
+import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
 console.log(process.env['BLOCKCHAIR_API_KEY'])
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
@@ -21,27 +21,31 @@ let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
+
+let BLOCKCHAIN = ChainToNetworkId['MAYA']
+console.log("BLOCKCHAIN: ",BLOCKCHAIN)
+let ASSET = 'CACAO'
+let MIN_BALANCE = process.env['MIN_BALANCE_MAYA'] || "0.004"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
+let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
+//http://127.0.0.1:9001/spec/swagger.json
+
+let wss = process.env['VITE_URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
+let FAUCET_MAYA_ADDRESS = process.env['FAUCET_MAYA_ADDRESS']
+if(!FAUCET_MAYA_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_MAYA_ADDRESS
+
 import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['ETH']
-let BLOCKCHAIN_OUT = ChainToNetworkId['BASE']
-let ASSET = 'ETH'
-let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
-let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
-let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-
-let TRADE_PAIR  = "ETH_ETH"
-let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "BASE"
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
 
 let txid:string
 let IS_SIGNED: boolean
+
 
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
@@ -104,16 +108,14 @@ const test_service = async function (this: any) {
         walletsVerbose.push(walletKeepKey);
 
         let resultInit = await app.init(walletsVerbose, {})
-        log.info(tag,"resultInit: ",resultInit)
+        // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
-        log.info(tag,"blockchains: ",blockchains)
+        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
 
         //get paths for wallet
         let paths = getPaths(blockchains)
         log.info("paths: ",paths.length)
-
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
@@ -126,16 +128,17 @@ const test_service = async function (this: any) {
         });
         log.info("optimized: ", optimized.length);
         app.setPaths(optimized)
+
+        // //connect
+        // assert(blockchains)
+        // assert(blockchains[0])
+        log.info(tag,"blockchains: ",blockchains)
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
         }
         resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
-        assert(app.keepkeyApiKey)
-        if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){
-            log.alert("SET THIS IN YOUR ENV AS KEEPKEY_API_KEY: ",app.keepkeyApiKey)
-        }
 
         //check pairing
         // //context should match first account
@@ -143,99 +146,53 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
+        //get osmo paths
+        // let paths = app.paths
+        // assert(paths)
+        // assert(paths[0])
+        // let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"osmoPath: ",osmoPath)
+        // assert(osmoPath)
 
-        await app.getPubkeys()
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-
-
-        let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
-        log.info(tag,"balanceOut: ",balanceOut)
-        assert(balanceOut[0])
-
-        if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
-        assert(balance.length > 0)
-        //verify balances
-        assert(balanceOut[0])
-
-
-        await app.setOutboundAssetContext(balanceOut[0]);
-
-        //get outbound asset
-        let outboundAssetContext = await app.outboundAssetContext
-        log.info(tag,"outboundAssetContext: ",outboundAssetContext)
-        assert(outboundAssetContext)
-        if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
-
-        assert(app.assetContext)
-        assert(app.assetContext.address)
-        assert(app.assetContext.address)
-
-        //get sender context
-        const senderAddress = app.assetContext.address;
-        assert(senderAddress)
-
-        const recipientAddress =
-          app.outboundAssetContext.address || app.swapKit.getAddress(app.outboundAssetContext.chain);
-        assert(recipientAddress)
-
-        let buyAsset;
-        if (app.outboundAssetContext.contract) {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}-${app.outboundAssetContext.contract}`;
-        } else {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}`;
-        }
-        assert(buyAsset)
-
-
-        //get receiver context
-        const entry = {
-            sellAsset: app.assetContext,
-            sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
-            buyAsset:app.outboundAssetContext,
-            senderAddress,
-            recipientAddress,
-            slippage: '3',
-        };
-
-        //quote
-        log.info(tag,"entry: ",entry)
-        let result = await app.pioneer.Quote(entry);
-        result = result?.data;
-        log.info(tag,"result: ",result)
-
+        // await app.getPubkeys()
+        // log.info(tag,"pubkeys: ",app.pubkeys)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
+        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"pubkey: ",pubkey)
+        // assert(pubkey.length > 0)
+        // //verify pubkeys
         //
-        let selected
-        //user selects route
-        for(let i = 0; i < result?.length; i++){
-            let route = result[i]
-            console.log("route: ", route)
-            selected = route.quote
-        }
+        //
+        // await app.getBalances()
+        // //log.info(tag,"balances: ",app.balances)
+        // //filter by OSMO caip
+        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"balance: ",balance)
+        // assert(balance.length > 0)
+        // //verify balances
 
-        const outputChain = app.outboundAssetContext?.chain;
-
-        const address = app?.swapKit.getAddress(outputChain);
-        log.info("address: ", address);
-
-
-        log.info("selected: ", selected);
-
+        // create assetValue
+        const assetString = `${ASSET}.${ASSET}`;
+        console.log('assetString: ', assetString);
+        await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        let assetValue = AssetValue.fromChainOrSignature(
+          Chain.Mayachain,
+          TEST_AMOUNT,
+        );
+        log.info("assetValue: ",assetValue)
         //send
-        const txHash = await app?.swapKit.swap({
-            route:selected,
-            recipient: address,
-            feeOptionKey: FeeOption.Fast,
-        });
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
         log.info("txHash: ",txHash)
-        // assert(txHash)
-
-        //TODO monitor TX untill complete
-
-        //TODO check balance
-
+        assert(txHash)
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {
@@ -245,4 +202,3 @@ const test_service = async function (this: any) {
     }
 }
 test_service()
-

@@ -121,6 +121,7 @@ export enum QuoteMode {
   GAIA_TO_OSMO = 'OSMOSIS-IBC',
   MAYA_SUPPORTED_TO_MAYA_SUPPORTED = 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED',
   CHANGELLY = 'CHANGELLY',
+  RANGO = 'RANGO',
 }
 
 export type Asset = {
@@ -157,6 +158,8 @@ export const SWAP_OUT = [
 
 export const UXTO_SWAP = [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED];
 
+export const RANGO = [QuoteMode.RANGO];
+
 export function classifySwap(quoteMode: QuoteMode) {
   if (AGG_SWAP.includes(quoteMode)) {
     return 'AGG_SWAP';
@@ -171,6 +174,12 @@ export function classifySwap(quoteMode: QuoteMode) {
     return 'OSMOSIS_SWAP';
   }
   if (CENTRALIZED_SWAPPER.includes(quoteMode)) {
+    return 'CENTRALIZED_SWAPPER';
+  }
+  if (CENTRALIZED_SWAPPER.includes(quoteMode)) {
+    return 'CENTRALIZED_SWAPPER';
+  }
+  if (RANGO.includes(quoteMode)) {
     return 'CENTRALIZED_SWAPPER';
   }
   return null;

@@ -858,6 +858,55 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/transfers/e2e-transfer-mayachain:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.6)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.21
+        version: 9.2.21
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.9
+        version: 9.2.9(@types/node@20.11.6)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.6
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/transfers/e2e-transfer-osmosis:
     dependencies:
       '@coinmasters/core':
@@ -2101,8 +2150,8 @@ importers:
         specifier: 0.31.1
         version: 0.31.1
       '@keepkey/keepkey-sdk':
-        specifier: ^0.2.52
-        version: 0.2.52
+        specifier: ^0.2.55
+        version: 0.2.56
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.11.6)
@@ -5807,8 +5856,8 @@ packages:
       pbjs: 0.0.5
     dev: false
 
-  /@keepkey/keepkey-sdk@0.2.52:
-    resolution: {integrity: sha512-Qp1hLI8aRGOQWwduGcyB+xwxzZE9UtJ2PqWLqATH1mEon26rkMQTUk1hrGn2oNO5cxqamzK94iGqeSR7p5Y2nA==}
+  /@keepkey/keepkey-sdk@0.2.56:
+    resolution: {integrity: sha512-p9tbGl4/vpeKASR9yriTlgsmAwYmajQORmu7zRpTpsbHcZ7Fby5nGZoBZ5GOB/TgWJnm/RUdzmtrSwfBWDctCg==}
     dev: false
 
   /@keplr-wallet/types@0.12.44:
@@ -7363,6 +7412,17 @@ packages:
       - '@types/node'
     dev: false
 
+  /@pioneer-platform/pioneer-coins@9.2.9(@types/node@20.11.6):
+    resolution: {integrity: sha512-LGWcme0U+oZniJJkGh/VhhKq/P5Fl4NfFIn2N2BU6B2cNgvrI1i8AebFoycixyzhfErlk0StCYegKRVnm3JXJA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.6)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
   /@pkgr/utils@2.4.2:
     resolution: {integrity: sha512-POgTXhjrTfbTV63DiFXav4lBHiICLKKwDeaKn9Nphwj7WH6m0hMMCaJkMyRWjgtPFyRKRVoMXXjczsTQRDEhYw==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
@@ -7897,8 +7957,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@shapeshiftoss/hdwallet-core@1.53.1:
-    resolution: {integrity: sha512-+0Ji0KO55YwQ8k6Ms29auIJHdqsqIDwLopxPjvYKlBBPHmll90G01ByIR7MOwWsNKibkThVTJdpB/Pc5XAZXFg==}
+  /@shapeshiftoss/hdwallet-core@1.53.3:
+    resolution: {integrity: sha512-ePR3aF4iGyLW05v/ZN3uNqvnQFERbmBMTEewrQ7BthcldOug3nVOQtIR5UHjjqjf8zU0Iwi2EGkD+bxsCxy4oA==}
     dependencies:
       '@shapeshiftoss/proto-tx-builder': 0.8.0
       eip-712: 1.0.0
@@ -18672,7 +18732,7 @@ packages:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
-      '@shapeshiftoss/hdwallet-core': 1.53.1
+      '@shapeshiftoss/hdwallet-core': 1.53.3
       '@types/node': 15.14.9
       bip39: 3.1.0
       codeclimate-test-reporter: 0.5.1

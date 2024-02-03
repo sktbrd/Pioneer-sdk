@@ -18,6 +18,7 @@ import { KeepKeySigner } from './chains/evm.ts';
 import { osmosisWalletMethods } from './chains/osmosis.js';
 import { rippleWalletMethods } from './chains/ripple.js';
 import { thorchainWalletMethods } from './chains/thorchain.ts';
+import { mayachainWalletMethods } from './chains/mayachain.ts';
 import { utxoWalletMethods } from './chains/utxo.js';
 export type { PairingInfo } from '@keepkey/keepkey-sdk';
 
@@ -39,6 +40,7 @@ export const KEEPKEY_SUPPORTED_CHAINS = [
   Chain.Polygon,
   Chain.Ripple,
   Chain.THORChain,
+  Chain.Mayachain,
   Chain.Zcash,
 ] as const;
 
@@ -138,6 +140,10 @@ const getToolbox = async ({
     }
     case Chain.THORChain: {
       const walletMethods = await thorchainWalletMethods({ sdk });
+      return { address: await walletMethods.getAddress(), walletMethods };
+    }
+    case Chain.Mayachain: {
+      const walletMethods = await mayachainWalletMethods({ sdk });
       return { address: await walletMethods.getAddress(), walletMethods };
     }
     case Chain.Ripple: {

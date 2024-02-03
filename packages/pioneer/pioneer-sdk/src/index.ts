@@ -368,7 +368,7 @@ export class SDK {
       try {
         let wallet = options.type;
         let blockchains = options.blockchains;
-        if (!wallet) throw Error('Must have wallet to pair!');
+        if (!wallet) throw Error('Must have wallet to pair! (Invalid params into pairWallet)');
         if (!this.swapKit) throw Error('SwapKit not initialized!');
         if (!blockchains) throw Error('Must have blockchains to pair!');
         let ledgerApp;
@@ -474,6 +474,7 @@ export class SDK {
           } else {
             const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
             if (!ethAddress) throw Error('Failed to get eth address! can not pair wallet');
+            console.log('wallet: ', wallet);
             context = `${wallet.toLowerCase()}:${ethAddress}.wallet`;
 
             // isPioneer?

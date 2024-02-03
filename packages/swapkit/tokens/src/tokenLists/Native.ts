@@ -16,6 +16,7 @@ export const list = {
     { chain: 'GAIA', identifier: 'GAIA.ATOM', decimals: 6 },
     { chain: 'LTC', identifier: 'LTC.LTC', decimals: 8 },
     { chain: 'THOR', identifier: 'THOR.RUNE', decimals: 8 },
+    { chain: 'MAYA', identifier: 'MAYA.CACAO', decimals: 10 },
   ],
   count: 15,
   logo: 'https://static.thorswap.net/logo.png',
