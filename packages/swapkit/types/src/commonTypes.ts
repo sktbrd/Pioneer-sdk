@@ -101,6 +101,12 @@ export type ExtendParams<WalletConnectMethodNames = ''> = {
   }[];
 };
 
+export type Asset = {
+  chain: Chain;
+  symbol: string;
+  ticker: string;
+  synth?: boolean;
+};
 export enum QuoteMode {
   TC_SUPPORTED_TO_TC_SUPPORTED = 'TC-TC',
   TC_SUPPORTED_TO_ETH = 'TC-ERC20',
@@ -124,63 +130,30 @@ export enum QuoteMode {
   RANGO = 'RANGO',
 }
 
-export type Asset = {
-  chain: Chain;
-  symbol: string;
-  ticker: string;
-  synth?: boolean;
+export const SWAP_TYPES = {
+  AGG_SWAP: [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC],
+  SWAP_IN: [
+    QuoteMode.ETH_TO_TC_SUPPORTED,
+    QuoteMode.ETH_TO_AVAX,
+    QuoteMode.ETH_TO_BSC,
+    QuoteMode.AVAX_TO_TC_SUPPORTED,
+    QuoteMode.AVAX_TO_ETH,
+    QuoteMode.AVAX_TO_BSC,
+    QuoteMode.BSC_TO_TC_SUPPORTED,
+    QuoteMode.BSC_TO_ETH,
+    QuoteMode.BSC_TO_AVAX,
+  ],
+  SWAP_OUT: [
+    QuoteMode.TC_SUPPORTED_TO_TC_SUPPORTED,
+    QuoteMode.TC_SUPPORTED_TO_ETH,
+    QuoteMode.TC_SUPPORTED_TO_AVAX,
+    QuoteMode.TC_SUPPORTED_TO_BSC,
+  ],
+  OSMOSIS_SWAP: [QuoteMode.GAIA_TO_OSMO],
+  CENTRALIZED_SWAPPER: [QuoteMode.CHANGELLY],
+  UXTO_SWAP: [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED, QuoteMode.RANGO],
 };
 
-export const OSMOSIS_SWAP = [QuoteMode.GAIA_TO_OSMO];
-
-export const CENTRALIZED_SWAPPER = [QuoteMode.CHANGELLY];
-
-export const AGG_SWAP = [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC];
-
-export const SWAP_IN = [
-  QuoteMode.ETH_TO_TC_SUPPORTED,
-  QuoteMode.ETH_TO_AVAX,
-  QuoteMode.ETH_TO_BSC,
-  QuoteMode.AVAX_TO_TC_SUPPORTED,
-  QuoteMode.AVAX_TO_ETH,
-  QuoteMode.AVAX_TO_BSC,
-  QuoteMode.BSC_TO_TC_SUPPORTED,
-  QuoteMode.BSC_TO_ETH,
-  QuoteMode.BSC_TO_AVAX,
-];
-
-export const SWAP_OUT = [
-  QuoteMode.TC_SUPPORTED_TO_TC_SUPPORTED,
-  QuoteMode.TC_SUPPORTED_TO_ETH,
-  QuoteMode.TC_SUPPORTED_TO_AVAX,
-  QuoteMode.TC_SUPPORTED_TO_BSC,
-];
-
-export const UXTO_SWAP = [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED];
-
-export const RANGO = [QuoteMode.RANGO];
-
-export function classifySwap(quoteMode: QuoteMode) {
-  if (AGG_SWAP.includes(quoteMode)) {
-    return 'AGG_SWAP';
-  }
-  if (SWAP_IN.includes(quoteMode)) {
-    return 'SWAP_IN';
-  }
-  if (SWAP_OUT.includes(quoteMode)) {
-    return 'SWAP_OUT';
-  }
-  if (OSMOSIS_SWAP.includes(quoteMode)) {
-    return 'OSMOSIS_SWAP';
-  }
-  if (CENTRALIZED_SWAPPER.includes(quoteMode)) {
-    return 'CENTRALIZED_SWAPPER';
-  }
-  if (CENTRALIZED_SWAPPER.includes(quoteMode)) {
-    return 'CENTRALIZED_SWAPPER';
-  }
-  if (RANGO.includes(quoteMode)) {
-    return 'CENTRALIZED_SWAPPER';
-  }
-  return null;
+export function classifySwap(quoteMode: QuoteMode): string | null {
+  return Object.entries(SWAP_TYPES).find(([_, modes]) => modes.includes(quoteMode))?.[0] || null;
 }

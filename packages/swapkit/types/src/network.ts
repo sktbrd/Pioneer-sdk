@@ -90,7 +90,7 @@ export const ChainToNetworkId: Record<Chain, string> = {
   [Chain.EOS]: 'eos:cf057bbfb72640471fd910bcb67639c2',
   [Chain.Ethereum]: 'eip155:1',
   [Chain.Litecoin]: 'bip122:12a765e31ffd4059bada1e25190f6e98',
-  [Chain.Mayachain]: 'cosmos:maya-mainnet-v1',
+  [Chain.Mayachain]: 'cosmos:mayachain-mainnet-v1',
   [Chain.Optimism]: 'eip155:10',
   [Chain.Osmosis]: 'cosmos:osmosis-1',
   [Chain.Polygon]: 'eip155:137',
@@ -313,8 +313,8 @@ export enum RPCUrl {
   Osmosis = 'https://lcd-osmosis.keplr.app',
   Polygon = 'https://polygon-rpc.com',
   Ripple = 'https://xrplcluster.com',
-  THORChain = 'https://rpc.thorswap.net',
-  THORChainStagenet = 'https://stagenet-rpc.ninerealms.com',
+  THORChain = 'https://thornode.ninerealms.com',
+  THORChainStagenet = 'https://thornode.ninerealms.com',
 }
 
 export enum ApiUrl {
@@ -322,8 +322,8 @@ export enum ApiUrl {
   Kujira = 'https://lcd-kujira.synergynodes.com/',
   MayanodeMainnet = 'https://mayanode.mayachain.info',
   MayanodeStagenet = 'https://stagenet.mayanode.mayachain.info',
-  ThornodeMainnet = 'https://thornode.thorswap.net',
-  ThornodeStagenet = 'https://stagenet-thornode.ninerealms.com',
+  ThornodeMainnet = 'https://thornode.ninerealms.com',
+  ThornodeStagenet = 'https://thornode.ninerealms.com',
   ThorswapApi = 'https://api.thorswap.net',
   ThorswapStatic = 'https://static.thorswap.net',
 }

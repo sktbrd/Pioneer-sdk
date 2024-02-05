@@ -1,5 +1,33 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 1.4.8
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.4.8
+  - @coinmasters/wallet-keystore@8.0.8
+  - @coinmasters/wallet-keepkey@10.0.9
+  - @coinmasters/types@4.4.8
+  - @coinmasters/core@8.0.8
+
+## 1.4.7
+
+### Patch Changes
+
+- bump
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.4.7
+  - @coinmasters/wallet-keystore@8.0.7
+  - @coinmasters/wallet-keepkey@10.0.8
+  - @coinmasters/types@4.4.7
+  - @coinmasters/core@8.0.7
+
 ## 1.4.6
 
 ### Patch Changes

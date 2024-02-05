@@ -1,8 +1,8 @@
-import { RequestClient } from '@coinmasters/helpers';
+import { AssetValue, RequestClient } from '@coinmasters/helpers';
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 // const PIONEER_API_URI = 'https://pioneers.dev';
 const PIONEER_API_URI = 'http://localhost:9001';
-const TAG = ' | osmosis-toolbox | ';
+const TAG = ' | mayachain-toolbox | ';
 const getAccount = (address: string): Promise<any> => {
   // Construct the URL
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/mayachain/${address}`;
@@ -25,8 +25,14 @@ const getBalance = async (address: any[]) => {
     const balancesNative: any = await RequestClient.get(
       `${PIONEER_API_URI}/api/v1/getPubkeyBalance/mayachain/${address[0].address}`,
     );
+    console.log('balancesNative: ', balancesNative);
 
-    return balancesNative;
+    await AssetValue.loadStaticAssets();
+    let identifier = 'MAYA.CACAO';
+    const assetValueNativeNative = AssetValue.fromStringSync(identifier, balancesNative);
+    console.log('assetValueNativeNative: ', assetValueNativeNative);
+
+    return [assetValueNativeNative];
   } catch (e) {
     return [];
   }
@@ -64,7 +70,7 @@ const sendRawTransaction = async (tx, sync = true) => {
       output.success = false;
       output.error = 'No txhash found in response';
     }
-    return output
+    return output;
   } catch (e) {
     console.log(e);
     throw e;

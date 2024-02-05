@@ -32,6 +32,7 @@ import Wallets from '../../components/Wallets';
 import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 
 const Home = () => {
   const { txid } = useParams<{ txid?: string }>();
@@ -82,17 +83,14 @@ const Home = () => {
   };
 
   const onSelect = async (blockchain: any) => {
-    // select asset
-    console.log('blockchain: ', blockchain);
-    // open blockchain modal
-    // connect wallet with just this blockchain
     try {
-      //TODO set paths
-      await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      let blockchains = ['eip155:1', blockchain];
       let pairObj: any = {
         type: 'KEEPKEY',
-        blockchains: ['eip155:1', blockchain],
+        blockchains,
       };
+      let paths = getPaths(blockchains);
+      await app.setPaths(paths);
       await app.pairWallet(pairObj);
       await app.getPubkeys();
       await app.getBalances();

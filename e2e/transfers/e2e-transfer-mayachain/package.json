@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-mayachain",
-  "version": "1.4.6",
+  "version": "1.4.8",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -23,8 +23,8 @@
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.2.21",
-    "@pioneer-platform/pioneer-coins": "^9.2.9",
+    "@pioneer-platform/pioneer-caip": "latest",
+    "@pioneer-platform/pioneer-coins": "latest",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

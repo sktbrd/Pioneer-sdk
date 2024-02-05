@@ -18,6 +18,10 @@
 */
 import { SDK } from '@coinmasters/pioneer-sdk';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
+import {
+  getPaths,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 import EventEmitter from 'events';
 import {
   createContext,
@@ -28,10 +32,7 @@ import {
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  getPaths,
-  // @ts-ignore
-} from '@pioneer-platform/pioneer-coins';
+
 import transactionDB from './txDb';
 
 const eventEmitter = new EventEmitter();
@@ -365,26 +366,33 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
         // supported chains
         const AllChainsSupported = availableChainsByWallet[wallet];
+        console.log("AllChainsSupported: ", AllChainsSupported);
         let allByCaip = AllChainsSupported.map(
           // @ts-ignore
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
-
+        console.log("allByCaip: ", allByCaip);
         //get paths for wallet
-        let paths = getPaths(allByCaip)
+        let paths = getPaths(allByCaip);
+        console.log("paths: ", paths);
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
-        let optimized: any[] = allByCaip.map(network =>
-          paths.filter((path: any) => path.network === network).slice(-1)[0]
-        ).filter((path: any) => path !== undefined);
+        let optimized: any[] = allByCaip
+          .map((network) => paths.filter((path: any) => path.network === network).slice(-1)[0])
+          .filter((path: any) => path !== undefined);
         //
         state.app.setPaths(optimized);
 
         //TODO get from localstorage disabled chains
         //TODO get from localStorage added chains!
         console.log('allByCaip: ', allByCaip);
-        const successPairWallet = await state.app.pairWallet(wallet, allByCaip, chain);
+        let pairParams: any = {
+          type: wallet,
+          blockchains: allByCaip,
+          ledgerApp: chain,
+        };
+        const successPairWallet = await state.app.pairWallet(pairParams);
         console.log('successPairWallet: ', successPairWallet);
         if (successPairWallet && successPairWallet.error) {
           //push error to state
@@ -469,8 +477,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
-      const blockchains:any = [
-      ];
+      const blockchains: any = [];
 
       // @TODO add custom paths from localstorage
       const paths: any = [];
@@ -506,7 +513,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // @ts-ignore
           import.meta.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
         // @ts-ignore
-        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || setup?.blockchairApiKey || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
+        utxoApiKey:
+          import.meta.env.VITE_BLOCKCHAIR_API_KEY ||
+          setup?.blockchairApiKey ||
+          'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
         // @ts-ignore
         walletConnectProjectId:
           // @ts-ignore
@@ -602,7 +612,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         });
         console.log('allByCaip: ', allByCaip);
         await appInit.setBlockchains(allByCaip);
-
       }
 
       //add to local storage of connected wallets
@@ -623,7 +632,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('pubkeyCache for', wallet, ':', pubkeyCache);
         await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
       }
-
     } catch (e) {
       console.error(e);
     }

@@ -382,11 +382,12 @@ export class SDK {
         console.log('this.wallets: ', this.wallets);
         const walletSelected = this.wallets.find((w: any) => w.type === wallet);
         if (!walletSelected) throw Error('Wallet not found!');
+        console.log('NetworkIdToChain: ', NetworkIdToChain);
         let AllChainsSupported = blockchains.map(
-          (caip: string | number) =>
-            NetworkIdToChain[caip] ||
+          (networkId: string | number) =>
+            NetworkIdToChain[networkId] ||
             (() => {
-              throw new Error(`Missing CAIP: ${caip}`);
+              throw new Error(`(NetworkIdToChain) Missing NetworkId: ${networkId}`);
             })(),
         );
 

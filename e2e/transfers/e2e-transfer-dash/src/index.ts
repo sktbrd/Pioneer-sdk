@@ -148,8 +148,6 @@ const test_service = async function (this: any) {
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
         //send

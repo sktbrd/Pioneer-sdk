@@ -1,6 +1,5 @@
 /*
     E2E testing
-
  */
 
 require("dotenv").config()

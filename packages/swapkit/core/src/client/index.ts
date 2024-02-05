@@ -123,7 +123,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       const swapType = classifySwap(quoteMode);
-      //log.info(tag,"swapType: ",swapType)
+      console.log(tag, 'swapType: ', swapType);
 
       switch (swapType) {
         case 'AGG_SWAP': {
@@ -212,13 +212,19 @@ export class SwapKitCore<T = ''> {
            */
           return await this.performTx(route.txs[0]);
         }
-        // case 'UXTO_SWAP': {
-        //   //log.info(tag,"OSMOSIS_SWAP route: ",route)
-        //   //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
-        //   return await this.performTx(route.txs[0]);
-        // }
+        case 'UXTO_SWAP': {
+          console.log(tag, 'UXTO_SWAP route: ', route);
+          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          return await this.performTx(route.txs[0]);
+        }
+        case 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED': {
+          console.log(' MAYA  Detected! ');
+          console.log('route: ', route);
+          //perform
+          return await this.performTx(route.txs[0]);
+        }
         case 'RANGO': {
-          console.log(" RANGO  Detected! ")
+          console.log(' RANGO  Detected! ');
           //perform
           return await this.performTx(route.txs[0]);
         }
@@ -267,15 +273,14 @@ export class SwapKitCore<T = ''> {
       console.log(tag, 'Transaction: ', tx);
       if (!tx.chain) throw Error('Invalid tx missing chain!');
       if (!tx.type) throw Error('Invalid tx missing type!');
-
-      //log.info(tag, "tx.chain: ", tx.chain);
+      console.log(tag, 'tx.type: ', tx.type);
+      console.log(tag, 'tx.chain: ', tx.chain);
 
       // @ts-ignore
       let chain = NetworkIdToChain[tx.chain];
-      //log.info(tag, "chain: ", chain);
-
+      // let chain = tx.chain;
       if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
-
+      console.log(tag, 'chain: ', chain);
       //log.info(tag, "chain: ", chain);
       //log.info(tag, "tx.type: ", tx.type);
 
@@ -283,98 +288,115 @@ export class SwapKitCore<T = ''> {
         //TODO do evm stuff
         console.log(tag, 'EVM Transaction: ', tx);
       }
-
+      let assetString = chain + '.' + tx.txParams.token;
+      await AssetValue.loadStaticAssets();
+      // @ts-ignore
+      const assetValue = await AssetValue.fromIdentifier(
+        assetString,
+        parseFloat(tx.txParams.amount),
+      );
+      tx.txParams.assetValue = assetValue;
       // @ts-ignore
       let walletMethods = this.connectedWallets[chain];
       if (!walletMethods || !walletMethods[tx.type]) {
         // @ts-ignore
         throw new SwapKitError(`core_wallet_tx_type_not_implemented for chain ${chain}`);
       }
-
-      await walletMethods[tx.type](tx.txParams);
+      tx.txParams.recipient = tx.txParams.recipientAddress;
+      let result = await walletMethods[tx.type](tx.txParams);
+      console.log('result: ', result);
+      return result;
     } catch (error) {
       // Handle or log the error as per requirement
       //log.error(tag, 'Error occurred:', error);
       // Optionally rethrow or handle the error
+      console.error('error: ', error);
     }
   };
 
   getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
-    console.log('First Time lookup! lets populate the wallet!');
-    const address = this.getAddress(chain);
-    console.log('getWalletByChain: address: ', address);
-    if (!address) return null;
-    console.log('chain: ', chain);
-    console.log('address: ', address);
-    let pubkeys = [];
-    if (this.getWallet(chain)?.getPubkeys) {
-      pubkeys = await this.getWallet(chain)?.getPubkeys();
-      //
-      console.log('pubkeys: ', pubkeys);
-    }
-    // let balance = [];
-    console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
-    //for each pubkey iterate and sum the balance
-    let balance: AssetValue[] = [];
-    if (pubkeys.length === 0) {
-      console.log('Get balance for Address! address: ' + address);
-      console.log('Get balance for Address! chain: ' + chain);
-      //use address balance
-      balance = await this.getWallet(chain)?.getBalance([{ address }]);
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < balance.length; i++) {
-        balance[i].address = address;
+    let tag = TAG + ' | getWalletByChain | ';
+    try {
+      console.log(tag, 'First Time lookup! lets populate the wallet!');
+      const address = this.getAddress(chain);
+      console.log(tag, 'getWalletByChain: address: ', address);
+      if (!address) return null;
+      console.log(tag, 'chain: ', chain);
+      console.log(tag, 'address: ', address);
+      let pubkeys = [];
+      if (this.getWallet(chain)?.getPubkeys) {
+        pubkeys = await this.getWallet(chain)?.getPubkeys();
+        //
+        console.log('pubkeys: ', pubkeys);
       }
-    } else {
-      console.log(chain + ' pubkeys: ', pubkeys.length);
-      /*
-            Logic assumptions
-              * Every pubkey will be a UTXO
-              * every UXTO has only 1 asset balance (fungable)
-              * we sum ALL balances of all pubkeys and return as 1 balance
-                (aka you have x amount bitcoin) as is commonly used in wallets
+      // let balance = [];
+      console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
+      //for each pubkey iterate and sum the balance
+      let balance: AssetValue[] = [];
+      if (pubkeys.length === 0) {
+        console.log(tag, 'Get balance for Address! address: ' + address);
+        console.log(tag, 'Get balance for Address! chain: ' + chain);
+        //use address balance
+        balance = await this.getWallet(chain)?.getBalance([{ address }]);
 
-              Notes: we will only allow sending FROM 1 xpub at a time
-              *so the MAX spendable is the balance of highest balance xpub.*
-
-              blockbook has a wallet gap limit of 20
-         */
-      //use pubkey balances
-      let balanceTotal = 0;
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < pubkeys.length; i++) {
-        const pubkey = pubkeys[i];
-        console.log('Get balance for xpub!');
-        console.log('pubkey: ', pubkey);
-        let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-        console.log('NEW pubkeyBalance pre: ', pubkeyBalance);
-        console.log('NEW pubkeyBalance pubkeyBalance[0].decimal: ', pubkeyBalance[0].decimal);
-        pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-        console.log('NEW pubkeyBalance post: ', pubkeyBalance);
-        if (isNaN(pubkeyBalance)) {
-          pubkeyBalance = 0;
+        console.log('Get balance for Address! chain: ' + chain);
+        for (let i = 0; i < balance.length; i++) {
+          balance[i].address = address;
         }
-        //TODO get string balance
-        pubkeys[i].balance = pubkeyBalance;
-        console.log('pubkeyBalance: ', pubkeyBalance);
-        console.log('pubkeyBalance: ', parseFloat(pubkeyBalance));
-        balanceTotal += parseFloat(pubkeyBalance);
+      } else {
+        console.log(tag, chain + ' pubkeys: ', pubkeys.length);
+        /*
+              Logic assumptions
+                * Every pubkey will be a UTXO
+                * every UXTO has only 1 asset balance (fungable)
+                * we sum ALL balances of all pubkeys and return as 1 balance
+                  (aka you have x amount bitcoin) as is commonly used in wallets
+
+                Notes: we will only allow sending FROM 1 xpub at a time
+                *so the MAX spendable is the balance of highest balance xpub.*
+
+                blockbook has a wallet gap limit of 20
+           */
+        //use pubkey balances
+        let balanceTotal = 0;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < pubkeys.length; i++) {
+          const pubkey = pubkeys[i];
+          console.log(tag, 'Get balance for xpub!');
+          console.log(tag, 'pubkey: ', pubkey);
+          let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
+          console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
+          console.log(tag, 'NEW pubkeyBalance pubkeyBalance[0].decimal: ', pubkeyBalance[0].decimal);
+          pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
+          console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
+          if (isNaN(pubkeyBalance)) {
+            pubkeyBalance = 0;
+          }
+          //TODO get string balance
+          pubkeys[i].balance = pubkeyBalance;
+          console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
+          console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
+          balanceTotal += parseFloat(pubkeyBalance);
+        }
+        console.log(tag, 'NEW balanceTotal: ', balanceTotal);
+        // balanceTotal = balanceTotal / 100000000;
+        let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
+        balanceValue.address = address;
+        balance = [balanceValue];
       }
-      console.log('NEW balanceTotal: ', balanceTotal);
-      // balanceTotal = balanceTotal / 100000000;
-      let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
-      balanceValue.address = address;
-      balance = [balanceValue];
+
+      this.connectedChains[chain] = {
+        address,
+        pubkeys,
+        balance,
+        walletType: this.connectedChains[chain]?.walletType as WalletOption,
+      };
+
+      return { ...this.connectedChains[chain] };
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
-
-    this.connectedChains[chain] = {
-      address,
-      pubkeys,
-      balance,
-      walletType: this.connectedChains[chain]?.walletType as WalletOption,
-    };
-
-    return { ...this.connectedChains[chain] };
   };
 
   approveAssetValue = (assetValue: AssetValue, contractAddress?: string) =>

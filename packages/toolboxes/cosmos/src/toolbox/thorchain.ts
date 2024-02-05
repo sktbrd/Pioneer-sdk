@@ -303,6 +303,45 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
     return txResponse.transactionHash;
   };
 
+  const sendRawTransaction = async (tx, sync = true) => {
+    let tag = TAG + ' | sendRawTransaction | ';
+    try {
+      let output: any = {};
+      // Construct payload
+      let payload = {
+        tx_bytes: tx,
+        mode: sync ? 'BROADCAST_MODE_SYNC' : 'BROADCAST_MODE_ASYNC',
+      };
+
+      // Define the URL for broadcasting transactions
+      let urlRemote = `${RPCUrl.THORChain}/cosmos/tx/v1beta1/txs`;
+      // let urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
+      console.log(tag, 'urlRemote: ', urlRemote);
+
+      // Sending the transaction using RequestClient
+      let result = await RequestClient.post(urlRemote, {
+        body: JSON.stringify(payload),
+        headers: {
+          'content-type': 'application/json', // Assuming JSON content type is required
+        },
+      });
+      console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+
+      // Handle the response
+      if (result.tx_response.txhash) {
+        output.txid = result.tx_response.txhash;
+        output.success = true;
+      } else {
+        output.success = false;
+        output.error = 'No txhash found in response';
+      }
+      return output;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  };
+
   return {
     ...baseToolbox,
     deposit,
@@ -317,9 +356,12 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
     createMultisig,
     importSignature,
     loadAddressBalances,
+    sendRawTransaction,
     pubkeyToAddress: __REEXPORT__pubkeyToAddress(prefix),
   };
 };
+
+
 
 export const ThorchainToolbox = ({
   stagenet = false,

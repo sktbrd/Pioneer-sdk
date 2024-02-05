@@ -1,5 +1,33 @@
 # @coinmasters/wallet-okx
 
+## 8.0.8
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.8
+  - @coinmasters/helpers@8.0.8
+  - @coinmasters/toolbox-utxo@8.0.8
+  - @coinmasters/types@4.4.8
+  - @coinmasters/toolbox-evm@8.0.8
+
+## 8.0.7
+
+### Patch Changes
+
+- bump
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.7
+  - @coinmasters/helpers@8.0.7
+  - @coinmasters/toolbox-utxo@8.0.7
+  - @coinmasters/types@4.4.7
+  - @coinmasters/toolbox-evm@8.0.7
+
 ## 8.0.6
 
 ### Patch Changes

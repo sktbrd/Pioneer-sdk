@@ -40,7 +40,9 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer({
+        console.log('account_number: ', account_number);
+        console.log('sequence: ', sequence);
+        let payload: any = {
           signDoc: {
             account_number,
             chain_id: ChainId.Mayachain,
@@ -59,7 +61,10 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             sequence,
           },
           signerAddress: from,
-        });
+        }
+        console.log('payload: ', payload);
+        console.log('payload: ', JSON.stringify(payload));
+        const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer(payload);
         console.log('keepKeyResponse: ', keepKeyResponse);
 
         // Broadcast tx
@@ -92,7 +97,9 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        let payload:any = {
+        console.log('account_number: ', account_number);
+        console.log('sequence: ', sequence);
+        let payload: any = {
           signerAddress: fromAddress,
           signDoc: {
             memo: memo || '',
@@ -112,8 +119,9 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
               },
             ],
           },
-        }
-        console.log("")
+        };
+        console.log('payload: ', payload);
+        console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoDeposit(payload);
         console.log('keepKeyResponse.serialized: ', keepKeyResponse.serialized);
         // Broadcast tx
