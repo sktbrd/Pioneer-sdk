@@ -151,7 +151,8 @@ export const SWAP_TYPES = {
   ],
   OSMOSIS_SWAP: [QuoteMode.GAIA_TO_OSMO],
   CENTRALIZED_SWAPPER: [QuoteMode.CHANGELLY],
-  UXTO_SWAP: [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED, QuoteMode.RANGO],
+  UXTO_SWAP: [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED],
+  RANGO: [QuoteMode.RANGO],
 };
 
 export function classifySwap(quoteMode: QuoteMode): string | null {

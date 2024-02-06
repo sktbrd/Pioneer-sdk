@@ -287,15 +287,19 @@ export class SwapKitCore<T = ''> {
       if (tx.type === 'evm') {
         //TODO do evm stuff
         console.log(tag, 'EVM Transaction: ', tx);
+        tx.type = 'sendTransaction';
+      } else {
+        let assetString = chain + '.' + tx.txParams.token;
+        await AssetValue.loadStaticAssets();
+        // @ts-ignore
+        const assetValue = await AssetValue.fromIdentifier(
+          assetString,
+          parseFloat(tx.txParams.amount),
+        );
+        if (!tx.txParams.from) tx.txParams.from = tx.txParams.senderAddress;
+        tx.txParams.assetValue = assetValue;
       }
-      let assetString = chain + '.' + tx.txParams.token;
-      await AssetValue.loadStaticAssets();
-      // @ts-ignore
-      const assetValue = await AssetValue.fromIdentifier(
-        assetString,
-        parseFloat(tx.txParams.amount),
-      );
-      tx.txParams.assetValue = assetValue;
+
       // @ts-ignore
       let walletMethods = this.connectedWallets[chain];
       if (!walletMethods || !walletMethods[tx.type]) {
@@ -366,7 +370,11 @@ export class SwapKitCore<T = ''> {
           console.log(tag, 'pubkey: ', pubkey);
           let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
           console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
-          console.log(tag, 'NEW pubkeyBalance pubkeyBalance[0].decimal: ', pubkeyBalance[0].decimal);
+          console.log(
+            tag,
+            'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
+            pubkeyBalance[0].decimal,
+          );
           pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
           console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
           if (isNaN(pubkeyBalance)) {

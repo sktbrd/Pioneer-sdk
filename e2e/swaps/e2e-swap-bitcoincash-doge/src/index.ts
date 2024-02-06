@@ -29,7 +29,7 @@ let BLOCKCHAIN_IN = ChainToNetworkId['BCH']
 let BLOCKCHAIN_OUT = ChainToNetworkId['DOGE']
 let ASSET = 'BCH'
 let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.12"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_DOGE_ADDRESS = process.env['FAUCET_DOGE_ADDRESS']
@@ -146,13 +146,16 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-
+        await app.getPubkeys()
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
         assert(balance.length > 0)
         //verify balances
+        //get asset context
+        await app.setAssetContext(balance[0])
+
 
         let balanceOut = app.balances.filter((e:any) => e.symbol === OUTPUT_ASSET)
         await app.setOutboundAssetContext(balanceOut[0]);
@@ -189,6 +192,7 @@ const test_service = async function (this: any) {
         };
 
         //quote
+        log.info(tag,"entry: ",entry)
         let result = await app.pioneer.Quote(entry);
         result = result?.data;
         log.info(tag,"result: ",result)
@@ -208,19 +212,12 @@ const test_service = async function (this: any) {
 
             //log fee
         }
-
-        const outputChain = app.outboundAssetContext?.chain;
-
-        const address = app?.swapKit.getAddress(outputChain);
-        log.info("address: ", address);
-
-
         log.info("selected: ", selected);
-
+        log.info("app.assetContext.address: ", app.assetContext.address);
         //send
         const txHash = await app?.swapKit.swap({
             route:selected,
-            recipient: address,
+            recipient: app.assetContext.address,
             feeOptionKey: FeeOption.Fast,
         });
         log.info("txHash: ",txHash)

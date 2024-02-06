@@ -29,7 +29,7 @@ let BLOCKCHAIN_IN = ChainToNetworkId['ETH']
 let BLOCKCHAIN_OUT = ChainToNetworkId['BASE']
 let ASSET = 'ETH'
 let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.01"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.008"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
