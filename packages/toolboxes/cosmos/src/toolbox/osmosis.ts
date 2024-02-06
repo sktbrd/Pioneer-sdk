@@ -2,8 +2,8 @@ import { AssetValue, RequestClient } from '@coinmasters/helpers';
 import { RPCUrl } from '@coinmasters/types';
 import { ec as EC } from 'elliptic';
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
-// const PIONEER_API_URI = 'https://pioneers.dev';
-const PIONEER_API_URI = 'http://localhost:9001';
+const PIONEER_API_URI = 'https://pioneers.dev';
+// const PIONEER_API_URI = 'http://localhost:9001';
 const TAG = ' | osmosis-toolbox | ';
 const getAccount = (address: string): Promise<any> => {
   // Construct the URL
