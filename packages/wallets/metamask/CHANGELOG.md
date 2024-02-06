@@ -1,5 +1,16 @@
 # @coinmasters/wallet-metamask
 
+## 7.0.9
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.9
+  - @coinmasters/toolbox-utxo@8.0.9
+  - @coinmasters/toolbox-evm@8.0.9
+
 ## 7.0.8
 
 ### Patch Changes
