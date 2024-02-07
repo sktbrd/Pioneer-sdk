@@ -1,5 +1,23 @@
 # @swapkit/types
 
+## 4.4.12
+
+### Patch Changes
+
+- bump
+
+## 4.4.11
+
+### Patch Changes
+
+- bump
+
+## 4.4.10
+
+### Patch Changes
+
+- bump
+
 ## 4.4.9
 
 ### Patch Changes

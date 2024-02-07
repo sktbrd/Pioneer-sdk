@@ -24,8 +24,8 @@ let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['ETH']
-let ASSET = 'FOX'
-let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
+let ASSET = 'USDT'
+let MIN_BALANCE = process.env['MIN_BALANCE_USDT'] || "1.0004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
@@ -108,11 +108,7 @@ const test_service = async function (this: any) {
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        let pairObject = {
-            type:WalletOption.KEEPKEY,
-            blockchains
-        }
-        resultInit = await app.pairWallet(pairObject)
+        resultInit = await app.pairWallet('KEEPKEY',blockchains)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -153,13 +149,8 @@ const test_service = async function (this: any) {
         // assert(balance[0].balance)
 
 
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Ethereum,
-          TEST_AMOUNT,
-        );
-        log.info("assetValue: ",assetValue)
-
+        //get assetValue for asset
+        let assetString = 'ETH.USDT'
         // create assetValue
         // const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
@@ -172,7 +163,17 @@ const test_service = async function (this: any) {
         );
         log.info("assetValue: ",assetValue)
 
-        //
+        //send
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
+
 
 
     } catch (e) {

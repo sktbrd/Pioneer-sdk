@@ -1,5 +1,23 @@
 # @swapkit/tokens
 
+## 3.4.12
+
+### Patch Changes
+
+- bump
+
+## 3.4.11
+
+### Patch Changes
+
+- bump
+
+## 3.4.10
+
+### Patch Changes
+
+- bump
+
 ## 3.4.9
 
 ### Patch Changes

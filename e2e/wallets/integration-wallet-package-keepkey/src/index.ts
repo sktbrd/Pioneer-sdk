@@ -2,6 +2,8 @@
     E2E testing
  */
 
+import { AssetValue } from '@coinmasters/helpers';
+
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -11,7 +13,7 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | intergration-test-wallet | "
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
-import { WalletOption, availableChainsByWallet, NetworkIdToChain } from "@coinmasters/types";
+import { WalletOption, availableChainsByWallet, NetworkIdToChain, Chain } from '@coinmasters/types';
 
 const getWalletByChain = async (keepkey:any, chain:any) => {
     if (!keepkey[chain]) return null;
@@ -21,18 +23,21 @@ const getWalletByChain = async (keepkey:any, chain:any) => {
     if (!address) return null;
 
     let balance = [];
+    let pubkeys = [];
     if (walletMethods.getPubkeys) {
-        const pubkeys = await walletMethods.getPubkeys();
+        pubkeys = await walletMethods.getPubkeys();
         for (const pubkey of pubkeys) {
             const pubkeyBalance = await walletMethods.getBalance([{ pubkey }]);
             balance.push(Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0);
         }
+        //create assetVaule
         balance = [{ total: balance.reduce((a, b) => a + b, 0), address }];
+
     } else {
         balance = await walletMethods.getBalance([{address}]);
     }
 
-    return { address, balance };
+    return { address, pubkeys, balance };
 };
 
 
@@ -269,7 +274,7 @@ const test_service = async function (this: any) {
             config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
         }
         let chains =  [
-            'ETH'
+            'ETH', 'BTC', 'MAYA'
         ]
         // let chains =  [
         //     'ARB',  'AVAX', 'BNB',
@@ -297,7 +302,8 @@ const test_service = async function (this: any) {
             let walletData:any = await getWalletByChain(keepkey, chain);
             log.info(chain+ " walletData: ",walletData)
             // keepkey[chain].wallet.address = walletData.address
-            // keepkey[chain].wallet.balances = walletData.balance
+            keepkey[chain].wallet.pubkeys = walletData.pubkeys
+            keepkey[chain].wallet.balance = walletData.balance
         }
         log.info(tag,"keepkey: ",keepkey)
         /*
@@ -315,7 +321,44 @@ const test_service = async function (this: any) {
             transferDash
             transferMaya
          */
-        
+
+        /*
+                SEND MAYA
+
+         */
+        // //get assetValue for asset
+        // // let assetString = 'ETH.USDT'
+        // let assetString = 'MAYA.CACAO'
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // let TEST_AMOUNT = "0.1"
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: process.env['FAUCET_MAYA_ADDRESS'] || 'maya1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfqkl5k',
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await  keepkey[Chain.Mayachain].walletMethods.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
+
+
+        /*
+               TODO  SEND ERC-20
+
+         */
+
         log.info("************************* TEST PASS *************************")
     } catch (e) {
         log.error(e)

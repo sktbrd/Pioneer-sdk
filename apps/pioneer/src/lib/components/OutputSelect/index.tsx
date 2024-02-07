@@ -28,6 +28,7 @@ import { Search2Icon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '../../context';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
+import MiddleEllipsis from '../../components/MiddleEllipsis';
 
 const TOKEN_PLATFORMS = ['ETH', 'BSC', 'AVAX', 'ARB'];
 
@@ -51,8 +52,9 @@ export default function OutputSelect({ onClose, onSelect }: any) {
         let allTokens = await app.getAssets();
 
         //remove tokens that are not native
-        allTokens = allTokens.filter(token => token.type === 'native');
+        allTokens = allTokens.filter((token) => token.type === 'native');
 
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < allTokens.length; i++) {
           let token = allTokens[i];
           let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
@@ -102,6 +104,7 @@ export default function OutputSelect({ onClose, onSelect }: any) {
   };
 
   const handleSelectClick = (asset: any) => {
+    onSelect()
     let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
       pk.networks.includes(asset.networkId),
     );
@@ -185,7 +188,7 @@ export default function OutputSelect({ onClose, onSelect }: any) {
                       <Box ml={3}>
                         <Text fontSize="sm">Asset: {asset?.identifier}</Text>
                         <Text fontSize="sm">{asset?.name}</Text>
-                        {asset.address && <Text fontSize="sm">Address: {asset.address}</Text>}
+                        {asset.address && <Text fontSize="sm">Address: <MiddleEllipsis text={asset.address} /></Text>}
                         {asset.balance && <Text fontSize="sm">Balance: {asset.balance}</Text>}
                       </Box>
                       <Button size='sm' onClick={handleSelectClick}>Select</Button>

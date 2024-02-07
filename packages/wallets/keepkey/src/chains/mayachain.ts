@@ -71,7 +71,7 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         console.log('Result broadcast: ', resultBroadcast);
 
-        return resultBroadcast;
+        return resultBroadcast.txid;
       } catch (e) {
         console.error(e);
         throw e;
