@@ -13,6 +13,8 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
+//@ts-ignore
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 console.log(process.env['BLOCKCHAIR_API_KEY'])
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
@@ -33,6 +35,10 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
+
+let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
+if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
 
 let txid:string
 let IS_SIGNED: boolean
@@ -55,17 +61,13 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
-        let paths:any = [
-        ]
-
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths,
+            // paths,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -98,17 +100,23 @@ const test_service = async function (this: any) {
         };
         walletsVerbose.push(walletKeepKey);
 
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
+        app.setPaths(paths)
+
         let resultInit = await app.init(walletsVerbose, {})
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN]
 
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -148,16 +156,15 @@ const test_service = async function (this: any) {
         // assert(balance[0])
         // assert(balance[0].balance)
 
-
         //get assetValue for asset
-        let assetString = 'ETH.USDT'
+        let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
         // create assetValue
         // const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
         // await AssetValue.loadStaticAssets();
         log.info("TEST_AMOUNT: ",TEST_AMOUNT)
         log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromString(
+        let assetValue = await AssetValue.fromString(
           assetString,
           parseFloat(TEST_AMOUNT),
         );
@@ -165,6 +172,7 @@ const test_service = async function (this: any) {
 
         //send
         let sendPayload = {
+            from:app.pubkeys[0].master,
             assetValue,
             memo: '',
             recipient: FAUCET_ADDRESS,

@@ -1129,6 +1129,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: latest
         version: 9.2.23
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.13
+        version: 9.2.13(@types/node@20.11.16)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.16

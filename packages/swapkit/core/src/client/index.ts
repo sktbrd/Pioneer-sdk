@@ -422,7 +422,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       let transferParams = await this.#prepareTxParams(params);
-      console.log('transferParams: ', transferParams);
+      console.log('CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);

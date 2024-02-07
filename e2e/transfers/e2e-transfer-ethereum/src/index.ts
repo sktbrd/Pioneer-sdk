@@ -152,26 +152,25 @@ const test_service = async function (this: any) {
         // assert(balance[0])
         // assert(balance[0].balance)
 
-
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Ethereum,
-          TEST_AMOUNT,
-        );
-        log.info("assetValue: ",assetValue)
-
-        // create assetValue
-        // const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromString(
-          assetString,
-          parseFloat(TEST_AMOUNT),
-        );
-        log.info("assetValue: ",assetValue)
-
+        //
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Ethereum,
+        //   TEST_AMOUNT,
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
         //
 
 

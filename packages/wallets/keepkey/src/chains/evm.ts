@@ -70,7 +70,6 @@ export class KeepKeySigner extends AbstractSigner {
     gasPrice,
     ...restTx
   }: EVMTxParams & { maxFeePerGas?: string; maxPriorityFeePerGas?: string; gasPrice?: string }) => {
-    if (!from) throw new Error('Missing from address');
     if (!to) throw new Error('Missing to address');
     if (!gasLimit) throw new Error('Missing gasLimit');
     if (!nonce) throw new Error('Missing nonce');
@@ -89,7 +88,12 @@ export class KeepKeySigner extends AbstractSigner {
     const nonceHex = '0x' + nonceValue.toString(16);
 
     //fix bugged gasLimit
-    if (gasLimit.indexOf('0x0x') >= 0) gasLimit = gasLimit.replace('0x0x', '0x');
+    const fixBuggedGasLimit = (gasLimit: any): bigint => typeof gasLimit === 'bigint' ? gasLimit : BigInt(String(gasLimit).replace(/^0x0x/, '0x'));
+    gasLimit = fixBuggedGasLimit(gasLimit);
+
+
+
+
 
     const input = {
       gas: toHexString(BigInt(gasLimit)),
