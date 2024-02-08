@@ -181,7 +181,7 @@ const connectMetaMask =
     config: { covalentApiKey, ethplorerApiKey = 'freekey', utxoApiKey },
   }: ConnectWalletParams) =>
   async (chains: (typeof METAMASK_SUPPORTED_CHAINS)[number], paths) => {
-    console.log("Checkpoint 1 :paths: ",paths)
+    //console.log("Checkpoint 1 :paths: ",paths)
     //is metamask available?
     const isMetaMaskAvailable = (): boolean => {
       return (window as any).ethereum !== undefined && (window as any).ethereum.isMetaMask;
@@ -190,13 +190,13 @@ const connectMetaMask =
     //dont procede if not available
     if (isMetaMaskAvailable) {
       const isSnapInstalled = await shapeShiftSnapInstalled(SNAP_ID);
-      console.log(isSnapInstalled);
+      //console.log(isSnapInstalled);
       //is snap installed?
       //if not installed install snap
       if (!isSnapInstalled) {
         //install it
         const result = await enableShapeShiftSnap(SNAP_ID, '1.0.0');
-        console.log('result: ', result);
+        //console.log('result: ', result);
       }
 
       const keyring = new core.Keyring();
@@ -205,14 +205,14 @@ const connectMetaMask =
       if (walletMetaMask) {
         // pair metamask
         await walletMetaMask.initialize();
-        console.log('walletMetaMask: ', walletMetaMask);
+        //console.log('walletMetaMask: ', walletMetaMask);
         // get all accounts
 
         //@ts-ignore
         const accounts = await window.ethereum.request({
           method: 'eth_requestAccounts',
         });
-        console.log('accounts: ', accounts);
+        //console.log('accounts: ', accounts);
 
         for (const chain of chains) {
           const { address, walletMethods } = await getToolbox({

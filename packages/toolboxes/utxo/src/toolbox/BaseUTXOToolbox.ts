@@ -56,7 +56,7 @@ const createKeysForPath = async ({
 
 const validateAddress = ({ address, chain }: { address: string } & UTXOBaseToolboxParams) => {
   try {
-    console.log(chain + ' validateAddress: ', address);
+    //console.log(chain + ' validateAddress: ', address);
     btcLibAddress.toOutputScript(address, getNetwork(chain));
     return true;
   } catch (error) {
@@ -107,24 +107,24 @@ const transfer = async ({
 
 const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: BlockchairApiType) {
   try {
-    console.log('getPubkeyBalance pubkey: ', pubkey);
-    console.log('getPubkeyBalance type: ', type);
+    //console.log('getPubkeyBalance pubkey: ', pubkey);
+    //console.log('getPubkeyBalance type: ', type);
     switch (type) {
       case 'pubkey':
       case 'zpub':
       case 'xpub':
-        console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
+        //console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
         // eslint-disable-next-line no-case-declarations
         const xpubBalance = await apiClient.getBalanceXpub(pubkey.pubkey.xpub || pubkey.xpub);
-        console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
+        //console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
         return xpubBalance;
       case 'address':
         // eslint-disable-next-line no-case-declarations
         const address = pubkey[type];
-        console.log('getPubkeyBalance address: ', address);
+        //console.log('getPubkeyBalance address: ', address);
         // eslint-disable-next-line no-case-declarations
         const addressBalance = await apiClient.getBalance(address);
-        console.log('getPubkeyBalance: addressBalance: ', addressBalance);
+        //console.log('getPubkeyBalance: addressBalance: ', addressBalance);
         return addressBalance;
       default:
         throw new Error('Invalid pubkey type');
@@ -147,15 +147,15 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     let type = '';
     if (pubkey.pubkey) type = 'pubkey';
     else type = 'address';
-    console.log('pubkey: ', pubkey);
+    //console.log('pubkey: ', pubkey);
     let balance = await getPubkeyBalance(pubkey, type, apiClient);
     if (typeof balance === 'object') balance = 0;
-    console.log('BaseUTXO getPubkeyBalance balance: ', balance);
+    //console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
-  console.log(`BaseUTXO totalBalance:`, totalBalance);
+  //console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
-  console.log('BaseUTXO asset: ', asset);
+  //console.log('BaseUTXO asset: ', asset);
   return [asset];
 };
 
@@ -186,13 +186,13 @@ const getInputsAndTargetOutputs = async ({
   //get balances for each pubkey
   for (let i = 0; i < pubkeys.length; i++) {
     let pubkey = pubkeys[i];
-    console.log('1 pubkey: ', pubkey);
-    console.log('2 pubkey: ', pubkey.pubkey);
+    //console.log('1 pubkey: ', pubkey);
+    //console.log('2 pubkey: ', pubkey.pubkey);
     let balance = await apiClient.getBalanceXpub(pubkey.pubkey || pubkey.xpub);
-    console.log('balance: ', balance);
+    //console.log('balance: ', balance);
     pubkeys[i].balance = balance.toString();
   }
-  console.log('pubkeys: ', pubkeys);
+  //console.log('pubkeys: ', pubkeys);
 
   // select a single pubkey
   // choose largest balance
@@ -210,7 +210,7 @@ const getInputsAndTargetOutputs = async ({
     }
   }
 
-  console.log('The pubkey with the highest balance is:', pubkeyWithLargestBalance);
+  //console.log('The pubkey with the highest balance is:', pubkeyWithLargestBalance);
 
   // pubkeyWithLargestBalance
   let inputs = await apiClient.listUnspent({
@@ -312,7 +312,7 @@ const buildTx = async ({
   //Blockchairs Doge API recomendations are WAYY wrong
   if (chain === Chain.Dogecoin) feeRate = 100000;
   if (chain === Chain.BitcoinCash) feeRate = 100;
-  console.log('inputsAndOutputs: ', inputsAndOutputs);
+  //console.log('inputsAndOutputs: ', inputsAndOutputs);
   const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
 
   // .inputs and .outputs will be undefined if no solution was found

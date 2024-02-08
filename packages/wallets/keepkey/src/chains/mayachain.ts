@@ -37,11 +37,11 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        console.log('accountInfo: ', accountInfo);
+        // console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        console.log('account_number: ', account_number);
-        console.log('sequence: ', sequence);
+        // console.log('account_number: ', account_number);
+        // console.log('sequence: ', sequence);
         let payload: any = {
           signDoc: {
             account_number,
@@ -62,7 +62,7 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
           },
           signerAddress: from,
         }
-        console.log('payload: ', payload);
+        // console.log('payload: ', payload);
         console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer(payload);
         console.log('keepKeyResponse: ', keepKeyResponse);

@@ -142,9 +142,9 @@ export const thorChainWalletMethods: any = async function (params: MetaMaskParam
             ]
           }
         }
-        console.log("requestToSign: ",requestToSign)
+        //console.log("requestToSign: ",requestToSign)
         const signedResponse = await wallet.thorchainSignTx(requestToSign);
-        console.log("signedResponse: ",signedResponse)
+        //console.log("signedResponse: ",signedResponse)
 
         const stargateClient = await StargateClient.connect(RPCUrl.THORChain);
         const decodedBytes = atob(signedResponse.serialized);

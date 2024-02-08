@@ -105,10 +105,10 @@ export abstract class UTXOLedgerInterface {
 
   public getExtendedPublicKey = async (path, xpubVersion) => {
     await this.checkBtcAppAndCreateTransportWebUSB();
-    console.log('Final: getWalletXpub: ', {
-      path,
-      xpubVersion,
-    });
+    //console.log('Final: getWalletXpub: ', {
+    //   path,
+    //   xpubVersion,
+    // });
     return this.btcApp!.getWalletXpub({
       path,
       xpubVersion,

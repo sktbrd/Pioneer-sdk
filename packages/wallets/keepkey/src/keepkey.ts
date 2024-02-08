@@ -210,26 +210,26 @@ const connectKeepkey =
   }) =>
   async (chains, paths) => {
     if (!keepkeyConfig) throw new Error('KeepKey config not found');
-    console.log('paths: ', paths);
-    console.log('apis: ', apis);
-    console.log('rpcUrls: ', rpcUrls);
-    console.log('addChain: ', addChain);
-    console.log('config: ', { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey });
+    //console.log('paths: ', paths);
+    //console.log('apis: ', apis);
+    //console.log('rpcUrls: ', rpcUrls);
+    //console.log('addChain: ', addChain);
+    //console.log('config: ', { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey });
 
-    console.log('connectKeepkey chains: ', chains);
+    //console.log('connectKeepkey chains: ', chains);
     await checkAndLaunch();
 
     if (!paths) paths = [];
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-    console.log('connectKeepkey chains2: ', chains);
+    //console.log('connectKeepkey chains2: ', chains);
 
     const chainPromises = chains.map(async (chain) => {
       if (!chain) return;
 
       const chainLogLabel = `Chain ${chain} processing time`;
       console.time(chainLogLabel);
-      console.log('Processing chain: ', chain);
+      //console.log('Processing chain: ', chain);
 
       // Get paths for chain
       const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);

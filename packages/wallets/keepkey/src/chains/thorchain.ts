@@ -37,7 +37,7 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        console.log('accountInfo: ', accountInfo);
+        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoTransfer({
@@ -85,7 +85,7 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionDepositParams) => {
       try {
         const accountInfo = await toolbox.getAccount(fromAddress);
-        console.log('accountInfo: ', accountInfo);
+        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
         let signPayload: any = {
@@ -112,11 +112,11 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             ],
           },
         };
-        console.log('signPayload: ', signPayload);
-        console.log('signPayload: ', JSON.stringify(signPayload));
+        //console.log('signPayload: ', signPayload);
+        //console.log('signPayload: ', JSON.stringify(signPayload));
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit(signPayload);
-        console.log('keepKeyResponse: ', keepKeyResponse);
-        console.log('URL: ', RPCUrl.THORChain);
+        //console.log('keepKeyResponse: ', keepKeyResponse);
+        //console.log('URL: ', RPCUrl.THORChain);
         let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         return txid.txid
       } catch (e) {

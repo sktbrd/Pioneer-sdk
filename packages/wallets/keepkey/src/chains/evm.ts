@@ -35,7 +35,7 @@ export class KeepKeySigner extends AbstractSigner {
         typedData: typedData,
       };
       const responseSign = await this.sdk.eth.ethSignTypedData(input);
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign;
     } catch (error) {
       // Handle error if needed

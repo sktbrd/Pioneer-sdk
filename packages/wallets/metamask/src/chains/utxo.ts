@@ -11,8 +11,8 @@ import type { Psbt } from 'bitcoinjs-lib';
 export const utxoWalletMethods: any = async function (params: any) {
   try {
     let { wallet, chain, utxoApiKey, api, paths } = params;
-    console.log('paths: ', paths);
-    // console.log('derivationPath: ', derivationPath);
+    //console.log('paths: ', paths);
+    // //console.log('derivationPath: ', derivationPath);
     if (!utxoApiKey && !api) throw new Error('UTXO API key not found');
     let toolbox: any = {};
     let isSegwit = false;
@@ -59,10 +59,10 @@ export const utxoWalletMethods: any = async function (params: any) {
           scriptType: 'p2pkh', //no segwit due to limitations in MM snaps
           showDisplay: false,
         };
-        console.log("addressInfo: ", addressInfo);
+        //console.log("addressInfo: ", addressInfo);
         let response = await wallet.btcGetAddress(addressInfo);
         response = response.replace("bitcoincash:", "")
-        console.log("response: ", response);
+        //console.log("response: ", response);
         return response;
       } catch (e) {
         console.error(e);
@@ -73,7 +73,7 @@ export const utxoWalletMethods: any = async function (params: any) {
     //getAddress
     const _getPubkeys = async (paths) => {
       try {
-        console.log('paths: ', paths);
+        //console.log('paths: ', paths);
 
         const pubkeys = await Promise.all(
           paths.map((path) => {
@@ -87,9 +87,9 @@ export const utxoWalletMethods: any = async function (params: any) {
                 showDisplay: false,
               }];
 
-              console.log('pathQuery: ', pathQuery);
+              //console.log('pathQuery: ', pathQuery);
               return wallet.getPublicKeys(pathQuery).then((response) => {
-                console.log('response: ', response);
+                //console.log('response: ', response);
                 response = response[0]
                 if(response && response.xpub){
                   // Combine the original path object with the xpub from the response
@@ -98,16 +98,16 @@ export const utxoWalletMethods: any = async function (params: any) {
                     xpub: response.xpub, // Adds the xpub field from the response
                     pubkey: response.xpub, // Adds the xpub field from the response
                   };
-                  console.log('combinedResult: ', combinedResult);
+                  //console.log('combinedResult: ', combinedResult);
                   return combinedResult;
                 }
               });
             }
           }),
         );
-        console.log('pubkeysPRE filter: ', pubkeys);
+        //console.log('pubkeysPRE filter: ', pubkeys);
         let pubkeysFinal = pubkeys.filter(pubkey => pubkey && pubkey.pubkey);
-        console.log('pubkeysFinal: ', pubkeysFinal);
+        //console.log('pubkeysFinal: ', pubkeysFinal);
         return pubkeysFinal
       } catch (e) {
         console.error(e);
@@ -115,7 +115,7 @@ export const utxoWalletMethods: any = async function (params: any) {
     };
     const pubkeys = await _getPubkeys(paths);
     const getPubkeys = async () => pubkeys;
-    console.log('pubkeys: ', pubkeys);
+    //console.log('pubkeys: ', pubkeys);
 
     const signTransaction = async (psbt: Psbt, inputs: UTXO[], memo: string = '') => {
       let outputs: any[] = psbt.txOutputs.map((output: any) => {

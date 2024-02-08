@@ -316,7 +316,7 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
       // Define the URL for broadcasting transactions
       let urlRemote = `${RPCUrl.THORChain}/cosmos/tx/v1beta1/txs`;
       // let urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
-      console.log(tag, 'urlRemote: ', urlRemote);
+      //console.log(tag, 'urlRemote: ', urlRemote);
 
       // Sending the transaction using RequestClient
       let result = await RequestClient.post(urlRemote, {
@@ -325,7 +325,7 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
           'content-type': 'application/json', // Assuming JSON content type is required
         },
       });
-      console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+      //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
       // Handle the response
       if (result.tx_response.txhash) {
@@ -337,7 +337,7 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
       }
       return output;
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       throw e;
     }
   };

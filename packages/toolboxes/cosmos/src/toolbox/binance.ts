@@ -35,7 +35,7 @@ const getTransferFee = async () => {
 const getBalance = async (address: string) => {
   try {
     const balances = (await getAccount(address[0].address))?.balances || [];
-    console.log('toolbox binance getBalance: ', balances);
+    //console.log('toolbox binance getBalance: ', balances);
     return balances.map(
       ({ symbol, free }) =>
         new AssetValue({ chain: Chain.Binance, symbol: symbol, value: free, decimal: 8 }),

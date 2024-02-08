@@ -38,7 +38,7 @@ console.log("wss: ",wss)
 
 let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
 if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
+let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS || '0xC3aFFff54122658b89C31183CeC4F15514F34624'
 
 let txid:string
 let IS_SIGNED: boolean
@@ -156,6 +156,7 @@ const test_service = async function (this: any) {
         // assert(balance[0])
         // assert(balance[0].balance)
 
+        await AssetValue.loadStaticAssets();
         //get assetValue for asset
         let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
         // create assetValue

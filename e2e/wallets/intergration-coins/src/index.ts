@@ -168,12 +168,17 @@ const test_service = async function (this: any) {
         // if(assetValue.ticker !== 'CACAO') throw Error("Invalid ticker for MAYA!")
         // if(assetValue.chain !== 'MAYA') throw Error("Invalid chain for MAYA!")
 
-        let assetString = 'MAYA.CACAO'
+        // let assetString = 'MAYA.CACAO'
+        //
+        // await AssetValue.loadStaticAssets();
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
+        // console.log("assetValue: ",assetValue)
+
+        let assetString = 'ETH.ETH'
 
         await AssetValue.loadStaticAssets();
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         console.log("assetValue: ",assetValue)
-
 
         //verify it set
         

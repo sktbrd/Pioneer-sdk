@@ -36,7 +36,7 @@ export const BASEToolbox = ({
       try {
         const evmGasTokenBalance = await provider.getBalance(address[0].address);
         //console.log('tokenBalances: ', tokenBalances);
-        console.log('evmGasTokenBalance: ', evmGasTokenBalance);
+        //console.log('evmGasTokenBalance: ', evmGasTokenBalance);
         let gasTokenBalance = AssetValue.fromChainOrSignature(
           Chain.Base,
           formatBigIntToSafeValue({
@@ -48,7 +48,7 @@ export const BASEToolbox = ({
         let balances = [gasTokenBalance];
         return balances;
       } catch (e) {
-        console.log('getBalance error: ', e);
+        //console.log('getBalance error: ', e);
       }
     },
     // getBalance: (address: any, potentialScamFilter?: boolean) =>

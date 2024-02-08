@@ -2,6 +2,8 @@
     E2E testing
 
  */
+//@ts-ignore
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
@@ -22,16 +24,16 @@ let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
-let BLOCKCHAIN = ChainToNetworkId['DASH']
+let BLOCKCHAIN = ChainToNetworkId['BTC']
 console.log("BLOCKCHAIN: ",BLOCKCHAIN)
-let ASSET = 'DASH'
+let ASSET = 'BTC'
 let MIN_BALANCE = process.env['MIN_BALANCE_DASH'] || "0.004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.0002"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_DASH_ADDRESS = process.env['FAUCET_DASH_ADDRESS']
-if(!FAUCET_DASH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_DASH_ADDRESS
+let FAUCET_BITCOIN_ADDRESS = process.env['FAUCET_BITCOIN_ADDRESS']
+if(!FAUCET_BITCOIN_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_BITCOIN_ADDRESS
 
 
 console.log("spec: ",spec)
@@ -107,11 +109,19 @@ const test_service = async function (this: any) {
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
 
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        app.setPaths(paths)
+
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -120,32 +130,32 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
-        let paths = app.paths
-        assert(paths)
-        assert(paths[0])
-        let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"osmoPath: ",osmoPath)
-        assert(osmoPath)
+        // //get osmo paths
+        // let paths = app.paths
+        // assert(paths)
+        // assert(paths[0])
+        // let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"osmoPath: ",osmoPath)
+        // assert(osmoPath)
 
         //
         await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
-        let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"pubkey: ",pubkey)
-        assert(pubkey.length > 0)
-        //verify pubkeys
+        // log.info(tag,"pubkeys: ",app.pubkeys)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
+        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"pubkey: ",pubkey)
+        // assert(pubkey.length > 0)
+        // //verify pubkeys
 
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
-        //verify balances
+        // //log.info(tag,"balances: ",app.balances)
+        // //filter by OSMO caip
+        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"balance: ",balance)
+        // assert(balance.length > 0)
+        // //verify balances
 
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;

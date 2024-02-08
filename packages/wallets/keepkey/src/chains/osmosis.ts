@@ -109,7 +109,7 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
 
     let sendSwapTx = async function (swapParams: any) {
       try {
-        console.log('swapParams: ', swapParams);
+        //console.log('swapParams: ', swapParams);
         if (!swapParams.senderAddress) throw new Error('missing senderAddress');
         if (!swapParams.tokenIn) throw new Error('missing tokenIn');
         if (!swapParams.tokenOut) throw new Error('missing tokenOut');
@@ -123,7 +123,7 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
           swapParams.amountIn,
           swapParams.amountOutMin,
         );
-        console.log('Built transaction: ', tx);
+        //console.log('Built transaction: ', tx);
 
         // Prepare the transaction for signing
         let signableTx = {
@@ -137,15 +137,15 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
             msgs: tx.msg,
           },
         };
-        console.log('Signable transaction: ', signableTx);
-        console.log('Signable transaction: ', JSON.stringify(signableTx));
+        //console.log('Signable transaction: ', signableTx);
+        //console.log('Signable transaction: ', JSON.stringify(signableTx));
         // Sign Tx with KeepKey
         const keepKeySignedTx = await sdk.osmosis.osmoSignAminoSwap(signableTx);
-        console.log('Signed transaction: ', keepKeySignedTx);
+        //console.log('Signed transaction: ', keepKeySignedTx);
 
         // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeySignedTx.serialized);
-        console.log('Result broadcast: ', resultBroadcast);
+        //console.log('Result broadcast: ', resultBroadcast);
 
         // Return txid
         return resultBroadcast.txid;
@@ -177,12 +177,12 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       memo = '',
     }: SignTransactionTransferParams) => {
       try {
-        console.log(tag, 'fromAddress: ', fromAddress);
+        //console.log(tag, 'fromAddress: ', fromAddress);
         let accountInfo = await toolbox.getAccount(fromAddress);
-        console.log('accountInfo: ', accountInfo);
+        //console.log('accountInfo: ', accountInfo);
         let { sequence, account_number } = accountInfo.account; // Corrected path
-        console.log('sequence: ', sequence);
-        console.log('account_number: ', account_number);
+        //console.log('sequence: ', sequence);
+        //console.log('account_number: ', account_number);
 
         let unSignedTx = {
           signerAddress: fromAddress,
@@ -200,15 +200,15 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
             ],
           },
         };
-        console.log('unSignedTx: ', unSignedTx);
-        console.log('unSignedTx: ', JSON.stringify(unSignedTx));
+        //console.log('unSignedTx: ', unSignedTx);
+        //console.log('unSignedTx: ', JSON.stringify(unSignedTx));
         // @ts-ignore
         const keepKeySignedTx = await sdk.osmosis.osmosisSignAmino(unSignedTx);
-        console.log('keepKeySignedTx: ', keepKeySignedTx);
-        console.log('keepKeySignedTx: ', JSON.stringify(keepKeySignedTx));
+        //console.log('keepKeySignedTx: ', keepKeySignedTx);
+        //console.log('keepKeySignedTx: ', JSON.stringify(keepKeySignedTx));
 
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeySignedTx.serialized);
-        console.log('resultBroadcast: ', resultBroadcast);
+        //console.log('resultBroadcast: ', resultBroadcast);
 
         return resultBroadcast.txid;
       } catch (e) {

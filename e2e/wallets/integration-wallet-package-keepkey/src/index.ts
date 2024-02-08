@@ -274,7 +274,7 @@ const test_service = async function (this: any) {
             config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
         }
         let chains =  [
-            'ETH', 'BTC', 'MAYA'
+            'BTC'
         ]
         // let chains =  [
         //     'ARB',  'AVAX', 'BNB',
@@ -326,6 +326,7 @@ const test_service = async function (this: any) {
                 SEND MAYA
 
          */
+
         // //get assetValue for asset
         // // let assetString = 'ETH.USDT'
         // let assetString = 'MAYA.CACAO'
@@ -355,9 +356,110 @@ const test_service = async function (this: any) {
 
 
         /*
-               TODO  SEND ERC-20
-
+               DEPOSIT MAYA
          */
+
+
+        // //deposit maya
+        // //get assetValue for asset
+        // // let assetString = 'ETH.USDT'
+        // let assetString = 'MAYA.CACAO'
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // let TEST_AMOUNT = "20"
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '=:DASH.DASH:Xursn5XQzLEa2J91uEWeAVsKpLsBTf393x::ELD:75'
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await  keepkey[Chain.Mayachain].walletMethods.deposit(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
+
+
+        /*
+               SEND ERC-20
+         */
+
+        // //get assetValue for asset
+        // let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // let TEST_AMOUNT = "0.1"
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // await AssetValue.loadStaticAssets();
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        //
+        // let address = await keepkey[Chain.Ethereum].walletMethods.getAddress()
+        // log.info("address: ",address)
+        // assert(address)
+        // //send
+        // let sendPayload = {
+        //     from:address,
+        //     assetValue,
+        //     memo: '',
+        //     recipient: process.env['FAUCET_ETH_ADDRESS'] || '0xC3aFFff54122658b89C31183CeC4F15514F34624',
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await  keepkey[Chain.Ethereum].walletMethods.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
+
+        /*
+           SEND Bitcoin
+         */
+
+        //get assetValue for asset
+        let assetString = 'BTC.BTC'
+        console.log('assetString: ', assetString);
+        let TEST_AMOUNT = "0.0005"
+        // await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        await AssetValue.loadStaticAssets();
+        let assetValue = await AssetValue.fromString(
+          assetString,
+          parseFloat(TEST_AMOUNT),
+        );
+        log.info("assetValue: ",assetValue)
+
+
+        let address = await keepkey[Chain.Bitcoin].walletMethods.getAddress()
+        log.info("address: ",address)
+        assert(address)
+        //send
+        let sendPayload = {
+            from:address,
+            assetValue,
+            memo: '',
+            recipient: process.env['FAUCET_BITCOIN_ADDRESS'],
+        }
+        log.info("sendPayload: ",sendPayload)
+        log.info("keepkey: ",keepkey)
+        log.info("keepkey[Chain.Bitcoin]: ",keepkey)
+        const txHash = await  keepkey[Chain.Bitcoin].walletMethods.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
+
 
         log.info("************************* TEST PASS *************************")
     } catch (e) {

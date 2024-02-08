@@ -10,7 +10,7 @@ const getAccount = (address: string): Promise<any> => {
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
 
   // Log the URL
-  console.log(`Requesting URL: ${url}`);
+  //console.log(`Requesting URL: ${url}`);
 
   // Make the request
   return RequestClient.get<any>(url);
@@ -28,25 +28,25 @@ const getAccount = (address: string): Promise<any> => {
 const getBalance = async (address: any[]) => {
   //console.log(address)
   try {
-    console.log('address: ', address[0].address);
-    console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
+    //console.log('address: ', address[0].address);
+    //console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
     const balancesOsmo: any = await RequestClient.get(
       `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`,
     );
 
-    console.log('balanceOsmo: ', balancesOsmo);
+    //console.log('balanceOsmo: ', balancesOsmo);
     let balances: any = [];
     await AssetValue.loadStaticAssets();
     for (let i = 0; i < balancesOsmo.length; i++) {
       let balance = balancesOsmo[i];
-      console.log('balance: ', balance);
+      //console.log('balance: ', balance);
       let identifier = 'OSMO.' + balance.asset;
       const assetValueNativeOsmo = AssetValue.fromStringSync(identifier, balance.balance);
 
       if (assetValueNativeOsmo) {
-        console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
+        //console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
         balances.push(assetValueNativeOsmo);
-        console.log('balances: ', balances);
+        //console.log('balances: ', balances);
       } else {
         console.error('Failed to get assetValueNative: ' + identifier);
       }
@@ -109,7 +109,7 @@ const sendRawTransaction = async (tx, sync = true) => {
 
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
-    console.log(tag, 'urlRemote: ', urlRemote);
+    //console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using RequestClient
     let result = await RequestClient.post(urlRemote, {
@@ -118,7 +118,7 @@ const sendRawTransaction = async (tx, sync = true) => {
         'content-type': 'application/json', // Assuming JSON content type is required
       },
     });
-    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     // Handle the response
     if (result.tx_response.txhash) {

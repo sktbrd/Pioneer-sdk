@@ -379,10 +379,10 @@ export class SDK {
           if (!options.seed) throw Error('Must have seed to pair keystore!');
         }
         this.blockchains = blockchains;
-        console.log('this.wallets: ', this.wallets);
+        //console.log('this.wallets: ', this.wallets);
         const walletSelected = this.wallets.find((w: any) => w.type === wallet);
         if (!walletSelected) throw Error('Wallet not found!');
-        console.log('NetworkIdToChain: ', NetworkIdToChain);
+        //console.log('NetworkIdToChain: ', NetworkIdToChain);
         let AllChainsSupported = blockchains.map(
           (networkId: string | number) =>
             NetworkIdToChain[networkId] ||
@@ -475,7 +475,7 @@ export class SDK {
           } else {
             const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
             if (!ethAddress) throw Error('Failed to get eth address! can not pair wallet');
-            console.log('wallet: ', wallet);
+            //console.log('wallet: ', wallet);
             context = `${wallet.toLowerCase()}:${ethAddress}.wallet`;
 
             // isPioneer?
@@ -702,10 +702,10 @@ export class SDK {
           tokens.forEach((token: any) => {
             chains.add(token.chain);
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            // console.log('token PRE: ', token);
+            //console.log('token PRE: ', token);
             let expandedInfo = tokenToCaip(token);
             expandedInfo.sourceList = sourceList;
-            // console.log('expandedInfo: ', expandedInfo);
+            //console.log('expandedInfo: ', expandedInfo);
             tokenMap[token.identifier] = expandedInfo;
           });
         };
@@ -848,14 +848,14 @@ export class SDK {
               } else {
                 //caip
                 try {
-                  console.log("balance: PRE: ",balance)
+                  //console.log("balance: PRE: ",balance)
                   let caip = thorchainToCaip(
                     balance.chain,
                     balance.symbol,
                     balance.ticker,
                     balance.type,
                   );
-                  console.log("caip: PRE: ",caip)
+                  //console.log("caip: PRE: ",caip)
                   //log.debug('caip: ', caip);
                   //if (!caip) throw Error('Failed to get caip for balance: ' + JSON.stringify(balance));
                   if (caip) {

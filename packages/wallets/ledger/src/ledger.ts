@@ -469,10 +469,10 @@ const connectLedger =
     rpcUrls,
   }: ConnectWalletParams) =>
   async (chain: (typeof LEDGER_SUPPORTED_CHAINS)[number], paths?: any) => {
-    console.log('Checkpoint Ledger! paths:', paths);
+    //console.log('Checkpoint Ledger! paths:', paths);
     //get paths for chain
     const filteredPaths = paths.filter((p) => p.symbolSwapKit === chain);
-    console.log('filteredPaths:', filteredPaths);
+    //console.log('filteredPaths:', filteredPaths);
 
     const ledgerClient = await getLedgerClient({ chain, paths: filteredPaths });
     if (!ledgerClient) return;
@@ -489,9 +489,9 @@ const connectLedger =
     ) {
       // @ts-ignore
       let xpubs: any = await getLedgerPubkeys({ chain, ledgerClient });
-      console.log('** xpubs: ', xpubs);
+      //console.log('** xpubs: ', xpubs);
       pubkeys = xpubs;
-      console.log('** pubkeys: ', pubkeys);
+      //console.log('** pubkeys: ', pubkeys);
     }
 
     const toolbox = await getToolbox({

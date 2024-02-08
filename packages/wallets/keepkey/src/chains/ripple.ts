@@ -80,22 +80,22 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
           },
         };
         //push tx to api
-        console.log('unsignedTx: ', JSON.stringify(unsignedTx));
+        //console.log('unsignedTx: ', JSON.stringify(unsignedTx));
         let responseSign = await sdk.xrp.xrpSignTransaction(unsignedTx);
         responseSign = JSON.parse(responseSign);
-        console.log('responseSign: ', responseSign);
-        console.log('responseSign: ', typeof responseSign);
-        console.log('responseSign.value: ', responseSign.value);
-        console.log('responseSign.value: ', responseSign.value.signatures[0]);
-        console.log(
-          'responseSign.value.signatures[0].serializedTx: ',
-          responseSign.value.signatures[0].serializedTx,
-        );
+        //console.log('responseSign: ', responseSign);
+        //console.log('responseSign: ', typeof responseSign);
+        //console.log('responseSign.value: ', responseSign.value);
+        //console.log('responseSign.value: ', responseSign.value.signatures[0]);
+        // console.log(
+        //   'responseSign.value.signatures[0].serializedTx: ',
+        //   responseSign.value.signatures[0].serializedTx,
+        // );
         //broadcast
         const resultBroadcast = await toolbox.sendRawTransaction(
           responseSign.value.signatures[0].serializedTx,
         );
-        console.log('resultBroadcast: ', resultBroadcast);
+        //console.log('resultBroadcast: ', resultBroadcast);
 
         return resultBroadcast?.result?.tx_json?.hash;
       } catch (e) {

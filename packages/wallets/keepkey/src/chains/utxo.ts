@@ -76,7 +76,7 @@ export const utxoWalletMethods = async ({
   if (!apiKey) throw new Error('UTXO API key not found');
   const { toolbox, segwit } = getToolbox({ chain, apiClient, apiKey });
 
-  const scriptType = segwit ? 'p2wpkh' : 'p2pkh';
+  const scriptType = segwit ? 'p2sh' : 'p2pkh';
   if (!ChainToKeepKeyName[chain]) throw Error('ChainToKeepKeyName: unknown chain: ' + chain);
   const addressInfo = {
     coin: ChainToKeepKeyName[chain],
@@ -170,14 +170,16 @@ export const utxoWalletMethods = async ({
     //   locktime: 0,
     // });
     try {
-      const responseSign = await sdk.utxo.utxoSignTransaction({
+      let signPayload = {
         coin: ChainToKeepKeyName[chain],
         inputs,
         outputs: removeNullAndEmptyObjectsFromArray(outputs),
         version: 1,
         locktime: 0,
         opReturnData: memo,
-      });
+      };
+      console.log('signPayload: ', JSON.stringify(signPayload));
+      const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
       //console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (e) {
