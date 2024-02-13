@@ -1,5 +1,11 @@
 # @internal/playground
 
+## 0.4.16
+
+### Patch Changes
+
+- bump
+
 ## 0.4.15
 
 ### Patch Changes

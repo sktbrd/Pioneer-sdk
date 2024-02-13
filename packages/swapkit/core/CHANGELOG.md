@@ -1,5 +1,20 @@
 # @coinmasters/core
 
+## 8.0.16
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.16
+  - @coinmasters/helpers@8.0.16
+  - @coinmasters/tokens@3.4.16
+  - @coinmasters/toolbox-utxo@8.0.16
+  - @coinmasters/types@4.4.16
+  - @coinmasters/toolbox-evm@8.0.16
+  - @coinmasters/api@3.4.16
+
 ## 8.0.15
 
 ### Patch Changes
