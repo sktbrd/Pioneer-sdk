@@ -32,7 +32,7 @@ import {
 } from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { caipToThorchain, thorchainToCaip, tokenToCaip } from '@pioneer-platform/pioneer-caip';
+import { caipToNetworkId, caipToThorchain, thorchainToCaip, tokenToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import EventEmitter from 'events';
@@ -401,7 +401,7 @@ export class SDK {
                 AllChainsSupported,
                 this.paths,
               )) || '';
-            resultPair = 'success'
+            resultPair = 'success';
             break;
           case 'METAMASK':
             resultPair =
@@ -790,6 +790,10 @@ export class SDK {
                 : []),
             ];
           }
+
+          //force networks to be unique
+          pubkey.networks = Array.from(new Set(pubkey.networks));
+
           //log.debug(tag, 'pubkey: ', pubkey);
           pubkeysNew.push(pubkey);
         }
@@ -820,16 +824,19 @@ export class SDK {
         // }
         //TODO if wallet doesn't support blockchains, throw error
         //log.debug('getBalances this.blockchains: ', this.blockchains);
+        console.log('this.blockchains: ', this.blockchains);
         let balances = [];
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
+          console.log('getWalletByChain: ', chain);
           let walletForChain = await this.swapKit?.getWalletByChain(chain);
-          //log.debug(chain + ' walletForChain: ', walletForChain);
-          if (walletForChain) {
+          console.log(chain + ' walletForChain: ', walletForChain);
+          if (walletForChain && walletForChain.balance) {
             // @ts-ignore
+            console.log('walletForChain.balance: ', walletForChain.balance);
             for (let j = 0; j < walletForChain.balance.length; j++) {
               // @ts-ignore
               let balance: AssetValue = walletForChain?.balance[j];
@@ -864,6 +871,7 @@ export class SDK {
                     balanceString.context = this.context;
                     balanceString.caip = caip;
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
+                    balanceString.networkId = caipToNetworkId(caip);
                     balanceString.address = balance.address;
                     balanceString.symbol = balance.symbol;
                     balanceString.chain = balance.chain;

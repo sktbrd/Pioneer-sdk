@@ -12,9 +12,7 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, getChainEnumValue, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -174,7 +172,14 @@ const test_service = async function (this: any) {
         // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         // console.log("assetValue: ",assetValue)
 
-        let assetString = 'ETH.ETH'
+        // let assetString = 'ETH.ETH'
+        //
+        // await AssetValue.loadStaticAssets();
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
+        // console.log("assetValue: ",assetValue)
+
+        // let assetString = 'BASE.ETH'
+        let assetString = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630'
 
         await AssetValue.loadStaticAssets();
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));

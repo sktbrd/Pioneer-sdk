@@ -1,5 +1,6 @@
 import { Chain, type EVMChain } from '@coinmasters/types';
 
+import { BASEToolbox } from './base.ts';
 import { ARBToolbox } from './arb.ts';
 import { AVAXToolbox } from './avax.ts';
 import { BSCToolbox } from './bsc.ts';
@@ -11,6 +12,8 @@ export const getToolboxByChain = async (chain: EVMChain) => {
   switch (chain) {
     case Chain.Avalanche:
       return AVAXToolbox;
+    case Chain.Base:
+      return BASEToolbox;
     case Chain.Arbitrum:
       return ARBToolbox;
     case Chain.Optimism:

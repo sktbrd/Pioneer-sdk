@@ -34,6 +34,9 @@ export const BASEToolbox = ({
     getNetworkParams,
     async getBalance(address: any) {
       try {
+        // const tokenBalances = await api.getBalance(address[0].address);
+        // console.log('tokenBalances: ', tokenBalances);
+
         const evmGasTokenBalance = await provider.getBalance(address[0].address);
         //console.log('tokenBalances: ', tokenBalances);
         //console.log('evmGasTokenBalance: ', evmGasTokenBalance);
@@ -45,6 +48,8 @@ export const BASEToolbox = ({
           }),
         );
         gasTokenBalance.address = address[0].address;
+        //get tokens
+
         let balances = [gasTokenBalance];
         return balances;
       } catch (e) {

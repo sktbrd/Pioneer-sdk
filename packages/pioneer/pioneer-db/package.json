@@ -1,7 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-db",
-  "version": "4.4.15",
+  "version": "4.4.16",
   "dependencies": {
     "idb": "^8.0.0",
     "sqlite": "^5.1.1",
@@ -9,6 +9,7 @@
   },
   "description": "Pioneer DB tools",
   "devDependencies": {
+    "@coinmasters/types": "workspace:*",
     "@internal/config": "workspace:*",
     "@types/bn.js": "5.1.5",
     "@types/crypto-js": "4.2.1",

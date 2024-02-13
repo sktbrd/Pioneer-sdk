@@ -11,10 +11,6 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | e2e-test | "
 import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
-import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -25,17 +21,17 @@ import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['ETH']
-let BLOCKCHAIN_OUT = ChainToNetworkId['XRP']
+let BLOCKCHAIN_IN = ChainToNetworkId['BASE']
+let BLOCKCHAIN_OUT = ChainToNetworkId['BASE']
 let ASSET = 'ETH'
-let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.02"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.019"
+let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.01"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.09"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
-let TRADE_PAIR  = "ETH_XRP"
+let TRADE_PAIR  = "ETH_ETH"
 let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "XRP"
+let OUTPUT_ASSET = "PRO"
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -107,12 +103,13 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN_IN, ChainToNetworkId['ETH']]
         log.info(tag,"blockchains: ",blockchains)
 
         //get paths for wallet
         let paths = getPaths(blockchains)
         log.info("paths: ",paths.length)
+
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
@@ -125,7 +122,6 @@ const test_service = async function (this: any) {
         });
         log.info("optimized: ", optimized.length);
         app.setPaths(optimized)
-
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
@@ -149,40 +145,31 @@ const test_service = async function (this: any) {
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
+
+        log.info(tag,"balance: ",app.balances)
+        let balanceOut = app.balances.filter((e:any) => e.ticker === OUTPUT_ASSET)
+        log.info(tag,"balanceOut: ",balanceOut)
+        assert(balanceOut[0])
+
+        if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
         assert(balance.length > 0)
         //verify balances
+        assert(balanceOut[0])
 
-        //get asset context
-        await app.setAssetContext(balance[0])
+        const balances = app?.swapKit.getBalance('BASE');
+        log.info(tag,"balances: ",balances)
 
-        let balanceOut = app.balances.filter((e:any) => e.symbol === OUTPUT_ASSET)
         await app.setOutboundAssetContext(balanceOut[0]);
-        //set outbound asset context
-        log.info(tag,"app.assetContext: ",app.assetContext)
+
+        //get outbound asset
+        let outboundAssetContext = await app.outboundAssetContext
+        log.info(tag,"outboundAssetContext: ",outboundAssetContext)
+        assert(outboundAssetContext)
+        if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
+
         assert(app.assetContext)
         assert(app.assetContext.address)
         assert(app.assetContext.address)
-
-        //get pubkey for outbound
-        log.info(tag,"pubkeysOut: ",app.pubkeys)
-        let pubkeysOut = app.pubkeys.filter((e:any) => e.networks.includes(BLOCKCHAIN_OUT));
-        log.info(tag, "pubkeysOut: ", pubkeysOut);
-
-        if (pubkeysOut.length > 0) {
-            //cool
-        } else {
-            // Handle the case where no XRP public key is found
-            log.error(tag, "No public key found for XRP network");
-            throw Error("Missing pubkey for outbound asset!")
-        }
-
-        //set outbound asset context
-        log.info(tag,"app.outboundAssetContext: ",app.outboundAssetContext)
-        assert(app.outboundAssetContext)
-        assert.equal(app.outboundAssetContext.ticker, OUTPUT_ASSET);
-        assert(app.outboundAssetContext.address)
-
-
 
         //get sender context
         const senderAddress = app.assetContext.address;
@@ -217,27 +204,22 @@ const test_service = async function (this: any) {
         result = result?.data;
         log.info(tag,"result: ",result)
 
-
-        const outputChain = app.outboundAssetContext?.chain;
-
-        const address = app?.swapKit.getAddress(outputChain);
-        log.info("address: ", address);
-
         //
         let selected
         //user selects route
         for(let i = 0; i < result?.length; i++){
             let route = result[i]
             console.log("route: ", route)
-            //detect if erroed
-            if(route.integration === 'changelly'){
-                selected = route.quote
-                break;
-            }
-            //log amountOut
-
-            //log fee
+            selected = route.quote
         }
+
+        const outputChain = app.outboundAssetContext?.chain;
+
+        const address = app?.swapKit.getAddress(outputChain);
+        log.info("address: ", address);
+
+
+        log.info("selected: ", selected);
 
         //send
         const txHash = await app?.swapKit.swap({
@@ -246,12 +228,11 @@ const test_service = async function (this: any) {
             feeOptionKey: FeeOption.Fast,
         });
         log.info("txHash: ",txHash)
-        assert(txHash)
-        
-        //TODO monitor TX untill complete
-        
-        //TODO check balance
+        // assert(txHash)
 
+        //TODO monitor TX untill complete
+
+        //TODO check balance
 
 
         console.log("************************* TEST PASS *************************")

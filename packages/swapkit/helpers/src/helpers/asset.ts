@@ -90,7 +90,7 @@ export const isGasAsset = ({ chain, symbol }: { chain: Chain; symbol: string }) 
     case Chain.Optimism:
     case Chain.Base:
       return 'ETH' === symbol;
-    case Chain.Maya:
+    case Chain.Mayachain:
       return symbol === 'CACAO';
     case Chain.Kujira:
       return symbol === 'KUJI';
@@ -124,8 +124,6 @@ export const getCommonAssetInfo = (
       return { identifier: 'MAYA.CACAO', decimal: BaseDecimal.MAYA };
     case 'MAYA.MAYA':
       return { identifier: 'MAYA.MAYA', decimal: 4 };
-    case Chain.Base:
-      return { identifier: 'BASE.ETH', decimal: 18 };
     case Chain.Ripple:
     case Chain.Kujira:
     case Chain.Arbitrum:
@@ -139,6 +137,7 @@ export const getCommonAssetInfo = (
     case Chain.Avalanche:
     case Chain.Polygon:
     case Chain.Bitcoin:
+    case Chain.Base:
     case Chain.Ethereum:
       return { identifier: `${assetString}.${assetString}`, decimal: BaseDecimal[assetString] };
   }

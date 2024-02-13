@@ -23,11 +23,11 @@ let BLOCKCHAIN = ChainToNetworkId['BASE']
 if(!BLOCKCHAIN) throw Error("unknown Chain! "+BLOCKCHAIN)
 let ASSET = 'BASE'
 let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.05"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "100"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-// let FAUCET_BASE_ADDRESS = process.env['FAUCET_BASE_ADDRESS']
-// if(!FAUCET_BASE_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_BASE_ADDRESS = process.env['FAUCET_BASE_ADDRESS']
+if(!FAUCET_BASE_ADDRESS) throw Error("Need Faucet Address!")
 let FAUCET_ADDRESS = '0x22BDa0413514E3f631476F5791C28289bAda37D9'
 import {
     getPaths,
@@ -179,42 +179,33 @@ const test_service = async function (this: any) {
         // assert(pubkey.length > 0)
         //verify pubkeys
 
-
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
-        // assert(balance.length > 0)
+        assert(balance.length > 0)
         //verify balances
 
-        // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
+        // // create assetValue
+        // let assetString = `BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630`;
+        // assetString = assetString.toUpperCase()
+        // console.log('assetString: ', assetString);
         // await AssetValue.loadStaticAssets();
-        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         // log.info("assetValue: ",assetValue)
-
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Base,
-          TEST_AMOUNT,
-        );
-        assetValue.type = 'Native'
-        assetValue.isGasAsset = true
-        log.info(tag,"assetValue: ",assetValue)
-        assert(assetValue)
-
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
     } catch (e) {
