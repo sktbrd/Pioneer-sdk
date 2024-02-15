@@ -1,8 +1,8 @@
 import { AssetValue, RequestClient } from '@coinmasters/helpers';
 import { Chain, RPCUrl } from '@coinmasters/types';
 
-//const PIONEER_API_URI = 'https://pioneers.dev';
-const PIONEER_API_URI = 'http://127.0.0.1:9001';
+const PIONEER_API_URI = 'https://pioneers.dev';
+// const PIONEER_API_URI = 'http://127.0.0.1:9001';
 
 const getAccount = (address: string): Promise<any> =>
   RequestClient.get<any>(`${PIONEER_API_URI}/api/v1/getAccountInfo/ripple/${address}`);
@@ -46,10 +46,10 @@ const sendRawTransaction = async (tx, sync = true) => {
         },
       ],
     };
-    console.log(tag, 'RPCUrl.Ripple: ', RPCUrl.Ripple);
+    //console.log(tag, 'RPCUrl.Ripple: ', RPCUrl.Ripple);
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Ripple}/`;
-    console.log(tag, 'urlRemote: ', urlRemote);
+    //console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using RequestClient
     let result = await RequestClient.post(urlRemote, {
@@ -58,7 +58,7 @@ const sendRawTransaction = async (tx, sync = true) => {
         'content-type': 'application/json', // Assuming JSON content type is required
       },
     });
-    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     return result;
   } catch (error) {

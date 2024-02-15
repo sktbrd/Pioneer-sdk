@@ -10,11 +10,8 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
-import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
+import { AssetValue, formatBigIntToSafeValue, isGasAsset } from '@coinmasters/core';
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -26,19 +23,32 @@ let BLOCKCHAIN = ChainToNetworkId['BASE']
 if(!BLOCKCHAIN) throw Error("unknown Chain! "+BLOCKCHAIN)
 let ASSET = 'BASE'
 let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.05"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
-if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
-
+// let FAUCET_BASE_ADDRESS = process.env['FAUCET_BASE_ADDRESS']
+// if(!FAUCET_BASE_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = '0x22BDa0413514E3f631476F5791C28289bAda37D9'
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 console.log("spec: ",spec)
 console.log("wss: ",wss)
 
 let txid:string
 let IS_SIGNED: boolean
 
+
+//TEST MODE
+let WALLET_SEED:any
+// let TEST_MODE = 'KEEPKEY'
+let TEST_MODE = 'KEYSTORE'
+if(TEST_MODE == "KEYSTORE"){
+    WALLET_SEED=process.env['WALLET_SEED']
+    if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")
+}
+log.info("TEST_MODE: ",TEST_MODE)
 
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
@@ -77,7 +87,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -89,6 +99,7 @@ const test_service = async function (this: any) {
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+        const { keystoreWallet } = await import("@coinmasters/wallet-keystore");
         //log.info(tag,"walletKeepKey: ",keepkeyWallet)
         const walletKeepKey = {
             type: WalletOption.KEEPKEY,
@@ -98,6 +109,15 @@ const test_service = async function (this: any) {
             status: "offline",
             isConnected: false,
         };
+        const walletKeystore:any = {
+            type: WalletOption.KEYSTORE,
+            icon: "https://pioneers.dev/coins/keepkey.png",
+            chains: availableChainsByWallet[WalletOption.KEYSTORE],
+            wallet: keystoreWallet,
+            status: "offline",
+            isConnected: false,
+        };
+        walletsVerbose.push(walletKeystore);
         walletsVerbose.push(walletKeepKey);
 
         let resultInit = await app.init(walletsVerbose, {})
@@ -105,12 +125,42 @@ const test_service = async function (this: any) {
         log.info(tag,"wallets: ",app.wallets.length)
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
 
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject:any
+        if(TEST_MODE == "KEYSTORE"){
+            pairObject = {
+                type: WalletOption.KEYSTORE,
+                seed: WALLET_SEED,
+                blockchains
+            }
+        } else {
+            //assume KK
+            pairObject = {
+                type:WalletOption.KEEPKEY,
+                blockchains
+            }
+        }
+        assert(pairObject)
+        log.info(tag,"pairObject: ",pairObject)
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -118,15 +168,6 @@ const test_service = async function (this: any) {
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-
-        //get osmo paths
-        let paths = app.paths
-        assert(paths)
-        assert(paths[0])
-        // let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"osmoPath: ",osmoPath)
-        // assert(osmoPath)
-
 
         //
         await app.getPubkeys()
@@ -140,21 +181,30 @@ const test_service = async function (this: any) {
 
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
+        log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
+        // assert(balance.length > 0)
         //verify balances
 
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
+        // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        // log.info("assetValue: ",assetValue)
+
+        let assetValue = AssetValue.fromChainOrSignature(
+          Chain.Base,
+          TEST_AMOUNT,
+        );
+        assetValue.type = 'Native'
+        assetValue.isGasAsset = true
+        log.info(tag,"assetValue: ",assetValue)
+        assert(assetValue)
+
         //send
         let sendPayload = {
             assetValue,

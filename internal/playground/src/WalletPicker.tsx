@@ -189,7 +189,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     async (option: WalletOption) => {
       if (!skClient) return alert('client is not ready');
       setLoading(true);
-      console.log("Open Modal!")
+      //console.log("Open Modal!")
       setWalletOption(option);
       const paths = chains.map((chain, index) => getDerivationPathFor({ chain, index: 0 }));
       setDerivationPaths(paths);

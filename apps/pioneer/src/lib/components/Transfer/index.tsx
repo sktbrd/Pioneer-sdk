@@ -37,7 +37,7 @@ import { getWalletBadgeContent } from '../WalletIcon';
 
 const Transfer = () => {
   const toast = useToast();
-  const { state, setIntent, showModal } = usePioneer();
+  const { state, setIntent, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;
   const { isOpen, onOpen, onClose } = useDisclosure(); // Add disclosure for modal
   const [isPairing, setIsPairing] = useState(false);
@@ -125,7 +125,11 @@ const Transfer = () => {
         console.log('Wallet not connected, opening modal for: ', walletType);
         //open wallet for context
 
-        showModal(walletType);
+        connectWallet(walletType.toUpperCase());
+        setTimeout(() => {
+          console.log('Retrying wallet connection...');
+          handleSend();
+        }, 3000);
         // pairWallet();
       } else {
         setIsSubmitting(true);
@@ -164,8 +168,8 @@ const Transfer = () => {
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
         console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(inputAmount));
-
+        // @ts-ignore
+        const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(inputAmount));
         console.log('assetValue: ', assetValue);
 
         // modify assetVaule for input
@@ -194,7 +198,7 @@ const Transfer = () => {
   }, [assetContext, inputAmount, app, recipient, sendAmount, toast]);
 
   // Function to show modal with a specific type
-  const showModalWithType = (type) => {
+  const showModalWithType = (type: any) => {
     setModalType(type);
     onOpen();
   };

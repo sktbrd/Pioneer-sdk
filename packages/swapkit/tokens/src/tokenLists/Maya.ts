@@ -6,6 +6,7 @@ export const list = {
   tokens: [
     { chain: 'BTC', identifier: 'BTC.BTC', decimals: 8 },
     { chain: 'DASH', identifier: 'DASH.DASH', decimals: 8 },
+    { chain: 'MAYA', identifier: 'MAYA.CACAO', decimals: 10 },
     { chain: 'ETH', identifier: 'ETH.ETH', decimals: 18 },
     { chain: 'KUJI', identifier: 'KUJI.KUJI', decimals: 6 },
     { chain: 'KUJI', identifier: 'KUJI.USK', decimals: 6 },

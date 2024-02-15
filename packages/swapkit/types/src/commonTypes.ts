@@ -101,6 +101,12 @@ export type ExtendParams<WalletConnectMethodNames = ''> = {
   }[];
 };
 
+export type Asset = {
+  chain: Chain;
+  symbol: string;
+  ticker: string;
+  synth?: boolean;
+};
 export enum QuoteMode {
   TC_SUPPORTED_TO_TC_SUPPORTED = 'TC-TC',
   TC_SUPPORTED_TO_ETH = 'TC-ERC20',
@@ -118,32 +124,37 @@ export enum QuoteMode {
   BSC_TO_ETH = 'BEP20-ERC20',
   BSC_TO_AVAX = 'BEP20-ARC20',
   BSC_TO_BSC = 'BEP20-BEP20',
+  GAIA_TO_OSMO = 'OSMOSIS-IBC',
+  MAYA_SUPPORTED_TO_MAYA_SUPPORTED = 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED',
+  CHANGELLY = 'CHANGELLY',
+  RANGO = 'RANGO',
 }
 
-export type Asset = {
-  chain: Chain;
-  symbol: string;
-  ticker: string;
-  synth?: boolean;
+export const SWAP_TYPES = {
+  AGG_SWAP: [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC],
+  SWAP_IN: [
+    QuoteMode.ETH_TO_TC_SUPPORTED,
+    QuoteMode.ETH_TO_AVAX,
+    QuoteMode.ETH_TO_BSC,
+    QuoteMode.AVAX_TO_TC_SUPPORTED,
+    QuoteMode.AVAX_TO_ETH,
+    QuoteMode.AVAX_TO_BSC,
+    QuoteMode.BSC_TO_TC_SUPPORTED,
+    QuoteMode.BSC_TO_ETH,
+    QuoteMode.BSC_TO_AVAX,
+  ],
+  SWAP_OUT: [
+    QuoteMode.TC_SUPPORTED_TO_TC_SUPPORTED,
+    QuoteMode.TC_SUPPORTED_TO_ETH,
+    QuoteMode.TC_SUPPORTED_TO_AVAX,
+    QuoteMode.TC_SUPPORTED_TO_BSC,
+  ],
+  OSMOSIS_SWAP: [QuoteMode.GAIA_TO_OSMO],
+  CENTRALIZED_SWAPPER: [QuoteMode.CHANGELLY],
+  UXTO_SWAP: [QuoteMode.MAYA_SUPPORTED_TO_MAYA_SUPPORTED],
+  RANGO: [QuoteMode.RANGO],
 };
 
-export const AGG_SWAP = [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC];
-
-export const SWAP_IN = [
-  QuoteMode.ETH_TO_TC_SUPPORTED,
-  QuoteMode.ETH_TO_AVAX,
-  QuoteMode.ETH_TO_BSC,
-  QuoteMode.AVAX_TO_TC_SUPPORTED,
-  QuoteMode.AVAX_TO_ETH,
-  QuoteMode.AVAX_TO_BSC,
-  QuoteMode.BSC_TO_TC_SUPPORTED,
-  QuoteMode.BSC_TO_ETH,
-  QuoteMode.BSC_TO_AVAX,
-];
-
-export const SWAP_OUT = [
-  QuoteMode.TC_SUPPORTED_TO_TC_SUPPORTED,
-  QuoteMode.TC_SUPPORTED_TO_ETH,
-  QuoteMode.TC_SUPPORTED_TO_AVAX,
-  QuoteMode.TC_SUPPORTED_TO_BSC,
-];
+export function classifySwap(quoteMode: QuoteMode): string | null {
+  return Object.entries(SWAP_TYPES).find(([_, modes]) => modes.includes(quoteMode))?.[0] || null;
+}

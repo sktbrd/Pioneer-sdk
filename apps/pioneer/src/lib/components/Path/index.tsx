@@ -31,7 +31,7 @@ export default function Path({ onClose, pubkey }: any) {
           {Object.entries(data).map(([key, value]) => (
             <Tr key={key}>
               <Td>{key}</Td>
-              <Td>{value}</Td>
+              {/*<Td>{value}</Td>*/}
             </Tr>
           ))}
         </Tbody>

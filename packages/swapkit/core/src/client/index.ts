@@ -1,3 +1,8 @@
+/*
+    Core Swapkit
+
+
+ */
 import type { Keys, ThornameRegisterParam } from '@coinmasters/helpers';
 import {
   AssetValue,
@@ -18,18 +23,19 @@ import type {
   WalletOption,
 } from '@coinmasters/types';
 import {
-  AGG_SWAP,
   Chain,
   ChainToChainId,
+  classifySwap,
   FeeOption,
   MemoType,
-  SWAP_IN,
-  SWAP_OUT,
   TCAvalancheDepositABI,
   TCBscDepositABI,
   TCEthereumVaultAbi,
 } from '@coinmasters/types';
+import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
 
+// import * as LoggerModule from "@pioneer-platform/loggerdog";
+// const log = LoggerModule.default();
 import type { AGG_CONTRACT_ADDRESS } from '../aggregator/contracts/index.ts';
 import { lowercasedContractAbiMapping } from '../aggregator/contracts/index.ts';
 import { getSwapInParams } from '../aggregator/getSwapParams.ts';
@@ -44,6 +50,7 @@ import type {
   Wallet,
   WalletMethods,
 } from './types.ts';
+const TAG = ' | TAG | ';
 
 const getEmptyWalletStructure = () =>
   (Object.values(Chain) as Chain[]).reduce(
@@ -94,176 +101,318 @@ export class SwapKitCore<T = ''> {
   };
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
+    const tag = TAG + ' | swap | ';
+    //console.log(tag, 'route: ', route);
     const { quoteMode } = route.meta;
-    const evmChain = quoteMode.startsWith('ERC20-')
-      ? Chain.Ethereum
-      : quoteMode.startsWith('ARC20-')
-        ? Chain.Avalanche
-        : Chain.BinanceSmartChain;
+    //console.log(tag, 'quoteMode: ', quoteMode);
+
+    let evmChain;
+
+    switch (quoteMode.split('-')[0]) {
+      case 'ERC20':
+        evmChain = Chain.Ethereum;
+        break;
+      case 'ARC20':
+        evmChain = Chain.Avalanche;
+        break;
+      default:
+        evmChain = Chain.BinanceSmartChain;
+    }
 
     if (!route.complete) throw new SwapKitError('core_swap_route_not_complete');
 
     try {
-      if (AGG_SWAP.includes(quoteMode)) {
-        const walletMethods = this.connectedWallets[evmChain];
-        if (!walletMethods?.sendTransaction) {
-          throw new SwapKitError('core_wallet_connection_not_found');
+      const swapType = classifySwap(quoteMode);
+      //console.log(tag, 'swapType: ', swapType);
+
+      switch (swapType) {
+        case 'AGG_SWAP': {
+          const walletMethods = this.connectedWallets[evmChain];
+          if (!walletMethods?.sendTransaction) {
+            throw new SwapKitError('core_wallet_connection_not_found');
+          }
+
+          const transaction = streamSwap ? route?.streamingSwap?.transaction : route?.transaction;
+          if (!transaction) throw new SwapKitError('core_swap_route_transaction_not_found');
+
+          const { data, from, to, value } = route.transaction;
+
+          const params = {
+            data,
+            from,
+            to: to.toLowerCase(),
+            chainId: BigInt(ChainToChainId[evmChain]),
+            value: value ? BigInt(value) : 0n,
+          };
+
+          return walletMethods.sendTransaction(params, feeOptionKey) as Promise<string>;
         }
 
-        const transaction = streamSwap ? route?.streamingSwap?.transaction : route?.transaction;
-        if (!transaction) throw new SwapKitError('core_swap_route_transaction_not_found');
+        case 'SWAP_OUT': {
+          if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
+          const asset = await AssetValue.fromString(route.calldata.fromAsset);
+          if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
 
-        const { data, from, to, value } = route.transaction;
+          const { address: recipient } = await this.#getInboundDataByChain(asset.chain);
+          const {
+            contract: router,
+            calldata: { expiration, amountIn, memo, memoStreamingSwap },
+          } = route;
 
-        const params = {
-          data,
-          from,
-          to: to.toLowerCase(),
-          chainId: BigInt(ChainToChainId[evmChain]),
-          value: value ? BigInt(value) : 0n,
-        };
+          const assetValue = asset.add(SwapKitNumber.fromBigInt(BigInt(amountIn), asset.decimal));
+          const swapMemo = (streamSwap ? memoStreamingSwap || memo : memo) as string;
 
-        return walletMethods.sendTransaction(params, feeOptionKey) as Promise<string>;
-      }
-
-      if (SWAP_OUT.includes(quoteMode)) {
-        if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
-        const asset = await AssetValue.fromString(route.calldata.fromAsset);
-        if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
-
-        const { address: recipient } = await this.#getInboundDataByChain(asset.chain);
-        const {
-          contract: router,
-          calldata: { expiration, amountIn, memo, memoStreamingSwap },
-        } = route;
-
-        const assetValue = asset.add(SwapKitNumber.fromBigInt(BigInt(amountIn), asset.decimal));
-        const swapMemo = (streamSwap ? memoStreamingSwap || memo : memo) as string;
-
-        return this.deposit({
-          expiration,
-          assetValue,
-          memo: swapMemo,
-          feeOptionKey,
-          router,
-          recipient,
-        });
-      }
-
-      if (SWAP_IN.includes(quoteMode)) {
-        const { calldata, contract: contractAddress } = route;
-        if (!contractAddress) throw new SwapKitError('core_swap_contract_not_found');
-
-        const walletMethods = this.connectedWallets[evmChain];
-        const from = this.getAddress(evmChain);
-        if (!walletMethods?.sendTransaction || !from) {
-          throw new SwapKitError('core_wallet_connection_not_found');
-        }
-
-        const { getProvider, toChecksumAddress } = await import('@coinmasters/toolbox-evm');
-        const provider = getProvider(evmChain);
-        const abi = lowercasedContractAbiMapping[contractAddress.toLowerCase()];
-
-        if (!abi) throw new SwapKitError('core_swap_contract_not_supported', { contractAddress });
-
-        const contract = await walletMethods.createContract?.(contractAddress, abi, provider);
-
-        const tx = await contract.getFunction('swapIn').populateTransaction(
-          ...getSwapInParams({
-            streamSwap,
-            toChecksumAddress,
-            contractAddress: contractAddress as AGG_CONTRACT_ADDRESS,
+          return this.deposit({
+            expiration,
+            assetValue,
+            memo: swapMemo,
+            feeOptionKey,
+            router,
             recipient,
-            calldata,
-          }),
-          { from },
-        );
+          });
+        }
 
-        return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
+        case 'SWAP_IN': {
+          const { calldata, contract: contractAddress } = route;
+          if (!contractAddress) throw new SwapKitError('core_swap_contract_not_found');
+
+          const walletMethods = this.connectedWallets[evmChain];
+          const from = this.getAddress(evmChain);
+          if (!walletMethods?.sendTransaction || !from) {
+            throw new SwapKitError('core_wallet_connection_not_found');
+          }
+
+          const { getProvider, toChecksumAddress } = await import('@coinmasters/toolbox-evm');
+          // @ts-ignore
+          const provider = getProvider(evmChain);
+          const abi = lowercasedContractAbiMapping[contractAddress.toLowerCase()];
+
+          if (!abi) throw new SwapKitError('core_swap_contract_not_supported', { contractAddress });
+
+          const contract = await walletMethods.createContract?.(contractAddress, abi, provider);
+
+          const tx = await contract.getFunction('swapIn').populateTransaction(
+            ...getSwapInParams({
+              streamSwap,
+              toChecksumAddress,
+              contractAddress: contractAddress as AGG_CONTRACT_ADDRESS,
+              recipient,
+              calldata,
+            }),
+            { from },
+          );
+
+          return walletMethods.sendTransaction(tx, feeOptionKey) as Promise<string>;
+        }
+        case 'OSMOSIS_SWAP': {
+          //log.info(tag,"OSMOSIS_SWAP route: ",route)
+          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          /*
+             Osmosis swaps are a bit different, they require 2 tx's. a osmo swap and an IBC transfer
+           */
+          return await this.performTx(route.txs[0]);
+        }
+        case 'UXTO_SWAP': {
+          //console.log(tag, 'UXTO_SWAP route: ', route);
+          //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          return await this.performTx(route.txs[0]);
+        }
+        case 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED': {
+          console.log(' MAYA  Detected! ');
+          //console.log('route: ', route);
+          //perform
+          return await this.performTx(route.txs[0]);
+        }
+        case 'RANGO': {
+          //console.log(' RANGO  Detected! ');
+          //perform
+          return await this.performTx(route.txs[0]);
+        }
+        case 'CENTRALIZED_SWAPPER': {
+          //log.info(tag,"CENTRALIZED_SWAPPER route: ",route)
+          /*
+            Centralized swappers just need a normal tranfer into their deposit address
+           */
+          const from = this.getAddress(NetworkIdToChain[route.tx.chain]);
+          //build assetValue
+          // create assetValue
+          const assetString = `${NetworkIdToChain[route.tx.chain]}.${
+            NetworkIdToChain[route.tx.chain]
+          }`; //TODO caip to identifier
+          //console.log('assetString: ', assetString);
+          await AssetValue.loadStaticAssets();
+          // @ts-ignore
+          const assetValue = await AssetValue.fromIdentifier(
+            assetString,
+            parseFloat(route.tx.txParams.amount),
+          );
+          if (!route.tx.txParams.memo && NetworkIdToChain[route.tx.chain] === 'XRP')
+            throw Error('Dest tag is required for centralized swapper for XRP');
+          let params = {
+            from,
+            assetValue,
+            memo: route.tx.txParams.memo || '',
+            recipient: route.tx.txParams.address,
+          };
+          let resultSend = await this.transfer(params);
+          //log.info(tag,"CENTRALIZED_SWAPPER resultSend: ",resultSend)
+          return resultSend;
+        }
+        default:
+          throw new SwapKitError('core_swap_quote_mode_not_supported', { quoteMode });
       }
-
-      throw new SwapKitError('core_swap_quote_mode_not_supported', { quoteMode });
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);
     }
   };
 
+  performTx = async function (tx: any) {
+    const tag = TAG + ' | performTx | ';
+    try {
+      //log.info(tag, "Transaction: ", tx);
+      console.log(tag, 'Transaction: ', tx);
+      if (!tx.chain) throw Error('Invalid tx missing chain!');
+      if (!tx.type) throw Error('Invalid tx missing type!');
+      //console.log(tag, 'tx.type: ', tx.type);
+      //console.log(tag, 'tx.chain: ', tx.chain);
+
+      // @ts-ignore
+      let chain = NetworkIdToChain[tx.chain];
+      console.log(tag, 'chain: ', chain);
+
+      // let chain = tx.chain;
+      if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
+      //console.log(tag, 'chain: ', chain);
+      //log.info(tag, "chain: ", chain);
+      //log.info(tag, "tx.type: ", tx.type);
+
+      if (tx.type.toLowerCase() === 'evm') {
+        //TODO do evm stuff
+        console.log(tag, 'EVM Transaction: ', tx);
+        tx.type = 'sendTransaction';
+      } else {
+        let assetString = chain + '.' + tx.txParams.token;
+        await AssetValue.loadStaticAssets();
+        // @ts-ignore
+        const assetValue = await AssetValue.fromIdentifier(
+          assetString,
+          parseFloat(tx.txParams.amount),
+        );
+        if (!tx.txParams.from) tx.txParams.from = tx.txParams.senderAddress;
+        tx.txParams.assetValue = assetValue;
+      }
+
+      // @ts-ignore
+      let walletMethods = this.connectedWallets[chain];
+      if (!walletMethods || !walletMethods[tx.type]) {
+        // @ts-ignore
+        throw new SwapKitError(`core_wallet_tx_type_not_implemented for chain ${chain}`);
+      }
+      tx.txParams.recipient = tx.txParams.recipientAddress;
+
+      //result
+      tx.txParams.nonce = null
+      console.log('tx.type: ', tx.type);
+      console.log('tx.txParams: ', tx.txParams);
+      let result = await walletMethods[tx.type](tx.txParams);
+      //console.log('result: ', result);
+      return result;
+    } catch (error) {
+      // Handle or log the error as per requirement
+      //log.error(tag, 'Error occurred:', error);
+      // Optionally rethrow or handle the error
+      console.error('error: ', error);
+    }
+  };
+
   getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
-    console.log('First Time lookup! lets populate the wallet!');
-    const address = this.getAddress(chain);
-    console.log('getWalletByChain: address: ', address);
-    if (!address) return null;
-    console.log('chain: ', chain);
-    console.log('address: ', address);
-    let pubkeys = [];
-    if (this.getWallet(chain)?.getPubkeys) {
-      pubkeys = await this.getWallet(chain)?.getPubkeys();
-      //
-      console.log('pubkeys: ', pubkeys);
-    }
-    // let balance = [];
-    console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
-    //for each pubkey iterate and sum the balance
-    let balance: AssetValue[] = [];
-    if (pubkeys.length === 0) {
-      console.log('Get balance for Address! address: ' + address);
-      console.log('Get balance for Address! chain: ' + chain);
-      //use address balance
-      balance = await this.getWallet(chain)?.getBalance([{ address }]);
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < balance.length; i++) {
-        balance[i].address = address;
+    let tag = TAG + ' | getWalletByChain | ';
+    try {
+      console.log(tag, 'start');
+      const address = this.getAddress(chain);
+      console.log(tag, 'address: ', address);
+      if (!address) return null;
+      console.log(tag, 'chain: ', chain);
+      console.log(tag, 'address: ', address);
+      let pubkeys = [];
+      if (this.getWallet(chain)?.getPubkeys) {
+        pubkeys = await this.getWallet(chain)?.getPubkeys();
+        //
+        //console.log('pubkeys: ', pubkeys);
       }
-    } else {
-      console.log(chain + ' pubkeys: ', pubkeys.length);
-      /*
-            Logic assumptions
-              * Every pubkey will be a UTXO
-              * every UXTO has only 1 asset balance (fungable)
-              * we sum ALL balances of all pubkeys and return as 1 balance
-                (aka you have x amount bitcoin) as is commonly used in wallets
+      // let balance = [];
+      //console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
+      //for each pubkey iterate and sum the balance
+      let balance: AssetValue[] = [];
+      if (pubkeys.length === 0) {
+        console.log(tag, 'Get balance for Address! address: ' + address);
+        console.log(tag, 'Get balance for Address! chain: ' + chain);
+        //use address balance
+        balance = await this.getWallet(chain)?.getBalance([{ address }]);
+        console.log(tag, 'balance: ' + balance);
 
-              Notes: we will only allow sending FROM 1 xpub at a time
-              *so the MAX spendable is the balance of highest balance xpub.*
-
-              blockbook has a wallet gap limit of 20
-         */
-      //use pubkey balances
-      let balanceTotal = 0;
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < pubkeys.length; i++) {
-        const pubkey = pubkeys[i];
-        console.log('Get balance for xpub!');
-        console.log('pubkey: ', pubkey);
-        let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-        console.log('NEW pubkeyBalance pre: ', pubkeyBalance);
-        console.log('NEW pubkeyBalance pubkeyBalance[0].decimal: ', pubkeyBalance[0].decimal);
-        pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-        console.log('NEW pubkeyBalance post: ', pubkeyBalance);
-        if (isNaN(pubkeyBalance)) {
-          pubkeyBalance = 0;
+        //console.log('Get balance for Address! chain: ' + chain);
+        for (let i = 0; i < balance.length; i++) {
+          balance[i].address = address;
         }
-        //TODO get string balance
-        pubkeys[i].balance = pubkeyBalance;
-        console.log('pubkeyBalance: ', pubkeyBalance);
-        console.log('pubkeyBalance: ', parseFloat(pubkeyBalance));
-        balanceTotal += parseFloat(pubkeyBalance);
+      } else {
+        //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
+        /*
+              Logic assumptions
+                * Every pubkey will be a UTXO
+                * every UXTO has only 1 asset balance (fungable)
+                * we sum ALL balances of all pubkeys and return as 1 balance
+                  (aka you have x amount bitcoin) as is commonly used in wallets
+
+                Notes: we will only allow sending FROM 1 xpub at a time
+                *so the MAX spendable is the balance of highest balance xpub.*
+
+                blockbook has a wallet gap limit of 20
+           */
+        //use pubkey balances
+        let balanceTotal = 0;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < pubkeys.length; i++) {
+          const pubkey = pubkeys[i];
+          //console.log(tag, 'Get balance for xpub!');
+          //console.log(tag, 'pubkey: ', pubkey);
+          let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
+          //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
+          //console.log(
+          //   tag,
+          //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
+          //   pubkeyBalance[0].decimal,
+          // );
+          pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
+          //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
+          if (isNaN(pubkeyBalance)) {
+            pubkeyBalance = 0;
+          }
+          //TODO get string balance
+          pubkeys[i].balance = pubkeyBalance;
+          //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
+          //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
+          balanceTotal += parseFloat(pubkeyBalance);
+        }
+        //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
+        // balanceTotal = balanceTotal / 100000000;
+        let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
+        balanceValue.address = address;
+        balance = [balanceValue];
       }
-      console.log('NEW balanceTotal: ', balanceTotal);
-      // balanceTotal = balanceTotal / 100000000;
-      let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
-      balanceValue.address = address;
-      balance = [balanceValue];
+
+      this.connectedChains[chain] = {
+        address,
+        pubkeys,
+        balance,
+        walletType: this.connectedChains[chain]?.walletType as WalletOption,
+      };
+
+      return { ...this.connectedChains[chain] };
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
-
-    this.connectedChains[chain] = {
-      address,
-      pubkeys,
-      balance,
-      walletType: this.connectedChains[chain]?.walletType as WalletOption,
-    };
-
-    return { ...this.connectedChains[chain] };
   };
 
   approveAssetValue = (assetValue: AssetValue, contractAddress?: string) =>
@@ -280,7 +429,9 @@ export class SwapKitCore<T = ''> {
     if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
 
     try {
-      return await walletInstance.transfer(this.#prepareTxParams(params));
+      let transferParams = await this.#prepareTxParams(params);
+      //console.log('CORE transferParams: ', transferParams);
+      return await walletInstance.transfer(transferParams);
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);
     }

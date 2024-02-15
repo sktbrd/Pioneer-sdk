@@ -19,17 +19,18 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { AssetValue } from '@coinmasters/core';
+//@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { usePioneer } from '../../context';
 
-const Earn = ({ openModal }) => {
+const Earn = ({ openModal }: any) => {
   const toast = useToast();
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pools, setPools] = useState([]);
-  const [selectedPool, setSelectedPool] = useState(null);
+  const [selectedPool, setSelectedPool]: any = useState(null);
   const [inputAmount, setInputAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
@@ -54,14 +55,14 @@ const Earn = ({ openModal }) => {
   //   fetchPools();
   // }, [app, app?.pioneer]);
 
-  const selectPool = (pool) => {
+  const selectPool = (pool: any) => {
     setSelectedPool(pool);
     // Set recipient to pool's address (or other relevant identifier)
     setRecipient(pool.address);
   };
 
   const renderPools = () => {
-    return pools.map((pool, index) => {
+    return pools.map((pool: any, index) => {
       const isAvailable = pool.status === 'available';
       const avatarUrl = COIN_MAP_LONG[pool.asset.split('.')[0]];
       return (
@@ -120,7 +121,7 @@ const Earn = ({ openModal }) => {
             <Box>
               <Text mb={2}>Asset: {selectedPool?.asset || 'N/A'}</Text>
               <Text mb={2}>status: {selectedPool?.status || 'N/A'}</Text>
-              <Text mb={4}>annualPercentageRate: {selectedPool?.annualPercentageRate || 'N/A'}</Text>
+              {/*<Text mb={4}>annualPercentageRate: {selectedPool?.annualPercentageRate || 'N/A'}</Text>*/}
               {/*{JSON.stringify(selectedPool)}*/}
               <Button
                 colorScheme="blue"

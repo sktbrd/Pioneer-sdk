@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-wallet-keepkey",
-  "version": "1.0.1",
+  "version": "1.5.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -23,7 +23,8 @@
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.0.14",
+    "@pioneer-platform/pioneer-caip": "latest",
+    "@pioneer-platform/pioneer-coins": "latest",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

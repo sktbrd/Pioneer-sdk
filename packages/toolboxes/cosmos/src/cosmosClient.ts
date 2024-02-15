@@ -53,11 +53,12 @@ export class CosmosClient {
       const client = await createStargateClient(this.rpcUrl);
       const allBalances = await client.getAllBalances(address);
 
-      return allBalances.map((balance) => ({
+      return allBalances.map((balance: { denom: string }) => ({
         ...balance,
         denom: balance.denom.includes('/') ? balance.denom.toUpperCase() : balance.denom,
       }));
     } catch (error) {
+      console.error('Failed on node: ', this.rpcUrl);
       console.error('An error occurred:', error);
       return [];
     }

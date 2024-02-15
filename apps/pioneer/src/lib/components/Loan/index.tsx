@@ -71,7 +71,10 @@ const Loan = ({ openModal }: any) => {
       const contextType = context.split(':')[0];
       console.log('contextType: ', contextType);
       // connect it
-      let result = await connectWallet(contextType.toUpperCase());
+      let pairObj: any = {
+        type: contextType,
+      };
+      let result = await connectWallet(pairObj);
       console.log('result: ', result);
     } catch (e) {
       console.error(e);

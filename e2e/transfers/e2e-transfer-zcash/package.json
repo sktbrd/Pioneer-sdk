@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-zcash",
-  "version": "1.0.1",
+  "version": "1.5.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -24,7 +24,7 @@
     "@coinmasters/wallet-keystore": "workspace:*",
     "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.0.10",
+    "@pioneer-platform/pioneer-caip": "latest",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

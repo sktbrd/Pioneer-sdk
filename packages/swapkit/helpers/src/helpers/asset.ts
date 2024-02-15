@@ -86,17 +86,14 @@ export const isGasAsset = ({ chain, symbol }: { chain: Chain; symbol: string }) 
     case Chain.Ethereum:
     case Chain.Avalanche:
       return symbol === chain;
-
     case Chain.Arbitrum:
     case Chain.Optimism:
+    case Chain.Base:
       return 'ETH' === symbol;
-
-    case Chain.Maya:
+    case Chain.Mayachain:
       return symbol === 'CACAO';
-
     case Chain.Kujira:
       return symbol === 'KUJI';
-
     case Chain.Cosmos:
       return symbol === 'ATOM';
     case Chain.Polygon:
@@ -123,7 +120,7 @@ export const getCommonAssetInfo = (
       return { identifier: 'THOR.RUNE', decimal: BaseDecimal[assetString] };
     case Chain.BinanceSmartChain:
       return { identifier: 'BSC.BNB', decimal: BaseDecimal[assetString] };
-    case Chain.Maya:
+    case Chain.Mayachain:
       return { identifier: 'MAYA.CACAO', decimal: BaseDecimal.MAYA };
     case 'MAYA.MAYA':
       return { identifier: 'MAYA.MAYA', decimal: 4 };
@@ -140,6 +137,7 @@ export const getCommonAssetInfo = (
     case Chain.Avalanche:
     case Chain.Polygon:
     case Chain.Bitcoin:
+    case Chain.Base:
     case Chain.Ethereum:
       return { identifier: `${assetString}.${assetString}`, decimal: BaseDecimal[assetString] };
   }
@@ -155,7 +153,7 @@ export const getAssetType = ({ chain, symbol }: { chain: Chain; symbol: string }
     case Chain.Dash:
     case Chain.Zcash:
     case Chain.Litecoin:
-    case Chain.Maya:
+    case Chain.Mayachain:
     case Chain.THORChain:
       return 'Native';
     case Chain.Osmosis:
@@ -174,7 +172,8 @@ export const getAssetType = ({ chain, symbol }: { chain: Chain; symbol: string }
       return symbol === Chain.Avalanche ? 'Native' : Chain.Avalanche;
     case Chain.Polygon:
       return symbol === Chain.Polygon ? 'Native' : 'POLYGON';
-
+    case Chain.Base:
+      return 'Native';
     case Chain.Arbitrum:
       return [Chain.Ethereum, Chain.Arbitrum].includes(symbol as Chain) ? 'Native' : 'ARBITRUM';
     case Chain.Optimism:

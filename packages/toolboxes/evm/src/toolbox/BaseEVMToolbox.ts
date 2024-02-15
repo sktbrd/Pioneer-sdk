@@ -95,9 +95,9 @@ const call = async <T>(
 ): Promise<T> => {
   const contractProvider = callProvider || provider;
   if (!contractAddress) throw new Error('contractAddress must be provided');
-
+  //console.log("call: function: ")
   const isStateChanging = isStateChangingCall(abi, funcName);
-
+  //console.log("isStateChanging: ",isStateChanging)
   if (isStateChanging && isBrowserProvider(contractProvider) && signer) {
     const txObject = await createContractTxObject(contractProvider, {
       contractAddress,
@@ -110,7 +110,7 @@ const call = async <T>(
     return EIP1193SendTransaction(contractProvider, txObject) as Promise<T>;
   }
   const contract = await createContract(contractAddress, abi, contractProvider);
-
+  //console.log("contract: ",contract)
   // only use signer if the contract function is state changing
   if (isStateChanging) {
     if (!signer) throw new Error('Signer is not defined');
@@ -120,12 +120,16 @@ const call = async <T>(
     if (!address) throw new Error('No signer address found');
 
     const connectedContract = contract.connect(signer);
+    //console.log("isEIP1559Compatible: ",isEIP1559Compatible)
     const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = (
       await estimateGasPrices(provider, isEIP1559Compatible)
     )[feeOption];
-
+    //console.log("isEIP1559Compatible: ",isEIP1559Compatible)
+    //console.log("funcName: ",funcName)
+    //console.log("funcParams: ",funcParams)
+    //console.log("txOverrides: ",txOverrides)
     const gasLimit = await contract.getFunction(funcName).estimateGas(...funcParams, txOverrides);
-
+    //console.log("gasLimit: ",gasLimit)
     // @ts-expect-error
     const result = await connectedContract[funcName](...funcParams, {
       ...txOverrides,
@@ -238,11 +242,14 @@ const transfer = async (
   signer?: Signer,
   isEIP1559Compatible = true,
 ) => {
+  //console.log('assetValue: ', assetValue);
   const txAmount = assetValue.getBaseValue('bigint');
-  const chain = assetValue.chain as EVMChain;
-
+  const chain = assetValue.chain as any;
+  //console.log('chain: ', chain);
+  //console.log('isGasAsset: ', isGasAsset(assetValue));
   if (!isGasAsset(assetValue)) {
     const contractAddress = getTokenAddress(assetValue, chain);
+    //console.log("contractAddress: ", contractAddress);
     if (!contractAddress) throw new Error('No contract address found');
 
     // Transfer ERC20
@@ -267,13 +274,16 @@ const transfer = async (
     value: txAmount,
     data: data || hexlify(toUtf8Bytes(memo || '')),
   };
-
+  //console.log('txObject: ', txObject);
   return sendTransaction(provider, txObject, feeOptionKey, signer, isEIP1559Compatible);
 };
 
 const estimateGasPrices = async (provider: Provider, isEIP1559Compatible = true) => {
   try {
     const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
+    //console.log("maxFeePerGas: ", maxFeePerGas);
+    //console.log("maxPriorityFeePerGas: ", maxPriorityFeePerGas);
+    //console.log("gasPrice: ", gasPrice);
 
     switch (isEIP1559Compatible) {
       case true:
@@ -446,7 +456,7 @@ const sendTransaction = async (
       chainId,
       type: isEIP1559 ? 2 : 0,
       gasLimit,
-      nonce,
+      nonce: nonce.toString(),
       ...feeData,
     };
     //console.log("TOOLBOX: txObject: ",txObject)
@@ -459,10 +469,13 @@ const sendTransaction = async (
         ...txObject,
         from: address,
       });
+      //console.log("TOOLBOX: txHex: ",txHex)
       const response = await provider.broadcastTransaction(txHex);
+
       return typeof response?.hash === 'string' ? response.hash : response;
     }
   } catch (error) {
+    console.error("sendTransaction: BaseEVMToolbox: ",error)
     throw new Error(`Error sending transaction: ${JSON.stringify(error)}`);
   }
 };

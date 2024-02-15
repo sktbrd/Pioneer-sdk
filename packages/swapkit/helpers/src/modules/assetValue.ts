@@ -58,6 +58,8 @@ const getStaticToken = (identifier: TokenNames) => {
   if (!staticTokensMap) {
     throw new Error('Static assets not loaded, call await AssetValue.loadStaticAssets() first');
   }
+  //console.log('getStaticToken: staticTokensMap: ', staticTokensMap);
+  //console.log('getStaticToken: identifier: ', identifier.toUpperCase());
   const tokenInfo = staticTokensMap.get(identifier.toUpperCase() as TokenNames);
 
   return tokenInfo || { decimal: BaseDecimal.THOR, identifier: '' };
@@ -128,20 +130,38 @@ export class AssetValue extends BigIntArithmetics {
   }
 
   static fromStringSync(assetString: string, value: NumberPrimitives = 0) {
-    const { isSynthetic } = getAssetInfo(assetString);
+    const { isSynthetic, symbol, chain, isGasAsset, ticker, address } = getAssetInfo(assetString);
+    //console.log('getAssetInfo: ', { isSynthetic, symbol, chain, isGasAsset, ticker, address });
     const {
       tax,
       decimal,
       identifier: tokenIdentifier,
     } = getStaticToken(assetString as unknown as TokenNames);
-
+    //console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
     const parsedValue = safeValue(value, decimal);
+    //console.log('parsedValue: ', parsedValue);
+    let asset: AssetValue | undefined;
 
-    const asset = tokenIdentifier
-      ? new AssetValue({ tax, decimal, identifier: tokenIdentifier, value: parsedValue })
-      : isSynthetic
-        ? new AssetValue({ tax, decimal: 8, identifier: assetString, value: parsedValue })
-        : undefined;
+    if (tokenIdentifier) {
+      //console.log('tokenIdentifier is truthy'); // Indicates tokenIdentifier has a value considered true in a boolean context
+      asset = new AssetValue({
+        tax,
+        decimal,
+        identifier: tokenIdentifier,
+        value: parsedValue,
+      });
+    } else if (isSynthetic) {
+      //console.log('isSynthetic is true'); // Indicates the asset is synthetic
+      asset = new AssetValue({
+        tax,
+        decimal: 8, // Synthetic assets use a fixed decimal value
+        identifier: assetString,
+        value: parsedValue,
+      });
+    } else {
+      //console.log('No valid condition met'); // Neither condition is true, asset is left undefined
+      asset = undefined;
+    }
 
     return asset;
   }
@@ -223,13 +243,14 @@ export const getMinAmountByChain = (chain: Chain) => {
     case Chain.Dogecoin:
       return asset.set(1.00000001);
 
+    case Chain.Base:
     case Chain.Avalanche:
     case Chain.Ethereum:
       return asset.set(0.00000001);
 
     case Chain.THORChain:
-    case Chain.Maya:
-      return asset.set(0);
+    case Chain.Mayachain:
+      return asset.set(0.0000000001);
 
     default:
       return asset.set(0.00000001);

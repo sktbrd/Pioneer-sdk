@@ -37,6 +37,7 @@ const getWalletMethodsForChain = async ({
   const derivationPath = `${DerivationPath[chain]}/${index}`;
 
   switch (chain) {
+    case Chain.Base:
     case Chain.BinanceSmartChain:
     case Chain.Avalanche:
     case Chain.Ethereum: {
@@ -47,7 +48,7 @@ const getWalletMethodsForChain = async ({
       }
 
       const { HDNodeWallet } = await import('ethers');
-      const { getProvider, ETHToolbox, AVAXToolbox, BSCToolbox } = await import(
+      const { getProvider, ETHToolbox, AVAXToolbox, BASEToolbox, BSCToolbox } = await import(
         '@coinmasters/toolbox-evm'
       );
 
@@ -55,12 +56,20 @@ const getWalletMethodsForChain = async ({
       const wallet = HDNodeWallet.fromPhrase(phrase).connect(provider);
       const params = { api, provider, signer: wallet };
 
-      const toolbox =
-        chain === Chain.Ethereum
-          ? ETHToolbox({ ...params, ethplorerApiKey: ethplorerApiKey! })
-          : chain === Chain.Avalanche
-            ? AVAXToolbox({ ...params, covalentApiKey: covalentApiKey! })
-            : BSCToolbox({ ...params, covalentApiKey: covalentApiKey! });
+      let toolbox;
+      switch (chain) {
+        case Chain.Ethereum:
+          toolbox = ETHToolbox({ ...params, ethplorerApiKey: ethplorerApiKey! });
+          break;
+        case Chain.Avalanche:
+          toolbox = AVAXToolbox({ ...params, covalentApiKey: covalentApiKey! });
+          break;
+        case Chain.Base:
+          toolbox = BASEToolbox({ ...params, covalentApiKey: covalentApiKey! });
+          break;
+        default:
+          toolbox = BSCToolbox({ ...params, covalentApiKey: covalentApiKey! });
+      }
 
       return {
         address: wallet.address,

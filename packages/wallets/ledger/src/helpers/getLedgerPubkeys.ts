@@ -41,21 +41,21 @@ export const getLedgerPubkeys = async ({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       await (ledgerClient as UTXOLedgerClients).connect();
-      console.log('ledgerClient: ', ledgerClient);
-      console.log('ledgerClient.paths: ', ledgerClient.paths);
+      //console.log('ledgerClient: ', ledgerClient);
+      //console.log('ledgerClient.paths: ', ledgerClient.paths);
       let pubkeys = [];
 
       for (let i = 0; i < ledgerClient.paths.length; i++) {
         let path = ledgerClient.paths[i];
-        console.log('path: ', path);
+        //console.log('path: ', path);
         let bip32Path = addressNListToBIP32(path.addressNList);
-        console.log('bip32Path: ', bip32Path);
-        console.log('ChainToXpub[chain]: ', ChainToXpub[chain]);
+        //console.log('bip32Path: ', bip32Path);
+        //console.log('ChainToXpub[chain]: ', ChainToXpub[chain]);
         let pubkey = await (ledgerClient as UTXOLedgerClients).getExtendedPublicKey(
           bip32Path,
           ChainToXpub[chain],
         );
-        console.log('pubkey: ', pubkey);
+        //console.log('pubkey: ', pubkey);
         if (bip32Path.indexOf('84')) {
           pubkey = xpubConvert(pubkey, 'zpub');
         }

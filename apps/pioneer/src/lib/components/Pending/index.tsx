@@ -11,11 +11,11 @@ const Pending = ({ onClose }: any) => {
   let getTxs = async function () {
     try {
       // Retrieve and parse data from local storage
-      let storedData = localStorage.getItem('pendingTransactions');
+      let storedData: any = localStorage.getItem('pendingTransactions');
       if (storedData && storedData.length > 0) {
         setPendingTransactions(JSON.parse(storedData));
         //get txs
-        let txs = await readTx();
+        let txs: any = await readTx();
         console.log('txs: ', txs);
         if (!txs || txs.length === 0) {
           //create from local storage

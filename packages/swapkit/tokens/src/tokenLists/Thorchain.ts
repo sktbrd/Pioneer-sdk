@@ -12,12 +12,7 @@ export const list = {
       decimals: 6,
     },
     { chain: 'BCH', identifier: 'BCH.BCH', decimals: 8 },
-    { address: '645', chain: 'BNB', identifier: 'BNB.AVA-645', decimals: 8 },
     { chain: 'BNB', identifier: 'BNB.BNB', decimals: 8 },
-    { address: '1DE', chain: 'BNB', identifier: 'BNB.BTCB-1DE', decimals: 8 },
-    { address: 'BD1', chain: 'BNB', identifier: 'BNB.BUSD-BD1', decimals: 8 },
-    { address: '1C9', chain: 'BNB', identifier: 'BNB.ETH-1C9', decimals: 8 },
-    { address: '8C2', chain: 'BNB', identifier: 'BNB.TWT-8C2', decimals: 8 },
     { chain: 'BSC', identifier: 'BSC.BNB', decimals: 8 },
     {
       address: '0x8AC76A51CC950D9822D68B83FE1AD97B32CD580D',

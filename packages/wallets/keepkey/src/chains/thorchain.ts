@@ -1,6 +1,5 @@
 import type { DepositParam, TransferParams } from '@coinmasters/toolbox-cosmos';
-import { ThorchainToolbox } from '@coinmasters/toolbox-cosmos';
-import type {} from '@coinmasters/types';
+import { ThorchainToolboxPioneer } from '@coinmasters/toolbox-cosmos';
 import { Chain, ChainId, DerivationPath, RPCUrl } from '@coinmasters/types';
 import { StargateClient } from '@cosmjs/stargate';
 import type { KeepKeySdk } from '@keepkey/keepkey-sdk';
@@ -24,7 +23,7 @@ type SignTransactionDepositParams = {
 
 export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) => {
   try {
-    const toolbox = ThorchainToolbox({ stagenet: !'smeshnet' });
+    const toolbox = ThorchainToolboxPioneer();
     const { address: fromAddress } = (await sdk.address.thorchainGetAddress({
       address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
     })) as { address: string };
@@ -38,16 +37,18 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        const stargateClient = await StargateClient.connect(RPCUrl.THORChain);
+        //console.log('accountInfo: ', accountInfo);
+        let account_number = accountInfo.result.value.account_number || '0';
+        let sequence = accountInfo.result.value.sequence || '0';
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoTransfer({
           signDoc: {
-            account_number: accountInfo?.accountNumber?.toString() ?? '0',
+            account_number,
             chain_id: ChainId.THORChain,
             fee: { gas: '500000000', amount: [] },
             msgs: [
               {
                 value: {
-                  amount: [{ denom: asset.toLowerCase(), amount: amount.toString() }],
+                  amount: [{ denom: asset.split('.')[0].toLowerCase(), amount: amount.toString() }],
                   to_address: to,
                   from_address: from,
                 },
@@ -55,20 +56,13 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
               },
             ],
             memo: memo || '',
-            sequence: accountInfo?.sequence.toString() ?? '0',
+            sequence,
           },
           signerAddress: from,
         });
 
-        const decodedBytes = atob(keepKeyResponse.serialized);
-        const uint8Array = new Uint8Array(decodedBytes.length);
-        for (let i = 0; i < decodedBytes.length; i++) {
-          uint8Array[i] = decodedBytes.charCodeAt(i);
-        }
-
-        const broadcastResponse = await stargateClient.broadcastTx(uint8Array);
-
-        return broadcastResponse.transactionHash;
+        let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
+        return txid.txid
       } catch (e) {
         console.error(e);
         throw e;
@@ -90,22 +84,26 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       memo = '',
     }: SignTransactionDepositParams) => {
       try {
-        const addressInfo = addressInfoForCoin(Chain.THORChain, false); // @highlander no witness script here
         const accountInfo = await toolbox.getAccount(fromAddress);
-
-        const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit({
+        //console.log('accountInfo: ', accountInfo);
+        let account_number = accountInfo.result.value.account_number || '0';
+        let sequence = accountInfo.result.value.sequence || '0';
+        let signPayload: any = {
           signerAddress: fromAddress,
           signDoc: {
+            sequence,
+            source: '0',
             memo: memo || '',
-            sequence: accountInfo?.sequence.toString() ?? '0',
-            source: addressInfo?.source?.toString() ?? '0',
-            account_number: accountInfo?.accountNumber?.toString() ?? '0',
+            account_number,
             chain_id: ChainId.THORChain,
-            fee: { gas: '500000000', amount: [] },
+            fee: { gas: '500000000', amount: [      {
+                "amount": "0",
+                "denom": "rune"
+              }] },
             msgs: [
               {
                 value: {
-                  coins: [{ asset: 'THOR.' + asset.toUpperCase(), amount: amount.toString() }],
+                  coins: [{ asset: 'THOR.RUNE', amount: amount.toString() }],
                   memo: memo || '',
                   signer: fromAddress,
                 },
@@ -113,18 +111,14 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
               },
             ],
           },
-        });
-        const stargateClient = await StargateClient.connect(RPCUrl.THORChain);
-
-        const decodedBytes = atob(keepKeyResponse.serialized);
-        const uint8Array = new Uint8Array(decodedBytes.length);
-        for (let i = 0; i < decodedBytes.length; i++) {
-          uint8Array[i] = decodedBytes.charCodeAt(i);
-        }
-
-        const broadcastResponse = await stargateClient.broadcastTx(uint8Array);
-
-        return broadcastResponse.transactionHash;
+        };
+        //console.log('signPayload: ', signPayload);
+        //console.log('signPayload: ', JSON.stringify(signPayload));
+        const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit(signPayload);
+        //console.log('keepKeyResponse: ', keepKeyResponse);
+        //console.log('URL: ', RPCUrl.THORChain);
+        let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
+        return txid.txid
       } catch (e) {
         console.error(e);
         throw e;

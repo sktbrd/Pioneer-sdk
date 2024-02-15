@@ -1,5 +1,187 @@
 # @swapkit/types
 
+## 4.5.0
+
+### Minor Changes
+
+- bump all
+
+## 4.4.18
+
+### Patch Changes
+
+- bump
+
+## 4.4.17
+
+### Patch Changes
+
+- bump
+
+## 4.4.16
+
+### Patch Changes
+
+- bump
+
+## 4.4.15
+
+### Patch Changes
+
+- bump
+
+## 4.4.14
+
+### Patch Changes
+
+- bump
+
+## 4.4.13
+
+### Patch Changes
+
+- bump
+
+## 4.4.12
+
+### Patch Changes
+
+- bump
+
+## 4.4.11
+
+### Patch Changes
+
+- bump
+
+## 4.4.10
+
+### Patch Changes
+
+- bump
+
+## 4.4.9
+
+### Patch Changes
+
+- bump
+
+## 4.4.8
+
+### Patch Changes
+
+- bump
+
+## 4.4.7
+
+### Patch Changes
+
+- bump
+
+- bump
+
+## 4.4.6
+
+### Patch Changes
+
+- bump
+
+## 4.4.5
+
+### Patch Changes
+
+- bump
+
+## 4.4.4
+
+### Patch Changes
+
+- bump
+
+## 4.4.3
+
+### Patch Changes
+
+- bump
+
+## 4.4.2
+
+### Patch Changes
+
+- bump for maya
+
+## 4.4.1
+
+### Patch Changes
+
+- bump
+
+## 4.4.0
+
+### Minor Changes
+
+- bump
+
+## 4.3.0
+
+### Minor Changes
+
+- bump
+
+## 4.2.7
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.6
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.5
+
+### Patch Changes
+
+- bump kk
+
+## 4.2.4
+
+### Patch Changes
+
+- bump hdwallet
+
+## 4.2.3
+
+### Patch Changes
+
+- bump kk wallet
+
+## 4.2.2
+
+### Patch Changes
+
+- deps keepkey wallet
+
+## 4.2.1
+
+### Patch Changes
+
+- y
+
+## 4.2.0
+
+### Minor Changes
+
+- swap work
+
+## 4.1.0
+
+### Minor Changes
+
+- bump
+
 ## 4.0.0
 
 ### Major Changes

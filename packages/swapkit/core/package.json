@@ -1,17 +1,19 @@
 {
   "author": "swapkit-oss-team",
   "dependencies": {
+    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/types": "workspace:*",
-    "@coinmasters/helpers": "workspace:*"
+    "@pioneer-platform/loggerdog": "^8.1.31",
+    "@pioneer-platform/pioneer-caip": "^9.2.23"
   },
   "description": "SwapKit Lib core",
   "devDependencies": {
-    "@internal/config": "workspace:*",
     "@coinmasters/api": "workspace:*",
     "@coinmasters/tokens": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
+    "@internal/config": "workspace:*",
     "@vitest/coverage-istanbul": "0.34.6",
     "ethers": "6.9.0",
     "vite": "4.5.0",
@@ -60,5 +62,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.4"
+  "version": "9.0.0"
 }

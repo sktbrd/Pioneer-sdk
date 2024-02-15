@@ -47,7 +47,7 @@ export const BaseCosmosToolbox = ({
   client: cosmosClient,
 }: Params): {
   getSignerFromPrivateKey: (privateKey: Uint8Array) => Promise<any>;
-  transfer: ({ from, recipient, assetValue, memo, fee, signer }: TransferParams) => Promise<any>;
+  transfer: ({ from, recipient, assetValue, memo, fee, signer }: any) => Promise<any>;
   getBalance: (pubkeys: any) => Promise<Awaited<AssetValue | symbol>[] | AssetValue[]>;
   getAccount: (address: string) => Promise<any>;
   getSigner: (phrase: string) => Promise<any>;

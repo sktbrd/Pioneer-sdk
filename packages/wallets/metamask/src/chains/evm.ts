@@ -34,7 +34,7 @@ export class MetaMaskSigner extends AbstractSigner {
         typedData: typedData,
       };
       const responseSign = await this.wallet.ethSignTypedData(input);
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign;
     } catch (error) {
       // Handle error if needed
@@ -50,9 +50,9 @@ export class MetaMaskSigner extends AbstractSigner {
       scriptType: 'ethereum',
       showDisplay: false
     }
-    console.log("payload: ",payload)
+    //console.log("payload: ",payload)
     const address = await this.wallet.ethGetAddress(payload);
-    console.log("address: ",address)
+    //console.log("address: ",address)
     this.address = address;
     return address;
   };
@@ -79,7 +79,7 @@ export class MetaMaskSigner extends AbstractSigner {
     if (!gasLimit) throw new Error('Missing gasLimit');
     if (!nonce) throw new Error('Missing nonce');
     if (!data) throw new Error('Missing data');
-    console.log("Metamask checkpoint: 1")
+    //console.log("Metamask checkpoint: 1")
     const isEIP1559 = maxFeePerGas && maxPriorityFeePerGas;
 
     if (isEIP1559 && !maxFeePerGas) throw new Error('Missing maxFeePerGas');
@@ -90,7 +90,7 @@ export class MetaMaskSigner extends AbstractSigner {
       ? BigInt(nonce)
       : BigInt(await this.provider.getTransactionCount(await this.getAddress(), 'pending'));
     const nonceHex = '0x' + nonceValue.toString(16);
-    console.log('value: ', value);
+    //console.log('value: ', value);
     let input = {
       gas: toHexString(BigInt(gasLimit)),
       addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
@@ -114,7 +114,7 @@ export class MetaMaskSigner extends AbstractSigner {
       const responseSign = await this.wallet.ethSendTx(input);
       return responseSign.serialized;
     }catch(e){
-      console.log("error: ",e)
+      //console.log("error: ",e)
       throw e
     }
   };

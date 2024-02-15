@@ -278,11 +278,11 @@ export const getBalance = async ({
   chain: EVMChain;
   potentialScamFilter?: boolean;
 }) => {
-  console.log('EVM toolbox getBalance: ', address[0].address);
+  //console.log('EVM toolbox getBalance: ', address[0].address);
   const tokenBalances = await api.getBalance(address[0].address);
   const evmGasTokenBalance = await provider.getBalance(address[0].address);
-  //console.log('tokenBalances: ', tokenBalances);
-  //console.log('evmGasTokenBalance: ', evmGasTokenBalance);
+  console.log('tokenBalances: ', tokenBalances);
+  console.log('evmGasTokenBalance: ', evmGasTokenBalance);
   let gasTokenBalance = AssetValue.fromChainOrSignature(
     chain,
     formatBigIntToSafeValue({ value: evmGasTokenBalance, decimal: BaseDecimal[chain] }),
@@ -293,12 +293,19 @@ export const getBalance = async ({
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < tokenBalances.length; i++) {
     let tokenBalance = tokenBalances[i];
-    let formatedBalance = AssetValue.fromIdentifierSync(
-      chain.toString() + '.' + tokenBalance.symbol,
-      formatBigIntToSafeValue({ value: tokenBalance.value, decimal: tokenBalance.decimal }),
-    );
-    formatedBalance.address = address[0].address;
-    balances.push(formatedBalance);
+    if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
+      let formatedBalance = AssetValue.fromIdentifierSync(
+        //@ts-ignore
+        tokenBalance.chain + '.' + tokenBalance.symbol.toUpperCase(),
+        tokenBalance.value,
+      );
+      // formatedBalance.address = address[0].address;
+      balances.push(formatedBalance);
+    } else {
+      console.log("chain: ",chain)
+      console.log("tokenBalance.chain: ",tokenBalance.chain)
+      console.error("invalid balance: ", tokenBalance);
+    }
   }
   // return filteredBalances;
   return balances;

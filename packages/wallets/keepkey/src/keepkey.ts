@@ -8,7 +8,7 @@ import {
   MATICToolbox,
   OPToolbox,
 } from '@coinmasters/toolbox-evm';
-import type { ConnectWalletParams, EVMChain } from '@coinmasters/types';
+import type { EVMChain } from '@coinmasters/types';
 import { Chain, WalletOption } from '@coinmasters/types';
 import { KeepKeySdk } from '@keepkey/keepkey-sdk';
 
@@ -18,6 +18,7 @@ import { KeepKeySigner } from './chains/evm.ts';
 import { osmosisWalletMethods } from './chains/osmosis.js';
 import { rippleWalletMethods } from './chains/ripple.js';
 import { thorchainWalletMethods } from './chains/thorchain.ts';
+import { mayachainWalletMethods } from './chains/mayachain.ts';
 import { utxoWalletMethods } from './chains/utxo.js';
 export type { PairingInfo } from '@keepkey/keepkey-sdk';
 
@@ -39,6 +40,7 @@ export const KEEPKEY_SUPPORTED_CHAINS = [
   Chain.Polygon,
   Chain.Ripple,
   Chain.THORChain,
+  Chain.Mayachain,
   Chain.Zcash,
 ] as const;
 
@@ -85,7 +87,6 @@ const getEVMWalletMethods = async ({
       return { ...AVAXToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
     case Chain.Base:
       return { ...BASEToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
-
     default:
       throw new Error('getEVMWalletMethods Chain not supported');
   }
@@ -139,6 +140,10 @@ const getToolbox = async ({
     }
     case Chain.THORChain: {
       const walletMethods = await thorchainWalletMethods({ sdk });
+      return { address: await walletMethods.getAddress(), walletMethods };
+    }
+    case Chain.Mayachain: {
+      const walletMethods = await mayachainWalletMethods({ sdk });
       return { address: await walletMethods.getAddress(), walletMethods };
     }
     case Chain.Ripple: {
@@ -201,39 +206,57 @@ const connectKeepkey =
     apis,
     rpcUrls,
     addChain,
-    config: { keepkeyConfig, covalentApiKey, ethplorerApiKey = 'freekey', utxoApiKey },
-  }: ConnectWalletParams) =>
-  async (chains: any, paths: any) => {
+    config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
+  }) =>
+  async (chains, paths) => {
     if (!keepkeyConfig) throw new Error('KeepKey config not found');
-    console.log('connectKeepkey chains: ', chains);
+    //console.log('paths: ', paths);
+    //console.log('apis: ', apis);
+    //console.log('rpcUrls: ', rpcUrls);
+    //console.log('addChain: ', addChain);
+    //console.log('config: ', { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey });
+
+    //console.log('connectKeepkey chains: ', chains);
     await checkAndLaunch();
+
     if (!paths) paths = [];
-    //only build this once for all assets
+    // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-    console.log('connectKeepkey chains2: ', chains);
-    for (let chain: any of chains) {
-      console.log('chain: ', chain);
-      //get paths for chain
-      if (chain) {
-        // eslint-disable-next-line eqeqeq
-        const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
-        const { address, walletMethods } = await getToolbox({
-          sdk: keepKeySdk,
-          apiClient: apis[chain],
-          rpcUrl: rpcUrls[chain],
-          chain,
-          covalentApiKey,
-          ethplorerApiKey,
-          utxoApiKey,
-          paths: filteredPaths,
-        });
-        addChain({
-          chain,
-          walletMethods,
-          wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-        });
-      }
-    }
+    //console.log('connectKeepkey chains2: ', chains);
+
+    const chainPromises = chains.map(async (chain) => {
+      if (!chain) return;
+
+      const chainLogLabel = `Chain ${chain} processing time`;
+      console.time(chainLogLabel);
+      //console.log('Processing chain: ', chain);
+
+      // Get paths for chain
+      const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
+
+      const { address, walletMethods } = await getToolbox({
+        sdk: keepKeySdk,
+        apiClient: apis[chain],
+        rpcUrl: rpcUrls[chain],
+        chain,
+        covalentApiKey,
+        ethplorerApiKey,
+        utxoApiKey,
+        paths: filteredPaths,
+      });
+
+      addChain({
+        chain,
+        walletMethods,
+        wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
+      });
+
+      console.timeEnd(chainLogLabel);
+    });
+
+    // Wait for all the promises to resolve
+    await Promise.all(chainPromises);
+
     return keepkeyConfig.apiKey;
   };
 

@@ -18,6 +18,10 @@
 */
 import { SDK } from '@coinmasters/pioneer-sdk';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
+import {
+  getPaths,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 import EventEmitter from 'events';
 import {
   createContext,
@@ -362,14 +366,33 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
         // supported chains
         const AllChainsSupported = availableChainsByWallet[wallet];
+        console.log("AllChainsSupported: ", AllChainsSupported);
         let allByCaip = AllChainsSupported.map(
           // @ts-ignore
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
+        console.log("allByCaip: ", allByCaip);
+        //get paths for wallet
+        let paths = getPaths(allByCaip);
+        console.log("paths: ", paths);
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized: any[] = allByCaip
+          .map((network) => paths.filter((path: any) => path.network === network).slice(-1)[0])
+          .filter((path: any) => path !== undefined);
+        //
+        state.app.setPaths(optimized);
+
         //TODO get from localstorage disabled chains
         //TODO get from localStorage added chains!
         console.log('allByCaip: ', allByCaip);
-        const successPairWallet = await state.app.pairWallet(wallet, allByCaip, chain);
+        let pairParams: any = {
+          type: wallet,
+          blockchains: allByCaip,
+          ledgerApp: chain,
+        };
+        const successPairWallet = await state.app.pairWallet(pairParams);
         console.log('successPairWallet: ', successPairWallet);
         if (successPairWallet && successPairWallet.error) {
           //push error to state
@@ -454,21 +477,18 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
-      const blockchains = [
-        'bitcoin',
-        'ethereum',
-        'thorchain',
-        'bitcoincash',
-        'litecoin',
-        'binance',
-        'cosmos',
-        'dogecoin',
-      ];
+      const blockchains: any = [];
 
       // @TODO add custom paths from localstorage
       const paths: any = [];
+      // const spec =
+      //   localStorage.getItem('pioneerUrl') ||
+      //   // @ts-ignore
+      //   import.meta.env.VITE_PIONEER_URL_SPEC ||
+      //   'http://127.0.0.1:9001/spec/swagger.json';
       const spec =
         localStorage.getItem('pioneerUrl') ||
+        // @ts-ignore
         import.meta.env.VITE_PIONEER_URL_SPEC ||
         'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
@@ -493,7 +513,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // @ts-ignore
           import.meta.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
         // @ts-ignore
-        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || setup?.blockchairApiKey,
+        utxoApiKey:
+          import.meta.env.VITE_BLOCKCHAIR_API_KEY ||
+          setup?.blockchairApiKey ||
+          'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
         // @ts-ignore
         walletConnectProjectId:
           // @ts-ignore
@@ -538,8 +561,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             console.log('setting balances: ', data);
 
             // Remove duplicates based on .caip property
-            const uniqueBalances = data.reduce((acc, currentItem) => {
-              if (!acc.some((item) => item.caip === currentItem.caip)) {
+            const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
+              if (!acc.some((item: any) => item.caip === currentItem.caip)) {
                 acc.push(currentItem);
               }
               return acc;
@@ -557,15 +580,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             console.log('setting pubkeys for context: ', appInit.context);
 
             // Remove duplicates based on .networkId property
-            const uniquePubkeys = data.reduce((acc, currentItem) => {
-              if (!acc.some((item) => item.networkId === currentItem.networkId)) {
-                acc.push(currentItem);
-              }
-              return acc;
-            }, []);
+            // const uniquePubkeys = data.reduce((acc: any, currentItem: any) => {
+            //   if (!acc.some((item: any) => item.networkId === currentItem.networkId)) {
+            //     acc.push(currentItem);
+            //   }
+            //   return acc;
+            // }, []);
 
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(uniquePubkeys));
+              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
           }
           // @ts-ignore
           dispatch({
@@ -583,13 +606,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('walletType: ', walletType);
         //set blockchains
         let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        let allByCaip = blockchainsForContext.map((chainStr) => {
+        let allByCaip = blockchainsForContext.map((chainStr: any) => {
           const chainEnum = getChainEnumValue(chainStr);
           return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
         });
         console.log('allByCaip: ', allByCaip);
         await appInit.setBlockchains(allByCaip);
-
       }
 
       //add to local storage of connected wallets
@@ -610,7 +632,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('pubkeyCache for', wallet, ':', pubkeyCache);
         await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
       }
-
     } catch (e) {
       console.error(e);
     }

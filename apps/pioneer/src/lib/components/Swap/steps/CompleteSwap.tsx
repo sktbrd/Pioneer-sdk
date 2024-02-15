@@ -1,3 +1,4 @@
+'use client';
 /*
   Comlete swap step
  */

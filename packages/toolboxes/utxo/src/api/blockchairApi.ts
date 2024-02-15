@@ -122,7 +122,7 @@ const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: strin
     //console.log('getXpubData URL: ', url);
     //const response = await blockchairRequest<any>(`${baseUrlPioneer()}${url}`);
     let response = await RequestClient.get<any>(`${baseUrlPioneer()}${url}`);
-    console.log('getXpubData: response: ', response);
+    //console.log('getXpubData: response: ', response);
     if (!response) {
       response = 0;
     } else {
@@ -168,7 +168,7 @@ const getUnconfirmedBalanceXpub = async ({
   chain,
   apiKey,
 }: BlockchairParams<{ address?: string }>) => {
-  console.log('getUnconfirmedBalanceXpub; ', { pubkey, chain, apiKey });
+  //console.log('getUnconfirmedBalanceXpub; ', { pubkey, chain, apiKey });
   return await getXpubData({ pubkey, chain, apiKey });
 };
 

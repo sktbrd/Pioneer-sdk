@@ -35,7 +35,7 @@ export class KeepKeySigner extends AbstractSigner {
         typedData: typedData,
       };
       const responseSign = await this.sdk.eth.ethSignTypedData(input);
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign;
     } catch (error) {
       // Handle error if needed
@@ -70,7 +70,6 @@ export class KeepKeySigner extends AbstractSigner {
     gasPrice,
     ...restTx
   }: EVMTxParams & { maxFeePerGas?: string; maxPriorityFeePerGas?: string; gasPrice?: string }) => {
-    if (!from) throw new Error('Missing from address');
     if (!to) throw new Error('Missing to address');
     if (!gasLimit) throw new Error('Missing gasLimit');
     if (!nonce) throw new Error('Missing nonce');
@@ -87,6 +86,14 @@ export class KeepKeySigner extends AbstractSigner {
       ? BigInt(nonce)
       : BigInt(await this.provider.getTransactionCount(await this.getAddress(), 'pending'));
     const nonceHex = '0x' + nonceValue.toString(16);
+
+    //fix bugged gasLimit
+    const fixBuggedGasLimit = (gasLimit: any): bigint => typeof gasLimit === 'bigint' ? gasLimit : BigInt(String(gasLimit).replace(/^0x0x/, '0x'));
+    gasLimit = fixBuggedGasLimit(gasLimit);
+
+
+
+
 
     const input = {
       gas: toHexString(BigInt(gasLimit)),

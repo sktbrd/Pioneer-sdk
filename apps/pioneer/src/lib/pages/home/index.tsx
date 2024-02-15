@@ -12,21 +12,27 @@ import Basic from '../../components/Basic';
 import Blockchains from '../../components/Blockchains';
 import Earn from '../../components/Earn';
 import Loan from '../../components/Loan';
+import OutputSelect from '../../components/OutputSelect';
 import Paths from '../../components/Paths';
-// import OutputSelect from "lib/components/OutputSelect";
-// import BlockchainSelect from "lib/components/BlockchainSelect";
-// import WalletSelect from "lib/components/WalletSelect";
-import Wallets from '../../components/Wallets';
 import Pending from '../../components/Pending';
 import Pioneer from '../../components/Pioneer';
 import Portfolio from '../../components/Portfolio';
 import Pubkeys from '../../components/Pubkeys';
+import Quote from '../../components/Quote';
+import Quotes from '../../components/Quotes';
+import Receive from '../../components/Receive';
+import SignTransaction from '../../components/SignTransaction';
 import Swap from '../../components/Swap';
 import Track from '../../components/Track';
 import Transfer from '../../components/Transfer';
+// import OutputSelect from "lib/components/OutputSelect";
+// import BlockchainSelect from "lib/components/BlockchainSelect";
+// import WalletSelect from "lib/components/WalletSelect";
+import Wallets from '../../components/Wallets';
 import { usePioneer } from '../../context';
 
 import { initWallets } from './setup';
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 
 const Home = () => {
   const { txid } = useParams<{ txid?: string }>();
@@ -37,7 +43,12 @@ const Home = () => {
   const [filteredOptions, setFilteredOptions] = useState([
     'portfolio',
     'wallets',
+    'receive',
     'track',
+    'sign',
+    'assets',
+    'quote',
+    'quotes',
     'basic',
     'blockchains',
     'paths',
@@ -72,12 +83,15 @@ const Home = () => {
   };
 
   const onSelect = async (blockchain: any) => {
-    // select asset
-    console.log('blockchain: ', blockchain);
-    // open blockchain modal
-    // connect wallet with just this blockchain
     try {
-      await app.pairWallet('KEEPKEY', ['eip155:1', blockchain]);
+      let blockchains = ['eip155:1', blockchain];
+      let pairObj: any = {
+        type: 'KEEPKEY',
+        blockchains,
+      };
+      let paths = getPaths(blockchains);
+      await app.setPaths(paths);
+      await app.pairWallet(pairObj);
       await app.getPubkeys();
       await app.getBalances();
     } catch (error) {
@@ -92,15 +106,15 @@ const Home = () => {
    */
 
   // Handle input change for autocomplete
-  const handleInputChange = (inputValue) => {
+  const handleInputChange = (inputValue: any) => {
     setSearchInput(inputValue);
-    setFilteredOptions(
-      options.filter((option) => option.toLowerCase().includes(inputValue.toLowerCase())),
-    );
+    // setFilteredOptions(
+    //   options.filter((option: any) => option.toLowerCase().includes(inputValue.toLowerCase())),
+    // );
   };
 
   // Handle selection from autocomplete options
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option: any) => {
     console.log('option: ', option);
     switch (option) {
       case 'wallets':
@@ -115,8 +129,23 @@ const Home = () => {
       case 'basic':
         navigate('/intent/basic');
         break;
+      case 'receive':
+        navigate('/intent/receive');
+        break;
       case 'blockchains':
         navigate('/intent/blockchains');
+        break;
+      case 'assets':
+        navigate('/intent/assets');
+        break;
+      case 'sign':
+        navigate('/intent/sign');
+        break;
+      case 'quote':
+        navigate('/intent/quote');
+        break;
+      case 'quotes':
+        navigate('/intent/quotes');
         break;
       case 'paths':
         navigate('/intent/paths');
@@ -153,40 +182,53 @@ const Home = () => {
   // Function to determine which component to render based on intent
   const renderComponent = () => {
     console.log('intent: ', intent);
-    let params = intent.split(':');
-    let intentType = params[0];
-    //parse intent and get props
-    let txHash = params[1];
-    switch (intentType) {
-      case 'track':
-        return <Track txHash={txHash} />;
-      case 'wallets':
-        return <Wallets />;
-      case 'portfolio':
-        return <Portfolio />;
-      case 'basic':
-        return <Basic />;
-      case 'blockchains':
-        return <Blockchains onSelect={onSelect} />;
-      case 'paths':
-        return <Paths />;
-      case 'pubkeys':
-        return <Pubkeys />;
-      case 'balances':
-        return <Balances />;
-      case 'pending':
-        return <Pending />;
-      case 'transfer':
-        return <Transfer openModal={openModal} />;
-      case 'swaps':
-        return <Swap />;
-      case 'earn':
-        return <Earn />;
-      case 'loan':
-        return <Loan />;
-      // Add additional cases as necessary
-      default:
-        return <div>No valid intent selected</div>;
+    if (intent) {
+      let params = intent.split(':');
+      let intentType = params[0];
+      //parse intent and get props
+      let txHash = params[1];
+      switch (intentType) {
+        case 'track':
+          return <Track txHash={txHash} />;
+        case 'wallets':
+          return <Wallets />;
+        case 'portfolio':
+          return <Portfolio />;
+        case 'basic':
+          return <Basic />;
+        case 'receive':
+          return <Receive />;
+        case 'blockchains':
+          return <Blockchains onSelect={onSelect} />;
+        case 'sign':
+          return <SignTransaction />;
+        case 'assets':
+          return <OutputSelect />;
+        case 'quote':
+          return <Quote />;
+        case 'quotes':
+          return <Quotes />;
+        case 'paths':
+          return <Paths />;
+        case 'pubkeys':
+          return <Pubkeys />;
+        case 'balances':
+          return <Balances />;
+        case 'pending':
+          return <Pending />;
+        case 'transfer':
+          return <Transfer />;
+        case 'swap':
+        case 'swaps':
+          return <Swap />;
+        case 'earn':
+          return <Earn openModal={openModal} />;
+        case 'loan':
+          return <Loan />;
+        // Add additional cases as necessary
+        default:
+          return <div>No valid intent selected</div>;
+      }
     }
   };
 

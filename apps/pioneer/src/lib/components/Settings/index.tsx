@@ -1,30 +1,25 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Button,
-  Text,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-  Flex,
-  Avatar,
+  ModalOverlay,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
-import { usePioneer } from '../../context';
+import React, { useEffect, useState } from 'react';
+
 import Path from '../../components/Path';
+import { usePioneer } from '../../context';
 import Basic from '..//Basic';
 import Blockchains from '../Blockchains';
 
-export default function Settings({ onClose }) {
+export default function Settings() {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
@@ -37,15 +32,19 @@ export default function Settings({ onClose }) {
     }
   }, [app, app?.blockchains]);
 
-  const handlePubkeyClick = (pubkey) => {
-    setSelectedPubkey(pubkey);
-    onOpen();
-  };
+  // const handlePubkeyClick = (pubkey) => {
+  //   setSelectedPubkey(pubkey);
+  //   onOpen();
+  // };
+  //
+  // const handleCopy = (address) => {
+  //   navigator.clipboard.writeText(address);
+  //   setCopiedAddress(address);
+  //   setTimeout(() => setCopiedAddress(''), 3000);
+  // };
 
-  const handleCopy = (address) => {
-    navigator.clipboard.writeText(address);
-    setCopiedAddress(address);
-    setTimeout(() => setCopiedAddress(''), 3000);
+  const onSelect = (pubkey: any) => {
+    console.log('pubkey: ', pubkey);
   };
 
   return (
@@ -60,7 +59,7 @@ export default function Settings({ onClose }) {
             <Basic />
           </TabPanel>
           <TabPanel>
-            <Blockchains />
+            <Blockchains onSelect={onSelect} />
           </TabPanel>
         </TabPanels>
       </Tabs>
@@ -70,7 +69,7 @@ export default function Settings({ onClose }) {
           <ModalHeader>Pubkey Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedPubkey && <Path path={selectedPubkey} onClose={onModalClose} />}
+            {selectedPubkey && <Path onClose={onModalClose} path={selectedPubkey} />}
           </ModalBody>
         </ModalContent>
       </Modal>

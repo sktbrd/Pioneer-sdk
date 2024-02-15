@@ -14,13 +14,13 @@ export const signUTXOTransaction = async (
   options?: Partial<CreateTransactionArg>,
 ) => {
   let allPaths = [];
-  console.log('inputUtxos', inputUtxos);
+  //console.log('inputUtxos', inputUtxos);
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < inputUtxos.length; i++) {
     let path = inputUtxos[i]?.path;
     if (path) allPaths.push(path.replace('m/44', '84'));
   }
-  console.log('allPaths', allPaths);
+  //console.log('allPaths', allPaths);
 
   const inputs = inputUtxos.map((item) => {
     const utxoTx = Transaction.fromHex(item.txHex || '');
@@ -47,6 +47,6 @@ export const signUTXOTransaction = async (
     segwit: true,
     useTrustedInputForSegwit: true,
   };
-  console.log('params', params);
+  //console.log('params', params);
   return btcApp.createPaymentTransaction({ ...params, ...options });
 };

@@ -21,7 +21,10 @@ let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
-
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 
 console.log("spec: ",spec)
@@ -33,7 +36,6 @@ const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
         //(tag,' CHECKPOINT 1');
-        console.time('start2paired');
         console.time('start2build');
         console.time('start2broadcast');
         console.time('start2end');
@@ -86,8 +88,9 @@ const test_service = async function (this: any) {
             isConnected: false,
         };
         walletsVerbose.push(walletKeepKey);
-
+        console.time('start2init');
         let resultInit = await app.init(walletsVerbose, {})
+        console.timeEnd('start2init');
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
@@ -97,30 +100,47 @@ const test_service = async function (this: any) {
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
 
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains)
+        log.info(tag,"blockchains: ",blockchains.length)
+        console.time('start2paired');
         resultInit = await app.pairWallet('KEEPKEY',blockchains)
-        log.info(tag,"resultInit: ",resultInit)
+        console.timeEnd('start2paired'); // End timing for pairing
+        log.debug(tag,"resultInit: ",resultInit)
 
         //check pairing
         // //context should match first account
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-
-        //
+        
+        console.time('start2getPubkeys');
         await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
+        console.timeEnd('start2getPubkeys');
+        log.info(tag,"pubkeys: ",app.pubkeys.length)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
 
-
+        console.time('start2getBalances');
         await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
-
-
+        log.info(tag,"balances: ",app.balances.length)
+        console.timeEnd('start2getBalances');
         console.timeEnd('start2end');
 
         console.log("************************* TEST PASS *************************")

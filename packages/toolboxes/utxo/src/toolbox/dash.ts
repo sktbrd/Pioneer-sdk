@@ -6,11 +6,12 @@ import { blockchairApi } from '../api/blockchairApi.ts';
 
 import { BaseUTXOToolbox } from './BaseUTXOToolbox.ts';
 
-const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
+const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
+// const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
 
 const broadcastTx = async (txHash: string) => {
   try {
-    console.log('broadcastTx: Initiating with txHash');
+    //console.log('broadcastTx: Initiating with txHash');
 
     const broadcastData = {
       network: 'DASH',
@@ -21,7 +22,7 @@ const broadcastTx = async (txHash: string) => {
     };
 
     const fullUrl = `${baseUrlPioneer()}/broadcast`;
-    console.log('broadcastTx: fullUrl: ', fullUrl);
+    //console.log('broadcastTx: fullUrl: ', fullUrl);
 
     const options = {
       method: 'POST',
@@ -31,11 +32,11 @@ const broadcastTx = async (txHash: string) => {
       body: JSON.stringify(broadcastData), // Ensure the data is being stringified
     };
 
-    console.log('broadcastTx: Sending data: ', broadcastData);
+    //console.log('broadcastTx: Sending data: ', broadcastData);
 
     let response = await RequestClient.post(fullUrl, options);
 
-    console.log('broadcastTx: Transaction broadcasted, response: ', response);
+    //console.log('broadcastTx: Transaction broadcasted, response: ', response);
     return response;
   } catch (e) {
     console.error('broadcastTx: Error broadcasting transaction', e);

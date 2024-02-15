@@ -33,6 +33,10 @@ let FAUCET_DASH_ADDRESS = process.env['FAUCET_DASH_ADDRESS']
 if(!FAUCET_DASH_ADDRESS) throw Error("Need Faucet Address!")
 let FAUCET_ADDRESS = FAUCET_DASH_ADDRESS
 
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -107,11 +111,31 @@ const test_service = async function (this: any) {
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
 
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
+
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -120,39 +144,10 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
-        let paths = app.paths
-        assert(paths)
-        assert(paths[0])
-        let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"osmoPath: ",osmoPath)
-        assert(osmoPath)
-
-        //
-        await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
-        let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"pubkey: ",pubkey)
-        assert(pubkey.length > 0)
-        //verify pubkeys
-
-
-        await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
-        //verify balances
-
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
         //send

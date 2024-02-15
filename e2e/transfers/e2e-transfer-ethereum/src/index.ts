@@ -3,6 +3,8 @@
 
  */
 
+import { AssetValue } from '@coinmasters/helpers';
+
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -10,7 +12,9 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
+import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
+//@ts-ignore
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 console.log(process.env['BLOCKCHAIR_API_KEY'])
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
 if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
@@ -28,6 +32,9 @@ let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
+let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
+if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -54,8 +61,8 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let paths:any = [
-        ]
+        // let paths:any = [
+        // ]
 
         let config:any = {
             username,
@@ -63,7 +70,7 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths,
+            // paths,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -101,12 +108,17 @@ const test_service = async function (this: any) {
         log.info(tag,"wallets: ",app.wallets.length)
 
         let blockchains = [BLOCKCHAIN]
-
+        let paths = getPaths(blockchains)
+        app.setPaths(paths)
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
         log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
         //check pairing
@@ -122,8 +134,6 @@ const test_service = async function (this: any) {
         assert(app.pubkeys[0])
 
         //verify pubkeys
-
-
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         //verify balances
@@ -147,6 +157,26 @@ const test_service = async function (this: any) {
         // assert(balance)
         // assert(balance[0])
         // assert(balance[0].balance)
+
+
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        let assetValue = AssetValue.fromChainOrSignature(
+          Chain.Ethereum,
+          TEST_AMOUNT,
+        );
+        log.info("assetValue: ",assetValue)
+
+        //send
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
+
 
     } catch (e) {
         log.error(e)

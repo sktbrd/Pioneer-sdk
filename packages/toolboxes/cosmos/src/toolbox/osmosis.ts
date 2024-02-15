@@ -3,13 +3,14 @@ import { RPCUrl } from '@coinmasters/types';
 import { ec as EC } from 'elliptic';
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 const PIONEER_API_URI = 'https://pioneers.dev';
+// const PIONEER_API_URI = 'http://localhost:9001';
 const TAG = ' | osmosis-toolbox | ';
 const getAccount = (address: string): Promise<any> => {
   // Construct the URL
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
 
   // Log the URL
-  console.log(`Requesting URL: ${url}`);
+  //console.log(`Requesting URL: ${url}`);
 
   // Make the request
   return RequestClient.get<any>(url);
@@ -27,16 +28,29 @@ const getAccount = (address: string): Promise<any> => {
 const getBalance = async (address: any[]) => {
   //console.log(address)
   try {
-    const balanceOsmo = await RequestClient.get(
-      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/osmosis/${address[0].address}`,
+    //console.log('address: ', address[0].address);
+    //console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
+    const balancesOsmo: any = await RequestClient.get(
+      `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`,
     );
-    console.log('balanceOsmo: ', balanceOsmo);
+
+    //console.log('balanceOsmo: ', balancesOsmo);
+    let balances: any = [];
     await AssetValue.loadStaticAssets();
-    const assetValueNativeOsmo = AssetValue.fromStringSync('OSMO.OSMO', balanceOsmo);
-    //console.log("assetValueNativeOsmo: ", assetValueNativeOsmo)
-    let balances = [assetValueNativeOsmo];
-    //console.log("balances: ", balances)
-    //TODO get token balances
+    for (let i = 0; i < balancesOsmo.length; i++) {
+      let balance = balancesOsmo[i];
+      //console.log('balance: ', balance);
+      let identifier = 'OSMO.' + balance.asset;
+      const assetValueNativeOsmo = AssetValue.fromStringSync(identifier, balance.balance);
+
+      if (assetValueNativeOsmo) {
+        //console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
+        balances.push(assetValueNativeOsmo);
+        //console.log('balances: ', balances);
+      } else {
+        console.error('Failed to get assetValueNative: ' + identifier);
+      }
+    }
 
     return balances;
   } catch (e) {
@@ -95,7 +109,7 @@ const sendRawTransaction = async (tx, sync = true) => {
 
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
-    console.log(tag, 'urlRemote: ', urlRemote);
+    //console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using RequestClient
     let result = await RequestClient.post(urlRemote, {
@@ -104,7 +118,7 @@ const sendRawTransaction = async (tx, sync = true) => {
         'content-type': 'application/json', // Assuming JSON content type is required
       },
     });
-    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     // Handle the response
     if (result.tx_response.txhash) {
