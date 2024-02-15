@@ -3,6 +3,9 @@
 ## Upstream Additions
 * KeepKey Wallet
 * osmo
+* xrp
+* DASH
+* ZEC
 * UTXO support
 
 ## Pioneer SDK
