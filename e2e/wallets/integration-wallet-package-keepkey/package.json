@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-wallet-package-keepkey",
-  "version": "0.2.16",
+  "version": "0.3.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

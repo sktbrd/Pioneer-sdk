@@ -15,7 +15,8 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 import { WalletOption, availableChainsByWallet, NetworkIdToChain, Chain } from '@coinmasters/types';
 
-let BLOCKCHAIN = 'MAYA'
+// let BLOCKCHAIN = 'MAYA'
+let BLOCKCHAIN = 'ETH'
 
 const getWalletByChain = async (keepkey:any, chain:any) => {
     if (!keepkey[chain]) return null;
@@ -33,7 +34,11 @@ const getWalletByChain = async (keepkey:any, chain:any) => {
             balance.push(Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0);
         }
         //create assetVaule
-        balance = [{ total: balance.reduce((a, b) => a + b, 0), address }];
+        let assetValue = AssetValue.fromChainOrSignature(
+          chain,
+          balance.reduce((a, b) => a + b, 0),
+        );
+        balance = [assetValue];
 
     } else {
         balance = await walletMethods.getBalance([{address}]);
@@ -270,22 +275,22 @@ const test_service = async function (this: any) {
         let ethplorerApiKey = 'freekey'
         let utxoApiKey = 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2'
         let input = {
-            apis: { },
+            apis: {},
             rpcUrls:{},
             addChain,
             config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
         }
-        let chains =  [
-            BLOCKCHAIN
-        ]
         // let chains =  [
-        //     'ARB',  'AVAX', 'BNB',
-        //     'BSC',  'BTC',  'BCH',
-        //     'GAIA', 'OSMO', 'XRP',
-        //     'DOGE', 'DASH', 'ETH',
-        //     'LTC',  'OP',   'MATIC',
-        //     'THOR'
+        //     BLOCKCHAIN
         // ]
+        let chains =  [
+            'ARB',  'AVAX', 'BNB',
+            'BSC',  'BTC',  'BCH',
+            'GAIA', 'OSMO', 'XRP',
+            'DOGE', 'DASH', 'ETH',
+            'LTC',  'OP',   'MATIC',
+            'THOR'
+        ]
         // Step 1: Invoke the outer function with the input object
         const connectFunction = walletKeepKey.wallet.connect(input);
     
@@ -309,6 +314,40 @@ const test_service = async function (this: any) {
         }
         log.info(tag,"keepkey: ",keepkey)
 
+        let address = await keepkey['ETH'].walletMethods.getAddress()
+        log.info("address: ",address)
+
+        //validate all the balances
+        let allChains = Object.keys(keepkey)
+        for(let i = 0; i < allChains.length; i++) {
+            let chain = allChains[i]
+            let balance = keepkey[chain].wallet.balance
+            log.info(chain+ " balance: ",balance)
+            for(let j = 0; j < balance.length; j++) {
+                let ticker = balance[j].ticker
+                let value = balance[j].getValue('string')
+                log.info(chain+ " "+ticker+ " balance: ",value)
+                if(!ticker || !value) {
+                    log.error(balance[j])
+                    throw new Error("Invalid balance for "+chain+ " "+ticker)
+                }
+            }
+        }
+
+
+
+        // log.info("balance: ",keepkey['ETH'].wallet.balance)
+        // log.info("balance: ",keepkey['ETH'].wallet.balance)
+        // log.info("balance: ",keepkey['ETH'].wallet.balance[0].getValue('string'))
+        log.info("balance: ", keepkey['ETH'].wallet.balance.find((item: any) => item.ticker === 'FOX')?.getValue('string'));
+        log.info("FOX entries count: ", keepkey['ETH'].wallet.balance.filter((item: any) => item.ticker === 'FOX').length);
+
+
+        // log.info("balance: ", keepkey['ETH'].wallet.balance.find((item: any) => item.ticker === 'USDT')?.getValue('string'));
+        // log.info("USDT entries count: ", keepkey['ETH'].wallet.balance.filter((item: any) => item.ticker === 'USDT').length);
+        //
+
+
         /*
             TODO
             depositThorchain
@@ -328,14 +367,14 @@ const test_service = async function (this: any) {
                 SEND MAYA
 
          */
-        let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
-        let pubkey = address
-        let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ pubkey }])
-        log.info(tag,"** balance: ",balanceNew)
-        if(balanceNew.length === 0) {
-            log.error(tag,"No balance")
-            return
-        }
+        // let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
+        // let pubkey = address
+        // let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ pubkey }])
+        // log.info(tag,"** balance: ",balanceNew)
+        // if(balanceNew.length === 0) {
+        //     log.error(tag,"No balance")
+        //     return
+        // }
         // //get assetValue for asset
         // // let assetString = 'ETH.USDT'
         // let assetString = 'MAYA.CACAO'
@@ -402,7 +441,8 @@ const test_service = async function (this: any) {
          */
 
         // //get assetValue for asset
-        // let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
+        // // let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
+        // let assetString = 'ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7'
         // // create assetValue
         // // const assetString = `${ASSET}.${ASSET}`;
         // console.log('assetString: ', assetString);

@@ -1,5 +1,40 @@
 # @coinmasters/wallet-keplr
 
+## 9.0.0
+
+### Minor Changes
+
+- bump all
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.0
+  - @coinmasters/helpers@9.0.0
+  - @coinmasters/types@4.5.0
+
+## 8.0.18
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.18
+  - @coinmasters/helpers@8.0.18
+  - @coinmasters/types@4.4.18
+
+## 8.0.17
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@8.0.17
+  - @coinmasters/helpers@8.0.17
+  - @coinmasters/types@4.4.17
+
 ## 8.0.16
 
 ### Patch Changes
