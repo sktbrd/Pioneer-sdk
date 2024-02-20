@@ -160,7 +160,6 @@ const test_service = async function (this: any) {
         // let pubkeys = await app.getPubkeys()
         log.info("pubkeys: ",pubkeys)
 
-
         //send
         let estimatePayload:any = {
             feeRate: 10,
@@ -176,8 +175,9 @@ const test_service = async function (this: any) {
         //send
         let sendPayload = {
             feeRate: 10,
-            assetValue,
-            // assetValue: maxSpendable,
+            // assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

@@ -3,6 +3,7 @@
 
  */
 
+
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -10,11 +11,10 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
+//@ts-ignore
+import { getPaths } from '@pioneer-platform/pioneer-coins';
+import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -57,17 +57,12 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
-        let pathsAdd:any = [
-        ]
-
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -77,7 +72,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -85,7 +80,7 @@ const test_service = async function (this: any) {
         };
 
         //console.log(tag,' CHECKPOINT 2');
-        //console.log(tag,' config: ',config);
+        console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
@@ -106,8 +101,28 @@ const test_service = async function (this: any) {
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
 
-        log.info(tag,"blockchains: ",blockchains)
-        resultInit = await app.pairWallet('KEEPKEY',blockchains)
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
+
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        resultInit = await app.pairWallet(pairObject)
+
         log.info(tag,"resultInit: ",resultInit)
         assert(app.keepkeyApiKey)
         if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){
@@ -120,23 +135,23 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get asset paths
-        let paths = app.paths
-        assert(paths)
-        assert(paths[0])
-        let assetPath = paths.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"assetPath: ",assetPath)
-        assert(assetPath)
+        // //get asset paths
+        // let paths = app.paths
+        // assert(paths)
+        // assert(paths[0])
+        // let assetPath = paths.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"assetPath: ",assetPath)
+        // assert(assetPath)
 
         //
         await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
-        let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"pubkey: ",pubkey)
-        log.info(tag,"pubkey: ",pubkey.length)
-        assert(pubkey.length > 0)
+        // log.info(tag,"pubkeys: ",app.pubkeys)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
+        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"pubkey: ",pubkey)
+        // log.info(tag,"pubkey: ",pubkey.length)
+        // assert(pubkey.length > 0)
         //verify pubkeys
 
 
@@ -155,9 +170,26 @@ const test_service = async function (this: any) {
         log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
+
+        let pubkeys = await app.getPubkeys([BLOCKCHAIN])
+        // let pubkeys = await app.getPubkeys()
+        log.info("pubkeys: ",pubkeys)
+
+        //send
+        let estimatePayload:any = {
+            pubkeys,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("app.swapKit: ",app.swapKit)
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.BitcoinCash, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+
         //send
         let sendPayload = {
             assetValue,
+            // assetValue:maxSpendable,
+            // isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

@@ -60,6 +60,7 @@ export type UTXOCalculateTxSizeParams = {
 export type UTXOBuildTxParams = {
   assetValue: AssetValue;
   recipient: string;
+  isMax?: boolean;
   memo?: string;
   feeRate: number;
   sender: string;

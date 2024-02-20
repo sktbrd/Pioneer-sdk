@@ -6,12 +6,12 @@ import { blockchairApi } from '../api/blockchairApi.ts';
 
 import { BaseUTXOToolbox } from './BaseUTXOToolbox.ts';
 
-const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
-// const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
+// const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
+const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
 
 const broadcastTx = async (txHash: string) => {
   try {
-    //console.log('broadcastTx: Initiating with txHash');
+    console.log('broadcastTx: Initiating with txHash');
 
     const broadcastData = {
       network: 'DASH',

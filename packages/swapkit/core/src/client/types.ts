@@ -26,6 +26,7 @@ type BaseWalletMethods = {
 export type CoreTxParams = {
   assetValue: AssetValue;
   recipient: string;
+  isMax?: boolean;
   memo?: string;
   feeOptionKey?: FeeOption;
   feeRate?: number;

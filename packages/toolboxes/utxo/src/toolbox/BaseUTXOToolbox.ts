@@ -4,6 +4,7 @@ import { Chain, FeeOption } from '@coinmasters/types';
 import { HDKey } from '@scure/bip32';
 import { address as btcLibAddress, payments, Psbt } from 'bitcoinjs-lib';
 import * as coinSelect from 'coinselect';
+import * as split from 'coinselect/split';
 import type { ECPairInterface } from 'ecpair';
 import { ECPairFactory } from 'ecpair';
 
@@ -314,6 +315,7 @@ const buildTx = async ({
   memo,
   feeRate,
   sender,
+  isMax,
   fetchTxHex = false,
   apiClient,
   chain,
@@ -343,12 +345,37 @@ const buildTx = async ({
   console.log('inputsAndOutputs: ', inputsAndOutputs);
   // console.log('coinSelect: ', coinSelect);
   console.log('feeRate: ', feeRate);
-  const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
-  // let { inputs, outputs } = coinSelect.default(
-  //   inputsAndOutputs.inputs,
-  //   inputsAndOutputs.outputs,
-  //   feeRate,
-  // );
+
+  // Assuming inputsAndOutputs, feeRate, and isMax are defined elsewhere in your code
+  let inputs: any[], outputs: any[];
+
+  if (isMax) {
+    console.log('isMax: detected!');
+    inputsAndOutputs.outputs = inputsAndOutputs.outputs
+      .filter((output) => output.address !== undefined)
+      .map((output) => {
+        const newOutput = { ...output };
+        delete newOutput.value;
+        return newOutput;
+      });
+    console.log('inputsAndOutputs: ', inputsAndOutputs);
+    ({ inputs, outputs } = split.default(
+      inputsAndOutputs.inputs,
+      inputsAndOutputs.outputs,
+      feeRate,
+    ));
+  } else {
+    console.log('isMax: not detected!');
+    //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
+    //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
+
+    ({ inputs, outputs } = coinSelect.default(
+      inputsAndOutputs.inputs,
+      inputsAndOutputs.outputs,
+      feeRate,
+    ));
+  }
+
   console.log('inputs: ', inputs);
   console.log('outputs: ', outputs);
 

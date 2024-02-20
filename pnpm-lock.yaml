@@ -948,6 +948,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: latest
         version: 9.2.22
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.13
+        version: 9.2.13(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1631,7 +1634,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vite-plugin-dts:
         specifier: 3.5.3
         version: 3.5.3(typescript@5.2.2)(vite@4.5.0)
@@ -1966,7 +1969,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2043,7 +2046,7 @@ importers:
         version: 9.1.2
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2068,7 +2071,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2129,7 +2132,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2156,7 +2159,7 @@ importers:
         version: 11.1.1
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2476,7 +2479,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2568,7 +2571,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2629,7 +2632,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2854,7 +2857,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2900,7 +2903,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2952,7 +2955,7 @@ importers:
         version: 0.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2989,7 +2992,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.16)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -20454,7 +20457,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       kolorist: 1.8.0
       typescript: 5.2.2
-      vite: 4.5.0(@types/node@20.11.16)
+      vite: 4.5.0(@types/node@20.5.9)
       vue-tsc: 1.8.8(typescript@5.2.2)
     transitivePeerDependencies:
       - '@types/node'
@@ -20471,7 +20474,7 @@ packages:
       buffer-polyfill: /buffer@6.0.3
       node-stdlib-browser: 1.2.0
       process: 0.11.10
-      vite: 4.5.0(@types/node@20.11.16)
+      vite: 4.5.0(@types/node@20.5.9)
     transitivePeerDependencies:
       - rollup
     dev: true
