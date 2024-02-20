@@ -180,7 +180,7 @@ export const utxoWalletMethods = async ({
       };
       console.log('signPayload: ', JSON.stringify(signPayload));
       const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
-      //console.log('responseSign: ', responseSign);
+      console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (e) {
       console.error(e);
@@ -209,10 +209,9 @@ export const utxoWalletMethods = async ({
       sender: from,
       fetchTxHex: chain,
     });
-
-    const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({
-      //@TODO don't hardcode master, lookup on blockbook what input this is for and what path that address is!
-      addressNList: addressInfo.address_n,
+    console.log('rawInputs: ', rawInputs);
+    const inputs = rawInputs.map(({ value, index, hash, txHex, path }) => ({
+      addressNList: bip32ToAddressNList(path),
       scriptType,
       amount: value.toString(),
       vout: index,

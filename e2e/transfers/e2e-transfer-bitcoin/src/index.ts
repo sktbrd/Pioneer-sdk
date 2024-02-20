@@ -12,11 +12,11 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
+import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+// console.log(process.env['BLOCKCHAIR_API_KEY'])
+// if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
+// if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -80,7 +80,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -165,9 +165,31 @@ const test_service = async function (this: any) {
         log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
+
+        //get pubkeys
+        log.info("BLOCKCHAIN: ",BLOCKCHAIN)
+        let pubkeys = await app.getPubkeys([BLOCKCHAIN])
+        // let pubkeys = await app.getPubkeys()
+        log.info("pubkeys: ",pubkeys)
+
+        //send
+        let estimatePayload:any = {
+            feeRate: 10,
+            pubkeys,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+
+
         //send
         let sendPayload = {
-            assetValue,
+            // assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

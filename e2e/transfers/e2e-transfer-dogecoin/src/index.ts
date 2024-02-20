@@ -3,7 +3,6 @@
 
  */
 
-
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -11,10 +10,11 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-//@ts-ignore
-import { getPaths } from '@pioneer-platform/pioneer-coins';
-import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
+import { WalletOption, availableChainsByWallet, Chain } from "@coinmasters/types";
 import { AssetValue } from '@coinmasters/core';
+// console.log(process.env['BLOCKCHAIR_API_KEY'])
+// if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
+// if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -22,16 +22,21 @@ let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
-let BLOCKCHAIN = ChainToNetworkId['BCH']
-let ASSET = 'BCH'
-let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
+let BLOCKCHAIN = ChainToNetworkId['DOGE']
+console.log("BLOCKCHAIN: ",BLOCKCHAIN)
+let ASSET = 'DOGE'
+let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "2"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "1"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_BCH_ADDRESS = process.env['FAUCET_BCH_ADDRESS']
-if(!FAUCET_BCH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_BCH_ADDRESS
+let FAUCET_DOGE_ADDRESS = process.env['FAUCET_DOGE_ADDRESS']
+if(!FAUCET_DOGE_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_DOGE_ADDRESS
 
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -57,12 +62,17 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
+        //add custom path
+        let pathsAdd:any = [
+        ]
+
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
+            paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -80,7 +90,7 @@ const test_service = async function (this: any) {
         };
 
         //console.log(tag,' CHECKPOINT 2');
-        console.log(tag,' config: ',config);
+        //console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
@@ -96,7 +106,7 @@ const test_service = async function (this: any) {
         walletsVerbose.push(walletKeepKey);
 
         let resultInit = await app.init(walletsVerbose, {})
-        log.info(tag,"resultInit: ",resultInit)
+        // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
         let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
@@ -117,17 +127,16 @@ const test_service = async function (this: any) {
         log.info("optimized: ", optimized.length);
         app.setPaths(optimized)
 
+        // //connect
+        // assert(blockchains)
+        // assert(blockchains[0])
+        log.info(tag,"blockchains: ",blockchains)
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
         }
         resultInit = await app.pairWallet(pairObject)
-
         log.info(tag,"resultInit: ",resultInit)
-        assert(app.keepkeyApiKey)
-        if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){
-            log.alert("SET THIS IN YOUR ENV AS KEEPKEY_API_KEY: ",app.keepkeyApiKey)
-        }
 
         //check pairing
         // //context should match first account
@@ -135,64 +144,44 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        // //get asset paths
-        // let paths = app.paths
-        // assert(paths)
-        // assert(paths[0])
-        // let assetPath = paths.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"assetPath: ",assetPath)
-        // assert(assetPath)
-
-        //
-        await app.getPubkeys()
-        // log.info(tag,"pubkeys: ",app.pubkeys)
-        // assert(app.pubkeys)
-        // assert(app.pubkeys[0])
-        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"pubkey: ",pubkey)
-        // log.info(tag,"pubkey: ",pubkey.length)
-        // assert(pubkey.length > 0)
-        //verify pubkeys
-
-
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
-        //verify balances
-
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
 
+        // let fromAddress = await app.swapKit.getAddress(Chain.Dogecoin)
+        // log.info("fromAddress: ",fromAddress)
+
+        //get pubkeys
+        log.info("BLOCKCHAIN: ",BLOCKCHAIN)
         let pubkeys = await app.getPubkeys([BLOCKCHAIN])
         // let pubkeys = await app.getPubkeys()
         log.info("pubkeys: ",pubkeys)
 
         //send
         let estimatePayload:any = {
+            // feeRate: 10,
             pubkeys,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }
-        log.info("app.swapKit: ",app.swapKit)
-        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.BitcoinCash, params:estimatePayload})
+        log.info("estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Dogecoin, params:estimatePayload})
         log.info("maxSpendable: ",maxSpendable)
 
         //send
         let sendPayload = {
+            // feeRate: 10,
             // assetValue,
             assetValue:maxSpendable,
             isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }
+        // sendPayload.assetValue = maxSpendable
         log.info("sendPayload: ",sendPayload)
         const txHash = await app.swapKit.transfer(sendPayload);
         log.info("txHash: ",txHash)

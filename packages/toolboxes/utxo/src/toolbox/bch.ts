@@ -15,7 +15,8 @@ import {
 } from 'bchaddrjs';
 import { Psbt } from 'bitcoinjs-lib';
 import { ECPairFactory } from 'ecpair';
-
+import * as coinSelect from 'coinselect';
+import * as split from 'coinselect/split';
 import type { BlockchairApiType } from '../api/blockchairApi.ts';
 import { blockchairApi } from '../api/blockchairApi.ts';
 import { broadcastUTXOTx } from '../api/rpcApi.ts';
@@ -158,6 +159,7 @@ const buildTx = async ({
   recipient,
   pubkeys,
   memo,
+  isMax,
   feeRate,
   sender,
   apiClient,
@@ -233,7 +235,7 @@ const buildTx = async ({
   const feeRateWhole = Number(feeRate.toFixed(0));
   const compiledMemo = memo ? compileMemo(memo) : null;
 
-  const targetOutputs = [] as TargetOutput[];
+  let targetOutputs = [] as any;
 
   // output to recipient
   targetOutputs.push({
@@ -246,12 +248,33 @@ const buildTx = async ({
     targetOutputs.push({ script: compiledMemo, value: 0 });
   }
 
-  const { inputs, outputs } = accumulative({
-    inputs: utxos,
-    outputs: targetOutputs,
-    feeRate: feeRateWhole,
-    chain,
-  });
+  let inputs: any[], outputs: any[];
+  if (isMax) {
+    console.log('isMax: detected!');
+    console.log('targetOutputs: ', targetOutputs);
+    targetOutputs = targetOutputs
+      // .filter((output) => output.address !== undefined)
+      .map((output) => {
+        const newOutput = { ...output };
+        delete newOutput.value;
+        return newOutput;
+      });
+    console.log('targetOutputs: ', targetOutputs);
+    ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
+  } else {
+    console.log('isMax: not detected!');
+    //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
+    //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
+
+    ({ inputs, outputs } = coinSelect.default(utxos, targetOutputs, feeRate));
+  }
+
+  // const { inputs, outputs } = accumulative({
+  //   inputs: utxos,
+  //   outputs: targetOutputs,
+  //   feeRate: feeRateWhole,
+  //   chain,
+  // });
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction');
