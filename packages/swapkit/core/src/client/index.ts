@@ -765,7 +765,8 @@ export class SwapKitCore<T = ''> {
     params,
   }: {
     chain: Chain;
-    params: { from: string; recipient: string; assetValue: AssetValue };
+    params: any;
+    // params: { from: string; recipient: string; assetValue: AssetValue };
   }) => {
     const walletMethods = this.getWallet<typeof chain>(chain);
 

@@ -12,8 +12,8 @@ import type {
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
 
 const baseUrl = (chain: Chain) => `https://api.blockchair.com/${mapChainToBlockchairChain(chain)}`;
-const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
-// const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
+// const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
+const baseUrlPioneer = () => `http://127.0.0.1:9001/api/v1`;
 
 const getDefaultTxFeeByChain = (chain: Chain) => {
   switch (chain) {
@@ -21,6 +21,8 @@ const getDefaultTxFeeByChain = (chain: Chain) => {
       return 5;
     case Chain.Dogecoin:
       return 10000;
+    case Chain.Dash:
+      return 1;
     case Chain.Litecoin:
       return 1;
     default:
@@ -58,6 +60,7 @@ const getSuggestedTxFee = async (chain: Chain) => {
       numBlocks: number;
       feeByBlockTarget: { 1: number; 3: number };
     }>(`https://app.bitgo.com/api/v2/${chain.toLowerCase()}/tx/fee`);
+    console.log("BITGO: feePerKb: ", feePerKb);
     const suggestedFee = feePerKb / 1000;
     return Math.max(suggestedFee, getDefaultTxFeeByChain(chain));
   } catch (error) {
@@ -115,9 +118,9 @@ const getUnconfirmedBalance = async ({
 };
 
 const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: string }>) => {
-  if (!pubkey) throw new Error('pubkey is required');
   try {
-    //console.log('pubkey: ', pubkey);
+    if (!pubkey) throw new Error('pubkey is required');
+    console.log('pubkey: ', pubkey);
     const url = `/utxo/getBalance/${chain}/${pubkey}`;
     //console.log('getXpubData URL: ', url);
     //const response = await blockchairRequest<any>(`${baseUrlPioneer()}${url}`);
@@ -141,10 +144,8 @@ const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: strin
 };
 
 const listUnspent = async ({ pubkey, chain }: any) => {
-  if (!pubkey) throw new Error('pubkey is required');
-
   try {
-    //console.log('pubkey: ', pubkey);
+    console.log('listUnspent pubkey: ', pubkey);
 
     const url = `/listUnspent/${chain}/${pubkey}`;
     //console.log('getXpubData URL: ', url);
@@ -153,13 +154,7 @@ const listUnspent = async ({ pubkey, chain }: any) => {
     //console.log('getXpubData: response: ', response);
     return response;
   } catch (error) {
-    return {
-      utxo: [],
-      address: {
-        balance: 0,
-        transaction_count: 0,
-      },
-    };
+    return [];
   }
 };
 

@@ -148,7 +148,7 @@ export class SDK {
   // @ts-ignore
   public loadBalanceCache: (balances: any) => Promise<void>;
   public loadPubkeyCache: (pubkeys: any) => Promise<void>;
-  public getPubkeys: () => Promise<boolean>;
+  public getPubkeys: (networkIds?: string[]) => Promise<any[]>;
   public getBalances: () => Promise<boolean>;
   public blockchains: any[];
   public clearWalletState: () => Promise<boolean>;
@@ -747,41 +747,45 @@ export class SDK {
         throw e;
       }
     };
-    this.getPubkeys = async function () {
+    this.getPubkeys = async function (networkIds?: string[]) {
       const tag = `${TAG} | getPubkeys | `;
       try {
         if (this.paths.length === 0) throw Error('No paths found!');
-        if (!this.swapKit) throw Error('this.swapKit not initialized!');
-        //log.debug(tag, 'this.blockchains: ', this.blockchains);
-        //log.debug(tag, 'this.paths: ', this.paths);
-        let pubkeysNew: any = [];
-        for (let i = 0; i < this.paths.length; i++) {
-          let path = this.paths[i];
-          let pubkey: any = {};
+        if (!this.swapKit) throw Error('SwapKit not initialized!');
+
+        // If no specific networkIds are requested, use all available in paths
+        if (!networkIds || networkIds.length === 0) {
+          networkIds = this.paths.map((path) => path.network);
+        }
+
+        let pubkeysNew: any[] = [];
+
+        // Filter paths first by requested networkIds to minimize wallet accesses
+        let filteredPaths = this.paths.filter((path) => networkIds.includes(path.network));
+
+        for (let path of filteredPaths) {
           let chain: Chain = NetworkIdToChain[path.network];
-          //log.debug(tag, 'path: ', path);
+          let pubkey: any = {};
           pubkey.type = path.type;
-          //get all blockchains on path
-          let address = this.swapKit?.getAddress(chain);
-          if (!address) throw Error('Failed to get address!' + chain);
+          let address = await this.swapKit?.getAddress(chain);
+          if (!address) throw Error(`Failed to get address for ${chain}`);
+
           pubkey.master = address;
           if (path.type === 'address') {
             pubkey.address = address;
             pubkey.pubkey = address;
           } else if (path.type === 'xpub' || path.type === 'zpub') {
             let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-            if (!pubkeys) throw Error('Failed to get pubkeys!' + chain);
-            //get pubkey for path
+            if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
             let pubkeyForPath = pubkeys.find(
               (p: any) => p.addressNList.toString() === path.addressNList.toString(),
             );
-            if (!pubkeyForPath) throw Error('Failed to get pubkey for path!' + chain);
+            if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
             pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
           }
-          //save pubkey
-          (pubkey.context = this.context), // TODO this is not right?
-            (pubkey.networks = [path.network]);
-          //if ETH then add ALL EIP:155 networks
+
+          pubkey.context = this.context;
+          pubkey.networks = [path.network];
           if (path.network === 'eip155:1') {
             pubkey.networks = [
               path.network,
@@ -791,19 +795,17 @@ export class SDK {
             ];
           }
 
-          //force networks to be unique
+          // Ensure networks are unique
           pubkey.networks = Array.from(new Set(pubkey.networks));
-
-          //log.debug(tag, 'pubkey: ', pubkey);
           pubkeysNew.push(pubkey);
         }
-        //log.debug('pubkeysNew: ', pubkeysNew);
+
+        // Cache and return the processed pubkeys
         this.pubkeys = pubkeysNew;
-        //load pubkeys into cache
         this.events.emit('SET_PUBKEYS', pubkeysNew);
-        return true;
+        return pubkeysNew;
       } catch (e) {
-        console.error(tag, 'e: ', e);
+        console.error(tag, 'Error: ', e);
         throw e;
       }
     };

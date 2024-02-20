@@ -53,6 +53,12 @@ export type ChainWallet = {
 
 export type Wallet = Record<Chain, ChainWallet | null>;
 
+export type MayachainWallet = BaseWalletMethods &
+  ThorchainToolboxType & {
+    transfer: (params: CoreTxParams) => Promise<string>;
+    deposit: (params: DepositParam) => Promise<string>;
+  };
+
 export type ThorchainWallet = BaseWalletMethods &
   ThorchainToolboxType & {
     transfer: (params: CoreTxParams) => Promise<string>;
@@ -91,7 +97,7 @@ export type WalletMethods = {
   [Chain.Ethereum]: EVMWallet<typeof ETHToolbox> | null;
   [Chain.Kujira]: CosmosBasedWallet<typeof KujiraToolbox> | null;
   [Chain.Litecoin]: UTXOWallet<typeof LTCToolbox> | null;
-  [Chain.Maya]: ThorchainWallet | null;
+  [Chain.Mayachain]: MayachainWallet | null;
   [Chain.Optimism]: EVMWallet<typeof OPToolbox> | null;
   [Chain.Polygon]: EVMWallet<typeof MATICToolbox> | null;
   [Chain.THORChain]: ThorchainWallet | null;
