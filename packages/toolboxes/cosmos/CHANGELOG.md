@@ -1,5 +1,14 @@
 # @coinmasters/toolbox-cosmos
 
+## 9.0.1
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/helpers@9.0.1
+
 ## 9.0.0
 
 ### Minor Changes

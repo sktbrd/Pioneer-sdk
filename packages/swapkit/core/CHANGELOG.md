@@ -1,5 +1,18 @@
 # @coinmasters/core
 
+## 9.0.1
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.1
+  - @coinmasters/helpers@9.0.1
+  - @coinmasters/tokens@3.5.1
+  - @coinmasters/toolbox-utxo@9.0.1
+  - @coinmasters/toolbox-evm@9.0.1
+
 ## 9.0.0
 
 ### Minor Changes
