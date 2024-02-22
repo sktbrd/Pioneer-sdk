@@ -12,9 +12,7 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | e2e-test | "
 import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -29,8 +27,8 @@ let BLOCKCHAIN_IN = ChainToNetworkId['THOR']
 let BLOCKCHAIN_OUT = ChainToNetworkId['MAYA']
 let ASSET = 'RUNE'
 let MIN_BALANCE = process.env['MIN_BALANCE_THOR'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "12"
-let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "1"
+let spec = process.env['PIONEER_URL_SPEC'] || 'http://127.0.0.1:9001/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
 let OUTPUT_ASSET = "MAYA"
@@ -78,7 +76,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore

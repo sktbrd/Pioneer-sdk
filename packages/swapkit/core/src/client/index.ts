@@ -794,6 +794,7 @@ export class SwapKitCore<T = ''> {
         return (walletMethods as UTXOToolbox).estimateMaxSendableAmount(params);
 
       case Chain.Binance:
+      case Chain.Mayachain:
       case Chain.THORChain:
       case Chain.Cosmos: {
         const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');

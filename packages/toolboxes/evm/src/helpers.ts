@@ -12,6 +12,7 @@ import type { BrowserProvider, Eip1193Provider, JsonRpcProvider } from 'ethers';
 
 import type { CovalentApiType, EthplorerApiType, EVMMaxSendableAmountsParams } from './index.ts';
 import { AVAXToolbox, BSCToolbox, ETHToolbox } from './index.ts';
+const TAG = ' | EVM -helpers | ';
 
 type NetworkParams = {
   chainId: ChainId;
@@ -159,7 +160,7 @@ export const getWeb3WalletMethods = async ({
   });
 };
 
-export const estimateMaxSendableAmount = async ({
+export const estimateMaxSendableAmount = async function ({
   toolbox,
   from,
   memo = '',
@@ -170,58 +171,136 @@ export const estimateMaxSendableAmount = async ({
   funcParams,
   contractAddress,
   txOverrides,
-}: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
-  const balance = (await toolbox.getBalance(from)).find(({ symbol, chain }) =>
-    assetValue
-      ? symbol === assetValue.symbol
-      : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
-  );
+}: EVMMaxSendableAmountsParams) {
+  let tag = TAG + ' | estimateMaxSendableAmount | ';
+  try {
+    console.log(tag, 'checkpoint ');
+    const balance = (await toolbox.getBalance([{address:from}])).find(({ symbol, chain }) =>
+      assetValue
+        ? symbol === assetValue.symbol
+        : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
+    );
+    console.log(tag, 'balance: ', balance);
 
-  const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
+    const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
+    console.log(tag, 'fees: ', fees);
 
-  if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
+    if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
 
-  if (assetValue && (balance.chain !== assetValue.chain || balance.symbol !== assetValue?.symbol)) {
-    return balance;
+    if (
+      assetValue &&
+      (balance.chain !== assetValue.chain || balance.symbol !== assetValue?.symbol)
+    ) {
+      return balance;
+    }
+
+    if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
+      throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
+    }
+
+    const gasLimit =
+      abi && funcName && funcParams && contractAddress
+        ? await toolbox.estimateCall({
+            contractAddress,
+            abi,
+            funcName,
+            funcParams,
+            txOverrides,
+          })
+        : await toolbox.estimateGasLimit({
+            from,
+            recipient: from,
+            memo,
+            assetValue,
+          });
+    console.log(tag, 'gasLimit: ', gasLimit);
+
+    const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
+    const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
+
+    if (!isFeeEVMLegacyCompatible && !isFeeEIP1559Compatible)
+      throw new Error('Could not fetch fee data');
+
+    const fee =
+      gasLimit *
+      (isFeeEIP1559Compatible
+        ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
+        : fees.gasPrice!);
+    const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint')).sub(
+      fee.toString(),
+    );
+    console.log(tag, 'fee: ', fee);
+
+    return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
+  } catch (e) {
+    console.error(tag,"e: ",e);
+    throw e;
   }
-
-  if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
-    throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
-  }
-
-  const gasLimit =
-    abi && funcName && funcParams && contractAddress
-      ? await toolbox.estimateCall({
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        })
-      : await toolbox.estimateGasLimit({
-          from,
-          recipient: from,
-          memo,
-          assetValue,
-        });
-
-  const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
-  const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
-
-  if (!isFeeEVMLegacyCompatible && !isFeeEIP1559Compatible)
-    throw new Error('Could not fetch fee data');
-
-  const fee =
-    gasLimit *
-    (isFeeEIP1559Compatible
-      ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
-      : fees.gasPrice!);
-  const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint')).sub(
-    fee.toString(),
-  );
-
-  return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
 };
+
+// export const estimateMaxSendableAmount = async ({
+//   toolbox,
+//   from,
+//   memo = '',
+//   feeOptionKey = FeeOption.Fastest,
+//   assetValue,
+//   abi,
+//   funcName,
+//   funcParams,
+//   contractAddress,
+//   txOverrides,
+// }: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
+//   const balance = (await toolbox.getBalance(from)).find(({ symbol, chain }) =>
+//     assetValue
+//       ? symbol === assetValue.symbol
+//       : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
+//   );
+//
+//   const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
+//
+//   if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
+//
+//   if (assetValue && (balance.chain !== assetValue.chain || balance.symbol !== assetValue?.symbol)) {
+//     return balance;
+//   }
+//
+//   if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
+//     throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
+//   }
+//
+//   const gasLimit =
+//     abi && funcName && funcParams && contractAddress
+//       ? await toolbox.estimateCall({
+//           contractAddress,
+//           abi,
+//           funcName,
+//           funcParams,
+//           txOverrides,
+//         })
+//       : await toolbox.estimateGasLimit({
+//           from,
+//           recipient: from,
+//           memo,
+//           assetValue,
+//         });
+//
+//   const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
+//   const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
+//
+//   if (!isFeeEVMLegacyCompatible && !isFeeEIP1559Compatible)
+//     throw new Error('Could not fetch fee data');
+//
+//   const fee =
+//     gasLimit *
+//     (isFeeEIP1559Compatible
+//       ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
+//       : fees.gasPrice!);
+//   const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint')).sub(
+//     fee.toString(),
+//   );
+//
+//   return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
+// };
 
 export const addAccountsChangedCallback = (callback: () => void) => {
   window.ethereum?.on('accountsChanged', () => callback());
@@ -302,9 +381,9 @@ export const getBalance = async ({
       // formatedBalance.address = address[0].address;
       balances.push(formatedBalance);
     } else {
-      console.log("chain: ",chain)
-      console.log("tokenBalance.chain: ",tokenBalance.chain)
-      console.error("invalid balance: ", tokenBalance);
+      console.log('chain: ', chain);
+      console.log('tokenBalance.chain: ', tokenBalance.chain);
+      console.error('invalid balance: ', tokenBalance);
     }
   }
   // return filteredBalances;

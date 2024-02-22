@@ -1,4 +1,6 @@
-import { AssetValue, RequestClient } from '@coinmasters/helpers';
+import { AssetValue, RequestClient, SwapKitNumber } from '@coinmasters/helpers';
+import { BaseDecimal, FeeOption } from '@coinmasters/types';
+
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 const PIONEER_API_URI = 'https://pioneers.dev';
 // const PIONEER_API_URI = 'http://localhost:9001';
@@ -77,12 +79,36 @@ const sendRawTransaction = async (tx, sync = true) => {
   }
 };
 
+const getFees = async function () {
+  let tag = TAG + ' | getFees | ';
+  try {
+    let fee: SwapKitNumber;
+    let isThorchain = false;
+    console.log(tag, 'checkpoint');
+    fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal['MAYA'] });
+
+    return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
+// const getFees = async () => {
+//   let fee: SwapKitNumber;
+//   let isThorchain = false;
+//
+//   fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal['MAYA'] });
+//
+//   return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
+// };
+
 export const MayachainToolbox = (): any => {
   return {
     // transfer: (params: TransferParams) => transfer(params),
     getAccount,
     getBalance,
-    // getFees,
+    getFees,
     sendRawTransaction,
   };
 };

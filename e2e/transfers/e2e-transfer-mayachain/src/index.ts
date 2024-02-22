@@ -12,9 +12,6 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -27,7 +24,7 @@ console.log("BLOCKCHAIN: ",BLOCKCHAIN)
 let ASSET = 'CACAO'
 let MIN_BALANCE = process.env['MIN_BALANCE_MAYA'] || "0.004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
-let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
+let spec = process.env['PIONEER_URL_SPEC'] || 'http://127.0.0.1:9001/spec/swagger.json'
 //http://127.0.0.1:9001/spec/swagger.json
 
 let wss = process.env['VITE_URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
@@ -84,7 +81,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -116,18 +113,7 @@ const test_service = async function (this: any) {
         //get paths for wallet
         let paths = getPaths(blockchains)
         log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
+        app.setPaths(paths)
 
         // //connect
         // assert(blockchains)
@@ -173,16 +159,20 @@ const test_service = async function (this: any) {
         //verify balances
 
         // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Mayachain,
-          TEST_AMOUNT,
-        );
-        log.info("assetValue: ",assetValue)
+        // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Mayachain,
+        //   TEST_AMOUNT,
+        // );
+        // log.info("assetValue: ",assetValue)
+        let assetString = 'MAYA.MAYA'
+        await AssetValue.loadStaticAssets();
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+
         //send
         let sendPayload = {
             assetValue,

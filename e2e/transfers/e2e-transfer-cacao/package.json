@@ -1,5 +1,5 @@
 {
-  "name": "@coinmasters/e2e-transfer-mayachain",
+  "name": "@coinmasters/e2e-transfer-cacao",
   "version": "1.5.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -24,7 +24,7 @@
     "@coinmasters/wallet-keystore": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "latest",
-    "@pioneer-platform/pioneer-coins": "^9.2.13",
+    "@pioneer-platform/pioneer-coins": "latest",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

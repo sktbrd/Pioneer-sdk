@@ -3,8 +3,6 @@
 
  */
 
-import { AssetValue } from '@coinmasters/helpers';
-
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -13,8 +11,7 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
-//@ts-ignore
-import { getPaths } from '@pioneer-platform/pioneer-coins';
+import { AssetValue } from '@coinmasters/core';
 // console.log(process.env['BLOCKCHAIR_API_KEY'])
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
@@ -25,16 +22,23 @@ let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
-let BLOCKCHAIN = ChainToNetworkId['ETH']
-let ASSET = 'FOX'
-let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
-let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
-let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
+let BLOCKCHAIN = ChainToNetworkId['MAYA']
+console.log("BLOCKCHAIN: ",BLOCKCHAIN)
+let ASSET = 'CACAO'
+let MIN_BALANCE = process.env['MIN_BALANCE_MAYA'] || "0.004"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
+let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
+//http://127.0.0.1:9001/spec/swagger.json
 
-let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
-if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
+let wss = process.env['VITE_URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
+let FAUCET_MAYA_ADDRESS = process.env['FAUCET_MAYA_ADDRESS']
+if(!FAUCET_MAYA_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_MAYA_ADDRESS
+
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -46,7 +50,7 @@ let IS_SIGNED: boolean
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
-        console.log(tag,' CHECKPOINT 1');
+        //(tag,' CHECKPOINT 1');
         console.time('start2paired');
         console.time('start2build');
         console.time('start2broadcast');
@@ -61,8 +65,8 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        // let paths:any = [
-        // ]
+        let pathsAdd:any = [
+        ]
 
         let config:any = {
             username,
@@ -70,7 +74,7 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            // paths,
+            paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -87,8 +91,8 @@ const test_service = async function (this: any) {
               process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
         };
 
-        // console.log(tag,' CHECKPOINT 2');
-        // console.log(tag,' config: ',config);
+        //console.log(tag,' CHECKPOINT 2');
+        //console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
@@ -107,9 +111,24 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN]
+        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+
+        //get paths for wallet
         let paths = getPaths(blockchains)
-        app.setPaths(paths)
+        log.info("paths: ",paths.length)
+        // @ts-ignore
+        //HACK only use 1 path per chain
+        //TODO get user input (performance or find all funds)
+        let optimized:any = [];
+        blockchains.forEach((network: any) => {
+            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+            if (pathForNetwork) {
+                optimized.push(pathForNetwork);
+            }
+        });
+        log.info("optimized: ", optimized.length);
+        app.setPaths(optimized)
+
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
@@ -127,65 +146,64 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //
-        await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
+        //get paths
+        // let paths = app.paths
+        // assert(paths)
+        // assert(paths[0])
+        // let AssetPath = paths.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"AssetPath: ",AssetPath)
+        // assert(AssetPath)
 
+        await app.getPubkeys()
+        // log.info(tag,"pubkeys: ",app.pubkeys)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
+        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"pubkey: ",pubkey)
+        // assert(pubkey.length > 0)
         //verify pubkeys
+
+
         await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
+        //log.info(tag,"balances: ",app.balances)
+        //filter by caip
+        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        log.info(tag,"balance: ",balance)
+        assert(balance.length > 0)
         //verify balances
 
-        // log.info(tag,"pubkeys: ",app.pubkeys)
-        // log.info(tag,"balances: ",app.balances)
-        // log.info(tag,"nfts: ",app.nfts)
-        // log.debug(tag,"wallets: ",app.wallets)
-        // log.info(tag,"pubkeys: ",app.pubkeys.length)
-        // // log.info(tag,"balances: ",app.balances.length)
-        // log.info(tag,"nfts: ",app.nfts.length)
-        // log.info(tag,"context: ",app.context)
-        // log.info(tag,"assetContext: ",app.assetContext)
-        // log.info(tag,"blo: ",app.assetContext)
-        // log.info(tag,"assetContext: ",app.assetContext)
-
-        //balances
-        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        // log.info("balance: ",balance)
-        // log.info("balance: ",balance[0].balance)
-        // assert(balance)
-        // assert(balance[0])
-        // assert(balance[0].balance)
-
-
-        // let fromAddress = await app.swapKit.getAddress(Chain.Ethereum)
-        // assert(fromAddress)
-        // log.info("fromAddress: ",fromAddress)
-        // //send
-        // let estimatePayload:any = {
-        //     from:fromAddress,
-        //     // assetValue,
-        //     // feeRate: 10,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("estimatePayload: ",estimatePayload)
-        // //verify amount is < max spendable
-        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Ethereum, params:estimatePayload})
-        // log.info("maxSpendable: ",maxSpendable)
-        // assert(maxSpendable)
-
+        // create assetValue
+        const assetString = `${ASSET}.${ASSET}`;
+        console.log('assetString: ', assetString);
+        // await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
         log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Ethereum,
+          Chain.Mayachain,
           TEST_AMOUNT,
         );
         log.info("assetValue: ",assetValue)
 
+        let fromAddress = await app.swapKit.getAddress(Chain.Mayachain)
+        assert(fromAddress)
+        log.info("fromAddress: ",fromAddress)
+        //send
+        let estimatePayload:any = {
+            from:fromAddress,
+            // assetValue,
+            // feeRate: 10,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Mayachain, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+
         //send
         let sendPayload = {
-            assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }
@@ -194,7 +212,7 @@ const test_service = async function (this: any) {
         log.info("txHash: ",txHash)
         assert(txHash)
 
-
+        console.log("************************* TEST PASS *************************")
     } catch (e) {
         log.error(e)
         //process

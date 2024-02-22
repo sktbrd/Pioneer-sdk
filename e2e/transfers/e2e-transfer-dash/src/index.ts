@@ -63,8 +63,8 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        // let pathsAdd:any = [
+        // ]
 
         let config:any = {
             username,
@@ -72,7 +72,6 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -174,7 +173,6 @@ const test_service = async function (this: any) {
 
         //send
         let sendPayload = {
-            feeRate: 10,
             // assetValue,
             assetValue:maxSpendable,
             isMax: true,
