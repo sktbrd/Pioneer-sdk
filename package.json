@@ -63,7 +63,7 @@
     "build:pioneer": "turbo run build-pioneer --concurrency=40",
     "preview:pioneer": "turbo run preview-pioneer --concurrency=40",
     "clean": "turbo run clean",
-    "dev:pioneer": "turbo run dev --concurrency=30 --filter=\"{./apps/pioneer}...\"",
+    "dev:pioneer": "cd ./apps/pioneer; pnpm dev; cd ../..",
     "dev:playground": "turbo run dev --concurrency=30 --filter=\"{./internal/playground}...\"",
     "dev:playground:node": "turbo run dev:node --concurrency=30 --filter=\"{./internal/node-playground}...\"",
     "dev:playground:bun": "turbo run dev:bun --concurrency=30 --filter=\"{./internal/node-playground}...\"",
