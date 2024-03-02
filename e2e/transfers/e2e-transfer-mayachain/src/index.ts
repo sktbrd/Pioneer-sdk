@@ -141,7 +141,7 @@ const test_service = async function (this: any) {
         // assert(AssetPath)
 
         await app.getPubkeys()
-        // log.info(tag,"pubkeys: ",app.pubkeys)
+        log.info(tag,"pubkeys: ",app.pubkeys)
         // assert(app.pubkeys)
         // assert(app.pubkeys[0])
         // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
@@ -151,9 +151,9 @@ const test_service = async function (this: any) {
 
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
+        log.info(tag,"balances: ",app.balances)
         //filter by caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        let balance = app.balances.filter((e:any) => e.networkId === BLOCKCHAIN)
         log.info(tag,"balance: ",balance)
         assert(balance.length > 0)
         //verify balances

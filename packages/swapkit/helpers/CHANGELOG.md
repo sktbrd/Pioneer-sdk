@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 9.0.4
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.5.4
+
 ## 9.0.3
 
 ### Patch Changes

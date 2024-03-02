@@ -1,5 +1,14 @@
 # @coinmasters/wallet-evm-extensions
 
+## 9.0.4
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-evm@9.0.4
+
 ## 9.0.3
 
 ### Patch Changes

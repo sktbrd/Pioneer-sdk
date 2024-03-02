@@ -16,26 +16,27 @@ const getAccount = (address: string): Promise<any> => {
   return RequestClient.get<any>(url);
 };
 
-const getBalance = async (address: any[]) => {
-  //console.log(address)
+const getBalance = async (address: any) => {
   try {
-    console.log('address: ', address[0].address);
-    console.log(
-      'URL: ',
-      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/mayachain/${address[0].address}`,
-    );
-    const balancesNative: any = await RequestClient.get(
-      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/mayachain/${address[0].address}`,
-    );
-    console.log('balancesNative: ', balancesNative);
+    console.log('Fetching balances for address:', address[0].address);
+    const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address[0].address}`;
+    console.log('URL:', balancesEndpoint);
+
+    // Fetch the balances for maya and cacao
+    const balances: any = await RequestClient.get(balancesEndpoint);
+    console.log('Balances:', balances);
 
     await AssetValue.loadStaticAssets();
-    let identifier = 'MAYA.CACAO';
-    const assetValueNativeNative = AssetValue.fromStringSync(identifier, balancesNative);
-    console.log('assetValueNativeNative: ', assetValueNativeNative);
 
-    return [assetValueNativeNative];
+    // Process each balance using AssetValue
+    return balances.map((balance: any) => {
+      const identifier = `MAYA.${balance.denom.toUpperCase()}`;
+      const assetValue = AssetValue.fromStringSync(identifier, balance.amount.toString());
+      console.log(`Asset value for ${identifier}:`, assetValue);
+      return assetValue;
+    });
   } catch (e) {
+    console.error('Error fetching balances:', e);
     return [];
   }
 };

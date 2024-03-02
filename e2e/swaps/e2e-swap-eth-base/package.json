@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-swap-eth-base",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
