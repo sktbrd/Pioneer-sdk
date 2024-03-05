@@ -178,7 +178,8 @@ const test_service = async function (this: any) {
         // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         // console.log("assetValue: ",assetValue)
 
-        let assetString = 'MAYA.MAYA'
+        // let assetString = 'MAYA.MAYA'
+        let assetString = 'ZEC.ZEC'
         // let assetString = 'BASE.ETH'
         // let assetString = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630'
         // let assetString = 'ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7'

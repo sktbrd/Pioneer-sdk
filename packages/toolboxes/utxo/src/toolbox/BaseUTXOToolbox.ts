@@ -2,7 +2,7 @@ import { AssetValue, SwapKitNumber } from '@coinmasters/helpers';
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, FeeOption } from '@coinmasters/types';
 import { HDKey } from '@scure/bip32';
-import { address as btcLibAddress, payments, Psbt } from 'bitcoinjs-lib';
+import { payments, Psbt } from 'bitcoinjs-lib';
 import * as coinSelect from 'coinselect';
 import * as split from 'coinselect/split';
 import type { ECPairInterface } from 'ecpair';
@@ -54,8 +54,9 @@ const createKeysForPath = async ({
 
 const validateAddress = ({ address, chain }: { address: string } & UTXOBaseToolboxParams) => {
   try {
-    //console.log(chain + ' validateAddress: ', address);
-    btcLibAddress.toOutputScript(address, getNetwork(chain));
+    console.log(chain + ' validateAddress: ', address);
+    //@TODO validate addresses!
+    //btcLibAddress.toOutputScript(address, getNetwork(chain));
     return true;
   } catch (error) {
     return false;
@@ -292,9 +293,9 @@ const getInputsAndTargetOutputs = async ({
   // //console.log('inputsMaster Inputs: ', inputs);
 
   //TODO do this again
-  if (!validateAddress({ address: recipient, chain, apiClient })) {
-    throw new Error('getInputsAndTargetOutputs Invalid address');
-  }
+  // if (!validateAddress({ address: recipient, chain, apiClient })) {
+  //   throw new Error('getInputsAndTargetOutputs Invalid address');
+  // }
 
   //1. add output amount and recipient to targets
   //2. add output memo to targets (optional)
@@ -392,21 +393,24 @@ const buildTx = async ({
     };
 
     // Explicitly set Dogecoin transactions as non-SegWit.
-    let isSegwit = false
+    let isSegwit = false;
     if (chain === Chain.Bitcoin) isSegwit = true;
 
     if (isSegwit) {
       console.log('isSegwit: ', isSegwit);
       inputOptions.witnessUtxo = utxo.witnessUtxo;
     } else {
-      console.log('not segwit: ');
+      console.log('not segwit: ', utxo);
       // For Dogecoin and non-SegWit transactions of other chains, use nonWitnessUtxo if available.
       if (utxo.txHex) {
+        console.log('not txHex: ', utxo.txHex);
         inputOptions.nonWitnessUtxo = Buffer.from(utxo.txHex, 'hex');
       }
     }
-
+    console.log('buildTx Checkpoint 1.5:');
+    console.log('inputOptions: ',inputOptions);
     psbt.addInput(inputOptions);
+    console.log(' buildTx Checkpoint 2:');
   });
 
   // inputs.forEach((utxo: UTXOType) =>

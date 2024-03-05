@@ -878,7 +878,7 @@ export class SDK {
                     balanceString.symbol = balance.symbol;
                     balanceString.chain = balance.chain;
                     balanceString.ticker = balance.ticker;
-                    balanceString.address = balance.address;
+                    // balanceString.address = balance.address;
                     balanceString.type = balance.type;
                     if (balance.toFixed) {
                       balanceString.balance = balance.toFixed(balance.decimal).toString();

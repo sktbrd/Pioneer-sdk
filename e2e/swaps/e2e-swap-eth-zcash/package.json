@@ -1,5 +1,5 @@
 {
-  "name": "@coinmasters/e2e-transfer-osmosis",
+  "name": "@coinmasters/e2e-swap-eth-zcash",
   "version": "1.5.4",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -24,8 +24,8 @@
     "@coinmasters/wallet-keystore": "workspace:*",
     "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "latest",
-    "@pioneer-platform/pioneer-coins": "latest",
+    "@pioneer-platform/pioneer-caip": "^9.2.21",
+    "@pioneer-platform/pioneer-coins": "^9.2.15",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",
