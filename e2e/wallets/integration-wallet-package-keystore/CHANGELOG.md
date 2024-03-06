@@ -1,5 +1,15 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 0.3.5
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@11.0.5
+  - @coinmasters/core@9.0.5
+
 ## 0.3.4
 
 ### Patch Changes

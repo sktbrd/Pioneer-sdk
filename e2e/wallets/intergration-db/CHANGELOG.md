@@ -1,5 +1,14 @@
 # @coinmasters/integration-coins
 
+## 1.5.5
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/core@9.0.5
+
 ## 1.5.4
 
 ### Patch Changes

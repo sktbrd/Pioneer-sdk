@@ -2002,36 +2002,6 @@ importers:
         specifier: 0.34.6
         version: 0.34.6
 
-  packages/pioneer/pioneer-react:
-    devDependencies:
-      '@coinmasters/pioneer-sdk':
-        specifier: workspace:*
-        version: link:../pioneer-sdk
-      '@coinmasters/types':
-        specifier: workspace:*
-        version: link:../../swapkit/types
-      '@internal/config':
-        specifier: workspace:*
-        version: link:../../../internal/config
-      '@pioneer-platform/pioneer-coins':
-        specifier: latest
-        version: 9.2.15(@types/node@20.11.24)
-      '@types/fs-extra':
-        specifier: 11.0.4
-        version: 11.0.4
-      '@vitest/coverage-istanbul':
-        specifier: 0.34.6
-        version: 0.34.6(vitest@0.34.6)
-      fs-extra:
-        specifier: 11.1.1
-        version: 11.1.1
-      vite:
-        specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
-      vitest:
-        specifier: 0.34.6
-        version: 0.34.6
-
   packages/pioneer/pioneer-sdk:
     dependencies:
       '@coinmasters/api':
@@ -8136,6 +8106,7 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
+    dev: false
 
   /@pioneer-platform/loggerdog@8.3.1(@types/node@20.11.5):
     resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
@@ -8382,6 +8353,7 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
+    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -17836,6 +17808,7 @@ packages:
 
   /os@0.1.2:
     resolution: {integrity: sha512-ZoXJkvAnljwvc56MbvhtKVWmSkzV712k42Is2mA0+0KTSRakq5XXuXpjZjgAt9ctzl51ojhQWakQQpmOvXWfjQ==}
+    dev: false
 
   /osmojs@0.37.0:
     resolution: {integrity: sha512-Xc+JbdrA2hRXNMkP4Ib8pCSJUA50L/CuEjn75rZFYJcQwVs7MvbDG2qwSwDzwMbF3BRt+E9r5kLL1YnutgOLXA==}
@@ -20671,6 +20644,7 @@ packages:
       typescript: 5.2.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: false
 
   /ts-node@10.9.2(@types/node@20.11.5)(typescript@5.2.2):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
