@@ -5,7 +5,7 @@
 import { Center, Text, useBreakpointValue } from "@chakra-ui/react";
 
 // @ts-ignore
-import calculatingAnimation from "../../../../public/gif/calculating.gif";
+let calculatingAnimation = "/gif/calculating.gif";
 import Image from "next/image";
 
 function CalculatingComponent() {
@@ -32,7 +32,7 @@ function CalculatingComponent() {
         Calculating Best Route...
       </Text>
 
-      <Image alt="calculating" src={calculatingAnimation} width={imageSize as number | `${number}`} />
+      <Image alt="calculating" src={calculatingAnimation} />
     </Center>
   );
 }

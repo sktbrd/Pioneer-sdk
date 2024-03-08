@@ -352,11 +352,11 @@ const Pioneer = () => {
             ) : (
               <div>
                 {isPioneer ? (
-                  <Avatar size="lg" src='/public/png/pioneer.png'>
+                  <Avatar size="lg" src='/png/pioneer.png'>
                     {avatarContent}
                   </Avatar>
                 ) : (
-                  <Avatar size="lg" src='/public/png/pioneer.png'>
+                  <Avatar size="lg" src='/png/pioneer.png'>
                     {avatarContent}
                   </Avatar>
                 )}

@@ -6,10 +6,10 @@ import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
 
-let ChangellyImage = '../../../../public/png/changelly.png'
-let MayachainImage = '../../../../public/png/mayachain.png'
-let OsmosisImage = '../../../../public/png/osmosis.png'
-let ThorswapImage = '../../../../public/png/thorswap.png'
+let ChangellyImage = '/png/changelly.png'
+let MayachainImage = '/png/mayachain.png'
+let OsmosisImage = '/png/osmosis.png'
+let ThorswapImage = '/png/thorswap.png'
 
 const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);

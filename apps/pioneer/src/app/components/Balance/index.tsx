@@ -7,7 +7,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
 import { usePioneer } from '../../context';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 
 let TAG = " | Balance | ";
 
@@ -17,7 +17,7 @@ interface BalanceProps {
 }
 
 export default function Balance({ onClose, balance }: BalanceProps) {
-  const router = useRouter();
+  // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context } = state;
 
@@ -31,7 +31,7 @@ export default function Balance({ onClose, balance }: BalanceProps) {
     console.log("balance: ", balance);
     app.setAssetContext(balance);
     console.log("action")
-    router.push(`/intent/${action}`);
+    // router.push(`/intent/${action}`);
     onClose();
   };
 

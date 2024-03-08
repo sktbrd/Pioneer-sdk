@@ -126,7 +126,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
   const ServerSelectionUI = () => (
     <Stack spacing={4}>
       <Flex alignItems="center">
-        <Avatar size="xl" src='/public/png/pioneerMan.png' />
+        <Avatar size="xl" src='/png/pioneerMan.png' />
         <Text fontStyle="italic" ml={4} textAlign="right">
           Welcome to the world of Cryptocurrencies, to start your journey you can select your pioneer server,
           if you have a custom pioneer server you can insert it here. Default is

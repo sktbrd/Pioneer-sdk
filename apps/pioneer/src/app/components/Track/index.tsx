@@ -61,10 +61,8 @@ import React from 'react';
 // import Icon from 'react-crypto-icons';
 import { BeatLoader } from 'react-spinners';
 
-// @ts-ignore
-import completedGif from '../../../../public/gif/completed.gif'; // Import the GIF here
-// @ts-ignore
-import shiftingGif from '../../../../public/gif/shifting.gif';
+let completedGif = '/gif/completed.gif'; // Import the GIF here
+let shiftingGif = '/gif/shifting.gif';
 
 /// /////////////////////////////////////////////////////////////////////////////////////
 // Config
