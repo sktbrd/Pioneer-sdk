@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 //@ts-ignore
-import pioneerImage from '../../../../public/png/pioneerMan.png';
+// import pioneerImage from '../../../../public/png/pioneerMan.png';
 import { getWalletContent } from '../../components/WalletIcon';
 import { usePioneer } from '../../context';
 
@@ -126,7 +126,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
   const ServerSelectionUI = () => (
     <Stack spacing={4}>
       <Flex alignItems="center">
-        <Avatar size="xl" src={pioneerImage.src} />
+        <Avatar size="xl" src='/public/png/pioneerMan.png' />
         <Text fontStyle="italic" ml={4} textAlign="right">
           Welcome to the world of Cryptocurrencies, to start your journey you can select your pioneer server,
           if you have a custom pioneer server you can insert it here. Default is

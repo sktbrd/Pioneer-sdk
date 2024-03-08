@@ -46,7 +46,15 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
           signDoc: {
             account_number,
             chain_id: ChainId.Mayachain,
-            fee: { gas: '500000000', amount: [] },
+            fee: {
+              gas: '500000000',
+              amount: [
+                {
+                  amount: '0',
+                  denom: 'cacao',
+                },
+              ],
+            },
             msgs: [
               {
                 value: {
@@ -61,7 +69,7 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             sequence,
           },
           signerAddress: from,
-        }
+        };
         // console.log('payload: ', payload);
         console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer(payload);
@@ -107,7 +115,15 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             source: '0',
             account_number,
             chain_id: ChainId.Mayachain,
-            fee: { gas: '500000000', amount: [] },
+            fee: {
+              gas: '500000000',
+              amount: [
+                {
+                  amount: '0',
+                  denom: 'cacao',
+                },
+              ],
+            },
             msgs: [
               {
                 value: {

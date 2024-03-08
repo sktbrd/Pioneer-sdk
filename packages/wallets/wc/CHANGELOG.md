@@ -1,5 +1,35 @@
 # @coinmasters/wallet-wc
 
+## 9.0.8
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.8
+  - @coinmasters/toolbox-evm@9.0.8
+
+## 9.0.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.7
+  - @coinmasters/toolbox-evm@9.0.7
+
+## 9.0.6
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.6
+  - @coinmasters/toolbox-evm@9.0.6
+
 ## 9.0.5
 
 ### Patch Changes

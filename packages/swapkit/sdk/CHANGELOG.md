@@ -1,5 +1,68 @@
 # @coinmasters/sdk
 
+## 3.5.8
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@9.0.8
+  - @coinmasters/toolbox-cosmos@9.0.8
+  - @coinmasters/wallet-keystore@9.0.8
+  - @coinmasters/wallet-keepkey@11.0.8
+  - @coinmasters/toolbox-utxo@9.0.8
+  - @coinmasters/wallet-ledger@9.0.8
+  - @coinmasters/wallet-trezor@9.0.8
+  - @coinmasters/toolbox-evm@9.0.8
+  - @coinmasters/wallet-keplr@9.0.8
+  - @coinmasters/wallet-xdefi@9.0.8
+  - @coinmasters/core@9.0.8
+  - @coinmasters/wallet-okx@9.0.8
+  - @coinmasters/wallet-wc@9.0.8
+
+## 3.5.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@9.0.7
+  - @coinmasters/toolbox-cosmos@9.0.7
+  - @coinmasters/wallet-keystore@9.0.7
+  - @coinmasters/wallet-keepkey@11.0.7
+  - @coinmasters/toolbox-utxo@9.0.7
+  - @coinmasters/wallet-ledger@9.0.7
+  - @coinmasters/wallet-trezor@9.0.7
+  - @coinmasters/toolbox-evm@9.0.7
+  - @coinmasters/wallet-keplr@9.0.7
+  - @coinmasters/wallet-xdefi@9.0.7
+  - @coinmasters/core@9.0.7
+  - @coinmasters/wallet-okx@9.0.7
+  - @coinmasters/wallet-wc@9.0.7
+
+## 3.5.6
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@9.0.6
+  - @coinmasters/toolbox-cosmos@9.0.6
+  - @coinmasters/wallet-keystore@9.0.6
+  - @coinmasters/wallet-keepkey@11.0.6
+  - @coinmasters/toolbox-utxo@9.0.6
+  - @coinmasters/wallet-ledger@9.0.6
+  - @coinmasters/wallet-trezor@9.0.6
+  - @coinmasters/toolbox-evm@9.0.6
+  - @coinmasters/wallet-keplr@9.0.6
+  - @coinmasters/wallet-xdefi@9.0.6
+  - @coinmasters/core@9.0.6
+  - @coinmasters/wallet-okx@9.0.6
+  - @coinmasters/wallet-wc@9.0.6
+
 ## 3.5.5
 
 ### Patch Changes

@@ -21,10 +21,10 @@ import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useCallback } from 'react';
 
-import ChangellyImage from '../../../../public/png/changelly.png';
-import MayachainImage from '../../../../public/png/mayachain.png';
-import OsmosisImage from '../../../../public/png/osmosis.png';
-import ThorswapImage from '../../../../public/png/thorswap.png';
+let ChangellyImage = '../../../../public/png/changelly.png'
+let MayachainImage = '../../../../public/png/mayachain.png'
+let OsmosisImage = '../../../../public/png/osmosis.png'
+let ThorswapImage = '../../../../public/png/thorswap.png'
 
 const Quote = ({ quote, onAcceptSign }: any) => {
   // Use actual values and image paths as needed
@@ -33,10 +33,10 @@ const Quote = ({ quote, onAcceptSign }: any) => {
   const toast = useToast();
 
   const integrationImages: { [key: string]: string } = {
-    thorswap: ThorswapImage.src,
-    changelly: ChangellyImage.src,
-    mayachain: MayachainImage.src,
-    osmosis: OsmosisImage.src,
+    thorswap: ThorswapImage,
+    changelly: ChangellyImage,
+    mayachain: MayachainImage,
+    osmosis: OsmosisImage,
   };
 
   const getAssetAvatar = (asset: string) => {

@@ -10,7 +10,7 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | e2e-test | "
-import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
+import { WalletOption, availableChainsByWallet, FeeOption, Chain } from '@coinmasters/types';
 import { AssetValue } from '@coinmasters/core';
 
 const log = require("@pioneer-platform/loggerdog")()
@@ -24,7 +24,7 @@ import {
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 let BLOCKCHAIN_LEG_1 = ChainToNetworkId['THOR']
-let BLOCKCHAIN_LEG_2 = ChainToNetworkId['DASH']
+let BLOCKCHAIN_LEG_2 = ChainToNetworkId['DOGE']
 let ASSET = 'RUNE'
 let MIN_BALANCE = process.env['MIN_BALANCE_THOR'] || "0.01"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "1"
@@ -101,7 +101,7 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN_LEG_1, BLOCKCHAIN_LEG_2, ChainToNetworkId['ETH']]
         log.info(tag,"blockchains: ",blockchains)
 
         //get paths for wallet
@@ -148,16 +148,16 @@ const test_service = async function (this: any) {
         app.setAssetContext(balance[0])
         //verify balances
 
-        let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
-        log.info(tag,"balanceOut: ",balanceOut)
-        assert(balanceOut[0])
-        await app.setOutboundAssetContext(balanceOut[0]);
+        // let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
+        // log.info(tag,"balanceOut: ",balanceOut)
+        // assert(balanceOut[0])
+        // await app.setOutboundAssetContext(balanceOut[0]);
 
         //get outbound asset
-        let outboundAssetContext = await app.outboundAssetContext
-        log.info(tag,"outboundAssetContext: ",outboundAssetContext)
-        assert(outboundAssetContext)
-        if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
+        // let outboundAssetContext = await app.outboundAssetContext
+        // log.info(tag,"outboundAssetContext: ",outboundAssetContext)
+        // assert(outboundAssetContext)
+        // // if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
 
         assert(app.assetContext)
         assert(app.assetContext.address)
@@ -167,63 +167,36 @@ const test_service = async function (this: any) {
         const senderAddress = app.assetContext.address;
         assert(senderAddress)
 
-        const recipientAddress =
-          app.outboundAssetContext.address || app.swapKit.getAddress(app.outboundAssetContext.chain);
-        assert(recipientAddress)
-
-        let buyAsset;
-        if (app.outboundAssetContext.contract) {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}-${app.outboundAssetContext.contract}`;
-        } else {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}`;
-        }
-        assert(buyAsset)
 
 
-        //get receiver context
-        const entry = {
-            sellAsset: app.assetContext,
-            sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
-            buyAsset:app.outboundAssetContext,
-            senderAddress,
-            recipientAddress,
-            slippage: '3',
-        };
+        await AssetValue.loadStaticAssets();
 
-        //quote
-        log.info(tag,"entry: ",entry)
-        let result = await app.pioneer.Quote(entry);
-        result = result?.data;
-        log.info(tag,"result: ",result)
-
-        //
-        let selected
-        //user selects route
-        for(let i = 0; i < result?.length; i++){
-            let route = result[i]
-            console.log("route: ", route)
-            //detect if erroed
-            if(route.integration === 'mayachain'){
-                selected = route.quote
-                break;
-            }
-            //log amountOut
-
-            //log fee
-        }
-
-        const outputChain = app.outboundAssetContext?.chain;
-
-        const address = app?.swapKit.getAddress(outputChain);
+        const address = app?.swapKit.getAddress(Chain.Dogecoin);
         log.info("address: ", address);
+        assert(address)
+        let runeAssetValue = AssetValue.fromChainOrSignature(Chain.THORChain,parseFloat(TEST_AMOUNT))
 
 
-        log.info("selected: ", selected);
-        const { runeTx, assetTx } = await app?.swapKit.createLiquidity({
-            route:selected,
-            recipient: address,
-            feeOptionKey: FeeOption.Fast,
-        });
+        // create assetValue
+        const assetString = `DOGE.DOGE`;
+        console.log('assetString: ', assetString);
+
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        log.info("assetValue: ",assetValue)
+
+        let runeAddr = app?.swapKit.getAddress(Chain.THORChain)
+
+        let paramsLP = {
+            runeAssetValue,
+            assetValue,
+            runeAddr,
+            assetAddr:address,
+            isPendingSymmAsset:false,
+            mode:'sym',
+        }
+        log.info("paramsLP: ",paramsLP)
+        const { runeTx, assetTx } = await app?.swapKit.createLiquidity(paramsLP);
+        console.log("paramsLP: ",paramsLP)
         console.log("runeTx: ",runeTx)
         console.log("assetTx: ",assetTx)
 

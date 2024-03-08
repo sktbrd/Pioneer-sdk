@@ -1,13 +1,13 @@
 // Import React as these functions return JSX elements
 import { Avatar, AvatarBadge, Image } from '@chakra-ui/react';
 
-import KeepKeyImagePng from '../../../../public/png/keepkey.png';
-import KeplerImagePng from '../../../../public/png/keplr.png';
-import LedgerImagePng from '../../../../public/png/ledger.png';
-import MetaMaskImagePng from '../../../../public/png/metamask.png';
-import pioneerImagePng from '../../../../public/png/pioneer.png';
-import XDEFIImagePng from '../../../../public/png/XDEFI.png';
-import wcImagePng from '../../../../public/svg/wc.svg';
+let KeepKeyImagePng = '/png/keepkey.png';
+let KeplerImagePng = '/png/keplr.png';
+let LedgerImagePng = '/png/ledger.png';
+let MetaMaskImagePng = '/png/metamask.png';
+let pioneerImagePng = '/png/pioneer.png';
+let XDEFIImagePng = '/png/XDEFI.png';
+let wcImagePng = '/svg/wc.svg';
 
 const icons: any = {
   metamask: MetaMaskImagePng,

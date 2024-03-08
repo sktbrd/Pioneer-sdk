@@ -367,10 +367,10 @@ const test_service = async function (this: any) {
                 SEND MAYA
 
          */
-        let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
-        let pubkey = address
-        let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ pubkey }])
-        log.info(tag,"** balance: ",balanceNew)
+        // let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
+        // let pubkey = address
+        // let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ pubkey }])
+        // log.info(tag,"** balance: ",balanceNew)
         // if(balanceNew.length === 0) {
         //     log.error(tag,"No balance")
         //     return
@@ -401,40 +401,41 @@ const test_service = async function (this: any) {
                 SEND CACAO
 
          */
-        // let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
+        let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
         // let pubkey = address
-        // let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ pubkey }])
-        // log.info(tag,"** balance: ",balanceNew)
-        // if(balanceNew.length === 0) {
-        //     log.error(tag,"No balance")
-        //     return
-        // }
-        // //get assetValue for asset
-        // // let assetString = 'ETH.USDT'
-        // let assetString = 'MAYA.CACAO'
-        // // create assetValue
-        // // const assetString = `${ASSET}.${ASSET}`;
-        // console.log('assetString: ', assetString);
-        // let TEST_AMOUNT = "0.1"
-        // // await AssetValue.loadStaticAssets();
-        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        // let assetValue = await AssetValue.fromString(
-        //   assetString,
-        //   parseFloat(TEST_AMOUNT),
-        // );
-        // log.info("assetValue: ",assetValue)
-        //
-        // //send
-        // let sendPayload = {
-        //     assetValue,
-        //     memo: '',
-        //     recipient: process.env['FAUCET_MAYA_ADDRESS'] || 'maya1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfqkl5k',
-        // }
-        // log.info("sendPayload: ",sendPayload)
-        // const txHash = await  keepkey[Chain.Mayachain].walletMethods.transfer(sendPayload);
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
+        log.info(tag,"** address: ",address)
+        let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ address }])
+        log.info(tag,"** balance: ",balanceNew)
+        if(balanceNew.length === 0) {
+            log.error(tag,"No balance")
+            return
+        }
+        //get assetValue for asset
+        // let assetString = 'ETH.USDT'
+        let assetString = 'MAYA.CACAO'
+        // create assetValue
+        // const assetString = `${ASSET}.${ASSET}`;
+        console.log('assetString: ', assetString);
+        let TEST_AMOUNT = "0.1"
+        // await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        let assetValue = await AssetValue.fromString(
+          assetString,
+          parseFloat(TEST_AMOUNT),
+        );
+        log.info("assetValue: ",assetValue)
+
+        //send
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: process.env['FAUCET_MAYA_ADDRESS'] || 'maya1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfqkl5k',
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await  keepkey[Chain.Mayachain].walletMethods.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
 
         /*

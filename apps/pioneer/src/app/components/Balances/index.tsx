@@ -62,9 +62,7 @@ export default function Balances() {
   const filteredAssets = currentPage
     .filter((asset: any) => {
       return (
-        (showOwnedAssets ? asset.valueUsd !== null : true) &&
-        asset?.name?.toLowerCase().includes(search.toLowerCase()) &&
-        (asset.valueUsd ? parseFloat(asset.valueUsd) >= 1 : false)
+        asset?.name?.toLowerCase().includes(search.toLowerCase())
       );
     })
     .sort((a: any, b: any) => {

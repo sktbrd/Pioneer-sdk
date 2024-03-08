@@ -1,5 +1,35 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 0.3.8
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@11.0.8
+  - @coinmasters/core@9.0.8
+
+## 0.3.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@11.0.7
+  - @coinmasters/core@9.0.7
+
+## 0.3.6
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@11.0.6
+  - @coinmasters/core@9.0.6
+
 ## 0.3.5
 
 ### Patch Changes

@@ -18,6 +18,7 @@ const getAccount = (address: string): Promise<any> => {
 
 const getBalance = async (address: any) => {
   try {
+    console.log('Fetching balances for address:', address);
     console.log('Fetching balances for address:', address[0].address);
     const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address[0].address}`;
     console.log('URL:', balancesEndpoint);

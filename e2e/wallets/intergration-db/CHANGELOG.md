@@ -1,5 +1,32 @@
 # @coinmasters/integration-coins
 
+## 1.5.8
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/core@9.0.8
+
+## 1.5.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/core@9.0.7
+
+## 1.5.6
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/core@9.0.6
+
 ## 1.5.5
 
 ### Patch Changes

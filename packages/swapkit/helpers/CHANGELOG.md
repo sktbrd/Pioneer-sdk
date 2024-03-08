@@ -1,5 +1,32 @@
 # @swapkit/helpers
 
+## 9.0.8
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.5.8
+
+## 9.0.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.5.7
+
+## 9.0.6
+
+### Patch Changes
+
+- bump for maya
+
+- Updated dependencies []:
+  - @coinmasters/tokens@3.5.6
+
 ## 9.0.5
 
 ### Patch Changes

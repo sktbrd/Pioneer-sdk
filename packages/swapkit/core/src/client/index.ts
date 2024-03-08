@@ -311,7 +311,7 @@ export class SwapKitCore<T = ''> {
       tx.txParams.recipient = tx.txParams.recipientAddress;
 
       //result
-      tx.txParams.nonce = null
+      tx.txParams.nonce = null;
       console.log('tx.type: ', tx.type);
       console.log('tx.txParams: ', tx.txParams);
       let result = await walletMethods[tx.type](tx.txParams);
@@ -845,6 +845,7 @@ export class SwapKitCore<T = ''> {
   };
 
   #getInboundDataByChain = async (chain: Chain) => {
+    console.log('getInboundDataByChain: ', chain);
     if (chain === Chain.THORChain) {
       return {
         gas_rate: '0',
@@ -855,6 +856,7 @@ export class SwapKitCore<T = ''> {
       };
     }
     const inboundData = await getInboundData(this.stagenet);
+    console.log('inboundData: ', inboundData);
     const chainAddressData = inboundData.find((item) => item.chain === chain);
 
     if (!chainAddressData) throw new SwapKitError('core_inbound_data_not_found');
@@ -912,11 +914,14 @@ export class SwapKitCore<T = ''> {
     memo: string;
     feeOptionKey?: FeeOption;
   }) => {
+    console.log('depositToPool: chain: ', assetValue.chain);
+    console.log('memo: ', memo);
     const {
       gas_rate,
       router,
       address: poolAddress,
     } = await this.#getInboundDataByChain(assetValue.chain);
+
     const feeRate = (parseInt(gas_rate) || 0) * gasFeeMultiplier[feeOptionKey];
 
     return this.deposit({

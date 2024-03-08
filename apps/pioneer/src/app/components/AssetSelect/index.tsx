@@ -50,20 +50,18 @@ export default function AssetSelect({ onSelect }: any) {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const filteredAssets = currentPage
-    .filter((asset: any) => {
-      return (
-        (showOwnedAssets ? asset.valueUsd !== null : true) &&
-        asset?.name?.toLowerCase().includes(search.toLowerCase()) &&
-        (asset.valueUsd ? parseFloat(asset.valueUsd) >= 1 : false)
-      );
-    })
-    .sort((a: any, b: any) => {
-      if (sortOrder === 'asc') {
-        return (a.valueUsd || 0) - (b.valueUsd || 0);
-      }
-      return (b.valueUsd || 0) - (a.valueUsd || 0);
-    });
+  // const filteredAssets = currentPage
+  //   .filter((asset: any) => {
+  //     return (
+  //       asset?.name?.toLowerCase().includes(search.toLowerCase())
+  //     );
+  //   })
+    // .sort((a: any, b: any) => {
+    //   if (sortOrder === 'asc') {
+    //     return (a.valueUsd || 0) - (b.valueUsd || 0);
+    //   }
+    //   return (b.valueUsd || 0) - (a.valueUsd || 0);
+    // });
 
   const fetchPage = async () => {
     try {
@@ -103,7 +101,7 @@ export default function AssetSelect({ onSelect }: any) {
         </Button>
         <br />
         <br />
-        {filteredAssets.map((asset: any, index: number) => (
+        {currentPage.map((asset: any, index: number) => (
           // eslint-disable-next-line react/no-array-index-key
           <Box key={index}>
             <Flex

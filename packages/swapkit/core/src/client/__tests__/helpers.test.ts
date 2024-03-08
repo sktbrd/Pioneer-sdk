@@ -8,7 +8,7 @@ describe('Explorer URLs', () => {
     Chain.Binance,
     Chain.Bitcoin,
     Chain.BitcoinCash,
-    Chain.Maya,
+    Chain.Mayachain,
     Chain.Kujira,
     Chain.THORChain,
   ].forEach((chain) => {

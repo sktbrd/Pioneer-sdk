@@ -6,26 +6,10 @@ import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
 
-// @ts-ignore
-import ChangellyImage from '../../../../public/png/changelly.png';
-// @ts-ignore
-import MayachainImage from '../../../../public/png/mayachain.png';
-// @ts-ignore
-import OsmosisImage from '../../../../public/png/osmosis.png';
-// interface Quote {
-//   integration: string;
-//   quote: {
-//     amountOut: string;
-//     proTokenEarnedUsd: number;
-//     sellAssetValueUsd: number;
-//     buyAssetValueUsd: number;
-//     sellAsset: string;
-//     buyAsset: string;
-//   };
-// }
-// Import images with '@ts-ignore' for TypeScript
-// @ts-ignore
-import ThorswapImage from '../../../../public/png/thorswap.png';
+let ChangellyImage = '../../../../public/png/changelly.png'
+let MayachainImage = '../../../../public/png/mayachain.png'
+let OsmosisImage = '../../../../public/png/osmosis.png'
+let ThorswapImage = '../../../../public/png/thorswap.png'
 
 const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
@@ -35,10 +19,10 @@ const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
   }, []);
 
   const integrationImages: { [key: string]: string } = {
-    thorswap: ThorswapImage.src,
-    changelly: ChangellyImage.src,
-    mayachain: MayachainImage.src,
-    osmosis: OsmosisImage.src,
+    thorswap: ThorswapImage,
+    changelly: ChangellyImage,
+    mayachain: MayachainImage,
+    osmosis: OsmosisImage,
   };
 
   const integrationColors: { [key: string]: string } = {
