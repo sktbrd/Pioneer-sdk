@@ -28,13 +28,12 @@ let BLOCKCHAIN = ChainToNetworkId['BTC']
 console.log("BLOCKCHAIN: ",BLOCKCHAIN)
 let ASSET = 'BTC'
 let MIN_BALANCE = process.env['MIN_BALANCE_DASH'] || "0.004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.0002"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_BITCOIN_ADDRESS = process.env['FAUCET_BITCOIN_ADDRESS']
 if(!FAUCET_BITCOIN_ADDRESS) throw Error("Need Faucet Address!")
 let FAUCET_ADDRESS = FAUCET_BITCOIN_ADDRESS
-
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -107,10 +106,41 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN]
 
         //get paths for wallet
         let paths = getPaths(blockchains)
+
+        paths.push({
+            note:"Bitcoin account 1 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        paths.push({
+            note:"Bitcoin account 1 legacy",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2pkh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
         app.setPaths(paths)
 
         // //connect
@@ -150,8 +180,8 @@ const test_service = async function (this: any) {
 
 
         await app.getBalances()
-        // //log.info(tag,"balances: ",app.balances)
-        // //filter by OSMO caip
+        log.info(tag,"balances: ",app.balances)
+        //filter by chainId
         // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         // log.info(tag,"balance: ",balance)
         // assert(balance.length > 0)
@@ -183,7 +213,7 @@ const test_service = async function (this: any) {
         //verify amount is < max spendable
         let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
         log.info("maxSpendable: ",maxSpendable)
-
+        log.info("maxSpendable: ",maxSpendable.getValue('string'))
 
         //send
         let sendPayload = {
@@ -192,6 +222,7 @@ const test_service = async function (this: any) {
             isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
+            noBroadcast: true,
         }
         log.info("sendPayload: ",sendPayload)
         const txHash = await app.swapKit.transfer(sendPayload);

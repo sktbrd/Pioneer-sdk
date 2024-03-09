@@ -1,5 +1,14 @@
 # @coinmasters/integration-coins
 
+## 1.5.9
+
+### Patch Changes
+
+- bump for btc
+
+- Updated dependencies []:
+  - @coinmasters/core@9.0.9
+
 ## 1.5.8
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 0.3.9
+
+### Patch Changes
+
+- bump for btc
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@11.0.9
+  - @coinmasters/core@9.0.9
+
 ## 0.3.8
 
 ### Patch Changes

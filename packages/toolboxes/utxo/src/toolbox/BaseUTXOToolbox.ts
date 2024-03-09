@@ -159,7 +159,8 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
-  //console.log(`BaseUTXO totalBalance:`, totalBalance);
+  totalBalance = totalBalance / 100000000
+  console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
   //console.log('BaseUTXO asset: ', asset);
   return [asset];
@@ -549,7 +550,7 @@ export const estimateMaxSendableAmount = async ({
     throw new Error('Unable to find a viable transaction amount after multiple attempts');
   }
 
-  return AssetValue.fromChainOrSignature(chain, maxSendableValue);
+  return AssetValue.fromChainOrSignature(chain, maxSendableValue / 100000000);
 };
 
 // export const estimateMaxSendableAmount = async ({

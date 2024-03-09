@@ -222,7 +222,9 @@ const connectKeepkey =
     if (!paths) paths = [];
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-    //console.log('connectKeepkey chains2: ', chains);
+    console.log('keepKeySdk: ', keepKeySdk);
+    let features = await keepKeySdk.system.info.getFeatures()
+    console.log('features: ', features);
 
     const chainPromises = chains.map(async (chain) => {
       if (!chain) return;
@@ -247,6 +249,7 @@ const connectKeepkey =
 
       addChain({
         chain,
+        info: features,
         walletMethods,
         wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
       });

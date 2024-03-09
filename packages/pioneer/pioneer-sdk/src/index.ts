@@ -473,15 +473,14 @@ export class SDK {
           if (wallet === 'LEDGER' && ledgerApp !== 'ETH') {
             context = 'ledger:ledger.wallet'; //placeholder until we know eth address
           } else {
-            const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
-            if (!ethAddress) throw Error('Failed to get eth address! can not pair wallet');
+            console.log('this.swapKit: ', this.swapKit);
             //console.log('wallet: ', wallet);
-            context = `${wallet.toLowerCase()}:${ethAddress}.wallet`;
+            context = `${wallet.toLowerCase()}:device.wallet`;
 
             // isPioneer?
             // get pioneer status
             let pioneerInfo = await this.pioneer.GetPioneer({
-              address: ethAddress,
+              address: context,
             });
             pioneerInfo = pioneerInfo.data;
             //log.debug('pioneerInfo: ', pioneerInfo);

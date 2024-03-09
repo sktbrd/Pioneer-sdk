@@ -9,6 +9,7 @@ import {
 } from '@coinmasters/toolbox-utxo';
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, DerivationPath, FeeOption } from '@coinmasters/types';
+import { xpubConvert } from '@pioneer-platform/pioneer-coins';
 import { toCashAddress } from 'bchaddrjs';
 import type { Psbt } from 'bitcoinjs-lib';
 
@@ -93,8 +94,9 @@ export const utxoWalletMethods = async ({
 
       console.time('getPubkeys Duration' + chain); // Starts the timer
       const pubkeys = await Promise.all(
-        paths.map((path: any) => {
-          // Create the path query from the original path object
+        paths.map(async (path) => {
+          // Marked as async to use await inside
+          // Create the path query for public key retrieval
           const pathQuery = {
             symbol: 'BTC',
             coin: 'Bitcoin',
@@ -103,17 +105,30 @@ export const utxoWalletMethods = async ({
             showDisplay: false,
           };
 
-          //console.log('pathQuery: ', pathQuery);
-          return sdk.system.info.getPublicKey(pathQuery).then((response: any) => {
-            //console.log('response: ', response);
-            // Combine the original path object with the xpub from the response
-            const combinedResult = {
-              ...path, // Contains all fields from the original path
-              xpub: response.xpub, // Adds the xpub field from the response
-            };
-            //console.log('combinedResult: ', combinedResult);
-            return combinedResult;
-          });
+          // Get the public key
+          const pubkeyResponse = await sdk.system.info.getPublicKey(pathQuery);
+
+          // Create the address info query for master address retrieval
+          const addressInfo = {
+            coin: ChainToKeepKeyName[chain],
+            script_type: path.script_type, // Assuming paths should be path if it's within map
+            address_n: path.addressNListMaster,
+          };
+
+          // Get the master address
+          const addressMaster = await sdk.address.utxoGetAddress(addressInfo);
+
+          if (path.script_type === 'p2wpkh') {
+            //convert xpub to zpub
+            pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'zpub');
+          }
+
+          // Combine the original path object with the xpub and master from the responses
+          return {
+            ...path, // Contains all fields from the original path
+            xpub: pubkeyResponse.xpub, // Adds the xpub field from the response
+            master: addressMaster.address, // Adds the master address from the response
+          };
         }),
       );
       console.timeEnd('getPubkeys Duration' + chain); // Ends the timer and logs the duration

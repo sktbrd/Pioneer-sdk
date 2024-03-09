@@ -190,6 +190,7 @@ const buildTx = async ({
     chain,
     apiKey: apiClient.apiKey,
   });
+
   //console.log("inputs total: ",utxos)
   //console.log("inputs total: ",utxos.length)
   // Create a function to transform an input into the desired output format

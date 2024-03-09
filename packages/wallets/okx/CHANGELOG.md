@@ -1,5 +1,17 @@
 # @coinmasters/wallet-okx
 
+## 9.0.9
+
+### Patch Changes
+
+- bump for btc
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@9.0.9
+  - @coinmasters/helpers@9.0.9
+  - @coinmasters/toolbox-utxo@9.0.9
+  - @coinmasters/toolbox-evm@9.0.9
+
 ## 9.0.8
 
 ### Patch Changes

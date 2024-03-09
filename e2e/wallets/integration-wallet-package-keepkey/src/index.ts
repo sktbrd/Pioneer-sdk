@@ -15,7 +15,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 import { WalletOption, availableChainsByWallet, NetworkIdToChain, Chain } from '@coinmasters/types';
 
-let BLOCKCHAIN = 'MAYA'
+let BLOCKCHAIN = 'BTC'
 // let BLOCKCHAIN = 'ETH'
 
 const getWalletByChain = async (keepkey:any, chain:any) => {
@@ -31,6 +31,7 @@ const getWalletByChain = async (keepkey:any, chain:any) => {
         pubkeys = await walletMethods.getPubkeys();
         for (const pubkey of pubkeys) {
             const pubkeyBalance = await walletMethods.getBalance([{ pubkey }]);
+            console.log("**** "+pubkey+ " pubkeyBalance: ",Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0)
             balance.push(Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0);
         }
         //create assetVaule
@@ -75,173 +76,60 @@ const test_service = async function (this: any) {
 
         let paths:any = [
             {
-                note: ' AVAX primary (default)',
-                symbol: 'AVAX',
-                symbolSwapKit: 'AVAX',
-                network: 'eip155:43114',
-                script_type: 'avalanche',
-                available_scripts_types: [ 'avalanche' ],
-                type: 'address',
-                addressNList: [ 2147483692, 2147483708, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483708, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'avalanche'
-            },
-            {
-                note: 'Binance default path',
-                type: 'address',
-                script_type: 'binance',
-                available_scripts_types: [ 'binance' ],
-                addressNList: [ 2147483692, 2147484362, 2147483648, 0, 0 ],
-                addressNListMaster: [ 2147483692, 2147484362, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'binance',
-                symbol: 'BNB',
-                symbolSwapKit: 'BNB',
-                network: 'binance:bnb-beacon-chain'
-            },
-            {
-                note: 'Bitcoin account Native Segwit (Bech32)',
+                note:"Bitcoin account 0 Native Segwit (Bech32)",
                 blockchain: 'bitcoin',
                 symbol: 'BTC',
                 symbolSwapKit: 'BTC',
                 network: 'bip122:000000000019d6689c085ae165831e93',
-                script_type: 'p2wpkh',
-                available_scripts_types: [ 'p2pkh', 'p2sh', 'p2wpkh', 'p2sh-p2wpkh' ],
-                type: 'zpub',
-                addressNList: [ 2147483732, 2147483648, 2147483648 ],
-                addressNListMaster: [ 2147483732, 2147483648, 2147483648, 0, 0 ],
+                script_type:"p2wpkh", //bech32
+                available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+                type:"zpub",
+                addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 0],
+                addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
                 curve: 'secp256k1',
-                showDisplay: false
+                showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+            },
+            // {
+            //     note:"Bitcoin account 1 Native Segwit (Bech32)",
+            //     blockchain: 'bitcoin',
+            //     symbol: 'BTC',
+            //     symbolSwapKit: 'BTC',
+            //     network: 'bip122:000000000019d6689c085ae165831e93',
+            //     script_type:"p2wpkh", //bech32
+            //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            //     type:"zpub",
+            //     addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            //     addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            //     curve: 'secp256k1',
+            //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+            // },
+            {
+                note:"Bitcoin account 0 legacy",
+                blockchain: 'bitcoin',
+                symbol: 'BTC',
+                symbolSwapKit: 'BTC',
+                network: 'bip122:000000000019d6689c085ae165831e93',
+                script_type:"p2pkh",
+                available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+                type:"xpub",
+                addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0],
+                addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+                curve: 'secp256k1',
+                showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
             },
             {
-                note: 'Bitcoin Cash Default path',
-                type: 'xpub',
-                script_type: 'p2pkh',
-                available_scripts_types: [ 'p2pkh' ],
-                addressNList: [ 2147483692, 2147483793, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483793, 2147483648, 0, 0 ],
+                note:"Bitcoin account 1 legacy",
+                blockchain: 'bitcoin',
+                symbol: 'BTC',
+                symbolSwapKit: 'BTC',
+                network: 'bip122:000000000019d6689c085ae165831e93',
+                script_type:"p2pkh",
+                available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+                type:"xpub",
+                addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
+                addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
                 curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'bitcoincash',
-                symbol: 'BCH',
-                symbolSwapKit: 'BCH',
-                network: 'bip122:000000000000000000651ef99cb9fcbe'
-            },
-            {
-                note: ' Default ATOM path ',
-                type: 'address',
-                script_type: 'cosmos',
-                available_scripts_types: [ 'cosmos' ],
-                addressNList: [ 2147483692, 2147483766, 2147483648, 0, 0 ],
-                addressNListMaster: [ 2147483692, 2147483766, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'cosmos',
-                symbol: 'ATOM',
-                symbolSwapKit: 'GAIA',
-                network: 'cosmos:cosmoshub-4'
-            },
-            {
-                note: ' Default OSMO path ',
-                type: 'address',
-                script_type: 'bech32',
-                available_scripts_types: [ 'bech32' ],
-                addressNList: [ 2147483692, 2147483766, 2147483648, 0, 0 ],
-                addressNListMaster: [ 2147483692, 2147483766, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'osmosis',
-                symbol: 'OSMO',
-                symbolSwapKit: 'OSMO',
-                network: 'cosmos:osmosis-1'
-            },
-            {
-                note: 'Default ripple path',
-                type: 'address',
-                coin: 'Ripple',
-                symbol: 'XRP',
-                symbolSwapKit: 'XRP',
-                network: 'ripple:4109C6F2045FC7EFF4CDE8F9905D19C2',
-                blockchain: 'ripple',
-                script_type: 'p2pkh',
-                available_scripts_types: [ 'p2pkh' ],
-                addressNList: [ 2147483692, 2147483792, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483792, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false
-            },
-            {
-                note: 'Dogecoin Default path',
-                type: 'xpub',
-                script_type: 'p2pkh',
-                available_scripts_types: [ 'p2pkh' ],
-                addressNList: [ 2147483692, 2147483651, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483651, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'dogecoin',
-                symbol: 'DOGE',
-                symbolSwapKit: 'DOGE',
-                network: 'bip122:00000000001a91e3dace36e2be3bf030'
-            },
-            {
-                note: 'Default dash path',
-                type: 'xpub',
-                coin: 'Dash',
-                symbol: 'DASH',
-                symbolSwapKit: 'DASH',
-                network: 'bip122:000007d91d1254d60e2dd1ae58038307',
-                blockchain: 'dash',
-                script_type: 'p2pkh',
-                available_scripts_types: [ 'p2pkh' ],
-                addressNList: [ 2147483692, 2147483653, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483653, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false
-            },
-            {
-                note: ' ETH primary (default)',
-                symbol: 'ETH',
-                symbolSwapKit: 'ETH',
-                network: 'eip155:1',
-                script_type: 'ethereum',
-                available_scripts_types: [ 'ethereum' ],
-                type: 'address',
-                addressNList: [ 2147483692, 2147483708, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483708, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'ethereum'
-            },
-            {
-                note: 'Litecoin Default path',
-                type: 'xpub',
-                script_type: 'p2pkh',
-                available_scripts_types: [ 'p2pkh' ],
-                addressNList: [ 2147483692, 2147483650, 2147483648 ],
-                addressNListMaster: [ 2147483692, 2147483650, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                showDisplay: false,
-                blockchain: 'litecoin',
-                symbol: 'LTC',
-                symbolSwapKit: 'LTC',
-                network: 'bip122:12a765e31ffd4059bada1e25190f6e98'
-            },
-            {
-                note: ' Default RUNE path ',
-                type: 'address',
-                addressNList: [ 2147483692, 2147484579, 2147483648, 0, 0 ],
-                addressNListMaster: [ 2147483692, 2147484579, 2147483648, 0, 0 ],
-                curve: 'secp256k1',
-                script_type: 'thorchain',
-                showDisplay: false,
-                blockchain: 'thorchain',
-                symbol: 'RUNE',
-                symbolSwapKit: 'RUNE',
-                network: 'cosmos:thorchain-mainnet-v1'
+                showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
             }
         ]
         log.info("walletKeepKey.wallet: ",walletKeepKey.wallet)
@@ -304,35 +192,35 @@ const test_service = async function (this: any) {
         log.info("keepkey: ",keepkey)
 
         //got balances
-        // for(let i = 0; i < chains.length; i++) {
-        //     let chain = chains[i]
-        //     let walletData:any = await getWalletByChain(keepkey, chain);
-        //     log.info(chain+ " walletData: ",walletData)
-        //     // keepkey[chain].wallet.address = walletData.address
-        //     keepkey[chain].wallet.pubkeys = walletData.pubkeys
-        //     keepkey[chain].wallet.balance = walletData.balance
-        // }
-        // log.info(tag,"keepkey: ",keepkey)
+        for(let i = 0; i < chains.length; i++) {
+            let chain = chains[i]
+            let walletData:any = await getWalletByChain(keepkey, chain);
+            log.info(chain+ " walletData: ",walletData)
+            // keepkey[chain].wallet.address = walletData.address
+            keepkey[chain].wallet.pubkeys = walletData.pubkeys
+            keepkey[chain].wallet.balance = walletData.balance
+        }
+        log.info(tag,"keepkey: ",keepkey)
         //
         // let address = await keepkey['ETH'].walletMethods.getAddress()
         // log.info("address: ",address)
         //
-        // //validate all the balances
-        // let allChains = Object.keys(keepkey)
-        // for(let i = 0; i < allChains.length; i++) {
-        //     let chain = allChains[i]
-        //     let balance = keepkey[chain].wallet.balance
-        //     log.info(chain+ " balance: ",balance)
-        //     for(let j = 0; j < balance.length; j++) {
-        //         let ticker = balance[j].ticker
-        //         let value = balance[j].getValue('string')
-        //         log.info(chain+ " "+ticker+ " balance: ",value)
-        //         if(!ticker || !value) {
-        //             log.error(balance[j])
-        //             throw new Error("Invalid balance for "+chain+ " "+ticker)
-        //         }
-        //     }
-        // }
+        //validate all the balances
+        let allChains = Object.keys(keepkey)
+        for(let i = 0; i < allChains.length; i++) {
+            let chain = allChains[i]
+            let balance = keepkey[chain].wallet.balance
+            log.info(chain+ " balance: ",balance)
+            for(let j = 0; j < balance.length; j++) {
+                let ticker = balance[j].ticker
+                let value = balance[j].getValue('string')
+                log.info(chain+ " "+ticker+ " balance: ",value)
+                if(!ticker || !value) {
+                    log.error(balance[j])
+                    throw new Error("Invalid balance for "+chain+ " "+ticker)
+                }
+            }
+        }
 
 
 
@@ -401,41 +289,41 @@ const test_service = async function (this: any) {
                 SEND CACAO
 
          */
-        let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
-        // let pubkey = address
-        log.info(tag,"** address: ",address)
-        let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ address }])
-        log.info(tag,"** balance: ",balanceNew)
-        if(balanceNew.length === 0) {
-            log.error(tag,"No balance")
-            return
-        }
-        //get assetValue for asset
-        // let assetString = 'ETH.USDT'
-        let assetString = 'MAYA.CACAO'
-        // create assetValue
-        // const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        let TEST_AMOUNT = "0.1"
-        // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = await AssetValue.fromString(
-          assetString,
-          parseFloat(TEST_AMOUNT),
-        );
-        log.info("assetValue: ",assetValue)
-
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: process.env['FAUCET_MAYA_ADDRESS'] || 'maya1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfqkl5k',
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await  keepkey[Chain.Mayachain].walletMethods.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let address = await keepkey[BLOCKCHAIN].walletMethods.getAddress()
+        // // let pubkey = address
+        // log.info(tag,"** address: ",address)
+        // let balanceNew = await keepkey[BLOCKCHAIN].walletMethods.getBalance([{ address }])
+        // log.info(tag,"** balance: ",balanceNew)
+        // if(balanceNew.length === 0) {
+        //     log.error(tag,"No balance")
+        //     return
+        // }
+        // //get assetValue for asset
+        // // let assetString = 'ETH.USDT'
+        // let assetString = 'MAYA.CACAO'
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // let TEST_AMOUNT = "0.1"
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: process.env['FAUCET_MAYA_ADDRESS'] || 'maya1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfqkl5k',
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await  keepkey[Chain.Mayachain].walletMethods.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
         /*
