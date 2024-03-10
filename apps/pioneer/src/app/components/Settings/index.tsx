@@ -20,6 +20,7 @@ import Path from '../../components/Path';
 import { usePioneer } from '../../context';
 import Basic from '..//Basic';
 import Blockchains from '../Blockchains';
+import Paths from '../Paths';
 
 export default function Settings() {
   const { state } = usePioneer();
@@ -54,7 +55,7 @@ export default function Settings() {
       const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
       if (key === 'walletCache' && lastConnectedWallet) {
         localStorage.removeItem(`${lastConnectedWallet}:balanceCache`);
-        localStorage.removeItem(`${lastConnectedWallet}pubkeyCache`);
+        localStorage.removeItem(`${lastConnectedWallet}:pubkeyCache`);
       } else {
         localStorage.removeItem(key);
       }
@@ -72,6 +73,7 @@ export default function Settings() {
         <TabList>
           <Tab>Context</Tab>
           <Tab>blockchains</Tab>
+          <Tab>paths</Tab>
           <Tab>Settings</Tab>
         </TabList>
         <TabPanels>
@@ -80,6 +82,9 @@ export default function Settings() {
           </TabPanel>
           <TabPanel>
             <Blockchains onSelect={onSelect} />
+          </TabPanel>
+          <TabPanel>
+            <Paths/>
           </TabPanel>
           <TabPanel>
             <VStack spacing={4}>

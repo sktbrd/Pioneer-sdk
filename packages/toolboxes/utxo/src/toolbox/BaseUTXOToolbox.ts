@@ -241,50 +241,79 @@ const getInputsAndTargetOutputs = async ({
   //get inputs by xpub
   console.log('pubkeys: ', pubkeys);
   //get balances for each pubkey
-  for (let i = 0; i < pubkeys.length; i++) {
-    let pubkey = pubkeys[i];
-    console.log('1 pubkey: ', pubkey);
-    console.log('2 pubkey: ', pubkey.pubkey);
-    let balance = await apiClient.getBalanceXpub(pubkey.pubkey || pubkey.xpub || pubkey);
-    console.log('balance: ', balance);
-    pubkeys[i].balance = balance.toString();
-  }
-  //console.log('pubkeys: ', pubkeys);
+  // for (let i = 0; i < pubkeys.length; i++) {
+  //   let pubkey = pubkeys[i];
+  //   console.log('1 pubkey: ', pubkey);
+  //   console.log('2 pubkey: ', pubkey.pubkey);
+  //   let balance = await apiClient.getBalanceXpub(pubkey.pubkey || pubkey.xpub || pubkey);
+  //   console.log('balance: ', balance);
+  //   pubkeys[i].balance = balance.toString();
+  // }
+  // //console.log('pubkeys: ', pubkeys);
+  //
+  // // select a single pubkey
+  // // choose largest balance
+  // let largestBalance = -Infinity; // Initialize with a very small value
+  // let pubkeyWithLargestBalance = null; // Initialize as null
+  //
+  // // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  // for (let i = 0; i < pubkeys.length; i++) {
+  //   const pubkey = pubkeys[i];
+  //   const balance = parseFloat(pubkey.balance);
+  //
+  //   if (!isNaN(balance) && balance > largestBalance) {
+  //     largestBalance = balance;
+  //     pubkeyWithLargestBalance = pubkey;
+  //   }
+  // }
+  //
+  // //console.log('The pubkey with the highest balance is:', pubkeyWithLargestBalance);
+  //
+  // // pubkeyWithLargestBalance
+  // console.log('pubkeyWithLargestBalance: ', pubkeyWithLargestBalance);
+  // let inputs = await apiClient.listUnspent({
+  //   pubkey:
+  //     pubkeyWithLargestBalance?.pubkey ||
+  //     pubkeyWithLargestBalance?.xpub ||
+  //     pubkeyWithLargestBalance,
+  //   chain,
+  //   apiKey: apiClient.apiKey,
+  // });
+  // console.log('inputs total: ', inputs);
+  // console.log('inputs total: ', inputs.length);
 
-  // select a single pubkey
-  // choose largest balance
-  let largestBalance = -Infinity; // Initialize with a very small value
-  let pubkeyWithLargestBalance = null; // Initialize as null
+  let allInputs: any[] = [];
 
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < pubkeys.length; i++) {
-    const pubkey = pubkeys[i];
-    const balance = parseFloat(pubkey.balance);
+    const pubkeyInfo = pubkeys[i];
+    const pubkey = pubkeyInfo.pubkey || pubkeyInfo.xpub || pubkeyInfo;
 
-    if (!isNaN(balance) && balance > largestBalance) {
-      largestBalance = balance;
-      pubkeyWithLargestBalance = pubkey;
+    // Assuming getBalance is a method of apiClient that returns a Promise<number>
+    const balance: number = await apiClient.getBalanceXpub(pubkey.pubkey || pubkey.xpub || pubkey);
+
+    if (balance > 0) {
+      // Assuming listUnspent returns a Promise of an array
+      // @ts-ignore
+      let inputs = await apiClient.listUnspent({
+        pubkey: pubkey.pubkey || pubkey.xpub || pubkey,
+        chain,
+        apiKey: apiClient.apiKey,
+      });
+      console.log('inputs: ', inputs);
+      if (inputs && inputs.length > 0) {
+        allInputs = [...allInputs, ...inputs];
+      }
     }
   }
 
-  //console.log('The pubkey with the highest balance is:', pubkeyWithLargestBalance);
+  console.log('Aggregated inputs total: ', allInputs.length);
+  console.log('Aggregated inputs: ', allInputs);
 
-  // pubkeyWithLargestBalance
-  console.log('pubkeyWithLargestBalance: ', pubkeyWithLargestBalance);
-  let inputs = await apiClient.listUnspent({
-    pubkey:
-      pubkeyWithLargestBalance?.pubkey ||
-      pubkeyWithLargestBalance?.xpub ||
-      pubkeyWithLargestBalance,
-    chain,
-    apiKey: apiClient.apiKey,
-  });
-  console.log('inputs total: ', inputs);
-  console.log('inputs total: ', inputs.length);
-
-  console.log('inputs: ', inputs);
+  console.log('allInputs: ', allInputs);
   //Use the map function to transform each input
-  inputs = inputs.map(transformInput);
+  let inputs = allInputs.map(transformInput);
+  console.log('inputs: ', inputs);
 
   // //console.log('sender: ', sender);
   // const inputs = await apiClient.scanUTXOs({
@@ -409,7 +438,7 @@ const buildTx = async ({
       }
     }
     console.log('buildTx Checkpoint 1.5:');
-    console.log('inputOptions: ',inputOptions);
+    console.log('inputOptions: ', inputOptions);
     psbt.addInput(inputOptions);
     console.log(' buildTx Checkpoint 2:');
   });
@@ -552,130 +581,6 @@ export const estimateMaxSendableAmount = async ({
 
   return AssetValue.fromChainOrSignature(chain, maxSendableValue / 100000000);
 };
-
-// export const estimateMaxSendableAmount = async ({
-//   pubkeys,
-//   feeRate,
-//   feeOptionKey = FeeOption.Fast,
-//   recipient,
-//   memo,
-//   chain,
-//   apiClient,
-// }: {
-//   pubkeys: any[];
-//   feeRate?: number;
-//   feeOptionKey?: FeeOption;
-//   recipient: string;
-//   memo?: string;
-//   chain: Chain;
-//   apiClient: any;
-// }): Promise<AssetValue> => {
-//   console.log('pubkeys: ', pubkeys);
-//   // Fetch the actual UTXOs for the provided pubkeys
-//   let utxos = [];
-//   for (let pubkey of pubkeys) {
-//     const utxoSet = await apiClient.listUnspent({
-//       pubkey: pubkey.pubkey || pubkey.xpub || pubkey,
-//       chain,
-//       apiKey: apiClient.apiKey,
-//     });
-//     console.log('utxoSet: ', utxoSet);
-//     // Assuming transformInput is a function that formats each UTXO correctly
-//     utxos = utxos.concat(utxoSet.map(transformInput));
-//   }
-//   if(utxos.length === 0) throw new Error('No UTXOs found for the provided pubkeys');
-//
-//   // Calculate the total available balance from the UTXOs
-//   const totalInputValue = utxos.reduce((acc, utxo) => acc + utxo.value, 0);
-//   console.log('totalInputValue: ', totalInputValue);
-//
-//   // Determine the effective fee rate
-//   // const effectiveFeeRate = feeRate
-//   //   ? Math.ceil(feeRate)
-//   //   : (await getFeeRates(apiClient))[feeOptionKey];
-//   let effectiveFeeRate = getDefaultTxFeeByChain(chain);
-//   console.log('totalInputValue: ', totalInputValue);
-//
-//
-//   // Estimate the size of the transaction. Assuming 148 bytes per input and 34 bytes per output, plus 10 bytes overhead
-//   const estimatedTxSize = utxos.length * 148 + 2 * 34 + 10; // Adjust based on your actual needs
-//
-//   // Calculate the estimated fee for the transaction
-//   const estimatedFee = estimatedTxSize * effectiveFeeRate;
-//
-//   // Calculate the maximum sendable amount by subtracting the estimated fee from the total UTXO balance
-//   const maxSendableValue = totalInputValue - estimatedFee;
-//
-//   // Ensure maxSendableValue is not negative
-//   if (maxSendableValue < 0) {
-//     throw new Error('Insufficient funds for transaction after accounting for fees');
-//   }
-//
-//   // Return the maximum sendable amount as an AssetValue
-//   return AssetValue.fromChainOrSignature(chain, maxSendableValue);
-// };
-
-// export const estimateMaxSendableAmount = async ({
-//   pubkeys,
-//   feeRate,
-//   feeOptionKey = FeeOption.Fast,
-//   recipient,
-//   memo,
-//   chain,
-//   apiClient,
-// }: {
-//   pubkeys: any[];
-//   feeRate?: number;
-//   feeOptionKey?: FeeOption;
-//   recipient: string;
-//   memo?: string;
-//   chain: Chain;
-//   apiClient: any;
-// }): Promise<AssetValue> => {
-//   console.log('pubkeys: ', pubkeys);
-//
-//
-//   const effectiveFeeRate = feeRate
-//     ? Math.ceil(feeRate)
-//     : (await getFeeRates(apiClient))[feeOptionKey];
-//
-//   console.log('effectiveFeeRate: ', effectiveFeeRate);
-//
-//   // Simulate transaction to estimate size and fee
-//   // Placeholder values for inputs and outputs since actual implementation may vary
-//   const txSizeEstimation = calculateTxSize({
-//     inputs: [], // This would be based on actual UTXO selection logic
-//     outputs: [
-//       { address: recipient, value: 0 }, // Placeholder, actual calculation needed
-//       ...(memo ? [{ address: recipient, script: compileMemo(memo), value: 0 }] : []),
-//     ],
-//     feeRate: effectiveFeeRate,
-//   });
-//
-//   console.log('txSizeEstimation: ', txSizeEstimation);
-//   const fee = AssetValue.fromChainOrSignature(
-//     chain,
-//     (txSizeEstimation * effectiveFeeRate) / 10000000,
-//   );
-//
-//   console.log('fee: ', fee);
-//   console.log('totalBalance: ', totalBalance);
-//
-//   console.log('fee: ', fee.toString());
-//   console.log('totalBalance: ', totalBalance.toString());
-//
-//   console.log('fee: ', fee.getValue('string'));
-//   console.log('totalBalance: ', totalBalance[0].getValue('string'));
-//
-//   // Adjusting for correct subtraction of BigInt values
-//   const maxSendableValue = totalBalance[0].getValue('string') - fee.getValue('string');
-//   console.log('maxSendableValue: ', maxSendableValue);
-//
-//   // Ensure the AssetValue is constructed correctly with bigIntValue
-//   const maxSendableAmount = AssetValue.fromChainOrSignature(chain, maxSendableValue);
-//
-//   return maxSendableAmount;
-// };
 
 export const BaseUTXOToolbox = (
   baseToolboxParams: UTXOBaseToolboxParams & { broadcastTx: (txHex: string) => Promise<string> },

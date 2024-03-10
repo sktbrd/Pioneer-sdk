@@ -20,7 +20,7 @@ import { usePioneer } from '../../context';
 import Path from '../../components/Path';
 // import { getWalletContent } from '../../components/WalletIcon';
 //@ts-ignore
-import { addressNListToBIP32 } from '@pioneer-platform/pioneer-coins';
+import { addressNListToBIP32, getPaths } from '@pioneer-platform/pioneer-coins';
 
 export default function Paths() {
   const { state } = usePioneer();
@@ -28,12 +28,51 @@ export default function Paths() {
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
   const [selectedPubkey, setSelectedPubkey] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState('');
+  const [paths, setPaths] = useState([]);
+
+  let loadPathsView = async function(){
+    try{
+      if (app?.paths.length !== 0) {
+        console.log('app?.paths: ', app);
+        console.log('app?.paths: ', app?.paths.length);
+        console.log('app?.blockchains: ', app?.blockchains);
+        setPaths(app?.paths);
+      } else {
+        console.log("Load paths for last connected wallet")
+        //get last paired wallet
+        let lastPairedWallet = localStorage.getItem('lastPairedWallet');
+        // Retrieve custom and disabled paths for the wallet from localStorage
+        const customPathsForWalletStr = localStorage.getItem(lastPairedWallet + ':paths:add');
+        const disabledPathsForWalletStr = localStorage.getItem(lastPairedWallet + ':paths:removed');
+
+        // Parse the retrieved strings as arrays
+        const customPathsForWallet = customPathsForWalletStr ? JSON.parse(customPathsForWalletStr) : [];
+        const disabledPathsForWallet = disabledPathsForWalletStr ? JSON.parse(disabledPathsForWalletStr) : [];
+
+
+        //get default paths
+        let defaultPaths = getPaths(app?.blockchains);
+        console.log("defaultPaths: ",defaultPaths)
+
+        // Combine default paths with custom paths, ensuring unique values
+        const combinedPaths = [...new Set([...defaultPaths, ...customPathsForWallet])];
+
+        // Filter out disabled paths
+        const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
+
+        console.log("pathsView: ", pathsView);
+
+        // Assuming setPaths is a function defined to update your paths state
+        setPaths(pathsView);
+        //get disabled paths for wallet
+      }
+    }catch(e){
+      console.error("Failed to load paths view: ", e);
+    }
+  }
 
   useEffect(() => {
-    if (app?.paths) {
-      console.log('app?.paths: ', app);
-      console.log('app?.paths: ', app?.paths);
-    }
+    loadPathsView();
   }, [app, app?.paths]);
 
   const handlePubkeyClick = (pubkey: any) => {
@@ -49,7 +88,7 @@ export default function Paths() {
 
   return (
     <div>
-      {app?.paths?.map((key: any, index: any) => (
+      {paths.map((key: any, index: any) => (
         <Card key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
           <Box>
             <Text fontWeight="bold">{key.network}</Text>

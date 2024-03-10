@@ -107,15 +107,31 @@ const test_service = async function (this: any) {
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
+        // let optimized:any = [];
+        // blockchains.forEach((network: any) => {
+        //     const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+        //     if (pathForNetwork) {
+        //         optimized.push(pathForNetwork);
+        //     }
+        // });
+        // log.info("optimized: ", optimized.length);
+
+        paths.push({
+            note:"Bitcoin Cash account 1 Default path",
+            type:"xpub",
+            script_type:"p2pkh",
+            available_scripts_types:['p2pkh'],
+            addressNList: [0x80000000 + 44, 0x80000000 + 145, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 145, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+            blockchain: 'bitcoincash',
+            symbol: 'BCH',
+            symbolSwapKit: 'BCH',
+            network: 'bip122:000000000000000000651ef99cb9fcbe',
+        })
+
+        app.setPaths(paths)
 
         let pairObject = {
             type:WalletOption.KEEPKEY,

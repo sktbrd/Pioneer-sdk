@@ -1,134 +1,64 @@
+import React, { useState, useEffect } from 'react';
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Avatar,
-  AvatarGroup,
   Box,
   Button,
   Flex,
+  Switch,
   Text,
+  Avatar,
 } from '@chakra-ui/react';
 import { NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-//@ts-ignore
-import React, { useEffect } from 'react';
 
 import { usePioneer } from '../../context';
 
-export default function Blockchains({ onSelect }: any) {
+export default function Blockchains() {
   const { state } = usePioneer();
   const { app } = state;
-  // const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
-  // const [selectedPubkey, setSelectedPubkey] = useState(null);
+
+  const [enabledChains, setEnabledChains] = useState<string[]>([]);
 
   useEffect(() => {
-    if (app?.blockchains) {
-      console.log('app?.blockchains: ', app?.blockchains);
-    }
-  }, [app, app?.blockchains]);
-  // Function to group and sort blockchains
-  const groupAndSortBlockchains = (blockchains: any) => {
-    const UTXO = blockchains.filter((chain: any) => chain.startsWith('bip122:'));
-    const EVM = blockchains.filter((chain: any) => chain.startsWith('eip155:'));
-    const others = blockchains.filter(
-      (chain: any) => !chain.startsWith('bip122:') && !chain.startsWith('eip155:'),
-    );
-    return { UTXO, EVM, others };
+    // Here, we could initialize the enabledChains based on app?.blockchains if needed
+  }, [app?.blockchains]);
+
+  const toggleChain = (chain: string) => {
+    setEnabledChains(prev => prev.includes(chain) ? prev.filter(c => c !== chain) : [...prev, chain]);
   };
 
-  const { UTXO, EVM, others } = groupAndSortBlockchains(app?.blockchains || []);
+  const saveEnabledChains = () => {
+    console.log('Enabled chains to save:', enabledChains);
+    // Logic to update the global state or perform another action with enabledChains
+  };
 
-  const renderChainCard = (chain: any) => (
-    <Box borderRadius="lg" borderWidth="1px" textAlign="center">
-      <Flex
-        alignItems="center"
-        bg="black"
-        borderRadius="md"
-        boxShadow="sm"
-        justifyContent="space-between" // Adjusts the space between items
-        padding={2}
-        w="100%" // Ensures the Flex container takes full width
-      >
-        <Avatar src={`https://pioneers.dev/coins/${COIN_MAP_LONG[NetworkIdToChain[chain] as keyof typeof COIN_MAP_LONG]}.png`} />
-        <Text fontWeight="bold" mt={2}>
-          {chain}
-        </Text>
-        <Button mt={3} onClick={() => onSelect(chain)}>
-          Select
-        </Button>
+  const renderChain = (chain: string) => (
+    <Flex alignItems="center" justifyContent="space-between" p={2} borderBottomWidth="1px" borderColor="gray.200">
+      <Flex alignItems="center">
+        <Avatar size="sm" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[NetworkIdToChain[chain] as keyof typeof COIN_MAP_LONG]}.png`} mr={4} />
+        <Text fontWeight="bold">{chain}</Text>
       </Flex>
-    </Box>
+      <Switch isChecked={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
+    </Flex>
   );
 
-  const renderAvatarGroup = (chains: any) => (
-    <AvatarGroup max={3} size="md">
-      {chains.map((chain: any) => (
-        <Avatar
-          key={chain}
-          src={`https://pioneers.dev/coins/${COIN_MAP_LONG[NetworkIdToChain[chain]as keyof typeof COIN_MAP_LONG]}.png`}
-        />
-      ))}
-    </AvatarGroup>
-  );
+  // Group and sort chains by type
+  const { UTXO, EVM, others } = app?.blockchains?.reduce((acc, chain) => {
+    if (chain.startsWith('bip122:')) acc.UTXO.push(chain);
+    else if (chain.startsWith('eip155:')) acc.EVM.push(chain);
+    else acc.others.push(chain);
+    return acc;
+  }, { UTXO: [], EVM: [], others: [] }) || {};
 
   return (
-    <div>
-      <Accordion allowMultiple>
-        <AccordionItem>
-          <h2>
-            <AccordionButton>
-              <Box flex="1" textAlign="left">
-                <Text fontWeight="bold">UTXO Chains</Text>
-                {renderAvatarGroup(UTXO)}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <Flex justify="center" wrap="wrap">
-              {UTXO.map((chain: any) => renderChainCard(chain))}
-            </Flex>
-          </AccordionPanel>
-        </AccordionItem>
-
-        <AccordionItem>
-          <h2>
-            <AccordionButton>
-              <Box flex="1" textAlign="left">
-                <Text fontWeight="bold">EVM Chains</Text>
-                {renderAvatarGroup(EVM)}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <Flex justify="center" wrap="wrap">
-              {EVM.map((chain: any) => renderChainCard(chain))}
-            </Flex>
-          </AccordionPanel>
-        </AccordionItem>
-
-        <AccordionItem>
-          <h2>
-            <AccordionButton>
-              <Box flex="1" textAlign="left">
-                <Text fontWeight="bold">Other Chains</Text>
-                {renderAvatarGroup(others)}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <Flex justify="center" wrap="wrap">
-              {others.map((chain: any) => renderChainCard(chain))}
-            </Flex>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
-    </div>
+    <Box>
+      <Text fontSize="xl" mb={4}>UTXO Chains</Text>
+      {UTXO.map(renderChain)}
+      <Text fontSize="xl" my={4}>EVM Chains</Text>
+      {EVM.map(renderChain)}
+      <Text fontSize="xl" my={4}>Other Chains</Text>
+      {others.map(renderChain)}
+      <Button colorScheme="blue" onClick={saveEnabledChains} mt={4}>Continue/Update</Button>
+    </Box>
   );
 }
