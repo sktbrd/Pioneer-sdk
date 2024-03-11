@@ -28,7 +28,10 @@ export class TransactionDB {
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
         if (!db.objectStoreNames.contains(this.storeName)) {
-          const store = db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+          const store = db.createObjectStore(this.storeName, {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
           store.createIndex('txid', 'txid', { unique: true });
           store.createIndex('state', 'state', { unique: false });
         }
@@ -49,7 +52,7 @@ export class TransactionDB {
       const db = await this.openDB();
       db.close();
     } catch (error) {
-      console.error("Error initializing the database:", error);
+      console.error('Error initializing the database:', error);
       throw error;
     }
   }
@@ -185,7 +188,6 @@ export class TransactionDB {
       };
     });
   }
-
 }
 
 const transactionDB = new TransactionDB('MyDatabase', 'transactions');

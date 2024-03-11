@@ -23,9 +23,9 @@ import {
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 import EventEmitter from 'events';
-import {
+// eslint-disable-next-line import/no-extraneous-dependencies
+import React, {
   createContext,
-  ServerContextJSONValue,
   useCallback,
   useContext,
   useEffect,
@@ -167,7 +167,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_BALANCES; payload: any }
   | { type: WalletActions.SET_PUBKEYS; payload: any }
   | { type: WalletActions.ADD_WALLET; payload: any }
-  | { type: WalletActions.RESET_STATE };
+  | { type: WalletActions.RESET_STATE; payload: any };
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -351,108 +351,110 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
     });
   };
 
-  const connectWallet = useCallback(async function (wallet: string, chain?: any) {
-    try {
-      if (state && state?.app) {
-        console.log('connectWallet: ', wallet);
-        let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
-        let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
+  const connectWallet = useCallback(
+    async function (wallet: string, chain?: any) {
+      try {
+        if (state && state?.app) {
+          console.log('connectWallet: ', wallet);
+          let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
+          let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
 
-        // Parse the strings to arrays
-        let customPathsArray = customPathsForWallet ? JSON.parse(customPathsForWallet) : [];
-        let disabledPathsArray = disabledPathsForWallet ? JSON.parse(disabledPathsForWallet) : [];
+          // Parse the strings to arrays
+          let customPathsArray = customPathsForWallet ? JSON.parse(customPathsForWallet) : [];
+          let disabledPathsArray = disabledPathsForWallet ? JSON.parse(disabledPathsForWallet) : [];
 
-        // Console log the arrays
-        console.log('Custom Paths for Wallet:', customPathsArray);
-        console.log('Disabled Paths for Wallet:', disabledPathsArray);
+          // Console log the arrays
+          console.log('Custom Paths for Wallet:', customPathsArray);
+          console.log('Disabled Paths for Wallet:', disabledPathsArray);
 
-        // supported chains
-        const AllChainsSupported = availableChainsByWallet[wallet];
-        console.log("AllChainsSupported: ", AllChainsSupported);
-        let allByCaip = AllChainsSupported.map(
-          // @ts-ignore
-          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        );
-        console.log("allByCaip: ", allByCaip);
-        //get paths for wallet
-        let paths = getPaths(allByCaip);
-        console.log("paths: ", paths);
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized: any[] = allByCaip
-          .map((network: any) => paths.filter((path: any) => path.network === network).slice(-1)[0])
-          .filter((path: any) => path !== undefined);
-        //
-        state.app.setPaths(optimized);
-
-        //TODO get from localstorage disabled chains
-        //TODO get from localStorage added chains!
-        console.log('allByCaip: ', allByCaip);
-        let pairParams: any = {
-          type: wallet,
-          blockchains: allByCaip,
-          ledgerApp: chain,
-        };
-        const successPairWallet = await state.app.pairWallet(pairParams);
-        console.log('successPairWallet: ', successPairWallet);
-        if (successPairWallet && successPairWallet.error) {
-          //push error to state
-          console.log('successPairWallet.error: ', successPairWallet.error);
-          // @ts-ignore
-          dispatch({
-            type: WalletActions.SET_HARDWARE_ERROR,
-            payload: successPairWallet.error,
-          });
-        } else {
-          if (successPairWallet) localStorage.setItem('keepkeyApiKey', successPairWallet);
-          console.log('state.app.assetContext: ', state.app.assetContext);
-          console.log('state.app.context: ', state.app.context);
-
-          //add to local storage of connected wallets
-          const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
-          const updatedPairedWallets = Array.from(new Set([...pairedWallets, state.app.context]));
-
-          localStorage.setItem(
-            'pairedWallets',
-            JSON.stringify(updatedPairedWallets),
+          // supported chains
+          const AllChainsSupported = availableChainsByWallet[wallet];
+          console.log('AllChainsSupported: ', AllChainsSupported);
+          let allByCaip = AllChainsSupported.map(
+            // @ts-ignore
+            (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
           );
+          console.log('allByCaip: ', allByCaip);
+          //get paths for wallet
+          let paths = getPaths(allByCaip);
+          console.log('paths: ', paths);
+          // @ts-ignore
+          //HACK only use 1 path per chain
+          //TODO get user input (performance or find all funds)
+          let optimized: any[] = allByCaip
+            .map(
+              (network: any) => paths.filter((path: any) => path.network === network).slice(-1)[0],
+            )
+            .filter((path: any) => path !== undefined);
+          //
+          state.app.setPaths(optimized);
 
-          //set last connected wallet
-          localStorage.setItem('lastConnectedWallet', state.app.context);
+          //TODO get from localstorage disabled chains
+          //TODO get from localStorage added chains!
+          console.log('allByCaip: ', allByCaip);
+          let pairParams: any = {
+            type: wallet,
+            blockchains: allByCaip,
+            ledgerApp: chain,
+          };
+          const successPairWallet = await state.app.pairWallet(pairParams);
+          console.log('successPairWallet: ', successPairWallet);
+          if (successPairWallet && successPairWallet.error) {
+            //push error to state
+            console.log('successPairWallet.error: ', successPairWallet.error);
+            // @ts-ignore
+            dispatch({
+              type: WalletActions.SET_HARDWARE_ERROR,
+              payload: successPairWallet.error,
+            });
+          } else {
+            if (successPairWallet) localStorage.setItem('keepkeyApiKey', successPairWallet);
+            console.log('state.app.assetContext: ', state.app.assetContext);
+            console.log('state.app.context: ', state.app.context);
 
-          if (state && state.app) {
-            // if pioneer set in localStoage
-            if (state.app.isPioneer) {
-              localStorage.setItem('isPioneer', state.app.isPioneer);
+            //add to local storage of connected wallets
+            const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
+            const updatedPairedWallets = Array.from(new Set([...pairedWallets, state.app.context]));
+
+            localStorage.setItem('pairedWallets', JSON.stringify(updatedPairedWallets));
+
+            //set last connected wallet
+            localStorage.setItem('lastConnectedWallet', state.app.context);
+
+            if (state && state.app) {
+              // if pioneer set in localStoage
+              if (state.app.isPioneer) {
+                localStorage.setItem('isPioneer', state.app.isPioneer);
+              }
+              // @ts-ignore
+              dispatch({
+                type: WalletActions.SET_CONTEXT,
+                payload: state.app.context,
+              });
+              // @ts-ignore
+              dispatch({
+                type: WalletActions.SET_ASSET_CONTEXT,
+                payload: state.app.assetContext,
+              });
+              // @ts-ignore
+              dispatch({
+                type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
+                payload: state.app.blockchainContext,
+              });
+              // @ts-ignore
+              dispatch({
+                type: WalletActions.SET_PUBKEY_CONTEXT,
+                payload: state.app.pubkeyContext,
+              });
             }
-            // @ts-ignore
-            dispatch({
-              type: WalletActions.SET_CONTEXT,
-              payload: state.app.context,
-            });
-            // @ts-ignore
-            dispatch({
-              type: WalletActions.SET_ASSET_CONTEXT,
-              payload: state.app.assetContext,
-            });
-            // @ts-ignore
-            dispatch({
-              type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
-              payload: state.app.blockchainContext,
-            });
-            // @ts-ignore
-            dispatch({
-              type: WalletActions.SET_PUBKEY_CONTEXT,
-              payload: state.app.pubkeyContext,
-            });
           }
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [state, dispatch]);
+    },
+    [state, dispatch],
+  );
   // @eslint-ignore
   const onStart = async function (wallets: any, setup: any) {
     try {
@@ -506,11 +508,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         paths,
         // @ts-ignore
         ethplorerApiKey:
-        // @ts-ignore
+          // @ts-ignore
           process.env.NEXT_PUBLIC_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7',
         // @ts-ignore
         covalentApiKey:
-        // @ts-ignore
+          // @ts-ignore
           process.env.NEXT_PUBLIC_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
         // @ts-ignore
         utxoApiKey:
@@ -519,7 +521,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
         // @ts-ignore
         walletConnectProjectId:
-        // @ts-ignore
+          // @ts-ignore
           process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
       };
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
