@@ -22,72 +22,22 @@ import {
   getPaths,
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-import EventEmitter from 'events';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import EventEmitter from 'eventemitter3';
 import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useReducer,
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import transactionDB from './txDb';
+import transactionDB from './transactionDB';
+import type { ActionTypes, InitialState } from './types';
+import { WalletActions } from './types';
 
 const eventEmitter = new EventEmitter();
-
-export enum WalletActions {
-  SET_STATUS = 'SET_STATUS',
-  SET_USERNAME = 'SET_USERNAME',
-  OPEN_MODAL = 'OPEN_MODAL',
-  SET_API = 'SET_API',
-  SET_APP = 'SET_APP',
-  SET_WALLETS = 'SET_WALLETS',
-  SET_CONTEXT = 'SET_CONTEXT',
-  SET_INTENT = 'SET_INTENT',
-  SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
-  SET_BLOCKCHAIN_CONTEXT = 'SET_BLOCKCHAIN_CONTEXT',
-  SET_PUBKEY_CONTEXT = 'SET_PUBKEY_CONTEXT',
-  SET_OUTBOUND_CONTEXT = 'SET_OUTBOUND_CONTEXT',
-  SET_OUTBOUND_ASSET_CONTEXT = 'SET_OUTBOUND_ASSET_CONTEXT',
-  SET_OUTBOUND_BLOCKCHAIN_CONTEXT = 'SET_OUTBOUND_BLOCKCHAIN_CONTEXT',
-  SET_OUTBOUND_PUBKEY_CONTEXT = 'SET_OUTBOUND_PUBKEY_CONTEXT',
-  SET_BLOCKCHAINS = 'SET_BLOCKCHAINS',
-  SET_BALANCES = 'SET_BALANCES',
-  SET_PUBKEYS = 'SET_PUBKEYS',
-  SET_HARDWARE_ERROR = 'SET_HARDWARE_ERROR',
-  ADD_WALLET = 'ADD_WALLET',
-  RESET_STATE = 'RESET_STATE',
-}
-
-export interface InitialState {
-  status: any;
-  hardwareError: string | null;
-  openModal: string | null;
-  username: string;
-  serviceKey: string;
-  queryKey: string;
-  context: string;
-  intent: string;
-  assetContext: string;
-  blockchainContext: string;
-  pubkeyContext: any;
-  outboundContext: any; // Adjusted
-  outboundAssetContext: any; // Adjusted
-  outboundBlockchainContext: any; // Adjusted
-  outboundPubkeyContext: any; // Adjusted
-  blockchains: any[]; // Adjusted assuming it's an array
-  balances: any[]; // Adjusted assuming it's an array
-  pubkeys: any[]; // Adjusted assuming it's an array
-  wallets: any[]; // Adjusted assuming it's an array
-  walletDescriptions: any[];
-  totalValueUsd: number;
-  app: any;
-  api: any;
-}
 
 const initialState: InitialState = {
   status: 'disconnected',
@@ -145,29 +95,6 @@ export interface IPioneerContext {
 //   app: any;
 //   api: any;
 // }
-
-export type ActionTypes =
-  | { type: WalletActions.SET_STATUS; payload: any }
-  | { type: WalletActions.SET_USERNAME; payload: string }
-  | { type: WalletActions.OPEN_MODAL; payload: string }
-  | { type: WalletActions.SET_HARDWARE_ERROR; payload: string }
-  | { type: WalletActions.SET_APP; payload: any }
-  | { type: WalletActions.SET_API; payload: any }
-  | { type: WalletActions.SET_INTENT; payload: any }
-  | { type: WalletActions.SET_WALLETS; payload: any }
-  | { type: WalletActions.SET_CONTEXT; payload: any }
-  | { type: WalletActions.SET_ASSET_CONTEXT; payload: any }
-  | { type: WalletActions.SET_BLOCKCHAIN_CONTEXT; payload: any }
-  | { type: WalletActions.SET_PUBKEY_CONTEXT; payload: any }
-  | { type: WalletActions.SET_OUTBOUND_CONTEXT; payload: any }
-  | { type: WalletActions.SET_OUTBOUND_ASSET_CONTEXT; payload: any }
-  | { type: WalletActions.SET_OUTBOUND_BLOCKCHAIN_CONTEXT; payload: any }
-  | { type: WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT; payload: any }
-  | { type: WalletActions.SET_BLOCKCHAINS; payload: any }
-  | { type: WalletActions.SET_BALANCES; payload: any }
-  | { type: WalletActions.SET_PUBKEYS; payload: any }
-  | { type: WalletActions.ADD_WALLET; payload: any }
-  | { type: WalletActions.RESET_STATE; payload: any };
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -266,12 +193,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialState);
   // const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    transactionDB
-      .initDB()
-      .catch((err: any) => console.error('Failed to initialize database:', err));
-  }, []);
 
   // Create transaction entry
   const createTx = (newTx: any) => {
