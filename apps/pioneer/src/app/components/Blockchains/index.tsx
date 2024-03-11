@@ -6,8 +6,9 @@ import {
   Switch,
   Text,
   Avatar,
+  useToast, // Import useToast
 } from '@chakra-ui/react';
-import { NetworkIdToChain } from '@coinmasters/types';
+import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
@@ -17,19 +18,74 @@ export default function Blockchains() {
   const { state } = usePioneer();
   const { app } = state;
 
+  const [allChains, setAllChains] = useState<string[]>([]);
+  const [wallet, setWallet] = useState<string>('');
   const [enabledChains, setEnabledChains] = useState<string[]>([]);
+  const toast = useToast(); // Initialize useToast
+
+  let onStart = async function(){
+    try{
+      const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
+      setWallet(lastConnectedWallet);
+      if(lastConnectedWallet){
+        console.log('lastConnectedWallet: ', lastConnectedWallet);
+        await app.setContext(lastConnectedWallet);
+        //get wallet type
+        const walletType = lastConnectedWallet.split(':')[0];
+        console.log('walletType: ', walletType);
+        //set blockchains
+        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+        let allByCaip = blockchainsForContext.map((chainStr: any) => {
+          const chainEnum = getChainEnumValue(chainStr);
+          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+        });
+        setAllChains(allByCaip)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+  useEffect(() => {
+    onStart();
+  }, []);
 
   useEffect(() => {
-    // Here, we could initialize the enabledChains based on app?.blockchains if needed
+    // Initialize the enabledChains based on app?.blockchains if needed
+    setEnabledChains(app?.blockchains || []);
   }, [app?.blockchains]);
 
   const toggleChain = (chain: string) => {
     setEnabledChains(prev => prev.includes(chain) ? prev.filter(c => c !== chain) : [...prev, chain]);
   };
 
+  const selectAllChains = () => {
+    setEnabledChains(app?.blockchains || []);
+  };
+
+  const unselectAllChains = () => {
+    setEnabledChains([]);
+  };
+
   const saveEnabledChains = () => {
-    console.log('Enabled chains to save:', enabledChains);
-    // Logic to update the global state or perform another action with enabledChains
+    try{
+      if (enabledChains.length === 0) {
+        toast({
+          title: 'Error',
+          description: "At least one blockchain must be selected.",
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+      console.log('Enabled chains to save:', enabledChains);
+      app.setBlockchains(enabledChains);
+      let walletType = wallet.split(':')[0];
+      localStorage.setItem("cache:blockchains:"+walletType, JSON.stringify(enabledChains));
+      // Logic to update the global state or perform another action with enabledChains
+    }catch(e){
+      console.error(e)
+    }
   };
 
   const renderChain = (chain: string) => (
@@ -52,6 +108,10 @@ export default function Blockchains() {
 
   return (
     <Box>
+      <Flex justifyContent="space-between" mb={4}>
+        <Button colorScheme="green" onClick={selectAllChains}>Select All</Button>
+        <Button colorScheme="red" onClick={unselectAllChains}>Unselect All</Button>
+      </Flex>
       <Text fontSize="xl" mb={4}>UTXO Chains</Text>
       {UTXO.map(renderChain)}
       <Text fontSize="xl" my={4}>EVM Chains</Text>

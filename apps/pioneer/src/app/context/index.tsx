@@ -374,20 +374,14 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
         console.log("allByCaip: ", allByCaip);
+
+        //
+
+
         //get paths for wallet
         let paths = getPaths(allByCaip);
         console.log("paths: ", paths);
-
-
-
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized: any[] = allByCaip
-          .map((network: any) => paths.filter((path: any) => path.network === network).slice(-1)[0])
-          .filter((path: any) => path !== undefined);
-        //
-        state.app.setPaths(optimized);
+        state.app.setPaths(paths);
 
         //TODO get from localstorage disabled chains
         //TODO get from localStorage added chains!
@@ -480,7 +474,13 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
-      const blockchains: any = [];
+
+      let blockchains: any = [];
+      if(lastConnectedWallet){
+        //get blockchainCache for last connected wallet
+        const blockchainCache = localStorage.getItem("cache:blockchains:"+lastConnectedWallet);
+        blockchains = JSON.parse(blockchainCache || "[]");
+      }
 
       // @TODO add custom paths from localstorage
       const paths: any = [];
@@ -571,7 +571,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
             if (appInit.context)
               localStorage.setItem(
-                appInit.context + ':balanceCache',
+                'cache:balances:' + appInit.context,
                 JSON.stringify(uniqueBalances),
               );
           }
@@ -589,7 +589,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             // }, []);
 
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+              localStorage.setItem('cache:pubkeys:'+appInit.context, JSON.stringify(data));
           }
           // @ts-ignore
           dispatch({
@@ -602,17 +602,18 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (lastConnectedWallet) {
         console.log('Loading from cache!');
         await appInit.setContext(lastConnectedWallet);
-        //get wallet type
+        // //get wallet type
         const walletType = lastConnectedWallet.split(':')[0];
-        console.log('walletType: ', walletType);
-        //set blockchains
-        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        let allByCaip = blockchainsForContext.map((chainStr: any) => {
-          const chainEnum = getChainEnumValue(chainStr);
-          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-        });
-        console.log('allByCaip: ', allByCaip);
-        await appInit.setBlockchains(allByCaip);
+        let blockchainsCached = JSON.parse(localStorage.getItem('cache:blockchains:'+walletType)|| '[]');
+        // console.log('walletType: ', walletType);
+        // //set blockchains
+        // let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+        // let allByCaip = blockchainsForContext.map((chainStr: any) => {
+        //   const chainEnum = getChainEnumValue(chainStr);
+        //   return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+        // });
+        // console.log('allByCaip: ', allByCaip);
+        await appInit.setBlockchains(blockchainsCached);
       }
 
       //add to local storage of connected wallets
@@ -622,13 +623,13 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // Loop over each wallet and load balance and pubkey into cache
       for (const wallet of pairedWallets) {
         // Load balance cache
-        let balanceCache = localStorage.getItem(wallet + ':balanceCache');
+        let balanceCache = localStorage.getItem('cache:balances:'+wallet);
         balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
         console.log('balanceCache for', wallet, ':', balanceCache);
         await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
 
         // Load pubkey cache
-        let pubkeyCache = localStorage.getItem(wallet + ':pubkeyCache');
+        let pubkeyCache = localStorage.getItem(wallet + ':cache:pubkeys');
         pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
         console.log('pubkeyCache for', wallet, ':', pubkeyCache);
         await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous

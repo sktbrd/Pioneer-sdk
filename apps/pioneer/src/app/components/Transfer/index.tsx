@@ -25,7 +25,8 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue, Chain } from '@coinmasters/core';
+let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';
@@ -213,6 +214,29 @@ const Transfer = () => {
     }
   };
 
+
+  const setMaxAmount = async function () {
+    try {
+      console.log('onSetMax: ');
+      let pubkeys = await app.getPubkeys([ChainToNetworkId[assetContext.chain]])
+      console.log("pubkeys: ",pubkeys)
+
+      //send
+      let estimatePayload:any = {
+        feeRate: 10,
+        pubkeys,
+        memo: '',
+        recipient: FAUCET_ADDRESS,
+      }
+      //verify amount is < max spendable
+      let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
+      log.info("maxSpendable: ",maxSpendable)
+      log.info("maxSpendable: ",maxSpendable.getValue('string'))
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <VStack align="start" borderRadius="md" p={6} spacing={5}>
       <Modal
@@ -297,6 +321,7 @@ const Transfer = () => {
           <Text>
             Available Balance: {assetContext?.balance} ({assetContext?.symbol})
           </Text>
+          <Button onClick={setMaxAmount} size={'sm'}>MAX</Button>
         </div>
       )}
 

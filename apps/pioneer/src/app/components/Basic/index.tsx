@@ -66,6 +66,11 @@ const Basic = () => {
               <Td />
             </Tr>
             <Tr>
+              <Td>lastConnected</Td>
+              <Td>{localStorage.getItem('lastConnectedWallet')}</Td>
+              <Td />
+            </Tr>
+            <Tr>
               <Td>Asset Context</Td>
               <Td>{assetContext?.caip || 'no wallets paired!'}</Td>
               <Td />
