@@ -277,45 +277,43 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       try {
         if (state && state?.app) {
           console.log('connectWallet: ', wallet);
-          let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
-          let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
+          //TODO use these
+          // let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
+          // let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
 
-          // Parse the strings to arrays
-          let customPathsArray = customPathsForWallet ? JSON.parse(customPathsForWallet) : [];
-          let disabledPathsArray = disabledPathsForWallet ? JSON.parse(disabledPathsForWallet) : [];
+          type ChainString = keyof typeof ChainToNetworkId; // Assuming ChainToNetworkId's keys are of a specific type.
 
-          // Console log the arrays
-          console.log('Custom Paths for Wallet:', customPathsArray);
-          console.log('Disabled Paths for Wallet:', disabledPathsArray);
+          const cacheKey = `cache:blockchains:${wallet}`;
+          const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
 
-          // supported chains
-          const AllChainsSupported = availableChainsByWallet[wallet];
-          console.log('AllChainsSupported: ', AllChainsSupported);
-          let allByCaip = AllChainsSupported.map(
-            // @ts-ignore
-            (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-          );
-          console.log('allByCaip: ', allByCaip);
+          const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
+            const chainEnum: ChainString | undefined = getChainEnumValue(chainStr) as ChainString;
+            return ChainToNetworkId[chainEnum];
+          };
+
+          let blockchains =
+            cachedBlockchains.length > 0
+              ? cachedBlockchains
+              : state.app.blockchains.length > 0
+                ? state.app.blockchains
+                : availableChainsByWallet[wallet]
+                    .map(getNetworkIdFromChainStr)
+                    .filter((networkId: any): networkId is string => networkId !== undefined);
+
+          console.log('Selected blockchains: ', blockchains);
+
+          console.log('Selected blockchains: ', blockchains);
+
           //get paths for wallet
-          let paths = getPaths(allByCaip);
+          let paths = getPaths(blockchains);
           console.log('paths: ', paths);
-          // @ts-ignore
-          //HACK only use 1 path per chain
-          //TODO get user input (performance or find all funds)
-          let optimized: any[] = allByCaip
-            .map(
-              (network: any) => paths.filter((path: any) => path.network === network).slice(-1)[0],
-            )
-            .filter((path: any) => path !== undefined);
-          //
-          state.app.setPaths(optimized);
+          state.app.setPaths(paths);
 
           //TODO get from localstorage disabled chains
           //TODO get from localStorage added chains!
-          console.log('allByCaip: ', allByCaip);
           let pairParams: any = {
             type: wallet,
-            blockchains: allByCaip,
+            blockchains,
             ledgerApp: chain,
           };
           const successPairWallet = await state.app.pairWallet(pairParams);
@@ -538,7 +536,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // Loop over each wallet and load balance and pubkey into cache
       for (const wallet of pairedWallets) {
         // Load balance cache
-        let balanceCache = localStorage.getItem('cache:balances:'+wallet);
+        let balanceCache = localStorage.getItem('cache:balances:' + wallet);
         balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
         console.log('balanceCache for', wallet, ':', balanceCache);
         await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
