@@ -164,6 +164,9 @@ importers:
       '@coinmasters/helpers':
         specifier: workspace:*
         version: link:../../packages/swapkit/helpers
+      '@coinmasters/pioneer-react':
+        specifier: workspace:*
+        version: link:../../packages/pioneer/pioneer-react
       '@coinmasters/pioneer-sdk':
         specifier: workspace:*
         version: link:../../packages/pioneer/pioneer-sdk
