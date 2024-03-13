@@ -1,6 +1,6 @@
 {
-  "name": "@amitojsingh366/pioneer-react",
-  "version": "0.0.4",
+  "name": "@coinmasters/pioneer-react",
+  "version": "0.5.6",
   "author": "swapkit-oss-team",
   "description": "Pioneer-sdk react provider",
   "devDependencies": {
@@ -47,10 +47,11 @@
     "@coinmasters/pioneer-sdk": "latest",
     "@coinmasters/types": "latest",
     "@pioneer-platform/pioneer-coins": "latest",
+    "@types/node": "18.15.13",
     "@vitest/coverage-istanbul": "0.34.6",
+    "ethers": "^6.11.1",
     "eventemitter3": "^5.0.1",
     "fs-extra": "11.1.1",
-    "idb": "^8.0.0",
     "react": "^18.2.0",
     "uuid": "^9.0.1",
     "vite": "4.5.0",

@@ -33,7 +33,7 @@ import React, {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import transactionDB from './transactionDB';
+// import transactionDB from './transactionDB';
 import type { ActionTypes, InitialState } from './types';
 import { WalletActions } from './types';
 
@@ -195,34 +195,34 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Create transaction entry
-  const createTx = (newTx: any) => {
-    console.log('CREATE_TX');
-    transactionDB
-      .createTransaction(newTx)
-      .then((id: number) => console.log(`Transaction created with ID: ${id}`))
-      .catch((err: any) => console.error('Error creating transaction:', err));
-  };
+  // const createTx = (newTx: any) => {
+  //   console.log('CREATE_TX');
+  //   transactionDB
+  //     .createTransaction(newTx)
+  //     .then((id: number) => console.log(`Transaction created with ID: ${id}`))
+  //     .catch((err: any) => console.error('Error creating transaction:', err));
+  // };
 
   // Update transaction
-  const updateTx = (txid: string, newState: any) => {
-    console.log('UPDATE_TX');
-    transactionDB
-      .updateTransaction(txid, newState)
-      .then(() => console.log(`Transaction ${txid} updated to state ${newState}`))
-      .catch((err: any) => console.error('Error updating transaction:', err));
-  };
+  // const updateTx = (txid: string, newState: any) => {
+  //   console.log('UPDATE_TX');
+  //   transactionDB
+  //     .updateTransaction(txid, newState)
+  //     .then(() => console.log(`Transaction ${txid} updated to state ${newState}`))
+  //     .catch((err: any) => console.error('Error updating transaction:', err));
+  // };
 
   // Read transaction
-  const readTx = async (txid?: string) => {
-    console.log('READ_TX');
-    if (txid) {
-      console.log('txid: ', txid);
-      return await transactionDB.getTransaction(txid);
-    } else {
-      console.log('READ ALL: ');
-      return await transactionDB.getAllTransactions();
-    }
-  };
+  // const readTx = async (txid?: string) => {
+  //   console.log('READ_TX');
+  //   if (txid) {
+  //     console.log('txid: ', txid);
+  //     return await transactionDB.getTransaction(txid);
+  //   } else {
+  //     console.log('READ ALL: ');
+  //     return await transactionDB.getAllTransactions();
+  //   }
+  // };
 
   const resetState = () => {
     console.log('RESET_STATE');
@@ -568,9 +568,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       connectWallet,
       clearHardwareError,
       onStart,
-      createTx,
-      updateTx,
-      readTx,
+      // createTx,
+      // updateTx,
+      // readTx,
       showModal,
       hideModal,
       setIntent,
@@ -590,9 +590,9 @@ export interface UsePioneerType {
   showModal: (modal: any) => void;
   hideModal: () => void;
   clearHardwareError: () => void;
-  createTx: (tx: any) => void;
-  updateTx: (tx: any) => void;
-  readTx: (tx?: any) => void;
+  // createTx: (tx: any) => void;
+  // updateTx: (tx: any) => void;
+  // readTx: (tx?: any) => void;
   resetState: () => void;
   connectWallet: (wallet: string, chain?: any) => void;
 }
