@@ -412,7 +412,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const spec =
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
-        import.meta.env.VITE_PIONEER_URL_SPEC ||
         'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
       console.log('spec: ', spec);
@@ -524,17 +523,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (lastConnectedWallet) {
         console.log('Loading from cache!');
         await appInit.setContext(lastConnectedWallet);
-        //get wallet type
+        // //get wallet type
         const walletType = lastConnectedWallet.split(':')[0];
-        console.log('walletType: ', walletType);
-        //set blockchains
-        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        let allByCaip = blockchainsForContext.map((chainStr: any) => {
-          const chainEnum = getChainEnumValue(chainStr);
-          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-        });
-        console.log('allByCaip: ', allByCaip);
-        await appInit.setBlockchains(allByCaip);
+        let blockchainsCached = JSON.parse(
+          localStorage.getItem('cache:blockchains:' + walletType) || '[]',
+        );
+        await appInit.setBlockchains(blockchainsCached);
       }
 
       //add to local storage of connected wallets
@@ -544,13 +538,13 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // Loop over each wallet and load balance and pubkey into cache
       for (const wallet of pairedWallets) {
         // Load balance cache
-        let balanceCache = localStorage.getItem(wallet + ':balanceCache');
+        let balanceCache = localStorage.getItem('cache:balances:'+wallet);
         balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
         console.log('balanceCache for', wallet, ':', balanceCache);
         await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
 
         // Load pubkey cache
-        let pubkeyCache = localStorage.getItem(wallet + ':pubkeyCache');
+        let pubkeyCache = localStorage.getItem(wallet + ':cache:pubkeys');
         pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
         console.log('pubkeyCache for', wallet, ':', pubkeyCache);
         await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
