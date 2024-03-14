@@ -223,7 +223,7 @@ const Transfer = () => {
         let pubkeys = await app.pubkeys
         console.log("pubkeys: ",pubkeys)
         //filter by chain
-        pubkeys = pubkeys.filter(pubkey => pubkey.networks.includes(assetContext.networkId));
+        pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
 
         //send
         let estimatePayload:any = {
