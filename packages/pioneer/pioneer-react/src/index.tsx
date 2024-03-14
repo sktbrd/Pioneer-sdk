@@ -341,6 +341,20 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             localStorage.setItem('lastConnectedWallet', state.app.context);
 
             if (state && state.app) {
+              //get pubkeys
+              if (state.app.pubkeys) {
+                console.log('pubkeys: ', state.app.pubkeys);
+                localStorage.setItem('cache:balances:' + wallet, JSON.stringify(state.app.pubkeys));
+              }
+              //get balances
+              if (state.app.balances) {
+                console.log('balances: ', state.app.balances);
+                localStorage.setItem(
+                  'cache:balances:' + wallet,
+                  JSON.stringify(state.app.balances),
+                );
+              }
+
               // if pioneer set in localStoage
               if (state.app.isPioneer) {
                 localStorage.setItem('isPioneer', state.app.isPioneer);
