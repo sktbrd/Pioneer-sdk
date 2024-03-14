@@ -43,7 +43,7 @@ const Transfer = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Add disclosure for modal
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [modalType, setModalType] = useState("");
+  const [walletConnected, setWalletConnected] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   const [sendAmount, setSendAmount] = useState<any | undefined>();
   const [recipient, setRecipient] = useState('');
@@ -74,27 +74,8 @@ const Transfer = () => {
   const handleInputChange = (value: string) => {
     setInputAmount(value);
     if (!assetContext) return;
-    // const float = parseFloat(value);
-    // const amount = new Amount(
-    //   float,
-    //   AmountType.ASSET_AMOUNT,
-    //   assetContext.asset.decimal
-    // );
     setSendAmount('');
   };
-
-  // const getSwapKitContext = async function () {
-  //   try {
-  //     const address = await app.swapKit.getAddress(assetContext.chain);
-  //     console.log('address: ', address);
-  //     console.log('await app.swapKit: ', await app.swapKit);
-  //     //get wallet
-  //     const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-  //     console.log('walletInfo: ', walletInfo);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
 
   const handleSend = useCallback(async () => {
     try {
@@ -217,23 +198,48 @@ const Transfer = () => {
 
   const setMaxAmount = async function () {
     try {
-      console.log('onSetMax: ');
-      let pubkeys = await app.pubkeys
-      console.log("pubkeys: ",pubkeys)
-      //filter by chain
+      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      console.log('walletInfo: ', walletInfo);
 
-      //send
-      let estimatePayload:any = {
-        feeRate: 10,
-        pubkeys,
-        memo: '',
-        recipient,
+      if(!walletInfo){
+        console.log("app.context: ",app.context)
+        console.log("aassetContext: ",assetContext)
+        console.log("aassetContext.chain: ",assetContext.chain)
+        console.log("aassetContext.networkId: ",assetContext.networkId)
+        //set blockchains to JUST input asset
+        let blockchains = [assetContext.networkId]
+        console.log("new blockchains: ",blockchains)
+        app.setBlockchains(blockchains)
+
+        //walletType
+        let walletType = app.context.split(':')[0];
+        console.log('Wallet not connected, opening modal for: ', walletType);
+
+        //connect wallet
+        await connectWallet(walletType.toUpperCase());
+      } else {
+
+        console.log('onSetMax: ');
+        let pubkeys = await app.pubkeys
+        console.log("pubkeys: ",pubkeys)
+        //filter by chain
+        pubkeys = pubkeys.filter(pubkey => pubkey.networks.includes(assetContext.networkId));
+
+        //send
+        let estimatePayload:any = {
+          feeRate: 10,
+          pubkeys,
+          memo: '',
+          recipient,
+        }
+        console.log("app.swapKit: ",app.swapKit)
+        console.log("app.swapKit: ",app.estimateMaxSendableAmount)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
+        console.log("maxSpendable: ",maxSpendable)
+        console.log("maxSpendable: ",maxSpendable.getValue('string'))
+        setInputAmount(maxSpendable.getValue('string'))
       }
-      //verify amount is < max spendable
-      let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
-      console.log("maxSpendable: ",maxSpendable)
-      console.log("maxSpendable: ",maxSpendable.getValue('string'))
-      setInputAmount(maxSpendable.getValue('string'))
     } catch (e) {
       console.error(e);
     }
