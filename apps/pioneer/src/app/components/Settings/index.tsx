@@ -22,7 +22,7 @@ import Basic from '..//Basic';
 import Blockchains from '../Blockchains';
 import Paths from '../Paths';
 import Pubkeys from '../Pubkeys';
-import Cache from '../Cache';
+import Cache from '../Storage';
 
 export default function Settings() {
   const { state } = usePioneer();

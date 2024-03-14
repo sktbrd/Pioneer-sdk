@@ -2,7 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/pioneer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/pioneer-sdk-v5" vcs="Git" />
   </component>
 </project>
