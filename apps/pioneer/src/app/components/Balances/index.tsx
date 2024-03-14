@@ -23,7 +23,7 @@ import React, { useEffect, useState } from 'react';
 
 import Balance from '../Balance';
 
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
 export default function Balances() {

@@ -2,7 +2,7 @@ import { Button, Link } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 const Pending = ({ onClose }: any) => {
   const { createTx, readTx } = usePioneer();

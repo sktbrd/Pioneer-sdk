@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import Portfolio from '../Portfolio';
 
 // @ts-ignore

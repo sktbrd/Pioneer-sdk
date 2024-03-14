@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
-import { usePioneer } from "../../context";
+import { usePioneer } from "@coinmasters/pioneer-react";
 import MiddleEllipsis from '../../components/MiddleEllipsis';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';

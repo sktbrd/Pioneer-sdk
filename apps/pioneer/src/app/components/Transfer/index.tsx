@@ -33,7 +33,7 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useCallback, useEffect, useState } from 'react';
 
 import AssetSelect from '../../components/AssetSelect';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
 const Transfer = () => {
@@ -218,20 +218,22 @@ const Transfer = () => {
   const setMaxAmount = async function () {
     try {
       console.log('onSetMax: ');
-      let pubkeys = await app.getPubkeys([ChainToNetworkId[assetContext.chain]])
+      let pubkeys = await app.pubkeys
       console.log("pubkeys: ",pubkeys)
+      //filter by chain
 
       //send
       let estimatePayload:any = {
         feeRate: 10,
         pubkeys,
         memo: '',
-        recipient: FAUCET_ADDRESS,
+        recipient,
       }
       //verify amount is < max spendable
       let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
-      log.info("maxSpendable: ",maxSpendable)
-      log.info("maxSpendable: ",maxSpendable.getValue('string'))
+      console.log("maxSpendable: ",maxSpendable)
+      console.log("maxSpendable: ",maxSpendable.getValue('string'))
+      setInputAmount(maxSpendable.getValue('string'))
     } catch (e) {
       console.error(e);
     }

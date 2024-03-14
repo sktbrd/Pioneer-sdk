@@ -18,7 +18,7 @@ import {
   getWalletContent,
   pioneerImagePng,
 } from '../../components/WalletIcon';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 export default function AssetSelect({ onSelect }: any) {
   const { state } = usePioneer();

@@ -13,10 +13,13 @@ import {
   Flex,
   IconButton,
   Card,
+  FormControl,
+  FormLabel,
+  Input,
   useClipboard,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import Path from '../../components/Path';
 // import { getWalletContent } from '../../components/WalletIcon';
 //@ts-ignore
@@ -26,9 +29,11 @@ export default function Paths() {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
-  const [selectedPubkey, setSelectedPubkey] = useState(null);
+  const [selectedPath, setSelectedPath] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState('');
-  const [paths, setPaths] = useState([]);
+  const [paths, setPaths] = useState<any>([]);
+  const [pathDetails, setPathDetails] = useState<any>(selectedPath || {});
+  const [isEditMode, setIsEditMode] = useState(false);
 
   let loadPathsView = async function(){
     try{
@@ -55,7 +60,8 @@ export default function Paths() {
         console.log("defaultPaths: ",defaultPaths)
 
         // Combine default paths with custom paths, ensuring unique values
-        const combinedPaths = [...new Set([...defaultPaths, ...customPathsForWallet])];
+        const combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
+
 
         // Filter out disabled paths
         const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
@@ -63,7 +69,7 @@ export default function Paths() {
         console.log("pathsView: ", pathsView);
 
         // Assuming setPaths is a function defined to update your paths state
-        setPaths(pathsView);
+        setPaths(pathsView || []);
         //get disabled paths for wallet
       }
     }catch(e){
@@ -75,8 +81,8 @@ export default function Paths() {
     loadPathsView();
   }, [app, app?.paths]);
 
-  const handlePubkeyClick = (pubkey: any) => {
-    setSelectedPubkey(pubkey);
+  const handlePathClick = (path: any) => {
+    setSelectedPath(path);
     onOpen();
   };
 
@@ -85,6 +91,63 @@ export default function Paths() {
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(''), 3000);
   };
+
+  const onAddPath = () => {
+    //open modal
+    console.log('Add Path');
+    onOpen()
+  };
+
+    const handleChange = (e:any) => {
+      const { name, value } = e.target;
+      setPathDetails((prevDetails:any) => ({ ...prevDetails, [name]: value }));
+    };
+
+  const renderForm = () => (
+    Object.keys(selectedPath ?? {}).map(key => ( // If selectedPath is nullish, default to an empty object
+      <FormControl key={key} mt={4}>
+        <FormLabel>{key.charAt(0).toUpperCase() + key.slice(1)}</FormLabel>
+        <Input name={key} value={pathDetails[key]} onChange={handleChange} placeholder={`Enter ${key}`} />
+      </FormControl>
+    ))
+  );
+
+  const renderDetails = () => {
+    if (!selectedPath) return null; // Or return some placeholder UI
+
+    const renderValue = (value: unknown): string => {
+      if (Array.isArray(value)) {
+        // TypeScript understands value is an array here, so .join() is safe
+        return value.join(', ');
+      }
+      if (value === null || value === undefined) {
+        // Handle null and undefined explicitly
+        return '';
+      }
+      // For other types, calling .toString() is safe.
+      // If value is an object, consider checking for a custom .toString() method if needed.
+      return value.toString();
+    };
+
+    return (
+      Object.entries(selectedPath).map(([key, value]) => (
+        <Box key={key} p={2}>
+          <Text fontWeight="bold">{`${key.charAt(0).toUpperCase()}${key.slice(1)}:`}</Text>
+          <Text>{renderValue(value)}</Text>
+        </Box>
+      ))
+    );
+  };
+
+  const onSavePath = async function(path: any){
+    try{
+      console.log("onSavePath: ", pathDetails);
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+
 
   return (
     <div>
@@ -109,18 +172,28 @@ export default function Paths() {
               aria-label="Copy address"
               mr={2}
             />
-            <Button onClick={() => handlePubkeyClick(key)}>Select</Button>
+            <Button onClick={() => handlePathClick(key)}>view</Button>
           </Flex>
         </Card>
       ))}
-
+      <Button onClick={onAddPath} mt={4}>
+        Add Custom Path
+      </Button>
       <Modal isOpen={isOpen} onClose={onModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Pubkey Details</ModalHeader>
+          <ModalHeader>{isEditMode ? 'Edit Path Details' : 'Path Details'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedPubkey && <Path path={selectedPubkey} onClose={onModalClose} />}
+            {isEditMode ? renderForm() : renderDetails()}
+            <Button mt={4} colorScheme="blue" onClick={() => {
+              if (isEditMode) {
+                onSavePath(pathDetails); // Function to save the edited details
+              }
+              setIsEditMode(!isEditMode);
+            }}>
+              {isEditMode ? 'Save' : 'Edit'}
+            </Button>
           </ModalBody>
         </ModalContent>
       </Modal>

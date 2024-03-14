@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { useRouter } from 'next/router';
 

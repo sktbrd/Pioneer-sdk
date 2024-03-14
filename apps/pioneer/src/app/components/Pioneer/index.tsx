@@ -44,7 +44,7 @@ import {
   getWalletContent,
   pioneerImagePng,
 } from '../../components/WalletIcon';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, WalletOption } from '@coinmasters/types';
 
 
@@ -157,13 +157,6 @@ const Pioneer = () => {
     //clear pubkeys
     //clear context
     //clear blockchains
-    const AllChainsSupported = availableChainsByWallet[wallet];
-    console.log('AllChainsSupported: ', AllChainsSupported);
-    let allByCaip = AllChainsSupported.map((chainStr: any) => {
-      const chainEnum = getChainEnumValue(chainStr);
-      return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-    }).filter((x: any) => x !== undefined);
-    app.setBlockchains(allByCaip);
     onOpen();
     setWalletType(wallet);
     setModalType(wallet);

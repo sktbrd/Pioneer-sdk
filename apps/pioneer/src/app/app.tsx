@@ -1,5 +1,6 @@
 "use client";
-import { usePioneer } from './context';
+// import { usePioneer } from './context';
+import { usePioneer } from "@coinmasters/pioneer-react"
 import { availableChainsByWallet, WalletOption } from '@coinmasters/types';
 import Swap from './components/Swap'; // Assuming these are correctly implemented
 import Pioneer from './components/Pioneer';

@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { WalletOption, availableChainsByWallet } from "@coinmasters/types";
-import { PioneerProvider, usePioneer } from './context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 // setup
 const pioneerSetup: any = {
   appName: "Pioneer Template",

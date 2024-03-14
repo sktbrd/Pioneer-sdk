@@ -15,8 +15,9 @@ import {
 import React, { useEffect, useState } from 'react';
 //@ts-ignore
 // import pioneerImage from '../../../../public/png/pioneerMan.png';
+import Blockchains from '../../components/Blockchains';
 import { getWalletContent } from '../../components/WalletIcon';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 const checkKeepkeyAvailability = async () => {
   try {
@@ -36,6 +37,8 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
   const { app } = state;
   const [server, setServer] = useState('https://pioneers.dev/spec/swagger.json');
   const [showWalletSelection, setShowWalletSelection] = useState(false);
+  const [showServerSelection, setShowServerSelection] = useState(true);
+  const [showBlockchainSelection, setShowBlockchainSelection] = useState(false);
   const [showAllWallets, setShowAllWallets] = useState(false);
   const [walletsAvailable, setWalletsAvailable] = useState([]);
 
@@ -65,7 +68,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
       if (isKeepkeyAvailable) {
         handleWalletClick('KEEPKEY');
       } else {
-        setShowWalletSelection(true);
+        setShowBlockchainSelection(true);
       }
     }
   }
@@ -128,8 +131,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
       <Flex alignItems="center">
         <Avatar size="xl" src='/png/pioneerMan.png' />
         <Text fontStyle="italic" ml={4} textAlign="right">
-          Welcome to the world of Cryptocurrencies, to start your journey you can select your pioneer server,
-          if you have a custom pioneer server you can insert it here. Default is
+          Welcome to the Pioneer Platform, this application is powered by the pioneer-sdk. for more information visit
           <Link isExternal color="blue.500" href="https://pioneers.dev/docs">
             {' '}
             pioneers.dev
@@ -147,9 +149,9 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
       </Button>
 
       <Box>
-        <Link isExternal href="https://pioneers.dev">
-          Click here to learn how to deploy a pioneer server
-        </Link>
+        {/*<Link isExternal href="https://pioneers.dev">*/}
+        {/*  Click here to learn how to deploy a pioneer server*/}
+        {/*</Link>*/}
       </Box>
     </Stack>
   );
@@ -171,5 +173,21 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
     </Stack>
   );
 
-  return showWalletSelection ? WalletSelectionUI() : ServerSelectionUI();
+  // Blockchain Selection UI
+  const BlockchainSelectionUI = () => (
+    <Stack spacing={4}>
+      <Blockchains />
+    </Stack>
+  );
+
+  if (showServerSelection) {
+    return <ServerSelectionUI />;
+  } else if (showBlockchainSelection) {
+    return <BlockchainSelectionUI />;
+  } else if (showWalletSelection) {
+    return <WalletSelectionUI />;
+  } else {
+    // Default or a fallback UI if needed
+    return <Text>Please select an option to get started.</Text>;
+  }
 }

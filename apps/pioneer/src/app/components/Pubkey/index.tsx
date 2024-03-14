@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box, Stack, Avatar, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 export default function Pubkey({ onClose, pubkey }: any) {
   const { state } = usePioneer();

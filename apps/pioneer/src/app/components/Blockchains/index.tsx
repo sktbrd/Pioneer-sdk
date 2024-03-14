@@ -12,9 +12,9 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
-export default function Blockchains() {
+export default function Blockchains({onSelect}: any) {
   const { state } = usePioneer();
   const { app } = state;
 
@@ -26,7 +26,7 @@ export default function Blockchains() {
   let onStart = async function(){
     try{
       const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
-      setWallet(lastConnectedWallet);
+      setWallet(lastConnectedWallet || '');
       if(lastConnectedWallet){
         console.log('lastConnectedWallet: ', lastConnectedWallet);
         await app.setContext(lastConnectedWallet);
@@ -83,6 +83,8 @@ export default function Blockchains() {
       let walletType = wallet.split(':')[0];
       localStorage.setItem("cache:blockchains:"+walletType, JSON.stringify(enabledChains));
       // Logic to update the global state or perform another action with enabledChains
+      // Reload the page to force restart the application
+      window.location.reload();
     }catch(e){
       console.error(e)
     }
@@ -99,7 +101,7 @@ export default function Blockchains() {
   );
 
   // Group and sort chains by type
-  const { UTXO, EVM, others } = app?.blockchains?.reduce((acc, chain) => {
+  const { UTXO, EVM, others } = allChains?.reduce((acc:any, chain:any) => {
     if (chain.startsWith('bip122:')) acc.UTXO.push(chain);
     else if (chain.startsWith('eip155:')) acc.EVM.push(chain);
     else acc.others.push(chain);

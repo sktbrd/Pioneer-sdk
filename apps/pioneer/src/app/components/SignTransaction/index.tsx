@@ -22,7 +22,7 @@ import {
 import { useEffect, useState } from 'react';
 
 // @ts-ignore
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 // Adjust the import path according to your file structure
 
 export default function SignTransaction({ onClose, quote }: any) {

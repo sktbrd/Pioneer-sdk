@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletContent } from '../WalletIcon';
 
 export default function WalletList() {

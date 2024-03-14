@@ -23,7 +23,7 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 
 // @ts-ignore
-import { usePioneer } from '../../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 const labelStyles = {
   mt: '2',

@@ -23,7 +23,7 @@ import OutputSelect from '../../components/OutputSelect';
 import Pending from '../../components/Pending';
 import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
 // import ForkMeBanner from "lib/components/ForkMe";

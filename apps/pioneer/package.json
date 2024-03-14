@@ -1,7 +1,6 @@
 {
   "name": "pioneer-template",
   "version": "0.1.6",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -33,6 +32,7 @@
     "@coinmasters/core": "workspace:*",
     "@coinmasters/helpers": "workspace:*",
     "@coinmasters/pioneer-sdk": "workspace:*",
+    "@coinmasters/pioneer-react": "workspace:*",
     "@coinmasters/tokens": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",

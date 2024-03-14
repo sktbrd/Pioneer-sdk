@@ -21,7 +21,7 @@ import {
 import { AssetValue } from '@coinmasters/core';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
 const Earn = ({ openModal }: any) => {
   const toast = useToast();

@@ -26,7 +26,7 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
-import { usePioneer } from '../../context';
+import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import MiddleEllipsis from '../../components/MiddleEllipsis';
 
