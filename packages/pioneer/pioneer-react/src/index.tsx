@@ -344,7 +344,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               //get pubkeys
               if (state.app.pubkeys) {
                 console.log('pubkeys: ', state.app.pubkeys);
-                localStorage.setItem('cache:balances:' + wallet, JSON.stringify(state.app.pubkeys));
+                localStorage.setItem('cache:pubkeys:' + wallet, JSON.stringify(state.app.pubkeys));
               }
               //get balances
               if (state.app.balances) {
@@ -416,11 +416,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       // @TODO add custom paths from localstorage
       const paths: any = [];
-      // const spec =
-      //   localStorage.getItem('pioneerUrl') ||
-      //   // @ts-ignore
-      //   import.meta.env.VITE_PIONEER_URL_SPEC ||
-      //   'http://127.0.0.1:9001/spec/swagger.json';
       const spec =
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
@@ -502,27 +497,18 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               return acc;
             }, []);
 
-            if (appInit.context)
-              localStorage.setItem(
-                appInit.context + ':balanceCache',
-                JSON.stringify(uniqueBalances),
-              );
+            let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
+            console.log('balance cacheKey: ', cacheKeyBalances);
+            localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
           }
 
           // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            console.log('setting pubkeys for context: ', appInit.context);
+            console.log('setting pubkeys: ', data);
 
-            // Remove duplicates based on .networkId property
-            // const uniquePubkeys = data.reduce((acc: any, currentItem: any) => {
-            //   if (!acc.some((item: any) => item.networkId === currentItem.networkId)) {
-            //     acc.push(currentItem);
-            //   }
-            //   return acc;
-            // }, []);
-
-            if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+            let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
+            console.log('pubkey cacheKey: ', cacheKeyPubkeys);
+            localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
           }
           // @ts-ignore
           dispatch({
@@ -533,6 +519,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       });
 
       if (lastConnectedWallet) {
+        console.log('lastConnectedWallet');
         console.log('Loading from cache!');
         await appInit.setContext(lastConnectedWallet);
         // //get wallet type
@@ -541,26 +528,56 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           localStorage.getItem('cache:blockchains:' + walletType) || '[]',
         );
         await appInit.setBlockchains(blockchainsCached);
+
+        //get pubkeys from cache
+        let pubkeyCache = localStorage.getItem('cache:pubkeys:' + walletType.toLowerCase());
+        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+
+        //@TODO filter by blockchain
+
+        //set pubkeys
+        console.log('pubkeyCache: ', pubkeyCache);
+        if (pubkeyCache && pubkeyCache.length > 0) {
+          await appInit.loadPubkeyCache(pubkeyCache);
+        } else {
+          console.error('Empty pubkey cache!');
+        }
+
+        //get balances from cache
+        let balanceCacheKey = 'cache:balance:' + walletType.toLowerCase();
+        console.log('balanceCacheKey: ', balanceCacheKey);
+        let balanceCache = localStorage.getItem(balanceCacheKey);
+        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+
+        //@TODO filter by blockchain
+
+        //set balances
+        console.log('balanceCache: ', balanceCache);
+        if (balanceCache && balanceCache.length > 0) {
+          await appInit.loadBalanceCache(balanceCache);
+        } else {
+          console.error('Empty balance cache!');
+        }
       }
 
       //add to local storage of connected wallets
       // Retrieve paired wallets from local storage
-      const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
+      // const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
 
-      // Loop over each wallet and load balance and pubkey into cache
-      for (const wallet of pairedWallets) {
-        // Load balance cache
-        let balanceCache = localStorage.getItem('cache:balances:' + wallet);
-        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-        console.log('balanceCache for', wallet, ':', balanceCache);
-        await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
-
-        // Load pubkey cache
-        let pubkeyCache = localStorage.getItem(wallet + ':cache:pubkeys');
-        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-        console.log('pubkeyCache for', wallet, ':', pubkeyCache);
-        await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
-      }
+      // // Loop over each wallet and load balance and pubkey into cache
+      // for (const wallet of pairedWallets) {
+      //   // Load balance cache
+      //   let balanceCache = localStorage.getItem('cache:balances:' + wallet);
+      //   balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+      //   console.log('balanceCache for', wallet, ':', balanceCache);
+      //   await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
+      //
+      //   // Load pubkey cache
+      //   let pubkeyCache = localStorage.getItem(wallet + ':cache:pubkeys');
+      //   pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+      //   console.log('pubkeyCache for', wallet, ':', pubkeyCache);
+      //   await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
+      // }
     } catch (e) {
       console.error(e);
     }
