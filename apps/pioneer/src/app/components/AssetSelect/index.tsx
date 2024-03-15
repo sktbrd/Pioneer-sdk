@@ -77,7 +77,7 @@ export default function AssetSelect({ onSelect }: any) {
 
         setCurrentPage(balancesView);
         console.log('balancesView: ', balancesView);
-        setTotalAssets(balancesView.length);
+        //setTotalAssets(balancesView.length);
       }
     } catch (e) {
       console.error(e);

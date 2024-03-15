@@ -305,8 +305,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // Correctly ensuring addedChains is an array before spreading
           // Ensure paths is an array to spread into
           let paths = getPaths(blockchains) || [];
+          console.log('wallet: ', wallet);
           // Attempt to retrieve and parse the added chains from localStorage
-          let addedChainsStr = localStorage.getItem(wallet + ':paths:add');
+          let addedChainsStr = localStorage.getItem(wallet.toLowerCase() + ':paths:add');
           let addedChains;
 
           // Safely parse addedChainsStr, ensuring it's not null before parsing
@@ -315,10 +316,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           } else {
             addedChains = [];
           }
-
+          console.log('onConnaddedChainsect paths: ', addedChains);
           // At this point, both paths and addedChains are guaranteed to be arrays
           // You can now safely concatenate them using the spread operator
           paths = paths.concat(addedChains);
+          console.log('onConnect paths: ', paths);
 
           state.app.setPaths(paths);
 
@@ -338,7 +340,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               payload: successPairWallet.error,
             });
           } else {
-            if (successPairWallet) localStorage.setItem('keepkeyApiKey', successPairWallet);
+            console.log('keepkeyApiKey: ', state.app.keepkeyApiKey);
+
+            if (successPairWallet) localStorage.setItem('keepkeyApiKey', state.app.keepkeyApiKey);
             console.log('state.app.assetContext: ', state.app.assetContext);
             console.log('state.app.context: ', state.app.context);
 
@@ -554,9 +558,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           addedChains = [];
         }
 
-        console.log('onStart paths: ', paths);
         paths = paths.concat(addedChains);
-
+        console.log('onStart paths: ', paths);
 
         appInit.setPaths(paths);
 
@@ -568,6 +571,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
         //set pubkeys
         console.log('pubkeyCache: ', pubkeyCache);
+        if (pubkeyCache && pubkeyCache.length > paths.length) {
+          console.log('I know im out of sync!');
+          //force a resync
+          //await connectWallet(lastConnectedWallet);
+        }
+
         if (pubkeyCache && pubkeyCache.length > 0) {
           await appInit.loadPubkeyCache(pubkeyCache);
         } else {

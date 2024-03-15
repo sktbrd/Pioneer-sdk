@@ -37,11 +37,12 @@ export default function SignTransaction({ onClose, quote }: any) {
   // const [outputFeeUSD, setOutputFeeUSD] = useState('');
   const [isPairing, setIsPairing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
+  const [txHash, setTxHash] = useState<string>('');
 
   const HandleSwap = async () => {
     // const inputChain = assetContext?.chain;
     console.log('outboundAssetContext: ', outboundAssetContext);
-    const [txHash, setTxHash] = useState<string>('');
+
 
     const outputChain = outboundAssetContext?.chain;
     if (!assetContext || !outboundAssetContext || !app || !app?.swapKit) return;
@@ -50,11 +51,13 @@ export default function SignTransaction({ onClose, quote }: any) {
     console.log('address: ', address);
 
     console.log('quote: ', quote);
-    const txHashResult = await app?.swapKit.swap({
-      route: quote.quote,
+    let swapObj = {
+      route: quote.quote.route,
       recipient: address,
       feeOptionKey: FeeOption.Fast,
-    });
+    }
+    console.log('swapObj: ', swapObj);
+    const txHashResult = await app?.swapKit.swap(swapObj);
     console.log('txHash: ', txHashResult);
     setTxHash(txHashResult);
     onClose();
@@ -63,7 +66,7 @@ export default function SignTransaction({ onClose, quote }: any) {
   const approveTransaction = async () => {
     // verify context of input asset
     const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-
+    console.log('walletInfo: ', walletInfo);
     if (!walletInfo) {
       setIsPairing(true);
       console.log('assetContext: ', assetContext);
@@ -71,30 +74,17 @@ export default function SignTransaction({ onClose, quote }: any) {
       console.log('contextType: ', contextType);
       //set blockchains to just ETH + tx chain for speed
       let blockchain = caipToNetworkId(quote.quote.sellAsset);
-      let blockchains = ['eip155:1', blockchain];
+      let blockchains = [blockchain];
       let paths = getPaths(blockchains);
-      let optimized: any = [];
-      blockchains.forEach((network: any) => {
-        const pathForNetwork = paths
-          .filter((path: { network: any }) => path.network === network)
-          .slice(-1)[0];
-        if (pathForNetwork) {
-          optimized.push(pathForNetwork);
-        }
-      });
-      app.setPaths(optimized);
-      console.log('blockchain: ', blockchain);
+
+      app.setPaths(paths);
+
       let pairObj = {
         type:WalletOption.KEEPKEY,
         blockchains
       }
       const resultInit = await app.pairWallet(pairObj)
-      await app.getPubkeys();
-      await app.getBalances();
-      setTimeout(() => {
-        console.log('Retrying wallet connection...');
-        approveTransaction();
-      }, 3000);
+      console.log('pair result: ', resultInit);
     } else {
       console.log('Approving TX');
       setIsApproved(true);

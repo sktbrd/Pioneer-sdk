@@ -225,7 +225,7 @@ export const utxoWalletMethods = async ({
       fetchTxHex: chain,
     });
     console.log('rawInputs: ', rawInputs);
-    const inputs = rawInputs.map(({ value, index, hash, txHex, path }) => ({
+    const inputs = rawInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
       addressNList: bip32ToAddressNList(path),
       scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType,
       amount: value.toString(),
@@ -242,6 +242,7 @@ export const utxoWalletMethods = async ({
   return {
     ...toolbox,
     getPubkeys,
+    // getInputsForPubkey,
     getAddress: () => walletAddress as string,
     signTransaction,
     transfer,

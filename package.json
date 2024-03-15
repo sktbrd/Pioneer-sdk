@@ -2,8 +2,8 @@
   "devDependencies": {
     "@babel/core": "7.23.3",
     "@babel/eslint-parser": "7.23.3",
-    "@changesets/changelog-github": "0.4.8",
-    "@changesets/cli": "2.26.1",
+    "@changesets/changelog-github": "0.5.0",
+    "@changesets/cli": "2.27.1",
     "@size-limit/file": "11.0.0",
     "@typescript-eslint/eslint-plugin": "6.12.0",
     "@typescript-eslint/parser": "6.12.0",
@@ -21,7 +21,7 @@
     "prettier": "3.1.0",
     "react": "18.2.0",
     "size-limit": "11.0.0",
-    "turbo": "latest",
+    "turbo": "^1.12.5",
     "typescript": "5.2.2",
     "vitest": "0.34.6"
   },
@@ -51,13 +51,12 @@
     },
     "patchedDependencies": {
       "cipher-base@1.0.4": "patches/cipher-base-npm-1.0.4-2e98b97140.patch",
-      "@changesets/cli@2.26.1": "patches/@changesets__cli@2.26.1.patch",
       "typeforce@1.18.0": "patches/typeforce@1.18.0.patch"
     }
   },
   "scripts": {
     "bootstrap": "rm -rf node_modules; pnpm install; pnpm build",
-    "build": "rm -rf ./apps/pioneer/.next || true && turbo run build",
+    "build": "turbo run build",
     "build:playground": "turbo run build-playground --concurrency=30",
     "preview:playground": "turbo run preview-playground --concurrency=30",
     "build:pioneer": "turbo run build-pioneer --concurrency=40",

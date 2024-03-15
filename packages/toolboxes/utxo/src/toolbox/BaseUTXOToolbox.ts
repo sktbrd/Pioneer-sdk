@@ -159,7 +159,7 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
-  totalBalance = totalBalance / 100000000
+  totalBalance = totalBalance / 100000000;
   console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
   //console.log('BaseUTXO asset: ', asset);
@@ -194,6 +194,7 @@ function transformInput(input) {
     height,
     confirmations,
     path,
+    scriptType,
     hex: txHex,
     tx,
     coin,
@@ -206,6 +207,7 @@ function transformInput(input) {
     index: vout,
     value: parseInt(value),
     height,
+    scriptType,
     confirmations,
     path,
     txHex,
@@ -300,7 +302,14 @@ const getInputsAndTargetOutputs = async ({
         chain,
         apiKey: apiClient.apiKey,
       });
-      console.log('inputs: ', inputs);
+      console.log('getInputsAndTargetOutputs: pubkeyInfo: ', pubkeyInfo);
+      console.log('getInputsAndTargetOutputs: inputs: ', inputs);
+      //add scriptType
+      inputs = inputs.map((input) => {
+        input.scriptType = pubkeyInfo.script_type;
+        return input;
+      });
+      console.log('getInputsAndTargetOutputs: inputs: POST: ', inputs);
       if (inputs && inputs.length > 0) {
         allInputs = [...allInputs, ...inputs];
       }
@@ -497,18 +506,29 @@ const getInputsOutputsFee = async ({
   feeeRate?: number;
 }) => {
   const inputsAndOutputs = await getInputsAndTargetOutputs({
+    pubkeys,
     assetValue,
     recipient,
     memo,
     sender,
     fetchTxHex,
     apiClient,
-    chain,
+    chain
   });
 
   const feeRateWhole = feeRate ? Math.floor(feeRate) : (await getFeeRates(apiClient))[feeOptionKey];
 
   return accumulative({ ...inputsAndOutputs, feeRate: feeRateWhole, chain });
+};
+
+export const getInputsForPubkey = async function (pubkey: string, chain: Chain, apiKey: any) {
+  try {
+    const utxos = await apiClient.listUnspent({ pubkey, chain, apiKey });
+    return utxos.map(transformInput);
+  } catch (e) {
+    console.error('Error getting inputs for pubkey', pubkey, e);
+    throw e;
+  }
 };
 
 export const estimateMaxSendableAmount = async ({
@@ -594,7 +614,7 @@ export const BaseUTXOToolbox = (
   validateAddress: (address: string) => validateAddress({ address, ...baseToolboxParams }),
 
   createKeysForPath: (params: any) => createKeysForPath({ ...params, ...baseToolboxParams }),
-
+  getInputsForPubkey: (pubkey: string) => getInputsForPubkey(pubkey, baseToolboxParams.chain, baseToolboxParams.apiClient),
   getPrivateKeyFromMnemonic: async ({
     phrase,
     derivationPath,

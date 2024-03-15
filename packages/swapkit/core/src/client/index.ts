@@ -345,6 +345,7 @@ export class SwapKitCore<T = ''> {
       //for each pubkey iterate and sum the balance
       let balance: AssetValue[] = [];
       if (pubkeys.length === 0) {
+        //get inputs
         console.log(tag, 'Get balance for Address! address: ' + address);
         console.log(tag, 'Get balance for Address! chain: ' + chain);
         //use address balance
@@ -352,6 +353,7 @@ export class SwapKitCore<T = ''> {
         console.log(tag, 'balance: ' + balance);
 
         //console.log('Get balance for Address! chain: ' + chain);
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < balance.length; i++) {
           balance[i].address = address;
         }
@@ -400,7 +402,9 @@ export class SwapKitCore<T = ''> {
         balanceValue.address = address;
         balance = [balanceValue];
       }
+      //if inputs add inputs
 
+      //if features (keepkey) add to object
       this.connectedChains[chain] = {
         address,
         pubkeys,

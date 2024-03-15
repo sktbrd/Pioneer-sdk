@@ -188,6 +188,22 @@ const test_service = async function (this: any) {
         // assert(balance.length > 0)
         // //verify balances
 
+        //get pubkeys
+        //get pubkeys
+        log.info("BLOCKCHAIN: ",BLOCKCHAIN)
+        let pubkeys = await app.getPubkeys([BLOCKCHAIN])
+        // let pubkeys = await app.getPubkeys()
+        log.info("pubkeys: ",pubkeys)
+
+        //get wallet for chain
+        let walletSwapkit = await app.swapKit.getWalletByChain('BTC')
+        log.info("walletSwapkit: ",walletSwapkit)
+
+        //TODO view inputs for pubkeys
+
+        //TODO verify inputs
+
+
         // create assetValue
         const assetString = `${ASSET}.${ASSET}`;
         console.log('assetString: ', assetString);
@@ -197,11 +213,7 @@ const test_service = async function (this: any) {
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
 
-        //get pubkeys
-        log.info("BLOCKCHAIN: ",BLOCKCHAIN)
-        let pubkeys = await app.getPubkeys([BLOCKCHAIN])
-        // let pubkeys = await app.getPubkeys()
-        log.info("pubkeys: ",pubkeys)
+
 
         //send
         let estimatePayload:any = {
