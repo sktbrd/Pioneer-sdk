@@ -59,7 +59,7 @@ export default function Blockchains({onSelect}: any) {
   };
 
   const selectAllChains = () => {
-    setEnabledChains(app?.blockchains || []);
+    setEnabledChains(allChains);
   };
 
   const unselectAllChains = () => {

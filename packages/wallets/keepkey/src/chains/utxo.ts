@@ -227,13 +227,13 @@ export const utxoWalletMethods = async ({
     console.log('rawInputs: ', rawInputs);
     const inputs = rawInputs.map(({ value, index, hash, txHex, path }) => ({
       addressNList: bip32ToAddressNList(path),
-      scriptType,
+      scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType,
       amount: value.toString(),
       vout: index,
       txid: hash,
       hex: txHex || '',
     }));
-    //console.log('transfer inputs: ', inputs);
+    console.log('transfer inputs: ', inputs);
     const txHex = await signTransaction(psbt, inputs, memo);
     //console.log('txHex: ', txHex);
     return toolbox.broadcastTx(txHex);

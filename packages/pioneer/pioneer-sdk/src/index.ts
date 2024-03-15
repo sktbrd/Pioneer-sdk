@@ -509,6 +509,7 @@ export class SDK {
         throw e;
       }
     };
+
     // this.pairWallet = async function (wallet: string, blockchains: any, ledgerApp?: any) {
     //   const tag = `${TAG} | pairWallet | `;
     //   try {

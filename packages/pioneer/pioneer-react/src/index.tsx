@@ -302,15 +302,26 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
           console.log('Selected blockchains: ', blockchains);
 
-          console.log('Selected blockchains: ', blockchains);
+          // Correctly ensuring addedChains is an array before spreading
+          // Ensure paths is an array to spread into
+          let paths = getPaths(blockchains) || [];
+          // Attempt to retrieve and parse the added chains from localStorage
+          let addedChainsStr = localStorage.getItem(wallet + ':paths:add');
+          let addedChains;
 
-          //get paths for wallet
-          let paths = getPaths(blockchains);
-          console.log('paths: ', paths);
+          // Safely parse addedChainsStr, ensuring it's not null before parsing
+          if (addedChainsStr) {
+            addedChains = JSON.parse(addedChainsStr);
+          } else {
+            addedChains = [];
+          }
+
+          // At this point, both paths and addedChains are guaranteed to be arrays
+          // You can now safely concatenate them using the spread operator
+          paths = paths.concat(addedChains);
+
           state.app.setPaths(paths);
 
-          //TODO get from localstorage disabled chains
-          //TODO get from localStorage added chains!
           let pairParams: any = {
             type: wallet,
             blockchains,
@@ -528,6 +539,26 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           localStorage.getItem('cache:blockchains:' + walletType) || '[]',
         );
         await appInit.setBlockchains(blockchainsCached);
+        console.log('blockchainsCached: ', blockchainsCached);
+        //get paths for wallet
+        let paths = getPaths(blockchainsCached);
+
+        //get paths for blockchains
+        let addedChainsStr = localStorage.getItem(walletType + ':paths:add');
+        let addedChains;
+
+        // Safely parse addedChainsStr, ensuring it's not null before parsing
+        if (addedChainsStr) {
+          addedChains = JSON.parse(addedChainsStr);
+        } else {
+          addedChains = [];
+        }
+
+        console.log('onStart paths: ', paths);
+        paths = paths.concat(addedChains);
+
+
+        appInit.setPaths(paths);
 
         //get pubkeys from cache
         let pubkeyCache = localStorage.getItem('cache:pubkeys:' + walletType.toLowerCase());
@@ -559,25 +590,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           console.error('Empty balance cache!');
         }
       }
-
-      //add to local storage of connected wallets
-      // Retrieve paired wallets from local storage
-      // const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
-
-      // // Loop over each wallet and load balance and pubkey into cache
-      // for (const wallet of pairedWallets) {
-      //   // Load balance cache
-      //   let balanceCache = localStorage.getItem('cache:balances:' + wallet);
-      //   balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-      //   console.log('balanceCache for', wallet, ':', balanceCache);
-      //   await appInit.loadBalanceCache(balanceCache); // Assuming this function exists and is asynchronous
-      //
-      //   // Load pubkey cache
-      //   let pubkeyCache = localStorage.getItem(wallet + ':cache:pubkeys');
-      //   pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-      //   console.log('pubkeyCache for', wallet, ':', pubkeyCache);
-      //   await appInit.loadPubkeyCache(pubkeyCache); // Assuming this function exists and is asynchronous
-      // }
     } catch (e) {
       console.error(e);
     }

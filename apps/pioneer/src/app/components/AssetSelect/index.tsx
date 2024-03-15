@@ -22,7 +22,7 @@ import { usePioneer } from '@coinmasters/pioneer-react';
 
 export default function AssetSelect({ onSelect }: any) {
   const { state } = usePioneer();
-  const { app, balances } = state;
+  let { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
   // const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [showOwnedAssets, setShowOwnedAssets] = useState(false);
@@ -67,9 +67,17 @@ export default function AssetSelect({ onSelect }: any) {
     try {
       if (balances) {
         setShowOwnedAssets(true);
-        setCurrentPage(balances);
-        console.log('balances: ', balances);
-        //setTotalAssets(balances.length);
+
+        let balancesView = balances.sort((a: any, b: any) => {
+          if (sortOrder === 'asc') {
+            return (a.valueUsd || 0) - (b.valueUsd || 0);
+          }
+          return (b.valueUsd || 0) - (a.valueUsd || 0);
+        });
+
+        setCurrentPage(balancesView);
+        console.log('balancesView: ', balancesView);
+        setTotalAssets(balancesView.length);
       }
     } catch (e) {
       console.error(e);

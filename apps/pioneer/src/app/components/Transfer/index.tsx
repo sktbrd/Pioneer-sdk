@@ -44,8 +44,10 @@ const Transfer = () => {
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
+  const [isMax, setisMax] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   const [sendAmount, setSendAmount] = useState<any | undefined>();
+
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -155,13 +157,15 @@ const Transfer = () => {
         console.log('assetValue: ', assetValue);
 
         // modify assetVaule for input
-
-        // let assetValue;
-        const txHash = await app.swapKit.transfer({
+        let sendPayload:any = {
           assetValue,
           memo: '',
           recipient,
-        });
+        }
+        if(isMax) sendPayload.isMax = true
+        // let assetValue;
+        console.log("sendPayload: ", sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
         window.open(
           `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
           '_blank',
@@ -200,7 +204,7 @@ const Transfer = () => {
     try {
       const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
       console.log('walletInfo: ', walletInfo);
-
+      setisMax(true);
       if(!walletInfo){
         console.log("app.context: ",app.context)
         console.log("aassetContext: ",assetContext)
