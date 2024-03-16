@@ -1,14 +1,15 @@
 "use client";
-// import { usePioneer } from './context';
+import { Box, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
 import { usePioneer } from "@coinmasters/pioneer-react"
 import { availableChainsByWallet, WalletOption } from '@coinmasters/types';
-import Swap from './components/Swap'; // Assuming these are correctly implemented
+import { useState, useEffect } from 'react';
 import Pioneer from './components/Pioneer';
-import Receive from './components/Receive';
-import { useEffect } from 'react';
+import Image from 'next/image'; // Import Next.js Image component for the logo
+import Swap from './components/Swap';
+
 export default function App() {
   const { onStart } = usePioneer();
-
+  const [tabIndex, setTabIndex] = useState(1);
   let onStartApp = async function(){
     try{
       let walletsVerbose = []
@@ -39,9 +40,52 @@ export default function App() {
     onStartApp();
   }, []);
 
+  const handleTabsChange = (index: any) => {
+    setTabIndex(index);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Pioneer />
-    </main>
+    <>
+      {/* Header */}
+      <header className="flex justify-between items-center w-full px-10 py-5 bg-gray-100 dark:bg-gray-800">
+        <div className="flex items-center gap-4">
+          {/* Avatar logo */}
+          <Image src="/png/blueMoon.png" alt="Logo" width={50} height={50} className="rounded-full" />
+          {/* Website title */}
+          <span className="text-xl font-bold">swaps.pro</span>
+        </div>
+        <Pioneer />
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow">
+        <Tabs
+          index={tabIndex}
+          onChange={handleTabsChange}
+          colorScheme="green"
+        >
+          <Box bg="black" mx="auto" w="35rem">
+            <TabList justifyContent="center">
+              <Tab>Trades</Tab>
+              <Tab>Swaps</Tab>
+              <Tab>Leaderboard</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+              </TabPanel>
+              <TabPanel>
+                <Swap />
+              </TabPanel>
+              <TabPanel>Leaderboard</TabPanel>
+            </TabPanels>
+          </Box>
+        </Tabs>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full px-10 py-5 bg-gray-200 dark:bg-gray-900 text-center">
+        Powered by <a href="https://pioneers.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500">Pioneers</a>
+      </footer>
+    </>
   );
 }

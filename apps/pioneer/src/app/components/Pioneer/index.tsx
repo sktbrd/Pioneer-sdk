@@ -326,11 +326,11 @@ const Pioneer = () => {
       </Modal>
       <Menu>
         <MenuButton as={Button} cursor="pointer" minW={100} rounded="full" variant="link">
-          <Avatar size="lg">
+          <Avatar size="md">
             {isSwitchingWallet ? (
               <div>
                 <Box display="inline-block" position="relative">
-                  <Avatar size="lg" src={pioneerImage} />
+                  <Avatar size="md" src={pioneerImage} />
                   <CircularProgress
                     isIndeterminate
                     color="green.500"
@@ -345,11 +345,11 @@ const Pioneer = () => {
             ) : (
               <div>
                 {isPioneer ? (
-                  <Avatar size="lg" src='/png/pioneer.png'>
+                  <Avatar size="md" src='/png/pioneer.png'>
                     {avatarContent}
                   </Avatar>
                 ) : (
-                  <Avatar size="lg" src='/png/pioneer.png'>
+                  <Avatar size="md" src='/png/pioneer.png'>
                     {avatarContent}
                   </Avatar>
                 )}
