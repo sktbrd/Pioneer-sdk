@@ -24,7 +24,9 @@ import {
   useDisclosure,
   useToast,
   VStack,
+  Tooltip,
 } from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { AssetValue, Chain } from '@coinmasters/core';
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 // @ts-ignore
@@ -47,6 +49,8 @@ const Transfer = () => {
   const [isMax, setisMax] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   const [sendAmount, setSendAmount] = useState<any | undefined>();
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [memo, setMemo] = useState('');
 
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
@@ -117,37 +121,6 @@ const Transfer = () => {
         // pairWallet();
       } else {
         setIsSubmitting(true);
-        /*
-            assetValue: AssetValue;
-            recipient: string;
-            memo?: string;
-            feeOptionKey?: FeeOption;
-            feeRate?: number;
-            data?: string;
-            from?: string;
-            expiration?: number;
-         */
-        // console.log('assetContext.chain: ', assetContext.chain);
-        // const address = await app.swapKit.getAddress(assetContext.chain);
-        // console.log('address: ', address);
-        //
-        // // get balance
-        // const balanceInfo = await app.swapKit.getBalance([{ address }]);
-        // console.log('balanceInfo: ', balanceInfo);
-        //
-        // // walletInfo
-        // const walletInfo = await app.swapKit.getWalletByChain(
-        //   assetContext.chain
-        // );
-        //
-        // // find balance by caip
-        // console.log('walletInfo: ', walletInfo);
-        // const balanceOfInput: any = walletInfo.balance.filter(
-        //   (b: any) => b.symbol === assetContext.symbol
-        // )[0];
-        // console.log('balanceOfInput: ', balanceOfInput);
-        // console.log('balanceOfInput: ', balanceOfInput.assetValue);
-
         // create assetValue
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
         console.log('assetString: ', assetString);
@@ -233,7 +206,7 @@ const Transfer = () => {
         let estimatePayload:any = {
           feeRate: 10,
           pubkeys,
-          memo: '',
+          memo,
           recipient,
         }
         console.log("app.swapKit: ",app.swapKit)
@@ -329,6 +302,26 @@ const Transfer = () => {
               />
             </FormControl>
           </Grid>
+          <Flex justify="space-between" align="center" mt="4">
+            <Button
+              variant="ghost"
+              rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              onClick={() => setShowAdvanced(!showAdvanced)}
+            >
+              Advanced
+            </Button>
+          </Flex>
+          {showAdvanced && (
+            <FormControl>
+              <FormLabel>
+                Memo:
+                <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
+                  <InfoOutlineIcon ml="2" />
+                </Tooltip>
+              </FormLabel>
+              <Input placeholder="Enter memo (optional)" value={memo} onChange={(e) => setMemo(e.target.value)} />
+            </FormControl>
+          )}
           <br />
           <Text>
             Available Balance: {assetContext?.balance} ({assetContext?.symbol})

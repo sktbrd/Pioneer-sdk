@@ -227,7 +227,8 @@ export const utxoWalletMethods = async ({
     console.log('rawInputs: ', rawInputs);
     const inputs = rawInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
       addressNList: bip32ToAddressNList(path),
-      scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType,
+      // p2sh was showing on native segwit and wrong, replace. If no scriptType, default to p2pkh (non-segwit)
+      scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType || 'p2pkh',
       amount: value.toString(),
       vout: index,
       txid: hash,

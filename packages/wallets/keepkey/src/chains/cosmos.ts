@@ -35,9 +35,9 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
           return await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
         } catch (error) {
           //log.error("Cosmos Error getting fee rate:", error);
-          return '500';
+          return '1000';
         }
-      })()) ?? '500',
+      })()) ?? '1000',
     );
 
     // Function to sign the transaction

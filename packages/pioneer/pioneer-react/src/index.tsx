@@ -316,6 +316,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           } else {
             addedChains = [];
           }
+          //fitler by chain
+          addedChains = addedChains.filter((chain: any) => blockchains.includes(chain.network));
+
           console.log('onConnaddedChainsect paths: ', addedChains);
           // At this point, both paths and addedChains are guaranteed to be arrays
           // You can now safely concatenate them using the spread operator
@@ -557,7 +560,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         } else {
           addedChains = [];
         }
-
+        //fitler by chain
+        addedChains = addedChains.filter((chain: any) => blockchainsCached.includes(chain.network));
         paths = paths.concat(addedChains);
         console.log('onStart paths: ', paths);
 
