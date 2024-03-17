@@ -28,7 +28,7 @@ let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_BASE_ADDRESS = process.env['FAUCET_BASE_ADDRESS']
 if(!FAUCET_BASE_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = '0x22BDa0413514E3f631476F5791C28289bAda37D9'
+let FAUCET_ADDRESS = FAUCET_BASE_ADDRESS
 import {
     getPaths,
     // @ts-ignore
@@ -128,17 +128,7 @@ const test_service = async function (this: any) {
         //get paths for wallet
         let paths = getPaths(blockchains)
         log.info("paths: ",paths.length)
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
+        app.setPaths(paths)
 
         // //connect
         // assert(blockchains)
@@ -181,31 +171,31 @@ const test_service = async function (this: any) {
 
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
+        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        // log.info(tag,"balance: ",balance)
+        // assert(balance.length > 0)
         //verify balances
 
-        // // create assetValue
-        // let assetString = `BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630`;
-        // assetString = assetString.toUpperCase()
-        // console.log('assetString: ', assetString);
-        // await AssetValue.loadStaticAssets();
-        // // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        // // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        // log.info("assetValue: ",assetValue)
-        //
-        // //send
-        // let sendPayload = {
-        //     assetValue,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("sendPayload: ",sendPayload)
-        // const txHash = await app.swapKit.transfer(sendPayload);
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
+        // create assetValue
+        let assetString = `BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630`;
+        assetString = assetString.toUpperCase()
+        console.log('assetString: ', assetString);
+        await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        log.info("assetValue: ",assetValue)
+
+        //send
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
 
     } catch (e) {

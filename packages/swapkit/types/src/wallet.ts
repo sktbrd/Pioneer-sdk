@@ -72,6 +72,7 @@ export const availableChainsByWallet: any = {
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
+    Chain.Base,
     Chain.Binance,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,

@@ -12,9 +12,6 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | e2e-test | "
 import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
 import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -83,7 +80,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -183,6 +180,7 @@ const test_service = async function (this: any) {
 
         //get receiver context
         const entry = {
+            affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
             sellAsset: app.assetContext,
             sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
             buyAsset:app.outboundAssetContext,

@@ -389,6 +389,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.10.4)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.23
+        version: 9.2.23
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.15(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1357,6 +1363,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.16)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.23
+        version: 9.2.23
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.15(@types/node@20.11.16)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.16
@@ -8316,6 +8328,17 @@ packages:
     resolution: {integrity: sha512-2uxZJ2H1vLNPsgXSklwjuNgnUzzZfbkM/HHz1XG51ZwceVwrrDTBetoBeH4gihLK0OKIFO7flVo7PRA9+s2u4Q==}
     dependencies:
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.15(@types/node@20.11.16):
+    resolution: {integrity: sha512-2uxZJ2H1vLNPsgXSklwjuNgnUzzZfbkM/HHz1XG51ZwceVwrrDTBetoBeH4gihLK0OKIFO7flVo7PRA9+s2u4Q==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.16)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - '@swc/core'

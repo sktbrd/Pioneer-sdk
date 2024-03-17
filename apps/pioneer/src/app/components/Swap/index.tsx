@@ -118,9 +118,10 @@ const Swap = () => {
 
       //get receiver context
       const entry = {
+        affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,
         // @ts-ignore
-        sellAmount: parseFloat(newAmountIn).toPrecision(3),
+        sellAmount: parseFloat(newAmountIn).toPrecision(8),
         buyAsset: app.outboundAssetContext,
         senderAddress,
         recipientAddress,
@@ -312,10 +313,10 @@ const Swap = () => {
         </ModalContent>
       </Modal>
 
-      <Box bg="black" mx="auto" w="35rem">
+      <Box bg="black" mx="auto">
         {renderStepContent()}
       </Box>
-      <Flex alignItems="center" bg="black" flexDirection="column" mx="auto" p="2rem" w="35rem">
+      <Flex alignItems="center" bg="black" flexDirection="column" mx="auto">
         {showGoBack && (
           <div>
             <Button onClick={goBack}>Go Back</Button>

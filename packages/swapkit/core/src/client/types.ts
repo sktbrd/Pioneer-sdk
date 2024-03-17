@@ -17,6 +17,7 @@ import type {
 } from '@coinmasters/toolbox-evm';
 import type { BCHToolbox, BTCToolbox, DOGEToolbox, LTCToolbox } from '@coinmasters/toolbox-utxo';
 import type { Chain, FeeOption, WalletOption } from '@coinmasters/types';
+import { BASEToolbox } from '@coinmasters/toolbox-evm';
 
 type BaseWalletMethods = {
   getAddress: () => Promise<string> | string;
@@ -89,6 +90,7 @@ export type UTXOWallet<
 export type WalletMethods = {
   [Chain.Arbitrum]: EVMWallet<typeof ARBToolbox> | null;
   [Chain.Avalanche]: EVMWallet<typeof AVAXToolbox> | null;
+  [Chain.Base]: EVMWallet<typeof BASEToolbox> | null;
   [Chain.BinanceSmartChain]: EVMWallet<typeof BSCToolbox> | null;
   [Chain.Binance]: CosmosBasedWallet<typeof BinanceToolbox> | null;
   [Chain.BitcoinCash]: UTXOWallet<typeof BCHToolbox> | null;

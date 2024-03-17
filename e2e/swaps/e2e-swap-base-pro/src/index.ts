@@ -209,7 +209,7 @@ const test_service = async function (this: any) {
         //user selects route
         for(let i = 0; i < result?.length; i++){
             let route = result[i]
-            console.log("route: ", route)
+            log.info("route: ", route)
             selected = route.quote
         }
 

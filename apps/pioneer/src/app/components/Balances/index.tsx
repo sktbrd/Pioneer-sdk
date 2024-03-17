@@ -60,17 +60,23 @@ export default function Balances() {
   };
 
   const filteredAssets = currentPage
-    .filter((asset: any) => {
-      return (
-        asset?.name?.toLowerCase().includes(search.toLowerCase())
-      );
-    })
-    .sort((a: any, b: any) => {
-      if (sortOrder === 'asc') {
-        return (a.valueUsd || 0) - (b.valueUsd || 0);
-      }
-      return (b.valueUsd || 0) - (a.valueUsd || 0);
+    .filter((asset) => asset.ticker.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      const aValue = a.valueUsd ? parseFloat(a.valueUsd) : 0;
+      const bValue = b.valueUsd ? parseFloat(b.valueUsd) : 0;
+      return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
     });
+    // // Filter by search term on asset name
+    // .filter((asset: any) => asset?.name?.toLowerCase().includes(search.toLowerCase()))
+    // // Additional filter step for blockchain based on app.blockchains
+    // // .filter((asset: any) => app.blockchains.includes(asset.networkId))
+    // // Sort by value in USD, ascending or descending
+    // .sort((a: any, b: any) => {
+    //   if (sortOrder === 'asc') {
+    //     return (a.valueUsd || 0) - (b.valueUsd || 0);
+    //   }
+    //   return (b.valueUsd || 0) - (a.valueUsd || 0);
+    // });
 
   const fetchPage = async () => {
     try {
@@ -139,7 +145,8 @@ export default function Balances() {
               </Avatar>
               <Box ml={3}>
                 <Text fontSize="sm">Asset: {asset?.ticker}</Text>
-                {/*<Text fontSize="sm">Asset: {asset?.caip}</Text>*/}
+                <Text fontSize="sm">Asset: {asset?.caip}</Text>
+                <Text fontSize="sm">amount: {asset?.balance}</Text>
                 {/*<Text fontSize="sm">symbol: {asset?.symbol}</Text>*/}
                 {/*<Text fontSize="sm">chain: {asset?.chain}</Text>*/}
                 <Text fontSize="sm">

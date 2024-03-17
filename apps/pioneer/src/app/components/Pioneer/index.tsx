@@ -23,16 +23,21 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  Spacer,
+  Stack,
+  AvatarGroup,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
-
+import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
+//@ts-ignore
+import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import AssetSelect from '../../components/AssetSelect';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
-import MiddleEllipsis from '../../components/MiddleEllipsis';
+// import MiddleEllipsis from '../../components/MiddleEllipsis';
 import Onboarding from '../../components/Onboarding';
 import Portfolio from '../../components/Portfolio';
 import Receive from '../../components/Receive';
@@ -45,7 +50,6 @@ import {
   pioneerImagePng,
 } from '../../components/WalletIcon';
 import { usePioneer } from '@coinmasters/pioneer-react';
-import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, WalletOption } from '@coinmasters/types';
 
 
 const Pioneer = () => {
@@ -359,22 +363,39 @@ const Pioneer = () => {
         </MenuButton>
         <MenuList>
           <Box borderBottomWidth="1px" p="4">
-            <HStack justifyContent="space-between">
-              <Button
-                leftIcon={getWalletContent(walletType)}
-                onClick={() => handleWalletClick(walletType)}
-              >
-                <small>
-                  <MiddleEllipsis text={context} />
-                </small>
-              </Button>
+            <Flex align="center" justify="space-between">
+              <Stack direction="row" spacing={-3} align="center">
+                <AvatarGroup size="md" max={4}>
+                  {app?.blockchains.slice(0, 4).map((chain, index) => { // Limit to first 4 chains
+                    const chainKey = NetworkIdToChain[chain];
+                    const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey]}.png`;
+
+                    return (
+                      <Avatar
+                        key={index}
+                        src={imageUrl}
+                        name={chainKey} // Optional: Use the chainKey or another property for the avatar's tooltip
+                        onClick={() => modalSelected('SETTINGS')}
+                      />
+                    );
+                  })}
+                  {app?.blockchains.length > 4 && ( // Conditionally render this if there are more than 4 chains
+                    <Text pl="3" alignSelf="center">
+                      +{app.blockchains.length - 4}
+                    </Text>
+                  )}
+                </AvatarGroup>
+              </Stack>
+              <Spacer />
               <IconButton
                 isRound
                 aria-label="Settings"
                 icon={<FaCog />}
                 onClick={() => modalSelected('SETTINGS')}
+                size="md"
               />
-            </HStack>
+            </Flex>
+            {app?.blockchains.length === 0 && <Text>No blockchains enabled.</Text>}
           </Box>
           <Box
             borderRadius="md"
