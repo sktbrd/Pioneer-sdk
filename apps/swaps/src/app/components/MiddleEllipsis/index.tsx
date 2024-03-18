@@ -3,7 +3,7 @@ import type React from 'react';
 interface MiddleEllipsisProps {
   text: string;
 }
-
+//@ts-ignore
 const MiddleEllipsis: React.FC<MiddleEllipsisProps> = ({ text }) => {
   const maxLength = 20;
   const ellipsis = '...';

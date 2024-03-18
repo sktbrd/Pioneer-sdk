@@ -22,7 +22,7 @@ import {
 import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
 import { useState } from "react";
 import type React from "react";
-
+//@ts-ignore
 const Trade: React.FC<any> = ({ trade }) => {
   const [showDetails, setShowDetails] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();

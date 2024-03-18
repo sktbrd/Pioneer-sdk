@@ -38,7 +38,7 @@ interface BeginSwapProps {
   sliderValue: any,
   setSliderValue: any,
 }
-
+//@ts-ignore
 const BeginSwap: React.FC<BeginSwapProps> = ({
   openModal,
   handleClick,

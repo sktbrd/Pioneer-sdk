@@ -1,7 +1,8 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 
-const ErrorQuote: React.FC<any> = ({ error, onClose }) => {
+//@ts-ignore
+const ErrorQuote: React.FC<any> = ({ error, onClose }: any) => {
   return (
     <div>
       {JSON.stringify(error)}

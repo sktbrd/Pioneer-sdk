@@ -20,9 +20,10 @@
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
-    "@coinmasters/core": "^8.0.10",
-    "@coinmasters/helpers": "^8.0.10",
-    "@coinmasters/wallet-keepkey": "10.0.11",
+    "@coinmasters/types": "workspace:*",
+    "@coinmasters/core": "workspace:*",
+    "@coinmasters/helpers": "workspace:*",
+    "@coinmasters/wallet-keepkey": "workspace:*",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "framer-motion": "^11.0.3",
