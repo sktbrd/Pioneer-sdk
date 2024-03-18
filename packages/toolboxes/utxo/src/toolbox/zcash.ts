@@ -18,5 +18,5 @@ export const ZCASHToolbox = ({
   BaseUTXOToolbox({
     chain: Chain.Zcash,
     broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, rpcUrl }),
-    apiClient: apiClient || blockchairApi({ apiKey, chain: Chain.Dash }),
+    apiClient: apiClient || blockchairApi({ apiKey, chain: Chain.Zcash }),
   });

@@ -121,6 +121,7 @@ const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: strin
   try {
     if (!pubkey) throw new Error('pubkey is required');
     console.log('pubkey: ', pubkey);
+    console.log('chain: ', chain);
     const url = `/utxo/getBalance/${chain}/${pubkey}`;
     //console.log('getXpubData URL: ', url);
     //const response = await blockchairRequest<any>(`${baseUrlPioneer()}${url}`);

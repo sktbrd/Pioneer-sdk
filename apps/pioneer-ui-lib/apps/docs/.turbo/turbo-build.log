@@ -1,0 +1,58 @@
+
+
+> @repo/docs@0.0.0 build /Users/highlander/WebstormProjects/turborepo-design-system/apps/docs
+> storybook build --docs
+
+[1m@storybook/cli v7.6.17[22m
+[1m[22m
+[32minfo[0m[35m[0m => Cleaning outputDir: [36m/storybook-static[39m
+[0m[32minfo[0m[35m[0m => Loading presets
+[0m[32minfo[0m[35m[0m => Building manager..
+[0m[32minfo[0m[35m[0m => Manager built ([38;5;176m143 ms[39m)
+[0m[32minfo[0m[35m[0m => Building preview..
+[0m[32minfo[0m[35m[0m => Copying static files: [36m/Users/highlander/WebstormProjects/turborepo-design-system/node_modules/.pnpm/@storybook+manager@7.6.17/node_modules/@storybook/manager/static[39m at [36m/Users/highlander/WebstormProjects/turborepo-design-system/apps/docs/storybook-static/sb-common-assets[39m
+[0m[33mThe CJS build of Vite's Node API is deprecated. See https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[36mvite v5.1.4 [32mbuilding for production...[36m[39m
+
+./sb-common-assets/fonts.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+[2K[1Gtransforming (1) [2miframe.html[22m[2K[1Gtransforming (17) [2m../../node_modules/.pnpm/@storybook+csf@0.1.2/node_modules/@storybook/csf/dist/index.mjs[22m[2K[1Gtransforming (29) [2m../../node_modules/.pnpm/acorn-walk@7.2.0/node_modules/acorn-walk/dist/walk.mjs[22m[2K[1Gtransforming (57) [2m../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_getPrototype.js[22m[2K[1Gtransforming (81) [2m../../node_modules/.pnpm/prop-types@15.8.1/node_modules/prop-types/index.js[22m[2K[1Gtransforming (113) [2m../../node_modules/.pnpm/source-map@0.6.1/node_modules/source-map/lib/base64-vlq.js[22m[2K[1Gtransforming (133) [2m../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_baseTimes.js[22m[2K[1Gtransforming (196) [2m../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/isArguments.js[22m[2K[1Gtransforming (278) [2m../../node_modules/.pnpm/get-intrinsic@1.2.2/node_modules/get-intrinsic/index.js[22m[2K[1Gtransforming (478) [2m../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_baseIteratee.js[22m[2K[1Gtransforming (546) [2m../../node_modules/.pnpm/has-tostringtag@1.0.0/node_modules/has-tostringtag/shams.js[22m[2K[1Gtransforming (559) [2m../../node_modules/.pnpm/util@0.12.5/node_modules/util/util.js[22m[2K[1Gtransforming (583) [2m../../node_modules/.pnpm/doctrine@3.0.0/node_modules/doctrine/lib/utility.js[22m[2K[1G[2K[1G../../node_modules/.pnpm/telejson@7.2.0/node_modules/telejson/dist/index.mjs (1413:15) Use of eval in "../../node_modules/.pnpm/telejson@7.2.0/node_modules/telejson/dist/index.mjs" is strongly discouraged as it poses security risks and may cause issues with minification.
+[2K[1G../../node_modules/.pnpm/telejson@7.2.0/node_modules/telejson/dist/index.mjs (1416:18) Use of eval in "../../node_modules/.pnpm/telejson@7.2.0/node_modules/telejson/dist/index.mjs" is strongly discouraged as it poses security risks and may cause issues with minification.
+[2K[1G[32m✓[39m 630 modules transformed.
+[2K[1Grendering chunks (1)...[2K[1Grendering chunks (2)...[2K[1Grendering chunks (3)...[2K[1Grendering chunks (4)...[2K[1Grendering chunks (5)...[2K[1Grendering chunks (6)...[2K[1Grendering chunks (7)...[2K[1Grendering chunks (8)...[2K[1Grendering chunks (9)...[2K[1Grendering chunks (10)...[2K[1Grendering chunks (11)...[2K[1Grendering chunks (12)...[2K[1Grendering chunks (13)...[2K[1Grendering chunks (14)...[2K[1Grendering chunks (15)...[2K[1Grendering chunks (16)...[2K[1Grendering chunks (17)...[2K[1Grendering chunks (18)...[2K[1Grendering chunks (19)...[2K[1Grendering chunks (20)...[2K[1Grendering chunks (21)...[2K[1Grendering chunks (22)...[2K[1Grendering chunks (23)...[2K[1G[2K[1Gcomputing gzip size (0)...[2K[1Gcomputing gzip size (1)...[2K[1Gcomputing gzip size (2)...[2K[1Gcomputing gzip size (3)...[2K[1Gcomputing gzip size (4)...[2K[1Gcomputing gzip size (5)...[2K[1Gcomputing gzip size (6)...[2K[1Gcomputing gzip size (7)...[2K[1Gcomputing gzip size (8)...[2K[1Gcomputing gzip size (9)...[2K[1Gcomputing gzip size (10)...[2K[1Gcomputing gzip size (11)...[2K[1Gcomputing gzip size (12)...[2K[1Gcomputing gzip size (13)...[2K[1Gcomputing gzip size (14)...[2K[1Gcomputing gzip size (15)...[2K[1Gcomputing gzip size (16)...[2K[1Gcomputing gzip size (17)...[2K[1Gcomputing gzip size (18)...[2K[1Gcomputing gzip size (19)...[2K[1Gcomputing gzip size (20)...[2K[1Gcomputing gzip size (21)...[2K[1Gcomputing gzip size (22)...[2K[1Gcomputing gzip size (23)...[2K[1Gcomputing gzip size (24)...[2K[1G[2mstorybook-static/[22m[32miframe.html                                    [39m[1m[2m 12.70 kB[22m[1m[22m[2m │ gzip:   3.57 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-Ep9wqWpU.js                     [39m[1m[2m  0.14 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mWithTooltip-V3YHNWJZ-TcNNjOTW.js        [39m[1m[2m  0.35 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36msyntaxhighlighter-B5GMVT5T-hkZRP15x.js  [39m[1m[2m  0.36 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mindex-LoCCyZqz.js                       [39m[1m[2m  0.54 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-VI2eoWmp.js                     [39m[1m[2m  0.64 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-Ws1JYJCG.js                     [39m[1m[2m  0.65 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mindex-PPLHz8o0.js                       [39m[1m[2m  0.77 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-bEa2SesL.js                     [39m[1m[2m  0.86 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mentry-preview-hpuSWCkx.js               [39m[1m[2m  1.08 kB[22m[1m[22m[2m │ gzip:   0.63 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mindex-ogXoivrg.js                       [39m[1m[2m  2.59 kB[22m[1m[22m[2m │ gzip:   1.26 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mbutton.stories-APVyu9Og.js              [39m[1m[2m  2.60 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-wm7zCcxo.js                     [39m[1m[2m  3.21 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36miframe-WZQwpQ9Y.js                      [39m[1m[2m  4.05 kB[22m[1m[22m[2m │ gzip:   1.59 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-IqwtUnem.js                     [39m[1m[2m  5.25 kB[22m[1m[22m[2m │ gzip:   2.40 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-u8M_OEO2.js                     [39m[1m[2m  7.62 kB[22m[1m[22m[2m │ gzip:   1.56 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mindex-DogsOklH.js                       [39m[1m[2m  7.80 kB[22m[1m[22m[2m │ gzip:   3.07 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mpreview-MdQXpms2.js                     [39m[1m[2m  8.28 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mColor-6VNJS4EI-MvU07zpa.js              [39m[1m[2m 30.96 kB[22m[1m[22m[2m │ gzip:  11.61 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mreact-16-hfYRM8RH.js                    [39m[1m[2m134.13 kB[22m[1m[22m[2m │ gzip:  43.23 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36m_getPrototype-YxJs5bVo.js               [39m[1m[2m142.79 kB[22m[1m[22m[2m │ gzip:  43.37 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mentry-preview-docs-UmfnsR9A.js          [39m[1m[2m213.08 kB[22m[1m[22m[2m │ gzip:  66.21 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mDocsRenderer-NNNQARDV-EjyPdX86.js       [39m[1m[33m536.57 kB[39m[22m[2m │ gzip: 175.13 kB[22m
+[2mstorybook-static/[22m[2massets/[22m[36mformatter-SWP5E3XI-tJSlYLDH.js          [39m[1m[33m601.55 kB[39m[22m[2m │ gzip: 184.99 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 3.62s[39m
+[32minfo[0m[35m[0m => Preview built ([38;5;176m5.06 s[39m)
+[0m[32minfo[0m[35m[0m => Output directory: /Users/highlander/WebstormProjects/turborepo-design-system/apps/docs/storybook-static
+[0m
+[35m[1mattention[22m[39m => Storybook now collects completely anonymous telemetry regarding usage.
+This information is used to shape Storybook's roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+[36mhttps://storybook.js.org/telemetry[39m
+

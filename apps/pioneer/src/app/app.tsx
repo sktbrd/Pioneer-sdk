@@ -59,27 +59,7 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-grow">
-        <Tabs
-          index={tabIndex}
-          onChange={handleTabsChange}
-          colorScheme="green"
-        >
-          <Box bg="black" mx="auto" w="35rem">
-            <TabList justifyContent="center">
-              <Tab>Trades</Tab>
-              <Tab>Swaps</Tab>
-              <Tab>Leaderboard</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-              </TabPanel>
-              <TabPanel>
-                <Swap />
-              </TabPanel>
-              <TabPanel>Leaderboard</TabPanel>
-            </TabPanels>
-          </Box>
-        </Tabs>
+
       </main>
 
       {/* Footer */}

@@ -1,0 +1,20 @@
+## Add KeepKey SDK to your project
+
+```json filename="package.json" {3} copy
+
+```
+init:
+
+```js filename="wallet.js" {3} copy
+            const chains = ['BTC', 'ETH']; // Example chains
+            const { keepkeyWallet } = await import('@coinmasters/wallet-keepkey');
+            const walletKeepKey: KeepKeyWallet = {
+                type: 'KEEPKEY',
+                icon: 'https://pioneers.dev/coins/keepkey.png',
+                chains,
+                wallet: keepkeyWallet,
+                status: 'offline',
+                isConnected: false,
+            };
+```
+

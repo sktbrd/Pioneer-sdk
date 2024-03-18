@@ -103,7 +103,7 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN]
         let paths = getPaths(blockchains)
         app.setPaths(paths)
         // //connect

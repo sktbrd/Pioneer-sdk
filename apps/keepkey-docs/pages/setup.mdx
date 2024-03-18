@@ -1,0 +1,103 @@
+## Add KeepKey SDK to your project
+
+```json filename="package.json" {3} copy
+
+```
+init:
+
+```js filename="wallet.js" {3} copy
+            const chains = ['BTC', 'ETH']; // Example chains
+            const { keepkeyWallet } = await import('@coinmasters/wallet-keepkey');
+            const walletKeepKey: KeepKeyWallet = {
+                type: 'KEEPKEY',
+                icon: 'https://pioneers.dev/coins/keepkey.png',
+                chains,
+                wallet: keepkeyWallet,
+                status: 'offline',
+                isConnected: false,
+            };
+```
+
+## Caips
+
+```js filename="wallet.js" {3} copy
+            const allByCaip = chains.map((chainStr) => {
+                const chain = getChainEnumValue(chainStr);
+                if (chain) {
+                    return ChainToNetworkId[chain];
+                }
+                return undefined;
+            });
+            const paths = getPaths(allByCaip);
+```
+
+TODO understanding paths:
+
+## Init wallet
+
+```js filename="wallet.js" {3} copy
+            // Implement the addChain function with additional logging
+            function addChain({ chain, walletMethods, wallet }) {
+                console.log(`Adding chain: ${chain}`);
+                console.log(`Chain data:`, { chain, walletMethods, wallet });
+                keepkey[chain] = {
+                    walletMethods,
+                    wallet
+                };
+            }
+
+            let keepkeyConfig = {
+                apiKey: localStorage.getItem('keepkeyApiKey') || '123',
+                pairingInfo: {
+                    name: "int-test-package",
+                    imageUrl: "",
+                    basePath: 'http://localhost:1646/spec/swagger.json',
+                    url: 'http://localhost:1646',
+                }
+            }
+            let covalentApiKey = process.env['VITE_COVALENT_API_KEY']
+            let ethplorerApiKey = process.env['VITE_ETHPLORER_API_KEY']
+            let utxoApiKey = process.env['VITE_BLOCKCHAIR_API_KEY']
+            let input = {
+                apis: {},
+                rpcUrls:{},
+                addChain,
+                config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
+            }
+```
+
+## Links:
+* covalentApiKey
+* ethplorerApiKey
+* utxoApiKey
+
+## on Startup
+
+```js filename="wallet.js" {3} copy
+           // Step 1: Invoke the outer function with the input object
+            const connectFunction = walletKeepKey.wallet.connect(input);
+
+            // Step 2: Invoke the inner function with chains and paths
+            let kkApikey = await connectFunction(chains, paths);
+            console.log("kkApikey: ", kkApikey);
+            localStorage.setItem('keepkeyApiKey', kkApikey);
+            //walletKeepKey
+            // console.log("walletKeepKey: ",walletKeepKey.wallet)
+            // console.log("connectFunction: ",connectFunction)
+            console.log("keepkey: ",keepkey)
+
+            //got balances
+            for(let i = 0; i < chains.length; i++) {
+                let chain = chains[i]
+                let walletData:any = await getWalletByChain(keepkey, chain);
+                console.log(chain+ " walletData: ",walletData)
+                // keepkey[chain].wallet.address = walletData.address
+                keepkey[chain].wallet.balances = walletData.balance
+            }
+```
+
+## External Component
+
+import Wallet from '../components/wallet';
+
+<Wallet />

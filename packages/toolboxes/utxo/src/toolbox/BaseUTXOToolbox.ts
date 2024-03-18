@@ -448,6 +448,7 @@ const buildTx = async ({
     }
     console.log('buildTx Checkpoint 1.5:');
     console.log('inputOptions: ', inputOptions);
+    console.log('inputOptions: ', JSON.stringify(inputOptions));
     psbt.addInput(inputOptions);
     console.log(' buildTx Checkpoint 2:');
   });
