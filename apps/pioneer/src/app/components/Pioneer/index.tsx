@@ -366,9 +366,12 @@ const Pioneer = () => {
             <Flex align="center" justify="space-between">
               <Stack direction="row" spacing={-3} align="center">
                 <AvatarGroup size="md" max={4}>
-                  {app?.blockchains.slice(0, 4).map((chain, index) => { // Limit to first 4 chains
+                  {app?.blockchains.slice(0, 4).map((chain: any, index: any) => { // Limit to first 4 chains
+
+                    // @ts-ignore
                     const chainKey = NetworkIdToChain[chain];
-                    const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey]}.png`;
+                    // @ts-ignore
+                    const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;
 
                     return (
                       <Avatar

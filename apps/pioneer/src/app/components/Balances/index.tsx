@@ -60,8 +60,8 @@ export default function Balances() {
   };
 
   const filteredAssets = currentPage
-    .filter((asset) => asset.ticker.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
+    .filter((asset: any) => asset.ticker.toLowerCase().includes(search.toLowerCase()))
+    .sort((a: any, b: any) => {
       const aValue = a.valueUsd ? parseFloat(a.valueUsd) : 0;
       const bValue = b.valueUsd ? parseFloat(b.valueUsd) : 0;
       return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;

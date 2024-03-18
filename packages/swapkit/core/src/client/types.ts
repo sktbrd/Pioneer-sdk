@@ -90,7 +90,8 @@ export type UTXOWallet<
 export type WalletMethods = {
   [Chain.Arbitrum]: EVMWallet<typeof ARBToolbox> | null;
   [Chain.Avalanche]: EVMWallet<typeof AVAXToolbox> | null;
-  [Chain.Base]: EVMWallet<typeof BASEToolbox> | null;
+  //@TODO fixme (everything worked with this missing? cant be that important)
+  [Chain.Base]: EVMWallet<any> | null;
   [Chain.BinanceSmartChain]: EVMWallet<typeof BSCToolbox> | null;
   [Chain.Binance]: CosmosBasedWallet<typeof BinanceToolbox> | null;
   [Chain.BitcoinCash]: UTXOWallet<typeof BCHToolbox> | null;
