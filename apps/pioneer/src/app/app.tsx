@@ -52,7 +52,7 @@ export default function App() {
           {/* Avatar logo */}
           <Image src="/png/blueMoon.png" alt="Logo" width={50} height={50} className="rounded-full" />
           {/* Website title */}
-          <span className="text-xl font-bold">swaps.pro</span>
+          <span className="text-xl font-bold">Pioneer SDK</span>
         </div>
         <Pioneer />
       </header>
