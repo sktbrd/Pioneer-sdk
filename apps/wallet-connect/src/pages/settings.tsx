@@ -11,7 +11,7 @@ import { Card, Divider, Row, Switch, Text } from '@nextui-org/react'
 import { Fragment } from 'react'
 import { useSnapshot } from 'valtio'
 import packageJSON from '../../package.json'
-import { tezosWallets } from '@/utils/TezosWalletUtil'
+// import { tezosWallets } from '@/utils/TezosWalletUtil'
 
 export default function SettingsPage() {
   const {

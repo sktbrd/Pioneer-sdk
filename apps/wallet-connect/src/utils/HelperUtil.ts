@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast'
-import { COSMOS_MAINNET_CHAINS, TCosmosChain } from '@/data/COSMOSData'
+// import { COSMOS_MAINNET_CHAINS, TCosmosChain } from '@/data/COSMOSData'
 import { EIP155_CHAINS, TEIP155Chain } from '@/data/EIP155Data'
 // import { MULTIVERSX_CHAINS, TMultiversxChain } from '@/data/MultiversxData'
 // import { NEAR_CHAINS, NEAR_TEST_CHAINS, TNearChain } from '@/data/NEARData'
@@ -9,6 +9,7 @@ import { EIP155_CHAINS, TEIP155Chain } from '@/data/EIP155Data'
 // import { TRON_CHAINS, TTronChain } from '@/data/TronData'
 // import { KADENA_CHAINS, TKadenaChain } from '@/data/KadenaData'
 
+//@ts-ignore
 import { utils } from 'ethers'
 import { Verify } from '@walletconnect/types'
 

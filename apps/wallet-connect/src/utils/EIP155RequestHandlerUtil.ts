@@ -10,7 +10,7 @@ import {
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 import { SignClientTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
-import { providers } from 'ethers'
+import { JsonRpcProvider } from 'ethers'
 import { chains } from './SmartAccountUtils'
 import { Hex } from 'viem'
 import { Chain, allowedChains } from './SmartAccountUtils'
@@ -72,14 +72,26 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
 
     case EIP155_SIGNING_METHODS.ETH_SEND_TRANSACTION:
       try {
-        const provider = new providers.JsonRpcProvider(EIP155_CHAINS[chainId as TEIP155Chain].rpc)
+        console.log("eip155Wallets: ",eip155Wallets)
+        console.log("chainId: ",chainId)
+        console.log("rpc: ",EIP155_CHAINS[chainId as TEIP155Chain].rpc)
+
+        // console.log("providers: ",providers)
+        const provider = new JsonRpcProvider(EIP155_CHAINS[chainId as TEIP155Chain].rpc)
+        console.log("provider: ",provider)
         const sendTransaction = request.params[0]
+        console.log("sendTransaction: ",sendTransaction)
 
         // const connectedWallet = await wallet.connect(provider)
         // const hash = await connectedWallet.sendTransaction(sendTransaction)
 
         //
         console.log("eip155Wallets: ",eip155Wallets)
+        let wallets = Object.keys(eip155Wallets)
+        console.log("wallets: ",wallets)
+        console.log("wallets: ",wallets)
+        let hash = await eip155Wallets[wallets[0]].signTransaction(sendTransaction)
+        console.log("hash: ",hash)
         // const hash = await keepkey['ETH'].walletMethods.sendTransaction(sendTransaction)
 
         const receipt = typeof hash === 'string' ? hash : hash?.hash // TODO improve interface
@@ -102,7 +114,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         // console.log("signature: ",signature)
 
 
-        return formatJsonRpcResult(id, signature)
+        // return formatJsonRpcResult(id, signature)
       } catch (error: any) {
         console.error(error)
         alert(error.message)

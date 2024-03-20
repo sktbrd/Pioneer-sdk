@@ -253,7 +253,7 @@ const connectKeepkey =
         info: features,
         walletMethods,
         wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-        keepkey: keepKeySdk,
+        keepkeySdk: keepKeySdk,
       });
 
       console.timeEnd(chainLogLabel);

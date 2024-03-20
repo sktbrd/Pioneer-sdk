@@ -14,19 +14,9 @@ interface KeepKeyWallet {
 import { getPaths } from "@pioneer-platform/pioneer-coins";
 import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 
-//old
-import { createOrRestoreCosmosWallet } from '@/utils/CosmosWalletUtil'
 import { createOrRestoreEIP155Wallet } from '@/utils/EIP155WalletUtil'
-import { createOrRestoreSolanaWallet } from '@/utils/SolanaWalletUtil'
-import { createOrRestorePolkadotWallet } from '@/utils/PolkadotWalletUtil'
-import { createOrRestoreNearWallet } from '@/utils/NearWalletUtil'
-import { createOrRestoreMultiversxWallet } from '@/utils/MultiversxWalletUtil'
-import { createOrRestoreTronWallet } from '@/utils/TronWalletUtil'
-import { createOrRestoreTezosWallet } from '@/utils/TezosWalletUtil'
 import { createWeb3Wallet, web3wallet } from '@/utils/WalletConnectUtil'
-import { createOrRestoreKadenaWallet } from '@/utils/KadenaWalletUtil'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useKeepKeyWallet } from "../context/WalletProvider";
 import { useSnapshot } from 'valtio'
 
 const getWalletByChain = async (keepkey: any, chain: any) => {
@@ -65,7 +55,7 @@ let onStartKeepkey = async function(){
         //     'LTC',  'OP',   'MATIC',
         //     'THOR'
         // ]
-        const chains = ['ETH'];
+        const chains = ['ETH', 'BASE'];
         // @ts-ignore
         const { keepkeyWallet } = await import('@coinmasters/wallet-keepkey');
 
@@ -89,8 +79,10 @@ let onStartKeepkey = async function(){
         let keepkey: any = {};
         // @ts-ignore
         // Implement the addChain function with additional logging
-        function addChain({ chain, walletMethods, wallet }) {
+        function addChain({ info, keepkeySdk, chain, walletMethods, wallet }) {
             keepkey[chain] = {
+                info,
+                keepkeySdk,
                 walletMethods,
                 wallet
             };
@@ -127,6 +119,8 @@ let onStartKeepkey = async function(){
             let chain = chains[i]
             let walletData: any = await getWalletByChain(keepkey, chain);
             // keepkey[chain].wallet.address = walletData.address
+            console.log("chain: ", chain);
+            console.log("chain: ", chain);
             keepkey[chain].wallet.balance = walletData.balance
         }
 
@@ -161,8 +155,11 @@ export default function useKeepKey() {
             // const { tezosAddresses } = await createOrRestoreTezosWallet()
             // const { kadenaAddresses } = await createOrRestoreKadenaWallet()
 
-            const { eip155Addresses, eip155Wallets } = createOrRestoreEIP155Wallet(keepkey)
-            SettingsStore.setEIP155Address(eip155Addresses)
+            const { eip155Addresses, eip155Wallets } = await createOrRestoreEIP155Wallet(keepkey)
+            console.log("eip155Addresses: ", eip155Addresses);
+            console.log("eip155Wallets: ", eip155Wallets);
+
+            SettingsStore.setEIP155Address(eip155Addresses[0])
 
             // console.log("eip155Addresses: ", eip155Addresses);
             // console.log("eip155Wallets: ", eip155Wallets);

@@ -433,6 +433,15 @@ importers:
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.13
         version: 9.2.15(@types/node@17.0.35)
+      '@walletconnect/core':
+        specifier: ^2.11.3
+        version: 2.11.3
+      '@walletconnect/types':
+        specifier: 2.10.5
+        version: 2.10.5
+      '@walletconnect/utils':
+        specifier: ^2.11.3
+        version: 2.11.3
       '@walletconnect/web3wallet':
         specifier: 1.10.1
         version: 1.10.1
@@ -445,6 +454,9 @@ importers:
       bs58:
         specifier: 5.0.0
         version: 5.0.0
+      ethers:
+        specifier: ^6.9.0
+        version: 6.11.1
       framer-motion:
         specifier: 6.5.1
         version: 6.5.1(react-dom@17.0.2)(react@17.0.2)
@@ -10767,8 +10779,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@shapeshiftoss/hdwallet-core@1.53.4:
-    resolution: {integrity: sha512-hB8GNOuVcosnrP+ZQqWWAY1Jqv6VaMKBsqnFSt0uQ6eLOJn4f8OCBj7JIsQvp0BB6+vHKxApWFPMXbsmLl76Dg==}
+  /@shapeshiftoss/hdwallet-core@1.53.5:
+    resolution: {integrity: sha512-337lTljIQukFnXrMAulwgc3bLHGn1WdnN7dD0wkniuejoIYEGOdENDaPlyS280+aAD5quRUrkq4GXA/zVNWSJw==}
     dependencies:
       '@shapeshiftoss/proto-tx-builder': 0.8.0
       eip-712: 1.0.0
@@ -12983,13 +12995,13 @@ packages:
       '@ethersproject/transactions': 5.7.0
       '@stablelib/random': 1.0.2
       '@stablelib/sha256': 1.0.1
-      '@walletconnect/core': 2.11.2
+      '@walletconnect/core': 2.11.3
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.0.1
       '@walletconnect/time': 1.0.2
-      '@walletconnect/utils': 2.11.2
+      '@walletconnect/utils': 2.11.3
       events: 3.3.0
       isomorphic-unfetch: 3.1.0
     transitivePeerDependencies:
@@ -13087,8 +13099,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@walletconnect/core@2.11.2:
-    resolution: {integrity: sha512-bB4SiXX8hX3/hyBfVPC5gwZCXCl+OPj+/EDVM71iAO3TDsh78KPbrVAbDnnsbHzZVHlsMohtXX3j5XVsheN3+g==}
+  /@walletconnect/core@2.11.3:
+    resolution: {integrity: sha512-/9m4EqiggFUwkQDv5PDWbcTI+yCVnBd/iYW5iIHEkivg2/mnBr2bQz2r/vtPjp19r/ZK62Dx0+UN3U+BWP8ulQ==}
     dependencies:
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-provider': 1.0.13
@@ -13101,8 +13113,8 @@ packages:
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.11.2
-      '@walletconnect/utils': 2.11.2
+      '@walletconnect/types': 2.11.3
+      '@walletconnect/utils': 2.11.3
       events: 3.3.0
       isomorphic-unfetch: 3.1.0
       lodash.isequal: 4.5.0
@@ -13416,7 +13428,6 @@ packages:
       - '@upstash/redis'
       - '@vercel/kv'
       - supports-color
-    dev: true
 
   /@walletconnect/types@2.11.1:
     resolution: {integrity: sha512-UbdbX+d6MOK0AXKxt5imV3KvAcLVpZUHylaRDIP5ffwVylM/p4DHnKppil1Qq5N+IGDr3RsUwLGFkKjqsQYRKw==}
@@ -13443,8 +13454,8 @@ packages:
       - supports-color
     dev: false
 
-  /@walletconnect/types@2.11.2:
-    resolution: {integrity: sha512-p632MFB+lJbip2cvtXPBQslpUdiw1sDtQ5y855bOlAGquay+6fZ4h1DcDePeKQDQM3P77ax2a9aNPZxV6y/h1Q==}
+  /@walletconnect/types@2.11.3:
+    resolution: {integrity: sha512-JY4wA9MVosDW9dcJMTpnwliste0aJGJ1X6Q4ulLsQsgWRSEBRkLila0oUT01TDBW9Yq8uUp7uFOUTaKx6KWVAg==}
     dependencies:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
@@ -13534,8 +13545,8 @@ packages:
       - supports-color
     dev: false
 
-  /@walletconnect/utils@2.11.2:
-    resolution: {integrity: sha512-LyfdmrnZY6dWqlF4eDrx5jpUwsB2bEPjoqR5Z6rXPiHJKUOdJt7az+mNOn5KTSOlRpd1DmozrBrWr+G9fFLYVw==}
+  /@walletconnect/utils@2.11.3:
+    resolution: {integrity: sha512-jsdNkrl/IcTkzWFn0S2d0urzBXg6RxVJtUYRsUx3qI3wzOGiABP9ui3yiZ3SgZOv9aRe62PaNp1qpbYZ+zPb8Q==}
     dependencies:
       '@stablelib/chacha20poly1305': 1.0.1
       '@stablelib/hkdf': 1.0.1
@@ -13545,7 +13556,7 @@ packages:
       '@walletconnect/relay-api': 1.0.9
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.11.2
+      '@walletconnect/types': 2.11.3
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
@@ -24936,7 +24947,7 @@ packages:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
-      '@shapeshiftoss/hdwallet-core': 1.53.4
+      '@shapeshiftoss/hdwallet-core': 1.53.5
       '@types/node': 15.14.9
       bip39: 3.1.0
       codeclimate-test-reporter: 0.5.1

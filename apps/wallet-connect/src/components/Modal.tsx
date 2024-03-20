@@ -18,7 +18,7 @@ import { useCallback, useMemo } from 'react'
 import AuthRequestModal from '@/views/AuthRequestModal'
 import LoadingModal from '@/views/LoadingModal'
 
-export default function Modal(keepkey: any) {
+export default function Modal() {
   const { open, view } = useSnapshot(ModalStore.state)
   // handle the modal being closed by click outside
   const onClose = useCallback(() => {
@@ -30,15 +30,15 @@ export default function Modal(keepkey: any) {
   const componentView = useMemo(() => {
     switch (view) {
       case 'SessionProposalModal':
-        return <SessionProposalModal keepkey={keepkey}/>
+        return <SessionProposalModal/>
       case 'SessionSignModal':
-        return <SessionRequestModal keepkey={keepkey}/>
+        return <SessionRequestModal/>
       case 'SessionSignTypedDataModal':
-        return <SessionSignTypedDataModal keepkey={keepkey}/>
+        return <SessionSignTypedDataModal />
       case 'SessionSendTransactionModal':
-        return <SessionSendTransactionModal keepkey={keepkey}/>
+        return <SessionSendTransactionModal />
       case 'SessionUnsuportedMethodModal':
-        return <SessionUnsuportedMethodModal keepkey={keepkey}/>
+        return <SessionUnsuportedMethodModal />
       // case 'SessionSignCosmosModal':
       //   return <SessionSignCosmosModal />
       // case 'SessionSignSolanaModal':
@@ -56,9 +56,9 @@ export default function Modal(keepkey: any) {
       // case 'SessionSignKadenaModal':
       //   return <SessionSignKadenaModal />
       case 'AuthRequestModal':
-        return <AuthRequestModal keepkey={keepkey}/>
+        return <AuthRequestModal />
       case 'LoadingModal':
-        return <LoadingModal keepkey={keepkey}/>
+        return <LoadingModal/>
       default:
         return null
     }

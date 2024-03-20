@@ -7,8 +7,9 @@ export async function createWeb3Wallet(relayerRegionURL: string) {
     projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
     relayUrl: relayerRegionURL ?? process.env.NEXT_PUBLIC_RELAY_URL
   })
+
   web3wallet = await Web3Wallet.init({
-    core,
+    core: core as any,
     metadata: {
       name: 'React Wallet Example',
       description: 'React Wallet for WalletConnect',
