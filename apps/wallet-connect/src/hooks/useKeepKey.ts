@@ -147,12 +147,11 @@ export default function useKeepKey() {
         try {
             // const { eip155Addresses } = createOrRestoreEIP155Wallet()
             let keepkey = await onStartKeepkey()
-            setKeepKey(keepkey)
             console.log("keepkey: ", keepkey);
             console.log("keepkey: ", keepkey.ETH);
             console.log("keepkey: ", keepkey.ETH.wallet);
-            const eip155Addresses = keepkey.ETH.wallet.address
-            console.log("eip155Addresses: ", eip155Addresses);
+            // const eip155Addresses = keepkey.ETH.wallet.address
+            // console.log("eip155Addresses: ", eip155Addresses);
             // const { cosmosAddresses } = await createOrRestoreCosmosWallet()
             // const { solanaAddresses } = await createOrRestoreSolanaWallet()
             // const { polkadotAddresses } = await createOrRestorePolkadotWallet()
@@ -162,7 +161,11 @@ export default function useKeepKey() {
             // const { tezosAddresses } = await createOrRestoreTezosWallet()
             // const { kadenaAddresses } = await createOrRestoreKadenaWallet()
 
+            const { eip155Addresses, eip155Wallets } = createOrRestoreEIP155Wallet(keepkey)
             SettingsStore.setEIP155Address(eip155Addresses)
+
+            // console.log("eip155Addresses: ", eip155Addresses);
+            // console.log("eip155Wallets: ", eip155Wallets);
 
             // SettingsStore.setCosmosAddress(cosmosAddresses[0])
             // SettingsStore.setSolanaAddress(solanaAddresses[0])
@@ -172,8 +175,11 @@ export default function useKeepKey() {
             // SettingsStore.setTronAddress(tronAddresses[0])
             // SettingsStore.setTezosAddress(tezosAddresses[0])
             // SettingsStore.setKadenaAddress(kadenaAddresses[0])
+
+            //THIS AWAIT IS CRITICAL!
             await createWeb3Wallet(relayerRegionURL)
-            // setInitialized(true)
+            //DO NOT SET TRUE UNTIL AFTER THE WALLET IS CREATED
+            setKeepKey(keepkey)
         } catch (err: unknown) {
             alert(err)
         }

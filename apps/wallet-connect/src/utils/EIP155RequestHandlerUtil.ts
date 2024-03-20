@@ -1,6 +1,6 @@
 import { EIP155_CHAINS, EIP155_SIGNING_METHODS, TEIP155Chain } from '@/data/EIP155Data'
-import EIP155Lib from '@/lib/EIP155Lib'
-import { SmartAccountLib } from '@/lib/SmartAccountLib'
+// import EIP155Lib from '@/lib/EIP155Lib'
+// import { SmartAccountLib } from '@/lib/SmartAccountLib'
 import { eip155Addresses, eip155Wallets } from '@/utils/EIP155WalletUtil'
 import {
   getSignParamsMessage,
@@ -18,40 +18,6 @@ import SettingsStore from '@/store/SettingsStore'
 type RequestEventArgs = Omit<SignClientTypes.EventArguments['session_request'], 'verifyContext'>
 
 
-const getWallet = async (params: any) => {
-  const typedChains: Record<number, Chain> = chains;
-  console.log('get wallet params', params)
-  const chainId = params?.chainId?.split(':')[1]
-  console.log('chain id', chainId)
-  const eoaWallet = eip155Wallets[getWalletAddressFromParams(eip155Addresses, params)]
-  if (eoaWallet) {
-    return eoaWallet
-  }
-
-  const smartAccountEnabledChain = allowedChains.find((chain) => chain.id.toString() === chainId) as Chain
-  console.log('smart account enabled chain', smartAccountEnabledChain)
-  const smartAccounts = await Promise.all(Object.values(eip155Wallets).map(async (wallet) => {
-    console.log('typeed chains', typedChains[chainId])
-   
-    const smartAccount = new SmartAccountLib({
-      privateKey: wallet.getPrivateKey() as Hex,
-      chain: typedChains[chainId],
-      sponsored: true, // TODO: Sponsor for now but should be dynamic according to SettingsStore
-    })
-
-    const isDeployed = await smartAccount.checkIfSmartAccountDeployed()
-    if (!isDeployed) {
-      await smartAccount.deploySmartAccount()
-    }
-    return smartAccount
-  }));
-
-  const smartAccountAddress = getWalletAddressFromParams(smartAccounts.map(acc => acc.address!), params)
-
-  return smartAccounts.find((smartAccount) => smartAccount?.address === smartAccountAddress) as SmartAccountLib
-}
-
-
 export async function approveEIP155Request(requestEvent: RequestEventArgs) {
   const { params, id } = requestEvent
   const { chainId, request } = params
@@ -60,15 +26,22 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
 
   SettingsStore.setActiveChainId(chainId)
 
-  const wallet = await getWallet(params)
+  // const wallet = await getWallet(params)
 
   switch (request.method) {
     case EIP155_SIGNING_METHODS.PERSONAL_SIGN:
     case EIP155_SIGNING_METHODS.ETH_SIGN:
       try {
-        const message = getSignParamsMessage(request.params)
-        const signedMessage = await wallet.signMessage(message)
-        return formatJsonRpcResult(id, signedMessage)
+        // const message = getSignParamsMessage(request.params)
+        // const signedMessage = await wallet.signMessage(message)
+        // return formatJsonRpcResult(id, signedMessage)
+
+        console.log("eip155Wallets: ",eip155Wallets)
+        //KeepKey Mapping
+        // console.log("signMessage: walletMethods: ",keepkey['ETH'].walletMethods)
+        // const signedMessage = await keepkey['ETH'].walletMethods.signMessage(message)
+        // console.log("signedMessage: ",signedMessage)
+
       } catch (error: any) {
         console.error(error)
         alert(error.message)
@@ -79,11 +52,18 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SIGN_TYPED_DATA_V3:
     case EIP155_SIGNING_METHODS.ETH_SIGN_TYPED_DATA_V4:
       try {
-        const { domain, types, message: data, primaryType } = getSignTypedDataParamsData(request.params)
-        // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
-        delete types.EIP712Domain
-        const signedData = await wallet._signTypedData(domain, types, data, primaryType)
-        return formatJsonRpcResult(id, signedData)
+        // const { domain, types, message: data, primaryType } = getSignTypedDataParamsData(request.params)
+        // // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
+        // delete types.EIP712Domain
+        // const signedData = await wallet._signTypedData(domain, types, data, primaryType)
+        // return formatJsonRpcResult(id, signedData)
+
+        console.log("eip155Wallets: ",eip155Wallets)
+
+        // console.log("signTypedData: ",{domain, types, data, primaryType})
+        // const signedMessage = await keepkey['ETH'].walletMethods.signTypedData(domain, types, data, primaryType)
+        // console.log("signedMessage: ",signedMessage)
+
       } catch (error: any) {
         console.error(error)
         alert(error.message)
@@ -94,8 +74,14 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
       try {
         const provider = new providers.JsonRpcProvider(EIP155_CHAINS[chainId as TEIP155Chain].rpc)
         const sendTransaction = request.params[0]
-        const connectedWallet = await wallet.connect(provider)
-        const hash = await connectedWallet.sendTransaction(sendTransaction)
+
+        // const connectedWallet = await wallet.connect(provider)
+        // const hash = await connectedWallet.sendTransaction(sendTransaction)
+
+        //
+        console.log("eip155Wallets: ",eip155Wallets)
+        // const hash = await keepkey['ETH'].walletMethods.sendTransaction(sendTransaction)
+
         const receipt = typeof hash === 'string' ? hash : hash?.hash // TODO improve interface
         return formatJsonRpcResult(id, receipt)
       } catch (error: any) {
@@ -107,7 +93,15 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SIGN_TRANSACTION:
       try {
         const signTransaction = request.params[0]
-        const signature = await wallet.signTransaction(signTransaction)
+        console.log("signTransaction: ",signTransaction)
+
+        // const signature = await wallet.signTransaction(signTransaction)
+        console.log("eip155Wallets: ",eip155Wallets)
+
+        // const signature = await keepkey['ETH'].walletMethods.signTransaction(signTransaction)
+        // console.log("signature: ",signature)
+
+
         return formatJsonRpcResult(id, signature)
       } catch (error: any) {
         console.error(error)

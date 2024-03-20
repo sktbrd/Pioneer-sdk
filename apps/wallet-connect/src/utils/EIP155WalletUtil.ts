@@ -1,43 +1,60 @@
-import EIP155Lib from '@/lib/EIP155Lib'
-
-export let wallet1: EIP155Lib
-export let wallet2: EIP155Lib
-export let eip155Wallets: Record<string, EIP155Lib>
-export let eip155Addresses: string[]
-
-let address1: string
-let address2: string
-
-/**
- * Utilities
- */
-export function createOrRestoreEIP155Wallet() {
-  const mnemonic1 = localStorage.getItem('EIP155_MNEMONIC_1')
-  const mnemonic2 = localStorage.getItem('EIP155_MNEMONIC_2')
-
-  if (mnemonic1 && mnemonic2) {
-    wallet1 = EIP155Lib.init({ mnemonic: mnemonic1 })
-    wallet2 = EIP155Lib.init({ mnemonic: mnemonic2 })
-  } else {
-    wallet1 = EIP155Lib.init({})
-    wallet2 = EIP155Lib.init({})
-
-    // Don't store mnemonic in local storage in a production project!
-    localStorage.setItem('EIP155_MNEMONIC_1', wallet1.getMnemonic())
-    localStorage.setItem('EIP155_MNEMONIC_2', wallet2.getMnemonic())
+// Assuming KeepKey's functionalities are encapsulated in the provided methods
+class EIP155Lib {
+  constructor(wallet: any) {
+    this.wallet = wallet;
   }
 
-  address1 = wallet1.getAddress()
-  address2 = wallet2.getAddress()
-
-  eip155Wallets = {
-    [address1]: wallet1,
-    [address2]: wallet2
+  static async init({ keepkey }) {
+    // Here you could initialize KeepKey wallet with specific parameters if needed
+    return new EIP155Lib(keepkey);
   }
-  eip155Addresses = Object.keys(eip155Wallets)
 
-  return {
-    eip155Wallets,
-    eip155Addresses
+  async getMnemonic() {
+    // Implement if KeepKey allows extracting mnemonic, which is unlikely due to security reasons
+    return "";
+  }
+
+  async getPrivateKey() {
+    // This is also highly sensitive and usually not directly accessible
+    return "";
+  }
+
+  async getAddress() {
+    // Use KeepKey's method to get the wallet address
+    return "";
+  }
+
+  async signMessage(message) {
+    // Use KeepKey's method to sign a message
+    return "";
+  }
+
+  async signTransaction(transaction) {
+    // Use KeepKey's method to sign a transaction
+    return "";
+  }
+
+  // Additional methods can be mapped here...
+}
+
+export async function createOrRestoreEIP155Wallet(keepkey) {
+  try {
+    const wallet = await EIP155Lib.init({ keepkey });
+    // Assuming KeepKey can provide a list of addresses or a single address
+    const address = await wallet.getAddress();
+
+    let eip155Wallets = {
+      [address]: wallet,
+    };
+    let eip155Addresses = Object.keys(eip155Wallets);
+
+    return {
+      eip155Wallets,
+      eip155Addresses,
+    };
+  } catch (e) {
+    // Handle any errors
+    console.error("Failed to create or restore EIP155 wallet:", e);
+    throw e; // It's generally a good practice to re-throw the error after logging it
   }
 }

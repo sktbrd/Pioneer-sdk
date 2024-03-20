@@ -31,13 +31,13 @@ import ChainDataMini from '@/components/ChainDataMini'
 import ChainAddressMini from '@/components/ChainAddressMini'
 import { getChainData } from '@/data/chainsUtil'
 import RequestModal from './RequestModal'
-import { SmartAccountLib } from '@/lib/SmartAccountLib'
-import ChainSmartAddressMini from '@/components/ChainSmartAddressMini'
+// import { SmartAccountLib } from '@/lib/SmartAccountLib'
+// import ChainSmartAddressMini from '@/components/ChainSmartAddressMini'
 import { useSnapshot } from 'valtio'
 import SettingsStore from '@/store/SettingsStore'
 import { Chain, allowedChains } from '@/utils/SmartAccountUtils'
-import { Hex } from 'viem'
-import useSmartAccount from '@/hooks/useSmartAccount'
+// import { Hex } from 'viem'
+// import useSmartAccount from '@/hooks/useSmartAccount'
 
 const StyledText = styled(Text, {
   fontWeight: 400
@@ -47,7 +47,7 @@ const StyledSpan = styled('span', {
   fontWeight: 400
 } as any)
 
-export default function SessionProposalModal() {
+export default function SessionProposalModal({keepkey}: any) {
   const { smartAccountSponsorshipEnabled, smartAccountEnabled } = useSnapshot(SettingsStore.state)
   // Get proposal data and wallet address from store
   const data = useSnapshot(ModalStore.state)
@@ -56,9 +56,9 @@ export default function SessionProposalModal() {
   const [isLoadingReject, setIsLoadingReject] = useState(false)
   console.log('proposal', data.data?.proposal)
   const supportedNamespaces = useMemo(() => {
-    // eip155
-    const eip155Chains = Object.keys(EIP155_CHAINS)
-    const eip155Methods = Object.values(EIP155_SIGNING_METHODS)
+  // eip155
+  const eip155Chains = Object.keys(EIP155_CHAINS)
+  const eip155Methods = Object.values(EIP155_SIGNING_METHODS)
 
     // // cosmos
     // const cosmosChains = Object.keys(COSMOS_MAINNET_CHAINS)
@@ -91,6 +91,10 @@ export default function SessionProposalModal() {
     // // tron
     // const tronChains = Object.keys(TRON_CHAINS)
     // const tronMethods = Object.values(TRON_SIGNING_METHODS)
+    console.log("keepkey: ",keepkey)
+    console.log("keepkey: ",keepkey.ETH)
+    console.log("keepkey: ",keepkey.keepkey)
+    eip155Addresses = [keepkey.keepkey.ETH.wallet.address]
 
     return {
       eip155: {
@@ -263,30 +267,30 @@ export default function SessionProposalModal() {
           if (allowedChainIds.length) {
             const chainIdParsed = allowedChainIds[0].replace(`${nameSpaceKey}:`, '')
 
-            if (namespaces[nameSpaceKey].accounts && smartAccountEnabled) {
-              const signerAddress = namespaces[nameSpaceKey].accounts[0].split(':')[2]
-              const wallet = eip155Wallets[signerAddress]
-              const chain = allowedChains.find(chain => chain.id.toString() === chainIdParsed)!
-        
-              const smartAccountClient = new SmartAccountLib({
-                privateKey: wallet.getPrivateKey() as Hex,
-                chain: allowedChains.find(chain => chain.id.toString() === chainIdParsed)!,
-                sponsored: smartAccountSponsorshipEnabled,
-              })
-    
-              const smartAccountAddress = await smartAccountClient.getAccount()
-              if (wallet && smartAccountAddress) {
-                const allowedAccounts = allowedChainIds.map(id => {
-                  // check if id is a part of any of these array elements namespaces.eip155.accounts
-                  const accountIsAllowed = namespaces.eip155.accounts.findIndex(account => account.includes(id))
-
-                  return namespaces.eip155.accounts[accountIsAllowed]
-                })                
-                // when SA available, make it first on dApp
-                namespaces.eip155.accounts = [`${nameSpaceKey}:${chain.id}:${smartAccountAddress.address}`, ...allowedAccounts]
-              }
-              console.log('approving namespaces:', namespaces.eip155.accounts) 
-            }
+            // if (namespaces[nameSpaceKey].accounts && smartAccountEnabled) {
+            //   const signerAddress = namespaces[nameSpaceKey].accounts[0].split(':')[2]
+            //   const wallet = eip155Wallets[signerAddress]
+            //   const chain = allowedChains.find(chain => chain.id.toString() === chainIdParsed)!
+            //
+            //   const smartAccountClient = new SmartAccountLib({
+            //     privateKey: wallet.getPrivateKey() as Hex,
+            //     chain: allowedChains.find(chain => chain.id.toString() === chainIdParsed)!,
+            //     sponsored: smartAccountSponsorshipEnabled,
+            //   })
+            //
+            //   const smartAccountAddress = await smartAccountClient.getAccount()
+            //   if (wallet && smartAccountAddress) {
+            //     const allowedAccounts = allowedChainIds.map(id => {
+            //       // check if id is a part of any of these array elements namespaces.eip155.accounts
+            //       const accountIsAllowed = namespaces.eip155.accounts.findIndex(account => account.includes(id))
+            //
+            //       return namespaces.eip155.accounts[accountIsAllowed]
+            //     })
+            //     // when SA available, make it first on dApp
+            //     namespaces.eip155.accounts = [`${nameSpaceKey}:${chain.id}:${smartAccountAddress.address}`, ...allowedAccounts]
+            //   }
+            //   console.log('approving namespaces:', namespaces.eip155.accounts)
+            // }
           }
         }
 
@@ -372,18 +376,18 @@ export default function SessionProposalModal() {
             })}
 
           <Row style={{ color: 'GrayText' }}>Smart Accounts</Row>
-          {smartAccountChains.length &&
-            smartAccountChains.map((chain, i) => {
-              if (!chain) {
-                return <></>
-              }
+          {/*{smartAccountChains.length &&*/}
+          {/*  smartAccountChains.map((chain, i) => {*/}
+          {/*    if (!chain) {*/}
+          {/*      return <></>*/}
+          {/*    }*/}
 
-              return (
-                <Row key={i}>
-                  <ChainSmartAddressMini chain={chain} />
-                </Row>
-              )
-            })}
+          {/*    return (*/}
+          {/*      <Row key={i}>*/}
+          {/*        /!*<ChainSmartAddressMini chain={chain} />*!/*/}
+          {/*      </Row>*/}
+          {/*    )*/}
+          {/*  })}*/}
         </Grid>
         <Grid>
           <Row style={{ color: 'GrayText' }} justify="flex-end">
