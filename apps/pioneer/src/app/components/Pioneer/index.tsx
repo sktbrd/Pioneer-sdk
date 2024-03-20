@@ -52,7 +52,12 @@ import {
 import { usePioneer } from '@coinmasters/pioneer-react';
 
 
-const Pioneer = () => {
+export interface PioneerProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+}
+
+export function Pioneer({ children, ...other }: PioneerProps): JSX.Element {
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context, openModal } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
