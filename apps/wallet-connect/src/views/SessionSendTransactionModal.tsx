@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { Divider, Text } from '@nextui-org/react'
 
 import RequestDataCard from '@/components/RequestDataCard'
+import RequestFeeCard from '@/components/RequestFeeCard'
 import RequesDetailsCard from '@/components/RequestDetalilsCard'
 import RequestMethodCard from '@/components/RequestMethodCard'
 import ModalStore from '@/store/ModalStore'
@@ -77,6 +78,8 @@ export default function SessionSendTransactionModal() {
       approveLoader={{ active: isLoadingApprove }}
       rejectLoader={{ active: isLoadingReject }}
     >
+      <RequestFeeCard data={transaction} />
+      <Divider y={1} />
       <RequestDataCard data={transaction} />
       <Divider y={1} />
       <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession?.relay.protocol} />

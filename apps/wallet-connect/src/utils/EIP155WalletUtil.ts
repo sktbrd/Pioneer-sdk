@@ -114,63 +114,104 @@ class EIP155Lib {
       let nonce = await provider.getTransactionCount(transaction.from, 'pending');
       transaction.nonce = `0x${nonce.toString(16)}`;
 
-      // Estimating gas limit if not provided
-      if (!transaction.gasLimit) {
+      // transaction.gas = '0x28b60'; // Correct as it was
+      console.log("dapp gasPrice: ", parseInt(transaction.gas, 16));
+
+      // transaction.maxFeePerGas = '0x1e076361'; // This should be the higher value
+      // transaction.maxPriorityFeePerGas = '0x8d19f'; // This should be the lower value
+
+      const feeData = await provider.getFeeData();
+      // console.log("recommended gasPrice:: ", feeData?.gasPrice?.toString());
+
+      console.log("feeData: ", feeData);
+      transaction.gasPrice = `0x${BigInt(feeData.gasPrice || '0').toString(16)}`;
+      // transaction.gasPrice = transaction.gas
+      transaction.maxFeePerGas = `0x${BigInt(feeData.maxFeePerGas || '0').toString(16)}`;
+
+      // transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
+
+
+      try{
         const estimatedGas = await provider.estimateGas({
           from: transaction.from,
           to: transaction.to,
-          data: transaction.data,
-          // Add other fields if necessary for estimating gas
+          data: transaction.data
         });
-        transaction.gasLimit = `0x${estimatedGas.toString(16)}`;
-      } else {
-        transaction.gasLimit = `0x${BigInt(transaction.gasLimit).toString(16)}`;
+        console.log("estimatedGas: ", estimatedGas);
+        transaction.gas = `0x${estimatedGas.toString(16)}`;
+      }catch(e){
+        transaction.gas = `0x${BigInt("300000").toString(16)}`;
       }
+
+
+      // Estimating gas limit if not provided
+      // try{
+      //   if (!transaction.gasLimit) {
+      //     const estimatedGas = await provider.estimateGas({
+      //       from: transaction.from,
+      //       to: transaction.to,
+      //       data: transaction.data
+      //     });
+      //     transaction.gasLimit = `0x${estimatedGas.toString(16)}`;
+      //   } else {
+      //     // transaction.gasLimit = `0x${BigInt(transaction.gasLimit).toString(16)}`;
+      //     transaction.gasLimit = '0x28b60'
+      //   }
+      // }catch(e){
+      //   transaction.gasLimit = `0x${BigInt("300000").toString(16)}`;
+      // }
+
 
       // Fetch recommended fee data
-      const feeData = await provider.getFeeData();
-      console.log("feeData: ", feeData);
+      // const feeData = await provider.getFeeData();
+      // console.log("feeData: ", feeData);
       // Handling for EIP-1559 and legacy transactions
-      if (transaction.chainId === 1) {
-        transaction.maxFeePerGas = `0x${BigInt(feeData.maxFeePerGas || '0').toString(16)}`;
-        transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
-      } else {
-        // For non-EIP-1559 chains, use the gasPrice
-        // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
-
-        // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
-        // gas = (gas * BigInt(120)) / BigInt(100);
-        // transaction.gas = `0x${gas.toString(16)}`;
-        transaction.gasPrice = transaction.gas
-      }
+      // if (true) {
+      //   transaction.maxFeePerGas = `0x${BigInt(feeData.maxFeePerGas || '0').toString(16)}`;
+      //   transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
+      // } else {
+      //   // For non-EIP-1559 chains, use the gasPrice
+      //   // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
+      //
+      //   // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
+      //   // gas = (gas * BigInt(120)) / BigInt(100);
+      //   // transaction.gas = `0x${gas.toString(16)}`;
+      //   transaction.gasPrice = transaction.gas
+      // }
 
       // Assuming gasLimit is already provided in the transaction and is a BigInt
-      transaction.gasLimit = `0x${BigInt(transaction.gasLimit).toString(16)}`;
+      // transaction.gas = `0x${BigInt(transaction.gasLimit).toString(16)}`;
 
       // Log final fee choice
-      console.log(`${tag} Using maxFeePerGas: ${transaction.maxFeePerGas}`);
-      console.log(`${tag} Using maxPriorityFeePerGas: ${transaction.maxPriorityFeePerGas}`);
+      // console.log(`${tag} Using maxFeePerGas: ${transaction.maxFeePerGas}`);
+      // console.log(`${tag} Using maxPriorityFeePerGas: ${transaction.maxPriorityFeePerGas}`);
 
       let input: any = {
         from: transaction.from,
         addressNList: [2147483692, 2147483708, 2147483648, 0, 0], // Placeholder for actual derivation path
         data: transaction.data,
         nonce: transaction.nonce,
-        gasLimit: transaction.gasLimit,
+        gasLimit: transaction.gas,
         value: '0x0', // Assuming the transaction value is 0
         to: transaction.to,
         chainId: `0x${transaction.chainId.toString(16)}`,
       };
 
+      input.gas = transaction.gas;
+      input.gasPrice = transaction.gasPrice;
+
+      // input.maxFeePerGas = transaction.maxFeePerGas;
+      // input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+
       // Add EIP-1559 fields if applicable
-      if (transaction.chainId === 1) {
-        input.maxFeePerGas = transaction.maxFeePerGas;
-        input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
-      } else {
-        // For non-EIP-1559 transactions
-        input.gasPrice = transaction.gas;
-        input.gas = transaction.gas;
-      }
+      // if (true) {
+      //   input.maxFeePerGas = transaction.maxFeePerGas;
+      //   input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+      // } else {
+      //   // For non-EIP-1559 transactions
+      //   input.gasPrice = transaction.gas;
+      //   input.gas = transaction.gasLimit;
+      // }
 
       // Proceed with transaction signing
       console.log(`${tag} Final input: `, input);

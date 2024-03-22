@@ -108,15 +108,15 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         let signedTx = await eip155Wallets[wallets[0]].signTransaction(sendTransaction)
 
         //broadcast
-        let receipt = await eip155Wallets[wallets[0]].broadcastTransaction(signedTx, sendTransaction.networkId)
-        console.log("receipt: ",receipt)
-        let hash = receipt.transactionHash
-        console.log("hash: ",hash)
-        // const hash = await keepkey['ETH'].walletMethods.sendTransaction(sendTransaction)
+        let hash = ''
+        try{
+          let receipt = await eip155Wallets[wallets[0]].broadcastTransaction(signedTx, sendTransaction.networkId)
+          console.log("receipt: ",receipt)
+          return formatJsonRpcResult(id, receipt)
+        }catch(e: any){
+          alert("failed to broadcast! e: "+e.message)
+        }
 
-        const output = typeof hash === 'string' ? hash : hash?.hash
-        console.log("output: ",output)
-        return formatJsonRpcResult(id, output)
       } catch (error: any) {
         console.error(error)
         alert(error.message)
