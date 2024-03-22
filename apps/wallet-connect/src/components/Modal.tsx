@@ -30,9 +30,9 @@ export default function Modal() {
   const componentView = useMemo(() => {
     switch (view) {
       case 'SessionProposalModal':
-        return <SessionProposalModal />
+        return <SessionProposalModal/>
       case 'SessionSignModal':
-        return <SessionRequestModal />
+        return <SessionRequestModal/>
       case 'SessionSignTypedDataModal':
         return <SessionSignTypedDataModal />
       case 'SessionSendTransactionModal':
@@ -58,7 +58,7 @@ export default function Modal() {
       case 'AuthRequestModal':
         return <AuthRequestModal />
       case 'LoadingModal':
-        return <LoadingModal />
+        return <LoadingModal/>
       default:
         return null
     }

@@ -4,7 +4,6 @@ import { createTheme, NextUIProvider } from '@nextui-org/react'
 
 import Layout from '@/components/Layout'
 import Modal from '@/components/Modal'
-import useInitialization from '@/hooks/useInitialization'
 import useWalletConnectEventsManager from '@/hooks/useWalletConnectEventsManager'
 import { web3wallet } from '@/utils/WalletConnectUtil'
 import { RELAYER_EVENTS } from '@walletconnect/core'
@@ -42,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </Layout>
 
-      <Modal />
+      <Modal/>
     </NextUIProvider>
   )
 }

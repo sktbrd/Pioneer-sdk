@@ -31,13 +31,13 @@ import ChainDataMini from '@/components/ChainDataMini'
 import ChainAddressMini from '@/components/ChainAddressMini'
 import { getChainData } from '@/data/chainsUtil'
 import RequestModal from './RequestModal'
-import { SmartAccountLib } from '@/lib/SmartAccountLib'
-import ChainSmartAddressMini from '@/components/ChainSmartAddressMini'
+// import { SmartAccountLib } from '@/lib/SmartAccountLib'
+// import ChainSmartAddressMini from '@/components/ChainSmartAddressMini'
 import { useSnapshot } from 'valtio'
 import SettingsStore from '@/store/SettingsStore'
 import { Chain, allowedChains } from '@/utils/SmartAccountUtils'
-import { Hex } from 'viem'
-import useSmartAccount from '@/hooks/useSmartAccount'
+// import { Hex } from 'viem'
+// import useSmartAccount from '@/hooks/useSmartAccount'
 
 const StyledText = styled(Text, {
   fontWeight: 400
@@ -56,41 +56,10 @@ export default function SessionProposalModal() {
   const [isLoadingReject, setIsLoadingReject] = useState(false)
   console.log('proposal', data.data?.proposal)
   const supportedNamespaces = useMemo(() => {
-    // eip155
-    const eip155Chains = Object.keys(EIP155_CHAINS)
-    const eip155Methods = Object.values(EIP155_SIGNING_METHODS)
+  // eip155
+  const eip155Chains = Object.keys(EIP155_CHAINS)
+  const eip155Methods = Object.values(EIP155_SIGNING_METHODS)
 
-    // // cosmos
-    // const cosmosChains = Object.keys(COSMOS_MAINNET_CHAINS)
-    // const cosmosMethods = Object.values(COSMOS_SIGNING_METHODS)
-    //
-    // // Kadena
-    // const kadenaChains = Object.keys(KADENA_CHAINS)
-    // const kadenaMethods = Object.values(KADENA_SIGNING_METHODS)
-    //
-    // // multiversx
-    // const multiversxChains = Object.keys(MULTIVERSX_CHAINS)
-    // const multiversxMethods = Object.values(MULTIVERSX_SIGNING_METHODS)
-    //
-    // // near
-    // const nearChains = Object.keys(NEAR_CHAINS)
-    // const nearMethods = Object.values(NEAR_SIGNING_METHODS)
-    //
-    // // polkadot
-    // const polkadotChains = Object.keys(POLKADOT_CHAINS)
-    // const polkadotMethods = Object.values(POLKADOT_SIGNING_METHODS)
-    //
-    // // solana
-    // const solanaChains = Object.keys(SOLANA_CHAINS)
-    // const solanaMethods = Object.values(SOLANA_SIGNING_METHODS)
-    //
-    // // tezos
-    // const tezosChains = Object.keys(TEZOS_CHAINS)
-    // const tezosMethods = Object.values(TEZOS_SIGNING_METHODS)
-    //
-    // // tron
-    // const tronChains = Object.keys(TRON_CHAINS)
-    // const tronMethods = Object.values(TRON_SIGNING_METHODS)
 
     return {
       eip155: {
@@ -98,61 +67,7 @@ export default function SessionProposalModal() {
         methods: eip155Methods,
         events: ['accountsChanged', 'chainChanged'],
         accounts: eip155Chains.map(chain => `${chain}:${eip155Addresses[0]}`).flat()
-      },
-      // cosmos: {
-      //   chains: cosmosChains,
-      //   methods: cosmosMethods,
-      //   events: [],
-      //   accounts: cosmosChains.map(chain => `${chain}:${cosmosAddresses[0]}`).flat()
-      // },
-      // kadena: {
-      //   chains: kadenaChains,
-      //   methods: kadenaMethods,
-      //   events: [],
-      //   accounts: kadenaChains.map(chain => `${chain}:${kadenaAddresses[0]}`).flat()
-      // },
-      // mvx: {
-      //   chains: multiversxChains,
-      //   methods: multiversxMethods,
-      //   events: [],
-      //   accounts: multiversxChains.map(chain => `${chain}:${multiversxAddresses[0]}`).flat()
-      // },
-      // near: {
-      //   chains: nearChains,
-      //   methods: nearMethods,
-      //   events: ['accountsChanged', 'chainChanged'],
-      //   accounts: nearChains.map(chain => `${chain}:${nearAddresses[0]}`).flat()
-      // },
-      // polkadot: {
-      //   chains: polkadotChains,
-      //   methods: polkadotMethods,
-      //   events: [],
-      //   accounts: polkadotChains
-      //     .map(chain => polkadotAddresses.map(address => `${chain}:${address}`))
-      //     .flat()
-      // },
-      // solana: {
-      //   chains: solanaChains,
-      //   methods: solanaMethods,
-      //   events: [],
-      //   accounts: solanaChains
-      //     .map(chain => solanaAddresses.map(address => `${chain}:${address}`))
-      //     .flat()
-      // },
-      // tezos: {
-      //   chains: tezosChains,
-      //   methods: tezosMethods,
-      //   events: [],
-      //   accounts: tezosChains
-      //     .map(chain => tezosAddresses.map(address => `${chain}:${address}`))
-      //     .flat()
-      // },
-      // tron: {
-      //   chains: tronChains,
-      //   methods: tronMethods,
-      //   events: [],
-      //   accounts: tronChains.map(chain => `${chain}:${tronAddresses[0]}`)
-      // }
+      }
     }
   }, [])
   console.log('supportedNamespaces', supportedNamespaces, eip155Addresses)
@@ -215,27 +130,11 @@ export default function SessionProposalModal() {
     switch (namespace) {
       case 'eip155':
         return eip155Addresses[0]
-      // case 'cosmos':
-      //   return cosmosAddresses[0]
-      // case 'kadena':
-      //   return kadenaAddresses[0]
-      // case 'mvx':
-      //   return multiversxAddresses[0]
-      // case 'near':
-      //   return nearAddresses[0]
-      // case 'polkadot':
-      //   return polkadotAddresses[0]
-      // case 'solana':
-      //   return solanaAddresses[0]
-      // case 'tezos':
-      //   return tezosAddresses[0]
-      // case 'tron':
-      //   return tronAddresses[0]
     }
   }, [])
 
   const namespaces = buildApprovedNamespaces({
-    proposal: proposal.params,
+    proposal: proposal.params as any,
     supportedNamespaces
   })
 
@@ -261,32 +160,6 @@ export default function SessionProposalModal() {
           console.log('allowedChainIds', allowedChainIds)
 
           if (allowedChainIds.length) {
-            const chainIdParsed = allowedChainIds[0].replace(`${nameSpaceKey}:`, '')
-
-            if (namespaces[nameSpaceKey].accounts && smartAccountEnabled) {
-              const signerAddress = namespaces[nameSpaceKey].accounts[0].split(':')[2]
-              const wallet = eip155Wallets[signerAddress]
-              const chain = allowedChains.find(chain => chain.id.toString() === chainIdParsed)!
-        
-              const smartAccountClient = new SmartAccountLib({
-                privateKey: wallet.getPrivateKey() as Hex,
-                chain: allowedChains.find(chain => chain.id.toString() === chainIdParsed)!,
-                sponsored: smartAccountSponsorshipEnabled,
-              })
-    
-              const smartAccountAddress = await smartAccountClient.getAccount()
-              if (wallet && smartAccountAddress) {
-                const allowedAccounts = allowedChainIds.map(id => {
-                  // check if id is a part of any of these array elements namespaces.eip155.accounts
-                  const accountIsAllowed = namespaces.eip155.accounts.findIndex(account => account.includes(id))
-
-                  return namespaces.eip155.accounts[accountIsAllowed]
-                })                
-                // when SA available, make it first on dApp
-                namespaces.eip155.accounts = [`${nameSpaceKey}:${chain.id}:${smartAccountAddress.address}`, ...allowedAccounts]
-              }
-              console.log('approving namespaces:', namespaces.eip155.accounts) 
-            }
           }
         }
 
@@ -372,18 +245,6 @@ export default function SessionProposalModal() {
             })}
 
           <Row style={{ color: 'GrayText' }}>Smart Accounts</Row>
-          {smartAccountChains.length &&
-            smartAccountChains.map((chain, i) => {
-              if (!chain) {
-                return <></>
-              }
-
-              return (
-                <Row key={i}>
-                  <ChainSmartAddressMini chain={chain} />
-                </Row>
-              )
-            })}
         </Grid>
         <Grid>
           <Row style={{ color: 'GrayText' }} justify="flex-end">
