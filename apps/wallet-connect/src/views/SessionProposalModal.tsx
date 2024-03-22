@@ -66,7 +66,7 @@ export default function SessionProposalModal() {
         chains: eip155Chains,
         methods: eip155Methods,
         events: ['accountsChanged', 'chainChanged'],
-        accounts: eip155Chains.map(chain => `${chain}:${eip155Addresses[0]}`).flat()
+        accounts: eip155Chains.map(chain => `${chain}:${(eip155Addresses || [])[0] || ''}`).flat()
       }
     }
   }, [])

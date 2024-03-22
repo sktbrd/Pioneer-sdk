@@ -41,60 +41,19 @@ class EIP155Lib {
   async signMessage(message: any) {
     try{
       console.log("signMessage: ", message)
+      console.log("this.wallet.ETH.walletMethods: ",this.wallet.ETH.walletMethods)
       // Use KeepKey's method to sign a message
-      return this.wallet.ETH.walletMethods.signMessage(message);
+      let address = this.wallet.ETH.wallet.address
+      const messageFormated = `0x${Buffer.from(
+        Uint8Array.from(
+          typeof message === 'string' ? new TextEncoder().encode(message) : message,
+        ),
+      ).toString('hex')}`
+      return this.wallet.ETH.keepkeySdk.eth.ethSign({address,message:messageFormated});
     }catch(e){
       console.error(e)
     }
   }
-
-  // async signTransactionBROKE(transaction) {
-  //   const tag = TAG+" | signTransaction | ";
-  //   try {
-  //     // Log transaction and wallet methods (for debugging purposes)
-  //     console.log(`${tag}transaction: `, transaction);
-  //
-  //     // Basic validation
-  //     if (!transaction.from) throw new Error("Invalid transaction: missing 'from'");
-  //     if (!transaction.to) throw new Error("Invalid transaction: missing 'to'");
-  //     if (!transaction.data) throw new Error("Invalid transaction: missing 'data'");
-  //     if (!transaction.chainId) throw new Error("Invalid transaction: missing 'chainId'");
-  //     if (!transaction.provider) throw new Error("Provider is not set for the transaction");
-  //
-  //     // Ensure nonce is set
-  //     if (typeof transaction.nonce === 'undefined') {
-  //       transaction.nonce = await transaction.provider.getTransactionCount(transaction.from, 'pending');
-  //     }
-  //
-  //     // Estimating gas
-  //     if (!transaction.gasLimit) {
-  //       // Here we should call an actual method from your provider to estimate gas
-  //       // This method and its parameters depend on your provider
-  //       transaction.gasLimit = await transaction.provider.estimateGas({...transaction});
-  //     }
-  //
-  //     // For EIP-1559 transactions, estimate gas fee parameters if not provided
-  //     if (!transaction.maxFeePerGas || !transaction.maxPriorityFeePerGas) {
-  //       // Use the provider to suggest appropriate gas fees
-  //       const feeData = await transaction.provider.getFeeData();
-  //       transaction.maxFeePerGas = feeData.maxFeePerGas;
-  //       transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
-  //     }
-  //
-  //     // Prepare and sign the transaction using your wallet's method
-  //     // Assuming `walletMethods` is an available method for signing
-  //     const signedTx = await this.wallet.ETH.walletMethods.signTransaction({
-  //       ...transaction,
-  //       nonce: '0x' + transaction.nonce.toString(16), // Ensure nonce is in hex format
-  //     });
-  //
-  //     console.log(`${tag}Signed transaction: `, signedTx);
-  //     return signedTx;
-  //   } catch (e) {
-  //     console.error(`${tag}`, e);
-  //     throw e; // Propagate the error after logging
-  //   }
-  // }
 
   async signTransaction(transaction:any) {
     let tag = TAG + " | signTransaction | ";
@@ -143,49 +102,6 @@ class EIP155Lib {
         transaction.gas = `0x${BigInt("135120").toString(16)}`;
       }
 
-
-      // Estimating gas limit if not provided
-      // try{
-      //   if (!transaction.gasLimit) {
-      //     const estimatedGas = await provider.estimateGas({
-      //       from: transaction.from,
-      //       to: transaction.to,
-      //       data: transaction.data
-      //     });
-      //     transaction.gasLimit = `0x${estimatedGas.toString(16)}`;
-      //   } else {
-      //     // transaction.gasLimit = `0x${BigInt(transaction.gasLimit).toString(16)}`;
-      //     transaction.gasLimit = '0x28b60'
-      //   }
-      // }catch(e){
-      //   transaction.gasLimit = `0x${BigInt("300000").toString(16)}`;
-      // }
-
-
-      // Fetch recommended fee data
-      // const feeData = await provider.getFeeData();
-      // console.log("feeData: ", feeData);
-      // Handling for EIP-1559 and legacy transactions
-      // if (true) {
-      //   transaction.maxFeePerGas = `0x${BigInt(feeData.maxFeePerGas || '0').toString(16)}`;
-      //   transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
-      // } else {
-      //   // For non-EIP-1559 chains, use the gasPrice
-      //   // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
-      //
-      //   // let gas = BigInt(feeData.gasPrice) / BigInt(1000)
-      //   // gas = (gas * BigInt(120)) / BigInt(100);
-      //   // transaction.gas = `0x${gas.toString(16)}`;
-      //   transaction.gasPrice = transaction.gas
-      // }
-
-      // Assuming gasLimit is already provided in the transaction and is a BigInt
-      // transaction.gas = `0x${BigInt(transaction.gasLimit).toString(16)}`;
-
-      // Log final fee choice
-      // console.log(`${tag} Using maxFeePerGas: ${transaction.maxFeePerGas}`);
-      // console.log(`${tag} Using maxPriorityFeePerGas: ${transaction.maxPriorityFeePerGas}`);
-
       let input: any = {
         from: transaction.from,
         addressNList: [2147483692, 2147483708, 2147483648, 0, 0], // Placeholder for actual derivation path
@@ -215,6 +131,9 @@ class EIP155Lib {
       let output = await this.wallet.ETH.keepkeySdk.eth.ethSignTransaction(input);
       console.log(`${tag} Transaction output: `, output);
 
+      //
+
+
       return output.serialized;
     } catch (e) {
       console.error(`${tag} Error: `, e);
@@ -222,80 +141,25 @@ class EIP155Lib {
     }
   }
 
-  // async signTransaction(transaction: any) {
-  //   let tag = TAG + " | signTransaction | ";
-  //   try {
-  //     console.log("transaction: ", transaction);
-  //     console.log("walletMethods: ", this.wallet.ETH.walletMethods);
-  //
-  //     // Validate
-  //     if (!transaction.from) throw Error("invalid tx missing from");
-  //     if (!transaction.to) throw Error("invalid tx missing to");
-  //     if (!transaction.data) throw Error("invalid tx missing data");
-  //     if (!transaction.chainId) throw Error("invalid tx missing chainId");
-  //
-  //     // Get provider for chainId
-  //     let rpcUrl = EIP155_CHAINS[transaction.networkId as TEIP155Chain].rpc;
-  //     console.log('rpcUrl: ', rpcUrl);
-  //     const provider = new JsonRpcProvider(rpcUrl);
-  //
-  //     let nonce = await provider.getTransactionCount(transaction.from, 'pending');
-  //     console.log("nonce: ", nonce);
-  //     transaction.nonce = '0x' + nonce.toString(16);
-  //
-  //     // Estimating gas
-  //     let estimatedGasLimit = await provider.estimateGas({ ...transaction });
-  //     if (!transaction.gasLimit || BigInt(transaction.gasLimit) < BigInt(estimatedGasLimit)) {
-  //       throw Error("Provided gas limit is less than recommended");
-  //     }
-  //
-  //     // Adjusting fees based on chainId
-  //     if (transaction.chainId === 1) {
-  //       // For EIP-1559 transactions on Ethereum Mainnet
-  //       if (!transaction.maxFeePerGas || !transaction.maxPriorityFeePerGas) {
-  //         const feeData = await provider.getFeeData();
-  //         transaction.maxFeePerGas = feeData.maxFeePerGas;
-  //         transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
-  //       }
-  //     } else {
-  //       // For non-EIP-1559 chains, use the legacy gasPrice
-  //       if (!transaction.gasPrice) {
-  //         const feeData = await provider.getFeeData();
-  //         transaction.gasPrice = feeData.gasPrice;
-  //       }
-  //     }
-  //
-  //     let input: any = {
-  //       from: transaction.from,
-  //       addressNList: [2147483692, 2147483708, 2147483648, 0, 0], // TODO: Get from path
-  //       data: transaction.data,
-  //       nonce: transaction.nonce,
-  //       gasLimit: transaction.gasLimit,
-  //       value: '0x0',
-  //       to: transaction.to,
-  //       chainId: '0x' + transaction.chainId.toString(16),
-  //     };
-  //
-  //     // Configure input based on transaction type
-  //     if (transaction.chainId !== 1) {
-  //       // Use gasPrice for non-EIP-1559 transactions
-  //       input.gasPrice = transaction.gasPrice;
-  //     } else {
-  //       // Use EIP-1559 fees for Ethereum Mainnet
-  //       input.maxFeePerGas = transaction.maxFeePerGas;
-  //       input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
-  //     }
-  //
-  //     console.log("input: ", input);
-  //     let output = await this.wallet.ETH.keepkeySdk.eth.ethSignTransaction(input);
-  //     console.log("output: ", output);
-  //     // Normalize output
-  //     return output.serialized;
-  //   } catch (e) {
-  //     console.error(e);
-  //     throw e; // Rethrowing the error for external handling
-  //   }
-  // }
+  //signTypedData
+  async signTypedData(params:any) {
+    let tag = TAG + " | signTypedData | ";
+    try {
+      console.log(tag,"**** params: ", params);
+      let signedMessage = await this.wallet.ETH.keepkeySdk.eth.ethSignTypedData({
+        address: this.wallet.ETH.wallet.address,
+        addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
+        typedData: params,
+      })
+      console.log(tag,"**** signedMessage: ", signedMessage);
+      return signedMessage;
+      // return output.serialized;
+    } catch (e) {
+      console.error(`${tag} Error: `, e);
+      throw e; // Rethrowing for external handling
+    }
+  }
+
 
   //broadcast
   async broadcastTransaction(signedTx: string, networkId: string) {
