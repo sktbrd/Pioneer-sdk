@@ -28,6 +28,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@coinmasters/pioneer": "workspace:*",
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
     "@coinmasters/helpers": "workspace:*",

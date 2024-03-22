@@ -1,5 +1,5 @@
 {
-  "name": "pioneer-template",
+  "name": "@coinmasters/pioneer",
   "version": "0.1.7",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

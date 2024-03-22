@@ -99,7 +99,7 @@ class EIP155Lib {
   async signTransaction(transaction:any) {
     let tag = TAG + " | signTransaction | ";
     try {
-      console.log("transaction: ", transaction);
+      console.log(tag,"**** transaction: ", transaction);
 
       // Basic transaction validation
       if (!transaction.from) throw Error("invalid tx missing from");
@@ -127,9 +127,9 @@ class EIP155Lib {
       transaction.gasPrice = `0x${BigInt(feeData.gasPrice || '0').toString(16)}`;
       // transaction.gasPrice = transaction.gas
       transaction.maxFeePerGas = `0x${BigInt(feeData.maxFeePerGas || '0').toString(16)}`;
+      transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
 
-      // transaction.maxPriorityFeePerGas = `0x${BigInt(feeData.maxPriorityFeePerGas || '0').toString(16)}`;
-
+      // transaction.gas = `0x${BigInt("300000").toString(16)}`;
 
       try{
         const estimatedGas = await provider.estimateGas({
@@ -140,7 +140,7 @@ class EIP155Lib {
         console.log("estimatedGas: ", estimatedGas);
         transaction.gas = `0x${estimatedGas.toString(16)}`;
       }catch(e){
-        transaction.gas = `0x${BigInt("300000").toString(16)}`;
+        transaction.gas = `0x${BigInt("135120").toString(16)}`;
       }
 
 
@@ -192,26 +192,23 @@ class EIP155Lib {
         data: transaction.data,
         nonce: transaction.nonce,
         gasLimit: transaction.gas,
-        value: '0x0', // Assuming the transaction value is 0
+        gas: transaction.gas,
+        value: transaction.value || '0x0', // Assuming the transaction value is 0
         to: transaction.to,
         chainId: `0x${transaction.chainId.toString(16)}`,
       };
-
-      input.gas = transaction.gas;
-      input.gasPrice = transaction.gasPrice;
 
       // input.maxFeePerGas = transaction.maxFeePerGas;
       // input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
 
       // Add EIP-1559 fields if applicable
-      // if (true) {
-      //   input.maxFeePerGas = transaction.maxFeePerGas;
-      //   input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
-      // } else {
-      //   // For non-EIP-1559 transactions
-      //   input.gasPrice = transaction.gas;
-      //   input.gas = transaction.gasLimit;
-      // }
+      if (transaction.chainId === 1) {
+        input.maxFeePerGas = transaction.maxFeePerGas;
+        input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+      } else {
+        // For non-EIP-1559 transactions
+        input.gasPrice = transaction.gasPrice;
+      }
 
       // Proceed with transaction signing
       console.log(`${tag} Final input: `, input);

@@ -55,7 +55,7 @@ let onStartKeepkey = async function(){
         //     'LTC',  'OP',   'MATIC',
         //     'THOR'
         // ]
-        const chains = ['ETH', 'BASE'];
+        const chains = ['ETH'];
         // @ts-ignore
         const { keepkeyWallet } = await import('@coinmasters/wallet-keepkey');
 

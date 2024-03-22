@@ -4,6 +4,7 @@ import { usePioneer } from "@coinmasters/pioneer-react"
 import { availableChainsByWallet, WalletOption } from '@coinmasters/types';
 import { useState, useEffect } from 'react';
 import Pioneer from './components/Pioneer';
+// import Pioneer from '@coinmasters/pioneer';
 import Image from 'next/image'; // Import Next.js Image component for the logo
 import Swap from './components/Swap';
 
