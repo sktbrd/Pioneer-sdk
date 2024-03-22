@@ -1,7 +1,7 @@
 import { EIP155_CHAINS, EIP155_SIGNING_METHODS, TEIP155Chain } from '@/data/EIP155Data'
 // import EIP155Lib from '@/lib/EIP155Lib'
 // import { SmartAccountLib } from '@/lib/SmartAccountLib'
-import { eip155Addresses, eip155Wallets } from '@/utils/EIP155WalletUtil'
+import { createOrRestoreEIP155Wallet, eip155Addresses, eip155Wallets } from '@/utils/EIP155WalletUtil';
 import {
   getSignParamsMessage,
   getSignTypedDataParamsData,
@@ -16,7 +16,7 @@ import { Hex } from 'viem'
 import { Chain, allowedChains } from './SmartAccountUtils'
 import SettingsStore from '@/store/SettingsStore'
 type RequestEventArgs = Omit<SignClientTypes.EventArguments['session_request'], 'verifyContext'>
-
+import useKeepKey from '@/hooks/useKeepKey'
 
 export async function approveEIP155Request(requestEvent: RequestEventArgs) {
   const { params, id } = requestEvent
@@ -25,7 +25,10 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
   console.log(requestEvent, chainId, "tests")
 
   SettingsStore.setActiveChainId(chainId)
-
+  if(!eip155Wallets) {
+    alert("Failed to init keepkey! restart app")
+    throw Error("Failed to init keepkey! restart app")
+  }
   // const wallet = await getWallet(params)
 
   switch (request.method) {
@@ -76,10 +79,22 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         console.log("chainId: ",chainId)
         console.log("rpc: ",EIP155_CHAINS[chainId as TEIP155Chain].rpc)
 
-        // console.log("providers: ",providers)
-        const provider = new JsonRpcProvider(EIP155_CHAINS[chainId as TEIP155Chain].rpc)
-        console.log("provider: ",provider)
+
         const sendTransaction = request.params[0]
+
+        // let rpcUrl = EIP155_CHAINS[chainId as TEIP155Chain].rpc
+        // console.log('rpcUrl: ',rpcUrl)
+        // // console.log("providers: ",providers)
+        // const provider = new JsonRpcProvider(rpcUrl)
+        // let nonce = await provider.getTransactionCount(sendTransaction.from,'pending')
+        // console.log("nonce: ",nonce)
+        // Use KeepKey's method to sign a transaction
+
+        let chainidNum = parseInt(chainId.split(":")[1])
+        console.log("chainidNum: ",chainidNum)
+        sendTransaction.networkId = chainId
+        sendTransaction.chainId = chainidNum
+        // sendTransaction.provider = provider
         console.log("sendTransaction: ",sendTransaction)
 
         // const connectedWallet = await wallet.connect(provider)
@@ -89,13 +104,19 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         console.log("eip155Wallets: ",eip155Wallets)
         let wallets = Object.keys(eip155Wallets)
         console.log("wallets: ",wallets)
-        console.log("wallets: ",wallets)
-        let hash = await eip155Wallets[wallets[0]].signTransaction(sendTransaction)
+        //TODO handle multiple accounts
+        let signedTx = await eip155Wallets[wallets[0]].signTransaction(sendTransaction)
+
+        //broadcast
+        let receipt = await eip155Wallets[wallets[0]].broadcastTransaction(signedTx, sendTransaction.networkId)
+        console.log("receipt: ",receipt)
+        let hash = receipt.transactionHash
         console.log("hash: ",hash)
         // const hash = await keepkey['ETH'].walletMethods.sendTransaction(sendTransaction)
 
-        const receipt = typeof hash === 'string' ? hash : hash?.hash // TODO improve interface
-        return formatJsonRpcResult(id, receipt)
+        const output = typeof hash === 'string' ? hash : hash?.hash
+        console.log("output: ",output)
+        return formatJsonRpcResult(id, output)
       } catch (error: any) {
         console.error(error)
         alert(error.message)

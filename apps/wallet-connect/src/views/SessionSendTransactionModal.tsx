@@ -9,6 +9,7 @@ import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155Request
 import { styledToast } from '@/utils/HelperUtil'
 import { web3wallet } from '@/utils/WalletConnectUtil'
 import RequestModal from './RequestModal'
+import useKeepKey from '@/hooks/useKeepKey'
 
 export default function SessionSendTransactionModal() {
   const [isLoadingApprove, setIsLoadingApprove] = useState(false)
@@ -23,6 +24,9 @@ export default function SessionSendTransactionModal() {
   const chainId = params?.chainId
   const request = params?.request
   const transaction = request?.params[0]
+
+  // Use the custom hook to get the KeepKey client
+  const keepKey = useKeepKey();
 
   // Handle approve action
   const onApprove = useCallback(async () => {
@@ -62,7 +66,7 @@ export default function SessionSendTransactionModal() {
       setIsLoadingReject(false)
       ModalStore.close()
     }
-  }, [requestEvent, topic])
+  }, [requestEvent, topic, keepKey])
 
   return request && requestSession ? (
     <RequestModal
