@@ -59,7 +59,7 @@ export default function App() {
         return <Basic />;
         break;
       case 'asset':
-        return <Asset onSelect={onSelect}/>;
+        return <Asset onSelect={onSelect} filters={{onlyOwned: false, noTokens: false}}/>;
         break;
       case 'swap':
         return <Swap />;

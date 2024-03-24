@@ -1,18 +1,20 @@
 import { ChevronLeftIcon, ChevronRightIcon, Search2Icon } from '@chakra-ui/icons';
 import {
-  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner
+  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '@coinmasters/pioneer-react';
 
 const itemsPerPage = 10; // Define how many items you want per page
 
-export default function Asset({ onSelect }:any) {
+export default function Asset({ onSelect }) {
   const { state } = usePioneer();
-  let { app } = state;
+  const { app } = state;
   const [allAssets, setAllAssets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [onlyOwned, setOnlyOwned] = useState(false);
+  const [noTokens, setNoTokens] = useState(false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -21,9 +23,7 @@ export default function Asset({ onSelect }:any) {
 
         assets = assets.map((asset) => {
           const balanceObj = app.balances.find(balance => balance.caip === asset.caip);
-          // Parse the valueUsd from balanceObj, or default to 0 if not present
           const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          // Use the balance amount from balanceObj, or default to an empty string if not present
           const balance = balanceObj ? balanceObj.balance : '';
           return { ...asset, valueUsd, balance };
         });
@@ -37,32 +37,27 @@ export default function Asset({ onSelect }:any) {
       }
     };
     fetchAssets();
-  }, [app]);
+  }, [app, onlyOwned, noTokens]);
 
-
-
-  // Filter assets based on search query
-  const filteredAssets = allAssets.filter((asset: any) =>
-    asset.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAssets = allAssets.filter((asset) =>
+    asset.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
+    (!noTokens || (noTokens && asset.type !== 'token'))
   );
 
-  // Calculate total pages
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
 
-  // Get current page assets
   const currentPageAssets = filteredAssets.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Handle search change
-  const handleSearchChange = (event: any) => {
+  const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
   };
 
-  // Handle page change
-  const handleChangePage = (direction: any) => {
+  const handleChangePage = (direction) => {
     setCurrentPage(prev => direction === 'next' ? Math.min(prev + 1, totalPages) : Math.max(prev - 1, 1));
   };
 
@@ -74,18 +69,24 @@ export default function Asset({ onSelect }:any) {
         </InputLeftElement>
         <Input
           onChange={handleSearchChange}
-          placeholder="Search assets (e.g., Bitcoin)..."
+          placeholder="Search assets..."
           value={searchQuery}
           type="text"
         />
       </InputGroup>
+
+      <Flex justify="space-between">
+        <Checkbox isChecked={onlyOwned} onChange={(e) => setOnlyOwned(e.target.checked)}>Only Owned</Checkbox>
+        <Checkbox isChecked={noTokens} onChange={(e) => setNoTokens(e.target.checked)}>Exclude Tokens</Checkbox>
+      </Flex>
+
       {allAssets.length === 0 ? (
         <Flex justifyContent="center" alignItems="center" height="100vh">
           <Spinner size="xl" />
         </Flex>
       ) : (
         <>
-          {currentPageAssets.map((asset: any, index: number) => (
+          {currentPageAssets.map((asset, index) => (
             <Box key={index} p={4} mb={2} borderRadius="md">
               <Flex align="center">
                 <Avatar size='xl' src={asset.icon} />
@@ -93,7 +94,7 @@ export default function Asset({ onSelect }:any) {
                   <Text fontWeight="bold">{asset.name}</Text>
                   <Text fontSize="sm">Symbol: {asset.symbol}</Text>
                   <Text fontSize="sm">CAIP: {asset.caip}</Text>
-                  {/* Conditionally render the balance and valueUsd text */}
+                  <Text fontSize="sm">Type: {asset.type}</Text>
                   {asset.balance && asset.valueUsd > 0 && (
                     <Text fontSize="sm">Balance: {asset.balance} ({parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
                   )}
@@ -120,3 +121,4 @@ export default function Asset({ onSelect }:any) {
     </Stack>
   );
 }
+
