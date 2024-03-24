@@ -10,6 +10,7 @@ import Portfolio from './components/Portfolio';
 import Transfer from './components/Transfer';
 import Assets from './components/Assets';
 import Asset from './components/Asset';
+import Amount from './components/Amount';
 import Swap from './components/Swap';
 
 
@@ -17,9 +18,11 @@ import Image from 'next/image'; // Import Next.js Image component for the logo
 
 
 export default function App() {
-  const { onStart } = usePioneer();
-  const [intent, setIntent] = useState('swap');
+  const { onStart, state } = usePioneer();
+  const { api, app, assets, context } = state;
+  const [intent, setIntent] = useState('amount');
   const [tabIndex, setTabIndex] = useState(1);
+  const [selectedAsset, setSelectedAsset] = useState({ });
   let onStartApp = async function(){
     try{
       let walletsVerbose = []
@@ -50,6 +53,10 @@ export default function App() {
     onStartApp();
   }, []);
 
+  useEffect(() => {
+    if(app && app.assetContext) setSelectedAsset(app.assetContext)
+  }, [app, app?.assetContext]);
+
   const handleTabsChange = (index: any) => {
     setTabIndex(index);
   };
@@ -65,9 +72,12 @@ export default function App() {
       case 'basic':
         return <Basic />;
         break;
-      // case 'asset':
-      //   return <Asset asset={app.assetContext}/>;
-      //   break;
+      case 'asset':
+        return <Asset asset={selectedAsset}/>;
+        break;
+      case 'amount':
+        return <Amount asset={selectedAsset}/>;
+        break;
       case 'assets':
         return <Assets onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:true }}/>;
         break;
@@ -107,6 +117,7 @@ export default function App() {
             <option value="basic">Basic</option>
             <option value="transfer">Transfer</option>
             <option value="asset">Asset</option>
+            <option value="amount">amount</option>
             <option value="assets">Assets</option>
             <option value="swap">Swap</option>
           </Select>

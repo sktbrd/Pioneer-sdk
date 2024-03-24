@@ -1119,7 +1119,7 @@ export class SDK {
         const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
         this.assetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
-        this.events.emit('SET_ASSET_CONTEXT', asset);
+        this.events.emit('SET_ASSET_CONTEXT', { ...assetInfo, valueUsd, balance, pubkey, address });
         return { success: true };
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -1145,7 +1145,7 @@ export class SDK {
           const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
           this.outboundAssetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
-          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', asset);
+          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', { ...assetInfo, valueUsd, balance, pubkey, address });
           return { success: true };
         }
         return { success: false, error: `already asset context=${asset}` };

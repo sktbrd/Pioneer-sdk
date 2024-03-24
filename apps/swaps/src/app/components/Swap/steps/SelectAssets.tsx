@@ -38,8 +38,8 @@ interface BeginSwapProps {
   sliderValue: any,
   setSliderValue: any,
 }
-
-const BeginSwap: React.FC<BeginSwapProps> = ({
+//@ts-ignore
+const BeginSwap: any = ({
                                                openModal,
                                                handleClick,
                                                selectedButton,
@@ -48,6 +48,7 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
                                              }: any) => {
   const { state } = usePioneer();
   const [inputAmount, setInputAmount] = useState(0);
+  const [assetConfirmed, setAssetsConfired] = useState(false);
   const { assetContext, outboundAssetContext, app, balances } = state;
   const [isInputValid, setIsInputValid] = useState<boolean>(true);
   const minimumTradeAmountUSD = 10;
@@ -108,13 +109,17 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
   };
 
   useEffect(() => {
-    if (assetContext) {
-      console.log("assetContext: ", assetContext);
-      const initialSliderValue = 50;
-      setSliderValue(initialSliderValue);
-      const newInitialAmount =
-        (initialSliderValue / 100) * parseFloat(assetContext.balance) * assetContext.priceUsd;
-      updateInputAmount(newInitialAmount);
+    if (assetContext && !isNaN(assetContext.balance) && !isNaN(assetContext.priceUsd)) {
+      const initialSliderValue = 50; // Default slider value
+      // Parse the balance and price to ensure they are numbers
+      const balance = parseFloat(assetContext.balance);
+      const priceUsd = parseFloat(assetContext.priceUsd);
+      if (!isNaN(balance) && !isNaN(priceUsd)) {
+        // Only proceed if balance and priceUsd are numbers
+        const newInitialAmount = (balance * priceUsd * initialSliderValue) / 100;
+        updateInputAmount(newInitialAmount); // Ensure this function handles 'NaN' gracefully
+        setSliderValue(initialSliderValue);
+      }
     }
   }, [assetContext]);
 
@@ -222,52 +227,60 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
           </Box>
         </HStack>
       </Flex>
-      <Text fontSize="md" mb="2">
-        Select Amount To Trade:
-      </Text>
-      <Flex alignItems="center" direction="column">
+      {assetConfirmed ? (<>
         <Text fontSize="md" mb="2">
-          Select Amount To Trade (in {inputCurrency}):
+          Select Amount To Trade:
         </Text>
-        <Flex justify="space-between" mb="2" width="100%">
-          <Button onClick={toggleCurrency}>Toggle {inputCurrency}</Button>
-          <Button
-            onClick={() =>
-              setInputAmount(
-                parseFloat(assetContext?.balance || '0') -
-                minimumTradeAmountUSD / assetContext?.priceUsd,
-              )
-            }
+        <Flex alignItems="center" direction="column">
+          <Text fontSize="md" mb="2">
+            Select Amount To Trade (in {inputCurrency}):
+          </Text>
+          <Flex justify="space-between" mb="2" width="100%">
+            <Button onClick={toggleCurrency}>Toggle {inputCurrency}</Button>
+            <Button
+              onClick={() =>
+                setInputAmount(
+                  parseFloat(assetContext?.balance || '0') -
+                  minimumTradeAmountUSD / assetContext?.priceUsd,
+                )
+              }
+            >
+              Max
+            </Button>
+          </Flex>
+          <NumberInput
+            errorBorderColor="red.500"
+            isInvalid={!isInputValid}
+            maxW="200px"
+            onChange={(_, valueAsNumber) => updateInputAmount(valueAsNumber)}
+            value={inputAmount}
           >
-            Max
-          </Button>
+            <NumberInputField borderColor={isInputValid ? 'inherit' : 'red.500'} />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <Slider
+            flex="1"
+            focusThumbOnChange={false}
+            mt="4"
+            onChange={onSliderChange}
+            value={sliderValue}
+          >
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb boxSize="32px">{sliderValue}%</SliderThumb>
+          </Slider>
         </Flex>
-        <NumberInput
-          errorBorderColor="red.500"
-          isInvalid={!isInputValid}
-          maxW="200px"
-          onChange={(_, valueAsNumber) => updateInputAmount(valueAsNumber)}
-          value={inputAmount}
-        >
-          <NumberInputField borderColor={isInputValid ? 'inherit' : 'red.500'} />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-        <Slider
-          flex="1"
-          focusThumbOnChange={false}
-          mt="4"
-          onChange={onSliderChange}
-          value={sliderValue}
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb boxSize="32px">{sliderValue}%</SliderThumb>
-        </Slider>
-      </Flex>
+      </>) : (
+        <>
+           Confirm Asset Selection
+          <Button onClick={() => setAssetConfirmed(true)}>Confirm</Button>
+        </>
+      )}
+
     </div>
   );
 };
