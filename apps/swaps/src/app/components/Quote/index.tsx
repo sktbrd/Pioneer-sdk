@@ -55,7 +55,9 @@ const Quote = ({ quote, onAcceptSign }: any) => {
     });
   }, [onCopy, toast, quote.quote.id]);
 
-  const formatUSD = (amount: number) => `$${amount.toFixed(2)}`;
+  const formatUSD = (amount: number) => `$${amount ? amount.toFixed(2) : '0.00'}`;
+
+
   function formatNumber(value: string): string {
     const number = parseFloat(value);
     let formattedNumber: string;

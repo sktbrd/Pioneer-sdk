@@ -25,7 +25,8 @@ export const getWalletContent = (walletType: string) => {
 };
 
 export const getWalletBadgeContent = (walletType: string, size?: string) => {
-  const icon = icons[walletType.toLowerCase()];
+  const icon = walletType ? icons[walletType.toLowerCase()] : undefined;
+
 
   if (!size) size = '1.25em';
   if (icon) {

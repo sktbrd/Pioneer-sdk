@@ -6,6 +6,9 @@ import { useState, useEffect } from 'react';
 //components
 import Pioneer from './components/Pioneer';
 import Basic from './components/Basic';
+import Portfolio from './components/Portfolio';
+import Transfer from './components/Transfer';
+import Assets from './components/Assets';
 import Asset from './components/Asset';
 import Swap from './components/Swap';
 
@@ -15,7 +18,7 @@ import Image from 'next/image'; // Import Next.js Image component for the logo
 
 export default function App() {
   const { onStart } = usePioneer();
-  const [intent, setIntent] = useState('asset');
+  const [intent, setIntent] = useState('swap');
   const [tabIndex, setTabIndex] = useState(1);
   let onStartApp = async function(){
     try{
@@ -51,6 +54,10 @@ export default function App() {
     setTabIndex(index);
   };
 
+  const onClose = () => {
+    console.log("onClose")
+  };
+
   // Function to determine which component to render based on intent
   const renderComponent = () => {
     // Your switch case logic here, similar to the original
@@ -58,8 +65,17 @@ export default function App() {
       case 'basic':
         return <Basic />;
         break;
-      case 'asset':
-        return <Asset onSelect={onSelect} filters={{onlyOwned: false, noTokens: false}}/>;
+      // case 'asset':
+      //   return <Asset asset={app.assetContext}/>;
+      //   break;
+      case 'assets':
+        return <Assets onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:true }}/>;
+        break;
+      case 'transfer':
+        return <Transfer />;
+        break;
+      case 'portfolio':
+        return <Portfolio />;
         break;
       case 'swap':
         return <Swap />;
@@ -89,7 +105,9 @@ export default function App() {
           <span className="text-xl font-bold">Pioneer SDK</span>
           <Select onChange={handleIntentChange} placeholder="Select Component" width="auto">
             <option value="basic">Basic</option>
+            <option value="transfer">Transfer</option>
             <option value="asset">Asset</option>
+            <option value="assets">Assets</option>
             <option value="swap">Swap</option>
           </Select>
         </div>

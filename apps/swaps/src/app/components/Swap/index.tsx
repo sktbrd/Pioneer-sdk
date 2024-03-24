@@ -17,9 +17,9 @@ import { FeeOption } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
 import { useEffect, useState } from 'react';
 
-import AssetSelect from '../../components/AssetSelect';
 import ErrorQuote from '../../components/ErrorQuote';
-import OutputSelect from '../../components/OutputSelect';
+import Assets from '../../components/Assets';
+
 import Pending from '../../components/Pending';
 import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
@@ -63,6 +63,7 @@ const Swap = () => {
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
   const [selectedButton, setSelectedButton] = useState('quick'); // Initial selected button is "Quick"
   const [isContinueDisabled, setIsContinueDisabled] = useState(true); // Initial continue button is disabled
+  const [isContinueVisable, setIsContinueVisable] = useState(true); // Initial continue button is disabled
   const [quotesData, setQuotesData] = useState<typeof Quote[]>([]);
 
   // const handleSliderChange = (event) => {
@@ -91,7 +92,9 @@ const Swap = () => {
       setShowGoBack(false);
     }
     if (step === 1) {
-      setContinueButtonContent('Accept Route');
+      setIsContinueDisabled(true);
+      setIsContinueVisable(false);
+      // setContinueButtonContent('Accept Route');
     }
   }, [step]);
 
@@ -269,12 +272,12 @@ const Swap = () => {
             {/* Render content based on modalType */}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
-                <AssetSelect onClose={onClose} onSelect={onSelect} />
+                <Assets filters={{onlyOwned: true, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelect} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
-                <OutputSelect onClose={onClose} onSelect={onSelectOutput} />
+                <Assets filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectQuote && (
@@ -322,16 +325,17 @@ const Swap = () => {
             <Button onClick={goBack}>Go Back</Button>
           </div>
         )}
-
-        <Button
-          colorScheme="blue"
-          isDisabled={isContinueDisabled}
-          leftIcon={<AddIcon />}
-          mt={4}
-          onClick={() => handleClickContinue()}
-        >
-          {continueButtonContent}
-        </Button>
+        {isContinueVisable && (
+          <Button
+            colorScheme="blue"
+            isDisabled={isContinueDisabled}
+            leftIcon={<AddIcon />}
+            mt={4}
+            onClick={() => handleClickContinue()}
+          >
+            {continueButtonContent}
+          </Button>
+        )}
       </Flex>
     </Box>
   );

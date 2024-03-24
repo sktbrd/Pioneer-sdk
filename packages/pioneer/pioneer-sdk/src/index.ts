@@ -32,11 +32,16 @@ import {
 } from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { caipToNetworkId, caipToThorchain, thorchainToCaip, tokenToCaip } from '@pioneer-platform/pioneer-caip';
-// @ts-ignore
-import { assetData } from '@pioneer-platform/pioneer-discovery'
+import {
+  caipToNetworkId,
+  caipToThorchain,
+  thorchainToCaip,
+  tokenToCaip,
+} from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
+// @ts-ignore
+import { assetData } from '@pioneer-platform/pioneer-discovery';
 import EventEmitter from 'events';
 
 // @ts-ignore
@@ -297,6 +302,8 @@ export class SDK {
       try {
         if (balances.length === 0) throw Error('No balances to load!');
         const combinedBalances = [...this.balances, ...balances];
+
+        //get extended info for each balance
 
         // Remove duplicates based on .caip property
         this.balances = combinedBalances.reduce((acc, currentItem) => {
@@ -695,7 +702,7 @@ export class SDK {
         // const tag = `${TAG} | getAssets | `;
         //log.info(tag, "filter: ", filter);
 
-        console.log("ASSET)DATA: ",Object.keys(assetData).length)
+        console.log('ASSET)DATA: ', Object.keys(assetData).length);
 
         let tokenMap: any = {};
         let chains = new Set();
@@ -713,7 +720,7 @@ export class SDK {
               // console.log('expandedInfo: ', expandedInfo);
               //get extended info
               let assetInfo = assetData[expandedInfo.caip.toLowerCase()];
-              if(assetInfo){
+              if (assetInfo) {
                 let combinedInfo = { ...expandedInfo, ...assetInfo };
                 tokenMap[token.identifier] = combinedInfo;
               } else {
@@ -1096,7 +1103,22 @@ export class SDK {
     this.setAssetContext = async function (asset: any) {
       const tag = `${TAG} | setAssetContext | `;
       try {
-        this.assetContext = asset;
+        //get verbose info
+        let allAssets = await this.getAssets('');
+        let assetInfo = allAssets.find((a: any) => a.caip === asset.caip);
+        const balanceObj = this.balances.find((balance: any) => balance.caip === asset.caip);
+        const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        const balance = balanceObj ? balanceObj.balance : '';
+        // Attempt to find a corresponding pubkey object that includes the asset's networkId
+        const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+          pubkey.networks.includes(asset.networkId),
+        );
+        // Extract the pubkey value if the pubkeyObj is found
+        const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+        // Set the asset's address to pubkey.master or pubkey.address if available
+        const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+
+        this.assetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
         this.events.emit('SET_ASSET_CONTEXT', asset);
         return { success: true };
       } catch (e) {
@@ -1108,7 +1130,21 @@ export class SDK {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
         if (asset && this.outboundAssetContext !== asset) {
-          this.outboundAssetContext = asset;
+          let allAssets = await this.getAssets('');
+          let assetInfo = allAssets.find((a: any) => a.caip === asset.caip);
+          const balanceObj = this.balances.find((balance: any) => balance.caip === asset.caip);
+          const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+          const balance = balanceObj ? balanceObj.balance : '';
+          // Attempt to find a corresponding pubkey object that includes the asset's networkId
+          const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+            pubkey.networks.includes(asset.networkId),
+          );
+          // Extract the pubkey value if the pubkeyObj is found
+          const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+          // Set the asset's address to pubkey.master or pubkey.address if available
+          const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+
+          this.outboundAssetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
           this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', asset);
           return { success: true };
         }

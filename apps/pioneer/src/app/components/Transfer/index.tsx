@@ -34,7 +34,7 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import AssetSelect from '../../components/AssetSelect';
+import Assets from '../Assets';
 import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
@@ -165,6 +165,7 @@ const Transfer = () => {
   const onSelect = async function (asset: any) {
     try {
       console.log('onSelect: ', asset);
+      await app.setAssetContext(asset);
       onClose();
       setModalType('');
     } catch (e) {
@@ -239,7 +240,7 @@ const Transfer = () => {
           <ModalBody>
             {modalType === 'SELECT' && (
               <div>
-                <AssetSelect onSelect={onSelect} />
+                <Assets onClose={onClose} onSelect={onSelect} filters={{onlyOwned: true, noTokens: true, hasPubkey:true }}/>
               </div>
             )}
           </ModalBody>

@@ -109,6 +109,7 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
 
   useEffect(() => {
     if (assetContext) {
+      console.log("assetContext: ", assetContext);
       const initialSliderValue = 50;
       setSliderValue(initialSliderValue);
       const newInitialAmount =
@@ -171,10 +172,12 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
             border="1px solid #fff"
             borderRadius="8px"
             display="flex"
-            flex="1"
-            flexDirection="column"
-            h="10rem"
-            justifyContent="center"
+            flexDir="column"
+            h="200px" // Ensure uniform height
+            justifyContent="space-between"
+            overflowY="auto"
+            p="4"
+            w="200px" // Ensure sufficient width
             onClick={() => openModal('Select Asset')}
           >
             {!assetContext ? (
@@ -183,17 +186,9 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
               <>
                 <Avatar
                   size="xl"
-                  src={
-                    assetContext?.image ||
-                    `https://pioneers.dev/coins/${COIN_MAP_LONG[assetContext?.chain as keyof typeof COIN_MAP_LONG]}.png`
-                  }
+                  src={assetContext.icon}
                 />
-                <Box border="1px solid #fff" borderRadius="8px" width="100%">
-                  <Text>Network: {assetContext?.chain}</Text>
-                </Box>
-                <Box border="1px solid #fff" borderRadius="8px" width="100%">
-                  <Text>Asset: {assetContext?.ticker}</Text>
-                </Box>
+                <Text noOfLines={1}>{assetContext.name}</Text>
               </>
             )}
           </Box>
@@ -205,30 +200,24 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
             border="1px solid #fff"
             borderRadius="8px"
             display="flex"
-            flex="1"
             flexDirection="column"
-            h="10rem"
-            justifyContent="center"
+            h="200px" // Ensure uniform height
+            justifyContent="space-between"
+            overflowY="auto"
+            p="4"
+            w="200px" // Ensure sufficient width
             onClick={() => openModal('Select Outbound')}
           >
             {!outboundAssetContext ? (
               <Spinner color="blue.500" size="lg" />
             ) : (
-              <div>
+              <>
                 <Avatar
                   size="xl"
-                  src={
-                    outboundAssetContext?.image ||
-                    `https://pioneers.dev/coins/${COIN_MAP_LONG[outboundAssetContext?.chain as keyof typeof COIN_MAP_LONG]}.png`
-                  }
+                  src={outboundAssetContext.icon}
                 />
-                <Box border="1px solid #fff" borderRadius="8px" width="100%">
-                  <Text>Network: {outboundAssetContext?.chain}</Text>
-                </Box>
-                <Box border="1px solid #fff" borderRadius="8px" width="100%">
-                  <Text>Asset: {outboundAssetContext?.ticker}</Text>
-                </Box>
-              </div>
+                <Text noOfLines={1}>{outboundAssetContext.name}</Text>
+              </>
             )}
           </Box>
         </HStack>

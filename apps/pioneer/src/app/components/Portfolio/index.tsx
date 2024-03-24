@@ -10,6 +10,7 @@ import { Doughnut } from 'react-chartjs-2';
 
 // import { Balances } from '../Balances';
 import Balances from '../../components/Balances';
+import Assets from '../../components/Assets';
 import { usePioneer } from '@coinmasters/pioneer-react';
 // Adjust the import path according to your file structure
 
@@ -27,9 +28,19 @@ export default function Portfolio() {
     datasets: [],
     labels: [],
   });
+  const handleChartClick = (event: any, elements: any) => {
+    console.log(`Clicked on asset`);
+    if (elements.length > 0) {
+      const elementIndex = elements[0].index;
+      const clickedAsset = balances[elementIndex];
+      console.log(`Clicked on asset: ${clickedAsset.symbol}`);
+      // setLastClickedBalance(clickedAsset);
+    }
+  };
 
   const options: any = {
     responsive: true,
+    onClick: handleChartClick,
     cutout: '75%',
     plugins: {
       legend: {
@@ -66,16 +77,7 @@ export default function Portfolio() {
     maintainAspectRatio: false,
   };
 
-  // const handleChartClick = (event: any, chartElement: any) => {
-  //   console.log('event: ', event);
-  //   if (chartElement.length) {
-  //     const { index } = chartElement[0];
-  //     const clickedAsset = balances[index];
-  //     console.log(`Clicked on asset: ${clickedAsset.symbol}`);
-  //     // Update the last clicked balance state
-  //     setLastClickedBalance(clickedAsset);
-  //   }
-  // };
+
 
   // Initialize lastClickedBalance with the largest asset
   useEffect(() => {
@@ -147,7 +149,9 @@ export default function Portfolio() {
         </Center>
       ) : (
         <div>
+          <br/>
           {/* Doughnut Chart */}
+          <Center bottom="0" left="0" >
           <Box height="300px" width="300px" position="relative">
             <Doughnut data={chartData} options={options} />
             <Center bottom="0" left="0" position="absolute" right="0" top="0">
@@ -156,8 +160,10 @@ export default function Portfolio() {
               </Text>
             </Center>
           </Box>
-          <Box width="100%" maxHeight="300px" overflowY="auto" mt="20px">
-            <Balances />
+          </Center>
+          <br/>
+          <Box width="100%" maxHeight="600px" overflowY="auto" mt="20px">
+            <Assets onSelect={onSelect} filters={{onlyOwned: true, noTokens: false, hasPubkey:true }}/>
           </Box>
         </div>
       )}

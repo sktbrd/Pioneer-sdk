@@ -33,7 +33,7 @@ import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } fro
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import AssetSelect from '../../components/AssetSelect';
+import Assets from '../../components/Assets';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
@@ -246,6 +246,11 @@ const Pioneer = () => {
     </AvatarBadge>
   );
 
+  let onSelect = async function(asset: any){
+    console.log('onSelect: ', asset);
+    await app.setAssetContext(asset);
+  }
+
   const closeModal = () => {
     onClose();
     hideModal();
@@ -282,7 +287,7 @@ const Pioneer = () => {
             )}
             {modalType === 'SELECT' && (
               <div>
-                <AssetSelect onlyOwned onClose={onClose} />
+                <Assets onClose={onClose} onSelect={onSelect} filters={{onlyOwned: true, noTokens: true, hasPubkey:true }}/>
               </div>
             )}
             {modalType === 'RECEIVE' && (
