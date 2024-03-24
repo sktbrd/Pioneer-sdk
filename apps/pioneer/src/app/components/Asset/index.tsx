@@ -1,106 +1,55 @@
-import { ChevronDownIcon, ChevronUpIcon, Search2Icon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon, Search2Icon } from '@chakra-ui/icons';
 import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Stack,
-  Text,
+  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text
 } from '@chakra-ui/react';
-// @ts-ignore
-import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
-import {
-  getWalletBadgeContent,
-  getWalletContent,
-  pioneerImagePng,
-} from '../../components/WalletIcon';
 import { usePioneer } from '@coinmasters/pioneer-react';
 
-export default function Asset({ onSelect }: any) {
+const itemsPerPage = 10; // Define how many items you want per page
+
+export default function Asset({ onSelect }) {
   const { state } = usePioneer();
-  let { app, balances } = state;
-  const [assets, setAssets] = useState([]);
-  const [currentPage, setCurrentPage] = useState([]);
-  // const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [showOwnedAssets, setShowOwnedAssets] = useState(false);
-  // const [totalAssets, setTotalAssets] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('desc');
-  // const itemsPerPage = 6;
-  // const cardWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
+  let { app } = state;
+  const [allAssets, setAllAssets] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  let onStart  = async function(){
-    try{
-      console.log("onStart Assets: ")
-      //get all slugs
-      let allAssets = await app.getAssets();
-      console.log('allAssets: ', allAssets);
-      console.log('allAssets: ', allAssets.length);
-      setAssets(allAssets);
-      setCurrentPage(allAssets);
-      //get in state
-
-      //allow search
-
-    }catch(e){
-      console.error(e)
-    }
-  }
   useEffect(() => {
-    onStart();
+    const fetchAssets = async () => {
+      try {
+        let assets = await app.getAssets(); // Assuming this fetches all assets
+        setAllAssets(assets);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchAssets();
   }, [app]);
 
+  // Filter assets based on search query
+  const filteredAssets = allAssets.filter(asset =>
+    asset.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const handleSelectClick = async (asset: any) => {
-    try {
-      app.setAssetContext(asset);
-      onSelect(asset);
-    } catch (e) {
-      console.error(e);
-    }
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
+
+  // Get current page assets
+  const currentPageAssets = filteredAssets.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle search change
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
-  const handleSearchChange = (event: any) => {
-    setSearch(event.target.value);
-    // setCurrentPageIndex(0);
+  // Handle page change
+  const handleChangePage = (direction) => {
+    setCurrentPage(prev => direction === 'next' ? Math.min(prev + 1, totalPages) : Math.max(prev - 1, 1));
   };
-
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-
-  const fetchPage = async () => {
-    try {
-      //get
-
-
-      //TODO mark and priotize balances
-      // if (balances) {
-      //   setShowOwnedAssets(true);
-      //
-      //   let balancesView = balances.sort((a: any, b: any) => {
-      //     if (sortOrder === 'asc') {
-      //       return (a.valueUsd || 0) - (b.valueUsd || 0);
-      //     }
-      //     return (b.valueUsd || 0) - (a.valueUsd || 0);
-      //   });
-      //
-      //   setCurrentPage(balancesView);
-      //   console.log('balancesView: ', balancesView);
-      //   //setTotalAssets(balancesView.length);
-      // }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchPage();
-  }, [balances]);
 
   return (
     <Stack spacing={4}>
@@ -108,69 +57,38 @@ export default function Asset({ onSelect }: any) {
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
-        <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />
+        <Input
+          onChange={handleSearchChange}
+          placeholder="Search assets (e.g., Bitcoin)..."
+          value={searchQuery}
+          type="text"
+        />
       </InputGroup>
-      <Box>
-        {/* <Text fontSize="2xl">Total Assets: {totalAssets}</Text> */}
-        {/* <Checkbox */}
-        {/*  isChecked={showOwnedAssets} */}
-        {/*  onChange={() => setShowOwnedAssets(!showOwnedAssets)} */}
-        {/* > */}
-        {/*  Show only owned assets */}
-        {/* </Checkbox> */}
-        <Button onClick={toggleSortOrder} size="sm">
-          Sort by Value {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+      {currentPageAssets.map((asset, index) => (
+        <Box key={index} p={4} mb={2} borderRadius="md">
+          <Flex align="center">
+            <Avatar src={asset.icon} />
+            <Box ml={3}>
+              <Text fontWeight="bold">{asset.name}</Text>
+              <Text fontSize="sm">Symbol: {asset.symbol}</Text>
+              <Text fontSize="sm">CAIP: {asset.caip}</Text>
+            </Box>
+            <Button ml="auto" onClick={() => onSelect(asset)}>
+              Select
+            </Button>
+          </Flex>
+        </Box>
+      ))}
+      <Flex justifyContent="center" mt={4}>
+        <Button onClick={() => handleChangePage('prev')} isDisabled={currentPage <= 1} leftIcon={<ChevronLeftIcon />}>
+          Prev
         </Button>
-        <br />
-        <br />
-        {currentPage.map((asset: any, index: number) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Box key={index}>
-            <Flex
-              alignItems="center"
-              bg="black"
-              border="1px solid #fff"
-              borderRadius="md"
-              boxShadow="sm"
-              padding={2}
-            >
-              <Avatar
-                size="md"
-                src={asset.icon || pioneerImagePng}
-              >
-                {/*{getWalletBadgeContent(asset?.context.split(':')[0])}*/}
-              </Avatar>
-              <Box ml={3}>
-                <Text fontSize="sm">name: {asset?.name}</Text>
-                <Text fontSize="sm">caip: {asset?.caip}</Text>
-                <Text fontSize="sm">symbol: {asset?.symbol}</Text>
-                <Text fontSize="sm">chain: {asset?.chain}</Text>
-              </Box>
-              <Button
-                ml="auto"
-                onClick={() => handleSelectClick(asset)}
-                size="sm"
-                variant="outline"
-              >
-                Select
-              </Button>
-            </Flex>
-          </Box>
-        ))}
-      </Box>
-      <Flex justifyContent="space-between" mt={4}>
-        {/* <Button */}
-        {/*  isDisabled={currentPageIndex === 0} */}
-        {/*  onClick={() => setCurrentPageIndex(currentPageIndex - 1)} */}
-        {/* > */}
-        {/*  Previous Page */}
-        {/* </Button> */}
-        {/* <Button */}
-        {/*  isDisabled={filteredAssets.length < itemsPerPage} */}
-        {/*  onClick={() => setCurrentPageIndex(currentPageIndex + 1)} */}
-        {/* > */}
-        {/*  Next Page */}
-        {/* </Button> */}
+        <Text mx={4} alignSelf="center">
+          Page {currentPage} of {totalPages}
+        </Text>
+        <Button onClick={() => handleChangePage('next')} isDisabled={currentPage >= totalPages} rightIcon={<ChevronRightIcon />}>
+          Next
+        </Button>
       </Flex>
     </Stack>
   );
