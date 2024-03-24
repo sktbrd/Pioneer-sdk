@@ -708,19 +708,19 @@ export class SDK {
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
             //console.log('token PRE: ', token);
             let expandedInfo = tokenToCaip(token);
-            if(expandedInfo.caip){
+            if (expandedInfo.caip) {
               expandedInfo.sourceList = sourceList;
-              console.log('expandedInfo: ', expandedInfo);
+              // console.log('expandedInfo: ', expandedInfo);
               //get extended info
               let assetInfo = assetData[expandedInfo.caip.toLowerCase()];
               if(assetInfo){
                 let combinedInfo = { ...expandedInfo, ...assetInfo };
                 tokenMap[token.identifier] = combinedInfo;
               } else {
-                console.error("UNABLE TO name: ", expandedInfo.caip)
+                // console.error("UNABLE TO name: ", expandedInfo.caip)
               }
-            }else{
-              console.error("UNABLE TO MAKE CAIP: ", token)
+            } else {
+              // console.error("UNABLE TO MAKE CAIP: ", token)
             }
           });
         };

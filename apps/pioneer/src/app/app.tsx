@@ -59,7 +59,7 @@ export default function App() {
         return <Basic />;
         break;
       case 'asset':
-        return <Asset />;
+        return <Asset onSelect={onSelect}/>;
         break;
       case 'swap':
         return <Swap />;
@@ -73,6 +73,10 @@ export default function App() {
   const handleIntentChange = (event: any) => {
     setIntent(event.target.value);
   };
+
+  const onSelect = (asset: any) => {
+    console.log("onSelect: ", asset)
+  }
 
   return (
     <>
