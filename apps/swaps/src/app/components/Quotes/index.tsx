@@ -32,7 +32,8 @@ const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
     osmosis: '#00a3ff', // Osmosis theme color
   };
 
-  const formatUSD = (amount: number) => `$${amount.toFixed(2)}`;
+  const formatUSD = (amount: number) => `$${amount?.toFixed(2)}`;
+
   function formatNumber(value: string): string {
     const number = parseFloat(value);
     let formattedNumber: string;

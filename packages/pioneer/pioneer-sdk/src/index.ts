@@ -15,24 +15,26 @@
 import type { AssetValue } from '@coinmasters/core';
 import { EVMChainList, SwapKitCore } from '@coinmasters/core';
 import {
-  // CoinGeckoList,
-  // MayaList,
+  CoinGeckoList,
+  MayaList,
   NativeList,
-  // OneInchList,
-  // PancakeswapETHList,
-  // PancakeswapList,
-  // PangolinList,
+  OneInchList,
+  PancakeswapETHList,
+  PancakeswapList,
+  PangolinList,
   PioneerList,
-  // StargateARBList,
-  // SushiswapList,
+  StargateARBList,
+  SushiswapList,
   ThorchainList,
-  // TraderjoeList,
-  // UniswapList,
-  // WoofiList,
+  TraderjoeList,
+  UniswapList,
+  WoofiList,
 } from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
 import { caipToNetworkId, caipToThorchain, thorchainToCaip, tokenToCaip } from '@pioneer-platform/pioneer-caip';
+// @ts-ignore
+import { assetData } from '@pioneer-platform/pioneer-discovery'
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import EventEmitter from 'events';
@@ -693,6 +695,8 @@ export class SDK {
         // const tag = `${TAG} | getAssets | `;
         //log.info(tag, "filter: ", filter);
 
+        console.log("ASSET)DATA: ",Object.keys(assetData).length)
+
         let tokenMap: any = {};
         let chains = new Set();
         let chainTokenCounts: any = {};
@@ -704,27 +708,38 @@ export class SDK {
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
             //console.log('token PRE: ', token);
             let expandedInfo = tokenToCaip(token);
-            expandedInfo.sourceList = sourceList;
-            //console.log('expandedInfo: ', expandedInfo);
-            tokenMap[token.identifier] = expandedInfo;
+            if(expandedInfo.caip){
+              expandedInfo.sourceList = sourceList;
+              console.log('expandedInfo: ', expandedInfo);
+              //get extended info
+              let assetInfo = assetData[expandedInfo.caip.toLowerCase()];
+              if(assetInfo){
+                let combinedInfo = { ...expandedInfo, ...assetInfo };
+                tokenMap[token.identifier] = combinedInfo;
+              } else {
+                console.error("UNABLE TO name: ", expandedInfo.caip)
+              }
+            }else{
+              console.error("UNABLE TO MAKE CAIP: ", token)
+            }
           });
         };
 
         // Add tokens from each list with their source
         addTokens(NativeList.tokens, 'NativeList');
-        // addTokens(MayaList.tokens, 'MayaList');
-        // addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
-        // addTokens(OneInchList.tokens, 'OneInchList');
-        // addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
-        // addTokens(PancakeswapList.tokens, 'PancakeswapList');
-        // addTokens(PangolinList.tokens, 'PangolinList');
+        addTokens(MayaList.tokens, 'MayaList');
+        addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
+        addTokens(OneInchList.tokens, 'OneInchList');
+        addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
+        addTokens(PancakeswapList.tokens, 'PancakeswapList');
+        addTokens(PangolinList.tokens, 'PangolinList');
         addTokens(PioneerList.tokens, 'PioneerList');
-        // addTokens(StargateARBList.tokens, 'StargateARBList');
-        // addTokens(SushiswapList.tokens, 'SushiswapList');
+        addTokens(StargateARBList.tokens, 'StargateARBList');
+        addTokens(SushiswapList.tokens, 'SushiswapList');
         addTokens(ThorchainList.tokens, 'ThorchainList');
-        // addTokens(TraderjoeList.tokens, 'TraderjoeList');
-        // addTokens(UniswapList.tokens, 'UniswapList');
-        // addTokens(WoofiList.tokens, 'WoofiList');
+        addTokens(TraderjoeList.tokens, 'TraderjoeList');
+        addTokens(UniswapList.tokens, 'UniswapList');
+        addTokens(WoofiList.tokens, 'WoofiList');
 
         // Convert the tokenMap back to an array
         let allAssets = Object.values(tokenMap);

@@ -91,7 +91,7 @@ let onStartKeepkey = async function(){
         let keepkeyConfig = {
             apiKey: localStorage.getItem('keepkeyApiKey') || '123',
             pairingInfo: {
-                name: "Keepkey Template",
+                name: "Wallet Connect",
                 imageUrl: "https://assets-global.website-files.com/61e4755aed304a1902077c92/6580b382048a90097562ccf5_6580b21b381a5d791651cd35_WalletConnect-Homepage-p-800.png",
                 basePath: 'http://localhost:1646/spec/swagger.json',
                 url: 'http://localhost:1646',

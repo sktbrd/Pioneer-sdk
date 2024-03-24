@@ -52,7 +52,7 @@ export default function OutputSelect({ onClose, onSelect }: any) {
         let allTokens = await app.getAssets();
 
         //remove tokens that are not native
-        allTokens = allTokens.filter((token: any) => token.type === 'native');
+        // allTokens = allTokens.filter((token: any) => token.type === 'native');
 
         for (let i = 0; i < allTokens.length; i++) {
           let token = allTokens[i];
@@ -102,17 +102,13 @@ export default function OutputSelect({ onClose, onSelect }: any) {
     setCurrentPageIndex(0);
   };
 
-  const handleSelectClick = (asset: any) => {
-    onSelect()
-    let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
-      pk.networks.includes(asset.networkId),
-    );
-    if (pubkey) {
-      asset.address = pubkey.address || pubkey.master;
+  const handleSelectClick = async (asset: any) => {
+    try {
+      console.log("asset: ",asset)
+      app.setOutboundAssetContext(asset);
       onSelect(asset);
-    } else {
-      setSelectedAsset(asset);
-      setIsSubmitAddressModalOpen(true);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -187,13 +183,13 @@ export default function OutputSelect({ onClose, onSelect }: any) {
                           />
                         </AvatarBadge>
                       </Avatar>
-                      {/*<Box ml={3}>*/}
-                      {/*  <Text fontSize="sm">Asset: {(asset as any)?.identifier}</Text>*/}
-                      {/*  <Text fontSize="sm">{(asset as any)?.name}</Text>*/}
-                      {/*  {(asset as any)?.address && <Text fontSize="sm">Address: <MiddleEllipsis text={(asset as any)?.address} /></Text>}*/}
-                      {/*  {(asset as any)?.balance && <Text fontSize="sm">Balance: {(asset as any)?.balance}</Text>}*/}
-                      {/*</Box>*/}
-                      <Button size='sm' onClick={handleSelectClick}>Select</Button>
+                      <Box ml={3}>
+                        <Text fontSize="sm">Asset: {(asset as any)?.identifier}</Text>
+                        <Text fontSize="sm">{(asset as any)?.name}</Text>
+                        {/*{(asset as any)?.address && <Text fontSize="sm">Address: <MiddleEllipsis text={(asset as any)?.address} /></Text>}*/}
+                        {/*{(asset as any)?.balance && <Text fontSize="sm">Balance: {(asset as any)?.balance}</Text>}*/}
+                      </Box>
+                      <Button size='sm' onClick={() => handleSelectClick(asset)}>Select</Button>
                     </Flex>
                   </Box>
                 ))

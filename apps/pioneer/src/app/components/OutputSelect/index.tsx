@@ -28,7 +28,7 @@ import { Search2Icon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import MiddleEllipsis from '../../components/MiddleEllipsis';
+// import MiddleEllipsis from '../../components/MiddleEllipsis';
 
 const TOKEN_PLATFORMS = ['ETH', 'BSC', 'AVAX', 'ARB'];
 
@@ -190,8 +190,8 @@ export default function OutputSelect({ onClose, onSelect }: any) {
                       <Box ml={3}>
                         <Text fontSize="sm">Asset: {(asset as any)?.identifier}</Text>
                         <Text fontSize="sm">{(asset as any)?.name}</Text>
-                        {(asset as any)?.address && <Text fontSize="sm">Address: <MiddleEllipsis text={(asset as any)?.address} /></Text>}
-                        {(asset as any)?.balance && <Text fontSize="sm">Balance: {(asset as any)?.balance}</Text>}
+                        {/*{(asset as any)?.address && <Text fontSize="sm">Address: <MiddleEllipsis text={(asset as any)?.address} /></Text>}*/}
+                        {/*{(asset as any)?.balance && <Text fontSize="sm">Balance: {(asset as any)?.balance}</Text>}*/}
                       </Box>
                       <Button size='sm' onClick={handleSelectClick}>Select</Button>
                     </Flex>

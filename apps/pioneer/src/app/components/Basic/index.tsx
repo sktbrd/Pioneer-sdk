@@ -1,3 +1,4 @@
+"use client";
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -26,7 +27,7 @@ const Basic = () => {
   };
 
   useEffect(() => {
-    let pioneerUrlLocal = localStorage.getItem('pioneerUrl');
+    let pioneerUrlLocal = window.localStorage.getItem('pioneerUrl');
     setPioneerUrl(pioneerUrlLocal || '');
     // Cleanup function to clear the timeout when the component unmounts
     return () => {

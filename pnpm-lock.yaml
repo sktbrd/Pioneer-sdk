@@ -2140,7 +2140,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vite-plugin-dts:
         specifier: 3.5.3
         version: 3.5.3(typescript@5.2.2)(vite@4.5.0)
@@ -2473,14 +2473,17 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.23
-        version: 9.2.23
+        specifier: ^9.2.25
+        version: 9.2.25
       '@pioneer-platform/pioneer-client':
         specifier: ^9.2.3
         version: 9.2.3
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.15
         version: 9.2.15(@types/node@20.10.0)
+      '@pioneer-platform/pioneer-discovery':
+        specifier: ^0.0.5
+        version: 0.0.5
     devDependencies:
       '@internal/config':
         specifier: workspace:*
@@ -2530,7 +2533,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2607,7 +2610,7 @@ importers:
         version: 9.1.2
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2632,7 +2635,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2693,7 +2696,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2720,7 +2723,7 @@ importers:
         version: 11.1.1
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3037,7 +3040,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3126,7 +3129,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3187,7 +3190,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3412,7 +3415,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3458,7 +3461,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3510,7 +3513,7 @@ importers:
         version: 0.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -3547,7 +3550,7 @@ importers:
         version: 6.9.0
       vite:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@20.11.24)
+        version: 4.5.0(@types/node@20.5.9)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -9648,6 +9651,10 @@ packages:
     resolution: {integrity: sha512-q3yF7RiD+nbSIrjXKakDnYFesVKgus5Yw/LjxD6KL6/vHIFUdA2PHmCW7V8mMI5ZgRYqx1p56r/rx3HTpabv5Q==}
     dev: false
 
+  /@pioneer-platform/pioneer-caip@9.2.25:
+    resolution: {integrity: sha512-4JJvZ4rNjjpG3ZEXOKPow2IBu2lR1mdV+YDszAhEnizx7VoVxkmXvLLuAxVZf1Hv8Mf55epZSd/exTdUEQ0Bgw==}
+    dev: false
+
   /@pioneer-platform/pioneer-client@9.2.3:
     resolution: {integrity: sha512-S7psBzQ7S4/38AaxsCS/NbZDOU8cUtpzUjb7ku6vQYS0wR9ZiEjIfuPet0CfpsGEMnnJUedPYM9Eeiv5G/QIRQ==}
     dependencies:
@@ -9834,6 +9841,10 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-discovery@0.0.5:
+    resolution: {integrity: sha512-b5U4Ed+4/zL24KfUYGlgfEms3xTTsCdewV8VTUGplD643eX9suBnLS1z59vY/xr+i+zdPTDS2Kgplo9NCa5S2w==}
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -27781,7 +27792,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       kolorist: 1.8.0
       typescript: 5.2.2
-      vite: 4.5.0(@types/node@20.11.24)
+      vite: 4.5.0(@types/node@20.5.9)
       vue-tsc: 1.8.8(typescript@5.2.2)
     transitivePeerDependencies:
       - '@types/node'
@@ -27798,7 +27809,7 @@ packages:
       buffer-polyfill: /buffer@6.0.3
       node-stdlib-browser: 1.2.0
       process: 0.11.10
-      vite: 4.5.0(@types/node@20.11.24)
+      vite: 4.5.0(@types/node@20.5.9)
     transitivePeerDependencies:
       - rollup
     dev: true
