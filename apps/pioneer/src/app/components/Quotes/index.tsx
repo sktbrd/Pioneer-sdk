@@ -32,7 +32,15 @@ const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
     osmosis: '#00a3ff', // Osmosis theme color
   };
 
-  const formatUSD = (amount: number) => `$${amount.toFixed(2)}`;
+  const formatUSD = (amount?: number) => {
+    if (typeof amount === 'number' && !isNaN(amount)) {
+      return `$${amount.toFixed(2)}`;
+    } else {
+      // Handle the case where amount is not set or invalid
+      return `$0.00`;
+    }
+  };
+
   function formatNumber(value: string): string {
     const number = parseFloat(value);
     let formattedNumber: string;

@@ -63,7 +63,7 @@ const Swap = () => {
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
   const [selectedButton, setSelectedButton] = useState('quick'); // Initial selected button is "Quick"
   const [isContinueDisabled, setIsContinueDisabled] = useState(true); // Initial continue button is disabled
-  const [isContinueVisable, setIsContinueVisable] = useState(true); // Initial continue button is disabled
+  const [isContinueVisable, setIsContinueVisable] = useState(false); // Initial continue button is disabled
   const [quotesData, setQuotesData] = useState<typeof Quote[]>([]);
 
   // const handleSliderChange = (event) => {
@@ -103,6 +103,10 @@ const Swap = () => {
     onOpen();
   };
 
+  useEffect(() => {
+    // console.log("**** inputAmount: ", inputAmount);
+  }, [inputAmount]);
+
   const fetchQuote = async () => {
     console.log('sliderValue: ', sliderValue);
     const senderAddress = assetContext.address;
@@ -116,15 +120,18 @@ const Swap = () => {
     }
 
     try {
-      const newAmountIn = (sliderValue / 100) * parseFloat(assetContext?.balance || '0');
-      setInputAmount(newAmountIn);
+      console.log("SELECT INPUT AMOUNT: ", inputAmount);
+
+      if(!inputAmount || inputAmount <= 0) {
+        throw Error('Invalid amount!');
+      }
 
       //get receiver context
       const entry = {
         affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,
         // @ts-ignore
-        sellAmount: parseFloat(newAmountIn).toPrecision(8),
+        sellAmount: parseFloat(inputAmount).toPrecision(8),
         buyAsset: app.outboundAssetContext,
         senderAddress,
         recipientAddress,
@@ -228,11 +235,9 @@ const Swap = () => {
       case 0:
         return (
           <SelectAssets
-            handleClick={handleClick}
             openModal={openModal}
-            selectedButton={selectedButton}
-            setSliderValue={setSliderValue}
-            sliderValue={sliderValue}
+            setInputAmount={setInputAmount}
+            setIsContinueVisable={setIsContinueVisable}
           />
         );
       case 1:

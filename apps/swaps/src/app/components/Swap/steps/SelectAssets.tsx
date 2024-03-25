@@ -48,7 +48,7 @@ const BeginSwap: any = ({
                                              }: any) => {
   const { state } = usePioneer();
   const [inputAmount, setInputAmount] = useState(0);
-  const [assetConfirmed, setAssetsConfired] = useState(false);
+  const [assetConfirmed, setAssetsConfirmed] = useState(false);
   const { assetContext, outboundAssetContext, app, balances } = state;
   const [isInputValid, setIsInputValid] = useState<boolean>(true);
   const minimumTradeAmountUSD = 10;
@@ -277,7 +277,7 @@ const BeginSwap: any = ({
       </>) : (
         <>
            Confirm Asset Selection
-          <Button onClick={() => setAssetConfirmed(true)}>Confirm</Button>
+          <Button onClick={() => setAssetsConfirmed(true)}>Confirm</Button>
         </>
       )}
 

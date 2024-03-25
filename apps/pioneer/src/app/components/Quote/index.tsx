@@ -55,7 +55,18 @@ const Quote = ({ quote, onAcceptSign }: any) => {
     });
   }, [onCopy, toast, quote.quote.id]);
 
-  const formatUSD = (amount: number) => `$${amount.toFixed(2)}`;
+  const formatUSD = (amount?: number) => {
+    if (typeof amount === 'number' && !isNaN(amount)) {
+      return `$${amount.toFixed(2)}`;
+    } else {
+      // Handle the case where amount is not set or invalid
+      return `$0.00`;
+    }
+  };
+
+
+
+
   function formatNumber(value: string): string {
     const number = parseFloat(value);
     let formattedNumber: string;
@@ -81,6 +92,7 @@ const Quote = ({ quote, onAcceptSign }: any) => {
 
     return formattedNumber;
   }
+
 
   const handleSignTransaction = useCallback(() => {
     // Placeholder function for signing transaction

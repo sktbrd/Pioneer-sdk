@@ -23,16 +23,14 @@ import { useEffect, useState } from 'react';
 import Asset from '../Asset';
 let TAG = " | Amount | ";
 
-
-
-export default function Amount({ onClose, asset }: any) {
+export default function Amount({ onClose, asset, setInputAmount }: any) {
   // const router = useRouter();
   const minimumTradeAmountUSD = 10;
   const [isInputValid, setIsInputValid] = useState<boolean>(true);
   const [inputCurrency, setInputCurrency] = useState<'USD' | 'Native'>('USD');
-  const [sliderValue, setSliderValue] = useState<number>(50);
+  const [sliderValue, setSliderValue] = useState<any>(50);
   const { state, hideModal, resetState } = usePioneer();
-  const [inputAmount, setInputAmount] = useState(0);
+  const [inputAmountNative, setInputAmountNative] = useState(0);
   const [inputAmountUsd, setInputAmountUsd] = useState(0);
   const { api, app, assets, context, assetContext, balances } = state;
 
@@ -44,13 +42,14 @@ export default function Amount({ onClose, asset }: any) {
 
   const onSliderChange = (value: number) => {
     if (!assetContext) return;
-    console.log(value)
+    // console.log(value)
     setSliderValue(value);
     let newAmount;
     let newAmountUsd;
     newAmountUsd = (value / 100) * parseFloat(assetContext.valueUsd);
     newAmount = (value / 100) * parseFloat(assetContext.balance);
     setInputAmount(newAmount);
+    setInputAmountNative(newAmount);
     setInputAmountUsd(newAmountUsd);
 
   };
@@ -62,7 +61,8 @@ export default function Amount({ onClose, asset }: any) {
 
     if (inputCurrency === 'Native') {
       // Input is in native currency.
-      setInputAmount(value); // Direct user input set as inputAmount.
+      setInputAmount(value);
+      setInputAmountNative(value); // Direct user input set as inputAmount.
 
       // Recalculate USD equivalent.
       const newAmountUsd = (value / parseFloat(assetContext.balance)) * parseFloat(assetContext.valueUsd);
@@ -76,13 +76,14 @@ export default function Amount({ onClose, asset }: any) {
 
       // Recalculate native currency equivalent.
       const newAmount = (value / parseFloat(assetContext.valueUsd)) * parseFloat(assetContext.balance);
+      setInputAmountNative(newAmount);
       setInputAmount(newAmount);
 
       // Recalculate slider value based on percentage of total USD value.
       newSliderValue = (value / parseFloat(assetContext.valueUsd)) * 100;
     }
 
-    setSliderValue(parseInt(newSliderValue));
+    setSliderValue(newSliderValue);
   };
 
   const toggleCurrency = () => {
@@ -93,10 +94,14 @@ export default function Amount({ onClose, asset }: any) {
     }
   };
 
+  let onSelect = function(asset: any){
+    console.log(TAG, "onSelect", asset);
+  }
+
   return (
     <Stack spacing={4}>
       <div>
-        <Asset asset={assetContext} />
+        <Asset onSelect={onSelect} onClose={onClose} asset={assetContext} />
       </div>
       <Text fontSize="md" mb="2">
         Select Amount To Trade:
@@ -111,7 +116,7 @@ export default function Amount({ onClose, asset }: any) {
         <Flex justify="space-between" mb="2" width="100%">
           <Button
             onClick={() =>
-              setInputAmount(
+              setInputAmountNative(
                 parseFloat(assetContext?.balance || '0') -
                 minimumTradeAmountUSD / assetContext?.priceUsd,
               )
@@ -123,9 +128,9 @@ export default function Amount({ onClose, asset }: any) {
         <NumberInput
           errorBorderColor="red.500"
           // isInvalid={!isInputValid}
-          onChange={(_, valueAsNumber) => updateInputAmount(valueAsNumber)}
+          onChange={(_, valueAsNumber) => setInputAmountNative(valueAsNumber)}
           maxW="200px"
-          value={inputCurrency === 'USD' ? inputAmountUsd : inputAmount}
+          value={inputCurrency === 'USD' ? inputAmountUsd : inputAmountNative}
         >
           <NumberInputField borderColor={isInputValid ? 'inherit' : 'red.500'} />
           <NumberInputStepper>
@@ -133,7 +138,7 @@ export default function Amount({ onClose, asset }: any) {
             <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <div>{inputCurrency === 'USD' ? (<>{inputAmount} ({assetContext.chain})</>):(<>{inputAmountUsd} (USD)</>)}</div>
+        <div>{inputCurrency === 'USD' ? (<>{inputAmountNative} ({assetContext.chain})</>):(<>{inputAmountUsd} (USD)</>)}</div>
         <Button onClick={toggleCurrency}>input as {inputCurrency}</Button>
         <Slider
           flex="1"

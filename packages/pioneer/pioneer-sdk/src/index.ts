@@ -1107,7 +1107,10 @@ export class SDK {
         let allAssets = await this.getAssets('');
         let assetInfo = allAssets.find((a: any) => a.caip === asset.caip);
         const balanceObj = this.balances.find((balance: any) => balance.caip === asset.caip);
+        console.log('balanceObj: ', balanceObj);
         const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        const priceUsd = balanceObj ? parseFloat(balanceObj.priceUsd) : 0;
+        const context = balanceObj ? parseFloat(balanceObj.context) : 'external';
         const balance = balanceObj ? balanceObj.balance : '';
         // Attempt to find a corresponding pubkey object that includes the asset's networkId
         const pubkeyObj = this.pubkeys.find((pubkey: any) =>
@@ -1118,8 +1121,16 @@ export class SDK {
         // Set the asset's address to pubkey.master or pubkey.address if available
         const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
-        this.assetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
-        this.events.emit('SET_ASSET_CONTEXT', { ...assetInfo, valueUsd, balance, pubkey, address });
+        this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
+        this.events.emit('SET_ASSET_CONTEXT', {
+          ...assetInfo,
+          valueUsd,
+          priceUsd,
+          context,
+          balance,
+          pubkey,
+          address,
+        });
         return { success: true };
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -1134,6 +1145,8 @@ export class SDK {
           let assetInfo = allAssets.find((a: any) => a.caip === asset.caip);
           const balanceObj = this.balances.find((balance: any) => balance.caip === asset.caip);
           const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+          const priceUsd = balanceObj ? parseFloat(balanceObj.priceUsd) : 0;
+          const context = balanceObj ? parseFloat(balanceObj.context) : 'external';
           const balance = balanceObj ? balanceObj.balance : '';
           // Attempt to find a corresponding pubkey object that includes the asset's networkId
           const pubkeyObj = this.pubkeys.find((pubkey: any) =>
@@ -1144,8 +1157,16 @@ export class SDK {
           // Set the asset's address to pubkey.master or pubkey.address if available
           const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
-          this.outboundAssetContext = { ...assetInfo, valueUsd, balance, pubkey, address };
-          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', { ...assetInfo, valueUsd, balance, pubkey, address });
+          this.outboundAssetContext = { ...assetInfo, valueUsd, context, priceUsd, balance, pubkey, address };
+          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', {
+            ...assetInfo,
+            valueUsd,
+            priceUsd,
+            context,
+            balance,
+            pubkey,
+            address,
+          });
           return { success: true };
         }
         return { success: false, error: `already asset context=${asset}` };

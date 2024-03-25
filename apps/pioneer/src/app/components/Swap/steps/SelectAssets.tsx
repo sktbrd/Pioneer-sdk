@@ -21,7 +21,8 @@ import {
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
-
+import Asset from '../../Asset';
+import Amount from '../../Amount';
 // @ts-ignore
 import { usePioneer } from '@coinmasters/pioneer-react';
 
@@ -35,24 +36,20 @@ interface BeginSwapProps {
   openModal: any; // Replace 'any' with the actual type of 'openModal'
   handleClick: any; // Replace 'any' with the actual type of 'handleClick'
   selectedButton: any; // Replace 'any' with the actual type of 'selectedButton',
+  setIsContinueVisable: any,
+  setInputAmount: any,
   sliderValue: any,
   setSliderValue: any,
 }
 
-const BeginSwap: React.FC<BeginSwapProps> = ({
+const BeginSwap: any = ({
   openModal,
-  handleClick,
-  selectedButton,
-  sliderValue,
-  setSliderValue,
-}) => {
+  setIsContinueVisable,
+  setInputAmount
+}: any) => {
   const { state } = usePioneer();
-  const [inputAmount, setInputAmount] = useState(0);
-  const [assetConfirmed, setAssetsConfired] = useState(false);
+  const [assetConfirmed, setAssetsConfirmed] = useState(false);
   const { assetContext, outboundAssetContext, app, balances } = state;
-  const [isInputValid, setIsInputValid] = useState<boolean>(true);
-  const minimumTradeAmountUSD = 10;
-  const [inputCurrency, setInputCurrency] = useState<'USD' | 'Native'>('USD');
 
   const switchAssets = function () {
     const currentInput = assetContext;
@@ -64,103 +61,19 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
     app.setAssetContext(currentOutput);
   };
 
-  const selectDefaultAssets = function () {
-    try {
-      const filteredAssets = balances
-        .filter((asset: any) => {
-          return asset.valueUsd ? parseFloat(asset.valueUsd) >= 1 : false;
-        })
-        .sort((a: any, b: any) => {
-          return (b.valueUsd || 0) - (a.valueUsd || 0);
-        });
+  //
+  const confirmAssetSelection = async function(isConfirmed: boolean){
+    setAssetsConfirmed(true)
+    setIsContinueVisable(true);
+  }
 
-      // set the default assets
-      if (filteredAssets.length > 0) {
-        app.setAssetContext(filteredAssets[0]);
-        app.setOutboundAssetContext(filteredAssets[1]);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  let onSelect = function (asset: any) {
+    console.log('asset: ',asset)
+  }
 
-  useEffect(() => {
-    if (assetContext) {
-      let initialSliderValue = 50;
-      const newInitialAmount =
-        (parseFloat(assetContext.balance) * assetContext.priceUsd * initialSliderValue) / 100;
-      updateInputAmount(newInitialAmount);
-      setSliderValue(initialSliderValue);
-    }
-  }, [assetContext]);
-
-  // start the context provider
-  useEffect(() => {
-    if (balances) {
-      console.log(`https://pioneers.dev/coins/${COIN_MAP_LONG.BTC}.png`);
-      selectDefaultAssets();
-    }
-  }, [balances]);
-
-
-  const getValidAmount = (amount: number, asset: any): number => {
-    const maxAmount = parseFloat(asset.balance) * asset.priceUsd - minimumTradeAmountUSD;
-    return Math.min(Math.max(amount, minimumTradeAmountUSD), maxAmount);
-  };
-
-  useEffect(() => {
-    if (assetContext) {
-      console.log("assetContext: ", assetContext);
-      const initialSliderValue = 50;
-      setSliderValue(initialSliderValue);
-      const newInitialAmount =
-        (initialSliderValue / 100) * parseFloat(assetContext.balance) * assetContext.priceUsd;
-      updateInputAmount(newInitialAmount);
-    }
-  }, [assetContext]);
-
-  const updateInputAmount = (value: number) => {
-    if (!assetContext) return;
-    let validAmount = value;
-    if (inputCurrency === 'USD') {
-      const maxAmount =
-        parseFloat(assetContext.balance) * assetContext.priceUsd - minimumTradeAmountUSD;
-      validAmount = Math.min(Math.max(value, minimumTradeAmountUSD), maxAmount);
-    } else {
-      const maxAmount =
-        parseFloat(assetContext.balance) - minimumTradeAmountUSD / assetContext.priceUsd;
-      validAmount = Math.min(
-        Math.max(value, minimumTradeAmountUSD / assetContext.priceUsd),
-        maxAmount,
-      );
-    }
-    setIsInputValid(validAmount === value);
-    setInputAmount(validAmount);
-  };
-
-  const onSliderChange = (value: number) => {
-    if (!assetContext) return;
-    let newAmount;
-    if (inputCurrency === 'USD') {
-      newAmount = (value / 100) * parseFloat(assetContext.balance) * assetContext.priceUsd;
-    } else {
-      newAmount = (value / 100) * parseFloat(assetContext.balance);
-    }
-    updateInputAmount(newAmount);
-    setSliderValue(value);
-  };
-
-  const toggleCurrency = () => {
-    if (inputCurrency === 'USD') {
-      setInputCurrency('Native');
-      const nativeAmount = inputAmount / assetContext.priceUsd;
-      setInputAmount(nativeAmount);
-    } else {
-      setInputCurrency('USD');
-      const usdAmount = inputAmount * assetContext.priceUsd;
-      setInputAmount(usdAmount);
-    }
-  };
+  let onClose = function () {
+    console.log('onClose: ')
+  }
 
   return (
     <div>
@@ -224,56 +137,13 @@ const BeginSwap: React.FC<BeginSwapProps> = ({
         </HStack>
       </Flex>
       {assetConfirmed ? (<>
-        {/*<Text fontSize="md" mb="2">*/}
-        {/*  Select Amount To Trade:*/}
-        {/*</Text>*/}
-        {/*<Flex alignItems="center" direction="column">*/}
-        {/*  <Text fontSize="md" mb="2">*/}
-        {/*    Select Amount To Trade (in {inputCurrency}):*/}
-        {/*  </Text>*/}
-        {/*  <Flex justify="space-between" mb="2" width="100%">*/}
-        {/*    <Button onClick={toggleCurrency}>Toggle {inputCurrency}</Button>*/}
-        {/*    <Button*/}
-        {/*      onClick={() =>*/}
-        {/*        setInputAmount(*/}
-        {/*          parseFloat(assetContext?.balance || '0') -*/}
-        {/*          minimumTradeAmountUSD / assetContext?.priceUsd,*/}
-        {/*        )*/}
-        {/*      }*/}
-        {/*    >*/}
-        {/*      Max*/}
-        {/*    </Button>*/}
-        {/*  </Flex>*/}
-        {/*  <NumberInput*/}
-        {/*    errorBorderColor="red.500"*/}
-        {/*    isInvalid={!isInputValid}*/}
-        {/*    maxW="200px"*/}
-        {/*    onChange={(_, valueAsNumber) => updateInputAmount(valueAsNumber)}*/}
-        {/*    value={inputAmount}*/}
-        {/*  >*/}
-        {/*    <NumberInputField borderColor={isInputValid ? 'inherit' : 'red.500'} />*/}
-        {/*    <NumberInputStepper>*/}
-        {/*      <NumberIncrementStepper />*/}
-        {/*      <NumberDecrementStepper />*/}
-        {/*    </NumberInputStepper>*/}
-        {/*  </NumberInput>*/}
-        {/*  <Slider*/}
-        {/*    flex="1"*/}
-        {/*    focusThumbOnChange={false}*/}
-        {/*    mt="4"*/}
-        {/*    onChange={onSliderChange}*/}
-        {/*    value={sliderValue}*/}
-        {/*  >*/}
-        {/*    <SliderTrack>*/}
-        {/*      <SliderFilledTrack />*/}
-        {/*    </SliderTrack>*/}
-        {/*    <SliderThumb boxSize="32px">{sliderValue}%</SliderThumb>*/}
-        {/*  </Slider>*/}
-        {/*</Flex>*/}
+        <Amount setInputAmount={setInputAmount} asset={app?.assetContext} ></Amount>
       </>) : (
         <>
+          <Asset onClose={onClose} onSelect={onSelect} asset={app?.assetContext} ></Asset>
+          <Asset onClose={onClose} onSelect={onSelect} asset={app?.outboundAssetContext} ></Asset>
           Confirm Asset Selection
-          <Button onClick={() => setAssetsConfired(true)}>Confirm</Button>
+          <Button onClick={() => confirmAssetSelection(true)}>Confirm</Button>
         </>
       )}
     </div>

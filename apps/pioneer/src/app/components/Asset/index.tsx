@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Avatar, Box, Stack, Flex, Text, Button, Collapse, IconButton,
+  Avatar, Box, Stack, Flex, Text, Button, Collapse, IconButton, Spinner,
   useColorModeValue, Badge, Table, Thead, Tbody, Tr, Th, Td
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -13,10 +13,11 @@ let TAG = " | asset | ";
 
 interface BalanceProps {
   onClose: () => void;
+  onSelect: (asset: any) => void;
   asset: any;
 }
 
-export default function Asset({ onClose, asset }: BalanceProps) {
+export default function Asset({ onClose, onSelect, asset }: BalanceProps) {
   // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, assets, context } = state;
@@ -40,7 +41,7 @@ export default function Asset({ onClose, asset }: BalanceProps) {
 
   return (
     <Stack spacing={4}>
-      <div>
+      {asset ? (<>
         <Flex align="center">
           <Avatar size='xl' src={asset.icon} />
           <Box ml={3}>
@@ -48,6 +49,7 @@ export default function Asset({ onClose, asset }: BalanceProps) {
             <Text fontSize="sm">Symbol: {asset.symbol}</Text>
             <Text fontSize="sm">CAIP: {asset.caip}</Text>
             <Text fontSize="sm">Type: {asset.type}</Text>
+            <Text fontSize="sm">priceUsd: {asset.priceUsd}</Text>
             {asset.address && (
               <Text fontSize="sm">Address: {asset.address}</Text>
             )}
@@ -59,6 +61,11 @@ export default function Asset({ onClose, asset }: BalanceProps) {
             Select
           </Button>
         </Flex>
+      </>) : (<>
+        No asset selected
+        <Spinner></Spinner>
+      </>)}
+      <div>
       </div>
     </Stack>
   );
