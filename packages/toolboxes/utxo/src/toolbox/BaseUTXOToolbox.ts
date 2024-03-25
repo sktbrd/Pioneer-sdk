@@ -54,7 +54,7 @@ const createKeysForPath = async ({
 
 const validateAddress = ({ address, chain }: { address: string } & UTXOBaseToolboxParams) => {
   try {
-    console.log(chain + ' validateAddress: ', address);
+    //console.log(chain + ' validateAddress: ', address);
     //@TODO validate addresses!
     //btcLibAddress.toOutputScript(address, getNetwork(chain));
     return true;
@@ -107,7 +107,7 @@ const transfer = async ({
 
 const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: BlockchairApiType) {
   try {
-    console.log('getPubkeyBalance pubkey: ', pubkey);
+    //console.log('getPubkeyBalance pubkey: ', pubkey);
     //console.log('getPubkeyBalance type: ', type);
     switch (type) {
       case 'pubkey':
@@ -118,7 +118,7 @@ const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: B
         const xpubBalance = await apiClient.getBalanceXpub(
           pubkey.pubkey.xpub || pubkey.xpub || pubkey.pubkey,
         );
-        console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
+        //console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
         return xpubBalance;
       case 'address':
         // eslint-disable-next-line no-case-declarations
@@ -137,7 +137,7 @@ const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: B
 };
 
 const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
-  console.log('getBalance pubkeys: ', pubkeys);
+  //console.log('getBalance pubkeys: ', pubkeys);
   //legacy support
   if (typeof pubkeys === 'string') {
     pubkeys = [{ address: pubkeys }];
@@ -149,18 +149,18 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     let type = '';
     if (pubkey.pubkey) {
       type = 'pubkey';
-      console.log('pubkey: ', pubkey.pubkey);
+      //console.log('pubkey: ', pubkey.pubkey);
     } else {
       type = 'address';
     }
-    console.log('type: ', type);
+    //console.log('type: ', type);
     let balance = await getPubkeyBalance(pubkey, type, apiClient);
     if (typeof balance === 'object') balance = 0;
-    console.log('BaseUTXO getPubkeyBalance balance: ', balance);
+    //console.log('BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
   totalBalance = totalBalance / 100000000;
-  console.log(`BaseUTXO totalBalance:`, totalBalance);
+  //console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
   //console.log('BaseUTXO asset: ', asset);
   return [asset];
@@ -241,14 +241,14 @@ const getInputsAndTargetOutputs = async ({
   chain: UTXOChain;
 }) => {
   //get inputs by xpub
-  console.log('pubkeys: ', pubkeys);
+  //console.log('pubkeys: ', pubkeys);
   //get balances for each pubkey
   // for (let i = 0; i < pubkeys.length; i++) {
   //   let pubkey = pubkeys[i];
-  //   console.log('1 pubkey: ', pubkey);
-  //   console.log('2 pubkey: ', pubkey.pubkey);
+  //   //console.log('1 pubkey: ', pubkey);
+  //   //console.log('2 pubkey: ', pubkey.pubkey);
   //   let balance = await apiClient.getBalanceXpub(pubkey.pubkey || pubkey.xpub || pubkey);
-  //   console.log('balance: ', balance);
+  //   //console.log('balance: ', balance);
   //   pubkeys[i].balance = balance.toString();
   // }
   // //console.log('pubkeys: ', pubkeys);
@@ -272,7 +272,7 @@ const getInputsAndTargetOutputs = async ({
   // //console.log('The pubkey with the highest balance is:', pubkeyWithLargestBalance);
   //
   // // pubkeyWithLargestBalance
-  // console.log('pubkeyWithLargestBalance: ', pubkeyWithLargestBalance);
+  // //console.log('pubkeyWithLargestBalance: ', pubkeyWithLargestBalance);
   // let inputs = await apiClient.listUnspent({
   //   pubkey:
   //     pubkeyWithLargestBalance?.pubkey ||
@@ -281,8 +281,8 @@ const getInputsAndTargetOutputs = async ({
   //   chain,
   //   apiKey: apiClient.apiKey,
   // });
-  // console.log('inputs total: ', inputs);
-  // console.log('inputs total: ', inputs.length);
+  // //console.log('inputs total: ', inputs);
+  // //console.log('inputs total: ', inputs.length);
 
   let allInputs: any[] = [];
 
@@ -302,27 +302,27 @@ const getInputsAndTargetOutputs = async ({
         chain,
         apiKey: apiClient.apiKey,
       });
-      console.log('getInputsAndTargetOutputs: pubkeyInfo: ', pubkeyInfo);
-      console.log('getInputsAndTargetOutputs: inputs: ', inputs);
+      //console.log('getInputsAndTargetOutputs: pubkeyInfo: ', pubkeyInfo);
+      //console.log('getInputsAndTargetOutputs: inputs: ', inputs);
       //add scriptType
       inputs = inputs.map((input) => {
         input.scriptType = pubkeyInfo.script_type;
         return input;
       });
-      console.log('getInputsAndTargetOutputs: inputs: POST: ', inputs);
+      //console.log('getInputsAndTargetOutputs: inputs: POST: ', inputs);
       if (inputs && inputs.length > 0) {
         allInputs = [...allInputs, ...inputs];
       }
     }
   }
 
-  console.log('Aggregated inputs total: ', allInputs.length);
-  console.log('Aggregated inputs: ', allInputs);
+  //console.log('Aggregated inputs total: ', allInputs.length);
+  //console.log('Aggregated inputs: ', allInputs);
 
-  console.log('allInputs: ', allInputs);
+  //console.log('allInputs: ', allInputs);
   //Use the map function to transform each input
   let inputs = allInputs.map(transformInput);
-  console.log('inputs: ', inputs);
+  //console.log('inputs: ', inputs);
 
   // //console.log('sender: ', sender);
   // const inputs = await apiClient.scanUTXOs({
@@ -366,8 +366,8 @@ const buildTx = async ({
 }> => {
   const compiledMemo = memo ? compileMemo(memo) : null;
 
-  console.log('Checkpoint buildTx');
-  console.log('pubkeys: ', pubkeys);
+  //console.log('Checkpoint buildTx');
+  //console.log('pubkeys: ', pubkeys);
 
   const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
@@ -382,15 +382,15 @@ const buildTx = async ({
   //Blockchairs Doge API recomendations are WAYY wrong
   if (chain === Chain.Dogecoin) feeRate = 100000;
   if (chain === Chain.BitcoinCash) feeRate = 100;
-  console.log('inputsAndOutputs: ', inputsAndOutputs);
-  // console.log('coinSelect: ', coinSelect);
-  console.log('feeRate: ', feeRate);
+  //console.log('inputsAndOutputs: ', inputsAndOutputs);
+  //console.log('coinSelect: ', coinSelect);
+  //console.log('feeRate: ', feeRate);
 
   // Assuming inputsAndOutputs, feeRate, and isMax are defined elsewhere in your code
   let inputs: any[], outputs: any[];
 
   if (isMax) {
-    console.log('isMax: detected!');
+    //console.log('isMax: detected!');
     inputsAndOutputs.outputs = inputsAndOutputs.outputs
       .filter((output) => output.address !== undefined)
       .map((output) => {
@@ -398,14 +398,14 @@ const buildTx = async ({
         delete newOutput.value;
         return newOutput;
       });
-    console.log('inputsAndOutputs: ', inputsAndOutputs);
+    //console.log('inputsAndOutputs: ', inputsAndOutputs);
     ({ inputs, outputs } = split.default(
       inputsAndOutputs.inputs,
       inputsAndOutputs.outputs,
       feeRate,
     ));
   } else {
-    console.log('isMax: not detected!');
+    //console.log('isMax: not detected!');
     //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
     //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
 
@@ -416,8 +416,8 @@ const buildTx = async ({
     ));
   }
 
-  console.log('inputs: ', inputs);
-  console.log('outputs: ', outputs);
+  //console.log('inputs: ', inputs);
+  //console.log('outputs: ', outputs);
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Insufficient Balance for transaction');

@@ -99,7 +99,7 @@ export class DB {
                 console.error('Error storing key-value pair:', err.message);
                 reject(err);
               } else {
-                console.log('Key-value pair stored successfully');
+                //console.log('Key-value pair stored successfully');
                 resolve();
               }
             },

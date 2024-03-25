@@ -218,7 +218,7 @@ export class SwapKitCore<T = ''> {
           return await this.performTx(route.txs[0]);
         }
         case 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED': {
-          console.log(' MAYA  Detected! ');
+          //console.log(' MAYA  Detected! ');
           //console.log('route: ', route);
           //perform
           return await this.performTx(route.txs[0]);
@@ -270,7 +270,7 @@ export class SwapKitCore<T = ''> {
     const tag = TAG + ' | performTx | ';
     try {
       //log.info(tag, "Transaction: ", tx);
-      console.log(tag, 'Transaction: ', tx);
+      //console.log(tag, 'Transaction: ', tx);
       if (!tx.chain) throw Error('Invalid tx missing chain!');
       if (!tx.type) throw Error('Invalid tx missing type!');
       //console.log(tag, 'tx.type: ', tx.type);
@@ -278,7 +278,7 @@ export class SwapKitCore<T = ''> {
 
       // @ts-ignore
       let chain = NetworkIdToChain[tx.chain];
-      console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'chain: ', chain);
 
       // let chain = tx.chain;
       if (!chain) throw Error(`Invalid tx unknown chain! ${chain}`);
@@ -288,7 +288,7 @@ export class SwapKitCore<T = ''> {
 
       if (tx.type.toLowerCase() === 'evm') {
         //TODO do evm stuff
-        console.log(tag, 'EVM Transaction: ', tx);
+        //console.log(tag, 'EVM Transaction: ', tx);
         tx.type = 'sendTransaction';
       } else {
         let assetString = chain + '.' + tx.txParams.token;
@@ -312,8 +312,8 @@ export class SwapKitCore<T = ''> {
 
       //result
       tx.txParams.nonce = null;
-      console.log('tx.type: ', tx.type);
-      console.log('tx.txParams: ', tx.txParams);
+      //console.log('tx.type: ', tx.type);
+      //console.log('tx.txParams: ', tx.txParams);
       let result = await walletMethods[tx.type](tx.txParams);
       //console.log('result: ', result);
       return result;
@@ -328,12 +328,12 @@ export class SwapKitCore<T = ''> {
   getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
     let tag = TAG + ' | getWalletByChain | ';
     try {
-      console.log(tag, 'start');
+      //console.log(tag, 'start');
       const address = this.getAddress(chain);
-      console.log(tag, 'address: ', address);
+      //console.log(tag, 'address: ', address);
       if (!address) return null;
-      console.log(tag, 'chain: ', chain);
-      console.log(tag, 'address: ', address);
+      //console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'address: ', address);
       let pubkeys = [];
       if (this.getWallet(chain)?.getPubkeys) {
         pubkeys = await this.getWallet(chain)?.getPubkeys();
@@ -346,11 +346,11 @@ export class SwapKitCore<T = ''> {
       let balance: AssetValue[] = [];
       if (pubkeys.length === 0) {
         //get inputs
-        console.log(tag, 'Get balance for Address! address: ' + address);
-        console.log(tag, 'Get balance for Address! chain: ' + chain);
+        //console.log(tag, 'Get balance for Address! address: ' + address);
+        //console.log(tag, 'Get balance for Address! chain: ' + chain);
         //use address balance
         balance = await this.getWallet(chain)?.getBalance([{ address }]);
-        console.log(tag, 'balance: ' + balance);
+        //console.log(tag, 'balance: ' + balance);
 
         //console.log('Get balance for Address! chain: ' + chain);
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -434,7 +434,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       let transferParams = await this.#prepareTxParams(params);
-      console.log('CORE transferParams: ', transferParams);
+      //console.log('CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
       throw new SwapKitError('core_swap_transaction_error', error);
@@ -849,7 +849,7 @@ export class SwapKitCore<T = ''> {
   };
 
   #getInboundDataByChain = async (chain: Chain) => {
-    console.log('getInboundDataByChain: ', chain);
+    //console.log('getInboundDataByChain: ', chain);
     if (chain === Chain.THORChain) {
       return {
         gas_rate: '0',
@@ -860,7 +860,7 @@ export class SwapKitCore<T = ''> {
       };
     }
     const inboundData = await getInboundData(this.stagenet);
-    console.log('inboundData: ', inboundData);
+    //console.log('inboundData: ', inboundData);
     const chainAddressData = inboundData.find((item) => item.chain === chain);
 
     if (!chainAddressData) throw new SwapKitError('core_inbound_data_not_found');
@@ -918,8 +918,8 @@ export class SwapKitCore<T = ''> {
     memo: string;
     feeOptionKey?: FeeOption;
   }) => {
-    console.log('depositToPool: chain: ', assetValue.chain);
-    console.log('memo: ', memo);
+    //console.log('depositToPool: chain: ', assetValue.chain);
+    //console.log('memo: ', memo);
     const {
       gas_rate,
       router,

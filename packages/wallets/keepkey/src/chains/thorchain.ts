@@ -113,9 +113,9 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
           },
         };
         // console.log('signPayload: ', signPayload);
-        console.log('signPayload: ', JSON.stringify(signPayload));
+        //console.log('signPayload: ', JSON.stringify(signPayload));
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit(signPayload);
-        console.log('keepKeyResponse: ', keepKeyResponse);
+        //console.log('keepKeyResponse: ', keepKeyResponse);
         //console.log('URL: ', RPCUrl.THORChain);
         let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         return txid.txid

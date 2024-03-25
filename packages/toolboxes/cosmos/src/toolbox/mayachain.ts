@@ -10,7 +10,7 @@ const getAccount = (address: string): Promise<any> => {
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/mayachain/${address}`;
 
   // Log the URL
-  console.log(`Requesting URL: ${url}`);
+  //console.log(`Requesting URL: ${url}`);
 
   // Make the request
   return RequestClient.get<any>(url);
@@ -18,14 +18,14 @@ const getAccount = (address: string): Promise<any> => {
 
 const getBalance = async (address: any) => {
   try {
-    console.log('Fetching balances for address:', address);
-    console.log('Fetching balances for address:', address[0].address);
+    //console.log('Fetching balances for address:', address);
+    //console.log('Fetching balances for address:', address[0].address);
     const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address[0].address}`;
-    console.log('URL:', balancesEndpoint);
+    //console.log('URL:', balancesEndpoint);
 
     // Fetch the balances for maya and cacao
     const balances: any = await RequestClient.get(balancesEndpoint);
-    console.log('Balances:', balances);
+    //console.log('Balances:', balances);
 
     await AssetValue.loadStaticAssets();
 
@@ -33,7 +33,7 @@ const getBalance = async (address: any) => {
     return balances.map((balance: any) => {
       const identifier = `MAYA.${balance.denom.toUpperCase()}`;
       const assetValue = AssetValue.fromStringSync(identifier, balance.amount.toString());
-      console.log(`Asset value for ${identifier}:`, assetValue);
+      //console.log(`Asset value for ${identifier}:`, assetValue);
       return assetValue;
     });
   } catch (e) {
@@ -55,7 +55,7 @@ const sendRawTransaction = async (tx, sync = true) => {
     // Define the URL for broadcasting transactions
     //let urlRemote = `${RPCUrl.Mayachain}/cosmos/tx/v1beta1/txs`;
     let urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
-    console.log(tag, 'urlRemote: ', urlRemote);
+    //console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using RequestClient
     let result = await RequestClient.post(urlRemote, {
@@ -64,7 +64,7 @@ const sendRawTransaction = async (tx, sync = true) => {
         'content-type': 'application/json', // Assuming JSON content type is required
       },
     });
-    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     // Handle the response
     if (result.tx_response.txhash) {
@@ -76,7 +76,7 @@ const sendRawTransaction = async (tx, sync = true) => {
     }
     return output;
   } catch (e) {
-    console.log(e);
+    //console.log(e);
     throw e;
   }
 };
@@ -86,7 +86,7 @@ const getFees = async function () {
   try {
     let fee: SwapKitNumber;
     let isThorchain = false;
-    console.log(tag, 'checkpoint');
+    //console.log(tag, 'checkpoint');
     fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal['MAYA'] });
 
     return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };

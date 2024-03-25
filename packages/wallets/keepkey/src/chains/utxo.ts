@@ -177,7 +177,7 @@ export const utxoWalletMethods = async ({
         (item) => item !== null && typeof item === 'object' && Object.keys(item).length !== 0,
       );
     }
-    // console.log({
+    //console.log({
     //   coin: ChainToKeepKeyName[chain],
     //   inputs,
     //   outputs: removeNullAndEmptyObjectsFromArray(outputs),
@@ -193,9 +193,9 @@ export const utxoWalletMethods = async ({
         locktime: 0,
         opReturnData: memo,
       };
-      console.log('signPayload: ', JSON.stringify(signPayload));
+      //console.log('signPayload: ', JSON.stringify(signPayload));
       const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (e) {
       console.error(e);
@@ -224,7 +224,7 @@ export const utxoWalletMethods = async ({
       sender: from,
       fetchTxHex: chain,
     });
-    console.log('rawInputs: ', rawInputs);
+    //console.log('rawInputs: ', rawInputs);
     const inputs = rawInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
       addressNList: bip32ToAddressNList(path),
       // p2sh was showing on native segwit and wrong, replace. If no scriptType, default to p2pkh (non-segwit)
@@ -234,7 +234,7 @@ export const utxoWalletMethods = async ({
       txid: hash,
       hex: txHex || '',
     }));
-    console.log('transfer inputs: ', inputs);
+    //console.log('transfer inputs: ', inputs);
     const txHex = await signTransaction(psbt, inputs, memo);
     //console.log('txHex: ', txHex);
     return toolbox.broadcastTx(txHex);

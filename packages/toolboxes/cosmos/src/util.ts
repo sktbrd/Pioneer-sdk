@@ -77,11 +77,11 @@ export const estimateMaxSendableAmount = async ({
     // Determine if asset is a string and convert to AssetValue, otherwise use it directly
     const assetEntity: AssetValue | undefined =
       typeof asset === 'string' ? await AssetValue.fromString(asset) : asset;
-    console.log(tag, 'assetEntity: ', assetEntity);
-    console.log(tag, 'from: ', from);
+    //console.log(tag, 'assetEntity: ', assetEntity);
+    //console.log(tag, 'from: ', from);
     // Retrieve balances for the account
     const balances = await toolbox.getBalance([{ address: from }]);
-    console.log(tag, 'balances: ', balances);
+    //console.log(tag, 'balances: ', balances);
     if (balances.length === 0) throw Error('No balances found for the specified address');
     // Find the balance for the specified asset
     const balance = balances.find(({ symbol, chain }) =>
@@ -92,7 +92,7 @@ export const estimateMaxSendableAmount = async ({
     if (!balance) throw Error('No balances found for the specified symbol or chain  ');
     // Retrieve fees
     const fees = await toolbox.getFees();
-    console.log(tag, 'fees: ', fees);
+    //console.log(tag, 'fees: ', fees);
 
     // If no balance for the asset, return zero amount of the asset
     if (!balance)

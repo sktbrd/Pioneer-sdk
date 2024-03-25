@@ -13,7 +13,7 @@ import {
   ModalOverlay,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FeeOption } from '@coinmasters/types';
+import { FeeOption, Chain } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
 import { useEffect, useState } from 'react';
 
@@ -125,6 +125,10 @@ const Swap = () => {
       if(!inputAmount || inputAmount <= 0) {
         throw Error('Invalid amount!');
       }
+      //if pro enabled
+      //TODO get pro enabled from context
+      let trader = app.swapKit.getAddress(Chain.Ethereum);
+      console.log("trader: ", trader);
 
       //get receiver context
       const entry = {

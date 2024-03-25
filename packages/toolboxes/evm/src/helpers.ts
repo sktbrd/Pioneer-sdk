@@ -174,16 +174,16 @@ export const estimateMaxSendableAmount = async function ({
 }: EVMMaxSendableAmountsParams) {
   let tag = TAG + ' | estimateMaxSendableAmount | ';
   try {
-    console.log(tag, 'checkpoint ');
+    //console.log(tag, 'checkpoint ');
     const balance = (await toolbox.getBalance([{ address: from }])).find(({ symbol, chain }) =>
       assetValue
         ? symbol === assetValue.symbol
         : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
     );
-    console.log(tag, 'balance: ', balance);
+    //console.log(tag, 'balance: ', balance);
 
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
-    console.log(tag, 'fees: ', fees);
+    //console.log(tag, 'fees: ', fees);
 
     if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
 
@@ -213,7 +213,7 @@ export const estimateMaxSendableAmount = async function ({
             memo,
             assetValue,
           });
-    console.log(tag, 'gasLimit: ', gasLimit);
+    //console.log(tag, 'gasLimit: ', gasLimit);
 
     const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
     const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
@@ -229,7 +229,7 @@ export const estimateMaxSendableAmount = async function ({
     const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint')).sub(
       fee.toString(),
     );
-    console.log(tag, 'fee: ', fee);
+    //console.log(tag, 'fee: ', fee);
 
     return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
   } catch (e) {
@@ -358,7 +358,7 @@ export const getBalance = async ({
   potentialScamFilter?: boolean;
 }) => {
   try {
-    console.log('EVM toolbox getBalance: ', address[0].address);
+    //console.log('EVM toolbox getBalance: ', address[0].address);
     const tokenBalances = await api.getBalance(address[0].address).catch((e) => {
       console.error(`Error fetching token balances for address ${address[0].address}:`, e);
       return []; // Return an empty array on failure to allow processing to continue
@@ -367,8 +367,8 @@ export const getBalance = async ({
       console.error(`Error fetching gas token balance for address ${address[0].address}:`, e);
       return BigInt(0); // Return 0 on failure
     });
-    console.log('tokenBalances: ', tokenBalances);
-    console.log('evmGasTokenBalance: ', evmGasTokenBalance.toString());
+    //console.log('tokenBalances: ', tokenBalances);
+    //console.log('evmGasTokenBalance: ', evmGasTokenBalance.toString());
 
     let gasTokenBalance = AssetValue.fromChainOrSignature(
       chain,
@@ -385,14 +385,14 @@ export const getBalance = async ({
       if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
         try {
           let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`
-          console.log("tokenString: ", tokenString);
-          console.log("tokenBalance.value: ", tokenBalance.value);
+          //console.log("tokenString: ", tokenString);
+          //console.log("tokenBalance.value: ", tokenBalance.value);
           let formattedBalance = AssetValue.fromIdentifierSync(
             //@ts-ignore
             tokenString,
             tokenBalance.value,
           );
-          console.log('formattedBalance: ', formattedBalance);
+          //console.log('formattedBalance: ', formattedBalance);
           //this hack removes all the tokens that are not in assetBalance token list package
           if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
             // formattedBalance.address = address[0].address;
@@ -402,7 +402,7 @@ export const getBalance = async ({
           console.error(`Error formatting balance for token ${tokenBalance.symbol}:`, error);
         }
       } else {
-        console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
+        //console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
       }
     }
 

@@ -37,11 +37,11 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        // console.log('accountInfo: ', accountInfo);
+        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        // console.log('account_number: ', account_number);
-        // console.log('sequence: ', sequence);
+        //console.log('account_number: ', account_number);
+        //console.log('sequence: ', sequence);
         let payload: any = {
           signDoc: {
             account_number,
@@ -71,13 +71,13 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
           signerAddress: from,
         };
         // console.log('payload: ', payload);
-        console.log('payload: ', JSON.stringify(payload));
+        //console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer(payload);
-        console.log('keepKeyResponse: ', keepKeyResponse);
+        //console.log('keepKeyResponse: ', keepKeyResponse);
 
         // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
-        console.log('Result broadcast: ', resultBroadcast);
+        //console.log('Result broadcast: ', resultBroadcast);
 
         return resultBroadcast.txid;
       } catch (e) {
@@ -102,11 +102,11 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
     }: SignTransactionDepositParams) => {
       try {
         const accountInfo = await toolbox.getAccount(fromAddress);
-        console.log('accountInfo: ', accountInfo);
+        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        console.log('account_number: ', account_number);
-        console.log('sequence: ', sequence);
+        //console.log('account_number: ', account_number);
+        //console.log('sequence: ', sequence);
         let payload: any = {
           signerAddress: fromAddress,
           signDoc: {
@@ -136,13 +136,13 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             ],
           },
         };
-        console.log('payload: ', payload);
-        console.log('payload: ', JSON.stringify(payload));
+        //console.log('payload: ', payload);
+        //console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoDeposit(payload);
-        console.log('keepKeyResponse.serialized: ', keepKeyResponse.serialized);
+        //console.log('keepKeyResponse.serialized: ', keepKeyResponse.serialized);
         // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
-        console.log('Result broadcast: ', resultBroadcast);
+        //console.log('Result broadcast: ', resultBroadcast);
 
         return resultBroadcast;
       } catch (e) {

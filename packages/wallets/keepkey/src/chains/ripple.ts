@@ -87,7 +87,7 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         //console.log('responseSign: ', typeof responseSign);
         //console.log('responseSign.value: ', responseSign.value);
         //console.log('responseSign.value: ', responseSign.value.signatures[0]);
-        // console.log(
+        //console.log(
         //   'responseSign.value.signatures[0].serializedTx: ',
         //   responseSign.value.signatures[0].serializedTx,
         // );
