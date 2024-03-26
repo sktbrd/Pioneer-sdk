@@ -108,18 +108,17 @@ const Swap = () => {
   }, [inputAmount]);
 
   const fetchQuote = async () => {
-    //console.log('sliderValue: ', sliderValue);
-    const senderAddress = assetContext.address;
-    const recipientAddress =
-      outboundAssetContext.address || app.swapKit.getAddress(outboundAssetContext.chain);
-    //console.log('outboundAssetContext: ', outboundAssetContext);
-
-    if (!recipientAddress) {
-      //console.log('outboundAssetContext: ', outboundAssetContext);
-      throw Error('must have recipient address');
-    }
-
     try {
+      //console.log('sliderValue: ', sliderValue);
+      let senderAddress = assetContext.address;
+      let recipientAddress =
+        outboundAssetContext.address || app.swapKit.getAddress(outboundAssetContext.chain);
+      //console.log('outboundAssetContext: ', outboundAssetContext);
+
+      if (!recipientAddress) {
+        //console.log('outboundAssetContext: ', outboundAssetContext);
+        throw Error('must have recipient address');
+      }
       //console.log("SELECT INPUT AMOUNT: ", inputAmount);
 
       if(!inputAmount || inputAmount <= 0) {
@@ -130,7 +129,11 @@ const Swap = () => {
       let trader = app.swapKit.getAddress(Chain.Ethereum);
       //console.log("trader: ", trader);
 
+      //validate input amount
+      if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
       //get receiver context
+      if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
+
       const entry = {
         affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,

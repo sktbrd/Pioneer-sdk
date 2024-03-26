@@ -48,6 +48,7 @@ const CompleteSwap = ({ txHash }: any) => {
     <div>
       <Card>
         <CardBody>
+          <Text>Your Swaps TXID: {txHash}</Text>
         </CardBody>
       </Card>
       <br />
