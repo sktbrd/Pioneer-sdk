@@ -41,7 +41,7 @@ export default function Receive({ onClose }: any) {
   };
 
   let onSelect = async function(asset: any) {
-    console.log("onSelect: ", asset);
+    //console.log("onSelect: ", asset);
     await app.setAssetContext(asset);
     closeModal();
   }
@@ -55,7 +55,7 @@ export default function Receive({ onClose }: any) {
 
   useEffect(() => {
     if (context) {
-      console.log('context: ', context);
+      //console.log('context: ', context);
       setWalletType(context.split(':')[0]);
     }
   }, [context, app]);

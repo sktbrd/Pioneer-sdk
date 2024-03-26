@@ -31,13 +31,13 @@ export default function Settings() {
 
   useEffect(() => {
     if (app?.blockchains) {
-      console.log('app?.blockchains: ', app?.blockchains);
+      //console.log('app?.blockchains: ', app?.blockchains);
     }
   }, [app, app?.blockchains]);
 
 
   const onSelect = (pubkey: any) => {
-    console.log('blockchain: ', pubkey);
+    //console.log('blockchain: ', pubkey);
   };
 
   return (

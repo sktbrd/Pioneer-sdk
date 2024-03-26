@@ -28,7 +28,7 @@ export default function Pubkeys() {
 
   useEffect(() => {
     if (app?.pubkeys) {
-      console.log('app?.pubkeys: ', app?.pubkeys);
+      //console.log('app?.pubkeys: ', app?.pubkeys);
     }
   }, [app, app?.pubkeys]);
 

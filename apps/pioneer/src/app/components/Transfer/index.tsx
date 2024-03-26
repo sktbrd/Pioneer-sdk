@@ -67,7 +67,7 @@ const Transfer = () => {
 
   useEffect(() => {
     if (context) {
-      console.log('context: ', context);
+      //console.log('context: ', context);
       setWalletType(context.split(':')[0]);
     }
   }, [context, app]);
@@ -87,14 +87,14 @@ const Transfer = () => {
     try {
       if (!inputAmount) alert('You MUST input an amount to send!');
       if (!recipient) alert('You MUST input a recipient to send to!');
-      // @TODO Validate Address!
-      // verify is connected
-      // const isContextExist = app.wallets.some((wallet: any) => wallet.context === context);
-      // console.log("isContextExist: ", isContextExist);
-      // //get context of swapkit
-      // let swapKitContext = await getSwapKitContext();
-      // console.log("swapKitContext: ", swapKitContext);
-      console.log('assetContext: ', assetContext);
+      //@TODO Validate Address!
+      //verify is connected
+      //const isContextExist = app.wallets.some((wallet: any) => wallet.context === context);
+      //console.log("isContextExist: ", isContextExist);
+      ////get context of swapkit
+      //let swapKitContext = await getSwapKitContext();
+      //console.log("swapKitContext: ", swapKitContext);
+      //console.log('assetContext: ', assetContext);
       setIntent(
         'transfer:' +
           assetContext.chain +
@@ -110,12 +110,12 @@ const Transfer = () => {
       if (!walletInfo) {
         //get wallet for context
         let walletType = app.context.split(':')[0];
-        console.log('Wallet not connected, opening modal for: ', walletType);
+        //console.log('Wallet not connected, opening modal for: ', walletType);
         //open wallet for context
 
         connectWallet(walletType.toUpperCase());
         setTimeout(() => {
-          console.log('Retrying wallet connection...');
+          //console.log('Retrying wallet connection...');
           handleSend();
         }, 3000);
         // pairWallet();
@@ -123,11 +123,11 @@ const Transfer = () => {
         setIsSubmitting(true);
         // create assetValue
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
-        console.log('assetString: ', assetString);
+        //console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
         // @ts-ignore
         const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(inputAmount));
-        console.log('assetValue: ', assetValue);
+        //console.log('assetValue: ', assetValue);
 
         // modify assetVaule for input
         let sendPayload:any = {
@@ -137,7 +137,7 @@ const Transfer = () => {
         }
         if(isMax) sendPayload.isMax = true
         // let assetValue;
-        console.log("sendPayload: ", sendPayload)
+        //console.log("sendPayload: ", sendPayload)
         const txHash = await app.swapKit.transfer(sendPayload);
         window.open(
           `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
@@ -164,7 +164,7 @@ const Transfer = () => {
 
   const onSelect = async function (asset: any) {
     try {
-      console.log('onSelect: ', asset);
+      //console.log('onSelect: ', asset);
       await app.setAssetContext(asset);
       onClose();
       setModalType('');
@@ -177,29 +177,29 @@ const Transfer = () => {
   const setMaxAmount = async function () {
     try {
       const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-      console.log('walletInfo: ', walletInfo);
+      //console.log('walletInfo: ', walletInfo);
       setisMax(true);
       if(!walletInfo){
-        console.log("app.context: ",app.context)
-        console.log("aassetContext: ",assetContext)
-        console.log("aassetContext.chain: ",assetContext.chain)
-        console.log("aassetContext.networkId: ",assetContext.networkId)
+        //console.log("app.context: ",app.context)
+        //console.log("aassetContext: ",assetContext)
+        //console.log("aassetContext.chain: ",assetContext.chain)
+        //console.log("aassetContext.networkId: ",assetContext.networkId)
         //set blockchains to JUST input asset
         let blockchains = [assetContext.networkId]
-        console.log("new blockchains: ",blockchains)
+        //console.log("new blockchains: ",blockchains)
         app.setBlockchains(blockchains)
 
         //walletType
         let walletType = app.context.split(':')[0];
-        console.log('Wallet not connected, opening modal for: ', walletType);
+        //console.log('Wallet not connected, opening modal for: ', walletType);
 
         //connect wallet
         await connectWallet(walletType.toUpperCase());
       } else {
 
-        console.log('onSetMax: ');
+        //console.log('onSetMax: ');
         let pubkeys = await app.pubkeys
-        console.log("pubkeys: ",pubkeys)
+        //console.log("pubkeys: ",pubkeys)
         //filter by chain
         pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
 
@@ -210,12 +210,12 @@ const Transfer = () => {
           memo,
           recipient,
         }
-        console.log("app.swapKit: ",app.swapKit)
-        console.log("app.swapKit: ",app.estimateMaxSendableAmount)
+        //console.log("app.swapKit: ",app.swapKit)
+        //console.log("app.swapKit: ",app.estimateMaxSendableAmount)
         //verify amount is < max spendable
         let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
-        console.log("maxSpendable: ",maxSpendable)
-        console.log("maxSpendable: ",maxSpendable.getValue('string'))
+        //console.log("maxSpendable: ",maxSpendable)
+        //console.log("maxSpendable: ",maxSpendable.getValue('string'))
         setInputAmount(maxSpendable.getValue('string'))
       }
     } catch (e) {

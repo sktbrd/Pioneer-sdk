@@ -29,11 +29,11 @@ export default function Portfolio() {
     labels: [],
   });
   const handleChartClick = (event: any, elements: any) => {
-    console.log(`Clicked on asset`);
+    //console.log(`Clicked on asset`);
     if (elements.length > 0) {
       const elementIndex = elements[0].index;
       const clickedAsset = balances[elementIndex];
-      console.log(`Clicked on asset: ${clickedAsset.symbol}`);
+      //console.log(`Clicked on asset: ${clickedAsset.symbol}`);
       // setLastClickedBalance(clickedAsset);
     }
   };
@@ -66,7 +66,7 @@ export default function Portfolio() {
       },
     },
     // onHover: (event: any, chartElement: any) => {
-    //   console.log('event: ', event);
+    //   //console.log('event: ', event);
     //   if (chartElement.length) {
     //     const { index } = chartElement[0];
     //     setActiveSegment(index);
@@ -129,12 +129,12 @@ export default function Portfolio() {
   };
 
   let onSelect = (balance: any) => {
-    console.log('balance: ', balance);
+    //console.log('balance: ', balance);
     // setLastClickedBalance(balance);
   };
 
   useEffect(() => {
-    console.log('activeSegment: ', activeSegment);
+    //console.log('activeSegment: ', activeSegment);
     updateChart();
   }, [balances]);
 

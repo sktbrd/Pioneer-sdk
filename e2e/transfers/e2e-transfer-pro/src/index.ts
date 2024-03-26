@@ -42,12 +42,12 @@ let IS_SIGNED: boolean
 
 //TEST MODE
 let WALLET_SEED:any
-let TEST_MODE = 'KEEPKEY'
-// let TEST_MODE = 'KEYSTORE'
-// if(TEST_MODE == "KEYSTORE"){
-//     WALLET_SEED=process.env['WALLET_SEED']
-//     if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")
-// }
+// let TEST_MODE = 'KEEPKEY'
+let TEST_MODE = 'KEYSTORE'
+if(TEST_MODE == "KEYSTORE"){
+    WALLET_SEED=process.env['WALLET_SEED']
+    if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")
+}
 log.info("TEST_MODE: ",TEST_MODE)
 
 const test_service = async function (this: any) {

@@ -32,7 +32,7 @@ function CalculatingComponent() {
         Calculating Best Route...
       </Text>
 
-      <Image alt="calculating" src={calculatingAnimation} width={'100'} height={'100'}/>
+      <Image alt="calculating" src={calculatingAnimation} width={'600'} height={'600'}/>
     </Center>
   );
 }

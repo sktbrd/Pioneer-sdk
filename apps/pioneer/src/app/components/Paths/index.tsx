@@ -39,12 +39,12 @@ export default function Paths() {
   let loadPathsView = async function(){
     try{
       if (app?.paths.length !== 0) {
-        // console.log('app?.paths: ', app);
-        console.log('app?.paths: ', app?.paths);
-        console.log('app?.blockchains: ', app?.blockchains);
+        // //console.log('app?.paths: ', app);
+        //console.log('app?.paths: ', app?.paths);
+        //console.log('app?.blockchains: ', app?.blockchains);
         setPaths(app?.paths);
       } else {
-        console.log("Load paths for last connected wallet")
+        //console.log("Load paths for last connected wallet")
         //get last paired wallet
         let lastPairedWallet = localStorage.getItem('lastPairedWallet');
         // Retrieve custom and disabled paths for the wallet from localStorage
@@ -57,7 +57,7 @@ export default function Paths() {
 
         //get default paths
         let defaultPaths = getPaths(app?.blockchains);
-        console.log("defaultPaths: ",defaultPaths)
+        //console.log("defaultPaths: ",defaultPaths)
 
         // Combine default paths with custom paths, ensuring unique values
         const combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
@@ -66,7 +66,7 @@ export default function Paths() {
         // Filter out disabled paths
         const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
 
-        console.log("pathsView: ", pathsView);
+        //console.log("pathsView: ", pathsView);
 
         // Assuming setPaths is a function defined to update your paths state
         setPaths(pathsView || []);
@@ -95,7 +95,7 @@ export default function Paths() {
 
   const onAddPath = () => {
     //open modal
-    console.log('Add Path');
+    //console.log('Add Path');
     setIsEditMode(true)
     onOpen()
   };

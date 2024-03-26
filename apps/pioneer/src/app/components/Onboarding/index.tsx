@@ -44,7 +44,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
 
   const onStartApp = async function () {
     try {
-      console.log('onStart');
+      //console.log('onStart');
       if (app && app.wallets) {
         setWalletsAvailable(app.wallets);
       }
@@ -83,7 +83,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType }: any
     // setPioneerImage('');
     setWalletType(wallet);
     setModalType(wallet);
-    console.log('Clicked wallet:', wallet);
+    //console.log('Clicked wallet:', wallet);
     const resultPair = await connectWallet(wallet);
     console.log('resultPair: ', resultPair);
   };

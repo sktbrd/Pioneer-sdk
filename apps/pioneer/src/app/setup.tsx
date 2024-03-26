@@ -11,7 +11,7 @@ const pioneerSetup: any = {
 export const InitWallets = async () => {
   const { state, onStart } = usePioneer();
   try {
-    console.log("onStart: ", onStart);
+    //console.log("onStart: ", onStart);
     const walletsVerbose: any = [];
     // @ts-ignore
     // eslint-disable-next-line import/no-extraneous-dependencies
@@ -143,7 +143,7 @@ export const InitWallets = async () => {
     // walletsVerbose.push(walletXDefi);
 
     // appIcon info
-    console.log('walletsVerbose: ', walletsVerbose);
+    //console.log('walletsVerbose: ', walletsVerbose);
     onStart(walletsVerbose, pioneerSetup);
   } catch (e) {
     console.error(e);

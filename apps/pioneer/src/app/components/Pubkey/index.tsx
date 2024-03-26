@@ -8,7 +8,7 @@ export default function Pubkey({ onClose, pubkey }: any) {
 
   useEffect(() => {
     if (app?.pubkeys) {
-      console.log('app?.pubkeys: ', app?.pubkeys);
+      //console.log('app?.pubkeys: ', app?.pubkeys);
     }
   }, [app, app?.pubkeys]);
 

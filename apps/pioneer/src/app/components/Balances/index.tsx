@@ -83,7 +83,7 @@ export default function Balances() {
       if (balances) {
         setShowOwnedAssets(true);
         setCurrentPage(balances);
-        console.log('balances: ', balances);
+        //console.log('balances: ', balances);
         // setTotalAssets(balances.length);
       }
     } catch (e) {

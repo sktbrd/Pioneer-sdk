@@ -42,7 +42,7 @@ const Earn = ({ openModal }: any) => {
   //       if(app?.pioneer && pools.length === 0) {
   //         let fetchedPools = await app.pioneer.Pools();
   //         fetchedPools = fetchedPools.data;
-  //         console.log('fetchedPools: ', fetchedPools);
+  //         //console.log('fetchedPools: ', fetchedPools);
   //         // Sort pools by APY
   //         fetchedPools.sort((a, b) => parseFloat(b.poolAPY) - parseFloat(a.poolAPY));
   //         setPools(fetchedPools);

@@ -26,8 +26,8 @@ export default function WalletList() {
 
   const handleWalletSelect = (wallet: any) => {
     try {
-      console.log('wallet: ', wallet);
-      console.log('wallet: ', wallet.split(':')[0]);
+      //console.log('wallet: ', wallet);
+      //console.log('wallet: ', wallet.split(':')[0]);
       setSelectedWallet(wallet.split(':')[0]);
       app.setContext(wallet);
       // Load public keys and balances as needed
@@ -37,7 +37,7 @@ export default function WalletList() {
   };
 
   const renderWalletDetails = (wallet: any) => {
-    console.log('renderWalletDetails: ', wallet);
+    //console.log('renderWalletDetails: ', wallet);
 
     switch (wallet) {
       case 'keepkey':

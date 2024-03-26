@@ -96,7 +96,7 @@ const Quote = ({ quote, onAcceptSign }: any) => {
 
   const handleSignTransaction = useCallback(() => {
     // Placeholder function for signing transaction
-    console.log('Transaction Signing Process Initiated');
+    //console.log('Transaction Signing Process Initiated');
     onAcceptSign();
     // Implement the actual sign transaction logic here
   }, []);

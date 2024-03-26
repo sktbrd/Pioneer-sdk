@@ -49,7 +49,7 @@ const Loan = ({ openModal }: any) => {
 
   useEffect(() => {
     if (context) {
-      console.log('context: ', context);
+      //console.log('context: ', context);
       setWalletType(context.split(':')[0]);
     }
   }, [context, app]);
@@ -69,13 +69,13 @@ const Loan = ({ openModal }: any) => {
     try {
       setIsPairing(true);
       const contextType = context.split(':')[0];
-      console.log('contextType: ', contextType);
+      //console.log('contextType: ', contextType);
       // connect it
       let pairObj: any = {
         type: contextType,
       };
       let result = await connectWallet(pairObj);
-      console.log('result: ', result);
+      //console.log('result: ', result);
     } catch (e) {
       console.error(e);
     }
@@ -96,11 +96,11 @@ const Loan = ({ openModal }: any) => {
 
         // create assetValue
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
-        console.log('assetString: ', assetString);
+        //console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(inputAmount));
 
-        console.log('assetValue: ', assetValue);
+        //console.log('assetValue: ', assetValue);
 
         // modify assetVaule for input
 

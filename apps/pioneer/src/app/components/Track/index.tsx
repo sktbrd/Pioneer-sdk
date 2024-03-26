@@ -1744,7 +1744,7 @@ function Track({ txHash }: any) {
     content = (
       <Card p={3} variant="outline">
         <Center height="full">
-          <Image alt="shiftingGif" src={shiftingGif}/>
+          <Image alt="shiftingGif" width='600' height='600' src={shiftingGif}/>
         </Center>
       </Card>
     );
@@ -1838,7 +1838,7 @@ function Track({ txHash }: any) {
           <Divider mb={3} mt={3} />
           {activeStep === 3 ? (
             <div>
-              <Image alt="completedGif" src={completedGif} />
+              <Image height={600} width={600} alt="completedGif" src={completedGif} />
             </div>
           ) : (
             <div>

@@ -54,7 +54,7 @@ export default function MetaMask({ onClose, setIsOpenSide }: any) {
   );
 
   const handleOnContinue = () => {
-    console.log('Continuing with snap plugin enabled:', isSnapEnabled);
+    //console.log('Continuing with snap plugin enabled:', isSnapEnabled);
     setHasConfirmed(true);
   };
 

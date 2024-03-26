@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import NextLink from "next/link";
 import Track from "../../../components/Track";
 
-const BeginSwap = ({ txHash }: any) => {
+const CompleteSwap = ({ txHash }: any) => {
   const saveToPendingTransactions = () => {
     const storedData = localStorage.getItem("pendingTransactions");
     let pendingTransactions: string[] = [];
@@ -48,9 +48,6 @@ const BeginSwap = ({ txHash }: any) => {
     <div>
       <Card>
         <CardBody>
-          <Link as={NextLink} href={`/txid/${txHash}`}>
-            <Text>Your Transaction:</Text> {txHash}
-          </Link>
         </CardBody>
       </Card>
       <br />
@@ -59,4 +56,4 @@ const BeginSwap = ({ txHash }: any) => {
   );
 };
 
-export default BeginSwap;
+export default CompleteSwap;

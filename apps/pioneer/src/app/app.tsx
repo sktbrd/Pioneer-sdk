@@ -14,7 +14,7 @@ import Amount from './components/Amount';
 import Quote from './components/Quote';
 import Quotes from './components/Quotes';
 import Swap from './components/Swap';
-
+import Track from './components/Track';
 
 import Image from 'next/image';
 import SignTransaction from '@/app/components/SignTransaction'; // Import Next.js Image component for the logo
@@ -390,19 +390,21 @@ let SAMPLE_DATA: any = [
   }
 ]
 
+let SAMPLE_SWAP_TXID = '793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23'
 
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('sign');
+  const [intent, setIntent] = useState('swap');
   const [tabIndex, setTabIndex] = useState(1);
+  const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
 
   let onStartApp = async function(){
     try{
       let walletsVerbose = []
       const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-      console.log('keepkeyWallet: ', keepkeyWallet);
+      //console.log('keepkeyWallet: ', keepkeyWallet);
 
       const pioneerSetup: any = {
         appName: "Pioneer Template",
@@ -416,9 +418,9 @@ export default function App() {
         status: "offline",
         isConnected: false,
       };
-      console.log('walletKeepKey: ', walletKeepKey);
+      //console.log('walletKeepKey: ', walletKeepKey);
       walletsVerbose.push(walletKeepKey);
-      console.log('walletsVerbose: ', walletsVerbose);
+      //console.log('walletsVerbose: ', walletsVerbose);
       onStart(walletsVerbose, pioneerSetup);
     }catch(e){
       console.error("Failed to start app!")
@@ -437,15 +439,15 @@ export default function App() {
   };
 
   const onClose = () => {
-    console.log("onClose")
+    //console.log("onClose")
   };
 
   const onSelect = (asset: any) => {
-    console.log("onSelect: ", asset)
+    //console.log("onSelect: ", asset)
   }
 
   const onAcceptSign = (tx: any) => {
-    console.log("onAcceptSign: ", tx)
+    //console.log("onAcceptSign: ", tx)
   }
 
   // Function to determine which component to render based on intent
@@ -468,10 +470,13 @@ export default function App() {
         return <Transfer />;
         break;
       case 'sign':
-        return <SignTransaction onClose={onClose} quote={SAMPLE_DATA[0]}/>;
+        return <SignTransaction setTxHash={setTxHash} onClose={onClose} quote={SAMPLE_DATA[0]}/>;
         break;
       case 'portfolio':
         return <Portfolio />;
+        break;
+      case 'tracker':
+        return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
         break;
       case 'quote':
         return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
@@ -479,8 +484,10 @@ export default function App() {
       case 'quotes':
         return <Quotes onClose={onClose} onSelectQuote={onSelect} Quotes={SAMPLE_DATA}/>;
         break;
+      case 'track':
+        return <Track txHash={SAMPLE_SWAP_TXID}/>;
       case 'swap':
-        return <Swap />;
+        return <Swap/>;
         break;
       // Handle other cases as needed
       default:
@@ -510,6 +517,7 @@ export default function App() {
             <option value="amount">amount</option>
             <option value="sign">sign</option>
             <option value="assets">Assets</option>
+            <option value="track">Track</option>
             <option value="swap">Swap</option>
           </Select>
         </div>

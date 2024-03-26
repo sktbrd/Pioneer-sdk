@@ -32,19 +32,11 @@ let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
 
-export default function SignTransaction({ onClose, quote }: any) {
+export default function SignTransaction({ setTxHash, onClose, quote }: any) {
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, outboundAssetContext } = state;
-  // const [totalNetworkFees, setTotalNetworkFees] = useState('');
-  // const [inputFeeAsset, setInputFeeAsset] = useState('');
-  // const [outputFeeAsset, setOutputFeeAsset] = useState('');
-  // const [inputFee, setInputFee] = useState('');
-  // const [inputFeeUSD, setInputFeeUSD] = useState('');
-  // const [outputFee, setOutputFee] = useState('');
-  // const [outputFeeUSD, setOutputFeeUSD] = useState('');
   const [isPairing, setIsPairing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
-  const [txHash, setTxHash] = useState<string>('');
 
   const integrationImages: { [key: string]: string } = {
     thorswap: ThorswapImage,
@@ -91,54 +83,71 @@ export default function SignTransaction({ onClose, quote }: any) {
 
   const HandleSwap = async () => {
     // const inputChain = assetContext?.chain;
-    console.log('outboundAssetContext: ', outboundAssetContext);
+    //console.log('outboundAssetContext: ', outboundAssetContext);
 
 
     const outputChain = outboundAssetContext?.chain;
     if (!assetContext || !outboundAssetContext || !app || !app?.swapKit) return;
 
     const address = app?.swapKit.getAddress(outputChain);
-    console.log('address: ', address);
+    //console.log('address: ', address);
 
-    console.log('quote: ', quote);
+    //console.log('quote: ', quote);
     let swapObj = {
       route: quote.quote.route,
       recipient: address,
       feeOptionKey: FeeOption.Fast,
     }
-    console.log('swapObj: ', swapObj);
-    const txHashResult = await app?.swapKit.swap(swapObj);
-    console.log('txHash: ', txHashResult);
+    //console.log('swapObj: ', swapObj);
+    let txHashResult = "793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23"
+    // const txHashResult = await app?.swapKit.swap(swapObj);
+    //console.log('txHash: ', txHashResult);
     setTxHash(txHashResult);
     onClose();
   };
 
-  const approveTransaction = async () => {
-    // verify context of input asset
-    const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-    console.log('walletInfo: ', walletInfo);
-    if (!walletInfo) {
-      setIsPairing(true);
-      console.log('assetContext: ', assetContext);
-      const contextType = assetContext.context.split(':')[0];
-      console.log('contextType: ', contextType);
-      //set blockchains to just ETH + tx chain for speed
-      let blockchain = caipToNetworkId(quote.quote.sellAsset);
-      let blockchains = [blockchain];
-      let paths = getPaths(blockchains);
+  const onConnect = async (retryCount = 0, maxRetries = 3) => {
+    try{
+      if(!app) throw new Error("app still loading...")
+      //
+      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      if (!walletInfo) {
+        console.log('Wallet not found, must pair first.');
+        setIsPairing(true);
 
-      app.setPaths(paths);
+        // Check if the retry count has reached the maximum retries limit
+        if (retryCount < maxRetries) {
+          console.log(`Retrying... Attempt ${retryCount + 1}/${maxRetries}`);
+          let blockchain = caipToNetworkId(quote.quote.sellAsset);
+          let blockchains = [blockchain];
+          let paths = getPaths(blockchains);
 
-      let pairObj = {
-        type:WalletOption.KEEPKEY,
-        blockchains
+          await connectWallet('KEEPKEY');
+          setTimeout(() => onConnect(retryCount + 1, maxRetries), 30000); // Retry after 30 seconds
+        } else {
+          console.log('Maximum retries reached. Please try again later.');
+          return false
+        }
+      }else {
+        return true
       }
-      const resultInit = await app.pairWallet(pairObj)
-      console.log('pair result: ', resultInit);
-    } else {
-      console.log('Approving TX');
-      setIsApproved(true);
-      await HandleSwap(); // Note: Added 'await' to ensure handleSwap completes before proceeding.
+    }catch(e){
+      console.error(e)
+    }
+  };
+
+  const approveTransaction = async () => {
+    try{
+      let isConnected = await onConnect();
+      if(!isConnected){
+        alert("Failed to connect wallet!")
+      } else {
+        console.log('Approving TX');
+        setIsApproved(true);
+        await HandleSwap(); // Note: Added 'await' to ensure handleSwap completes before proceeding.
+      }
+    }catch(e){
+      console.error(e)
     }
   };
 

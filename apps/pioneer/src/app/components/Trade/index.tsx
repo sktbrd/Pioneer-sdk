@@ -43,7 +43,7 @@ const Trade: React.FC<any> = ({ trade }) => {
   };
 
   const renderAvatar = (trade: any) => {
-    // console.log("trade: ", trade);
+    //console.log("trade: ", trade);
     let symbol = "THOR";
     if (
       trade &&

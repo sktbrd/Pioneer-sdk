@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 
 import { usePioneer } from '@coinmasters/pioneer-react';
 
-const Pending = ({ onClose }: any) => {
+const Pending = ({ onClose, setTxHash }: any) => {
   const { createTx, readTx } = usePioneer();
   const [pendingTransactions, setPendingTransactions] = useState<string[]>([]);
 
@@ -16,22 +16,22 @@ const Pending = ({ onClose }: any) => {
         setPendingTransactions(JSON.parse(storedData));
         //get txs
         let txs: any = await readTx();
-        console.log('txs: ', txs);
+        //console.log('txs: ', txs);
         if (!txs || txs.length === 0) {
           //create from local storage
           storedData = JSON.parse(storedData);
-          console.log('storedData: ', storedData);
+          //console.log('storedData: ', storedData);
           let newTx = {
             status: 'pending',
             txid: storedData[0],
           }
-          console.log('newTx: ', newTx);
+          //console.log('newTx: ', newTx);
           let txs = await createTx(newTx);
-          console.log('txs: ', txs);
+          //console.log('txs: ', txs);
         }
       }
     } catch (e) {
-      console.log('error: ', e);
+      //console.log('error: ', e);
     }
   };
 
@@ -48,7 +48,7 @@ const Pending = ({ onClose }: any) => {
     localStorage.setItem('pendingTransactions', JSON.stringify(updatedTransactions));
 
     // Optionally, handle additional logic based on the status
-    console.log(`Transaction ${txId} marked as ${status}`);
+    //console.log(`Transaction ${txId} marked as ${status}`);
     onClose();
   };
 
@@ -56,9 +56,7 @@ const Pending = ({ onClose }: any) => {
     <div>
       {pendingTransactions.map((txId, index) => (
         <div key={index}>
-          <Link as={NextLink} href={`/intent/track:${txId}`}>
-            View Transaction {txId}
-          </Link>
+
           <Button onClick={() => getTxs()}>refresh</Button>
           {/*<Button onClick={() => handleMark(txId, 'success')}>Mark Success</Button>*/}
           {/*<Button onClick={() => handleMark(txId, 'failed')}>Mark Failed</Button>*/}

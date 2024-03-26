@@ -57,7 +57,7 @@ const Swap = () => {
   const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
-  const [txHash, setTxhash] = useState(null);
+  const [txHash, setTxHash] = useState(null);
   const [sliderValue, setSliderValue] = useState(50);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
@@ -104,23 +104,23 @@ const Swap = () => {
   };
 
   useEffect(() => {
-    // console.log("**** inputAmount: ", inputAmount);
+    //console.log("**** inputAmount: ", inputAmount);
   }, [inputAmount]);
 
   const fetchQuote = async () => {
-    console.log('sliderValue: ', sliderValue);
+    //console.log('sliderValue: ', sliderValue);
     const senderAddress = assetContext.address;
     const recipientAddress =
       outboundAssetContext.address || app.swapKit.getAddress(outboundAssetContext.chain);
-    console.log('outboundAssetContext: ', outboundAssetContext);
+    //console.log('outboundAssetContext: ', outboundAssetContext);
 
     if (!recipientAddress) {
-      console.log('outboundAssetContext: ', outboundAssetContext);
+      //console.log('outboundAssetContext: ', outboundAssetContext);
       throw Error('must have recipient address');
     }
 
     try {
-      console.log("SELECT INPUT AMOUNT: ", inputAmount);
+      //console.log("SELECT INPUT AMOUNT: ", inputAmount);
 
       if(!inputAmount || inputAmount <= 0) {
         throw Error('Invalid amount!');
@@ -128,7 +128,7 @@ const Swap = () => {
       //if pro enabled
       //TODO get pro enabled from context
       let trader = app.swapKit.getAddress(Chain.Ethereum);
-      console.log("trader: ", trader);
+      //console.log("trader: ", trader);
 
       //get receiver context
       const entry = {
@@ -141,11 +141,11 @@ const Swap = () => {
         recipientAddress,
         slippage: '3',
       };
-      console.log('entry: ', entry);
+      //console.log('entry: ', entry);
       try {
         let result = await app.pioneer.Quote(entry);
         result = result.data;
-        console.log('result: ', result);
+        //console.log('result: ', result);
 
         if (result) {
           setQuotesData(result);
@@ -168,7 +168,7 @@ const Swap = () => {
   };
 
   let handleQuoteSelection = function (quote: any) {
-    console.log('handleQuoteSelection: ', quote);
+    //console.log('handleQuoteSelection: ', quote);
     setQuoteId(quote.id);
     if(quote && quote.quote)setQuote(quote);
     onClose();
@@ -177,16 +177,16 @@ const Swap = () => {
   // start the context provider
   useEffect(() => {
     if (txid) {
-      console.log('Set txid: ', txid);
+      //console.log('Set txid: ', txid);
       // set the txid
       // @ts-ignore
-      setTxhash(txid);
+      setTxHash(txid);
       setStep(2);
     } else {
       // check pending
       const pendingTransactions = JSON.parse(localStorage.getItem('pendingTransactions') ?? '[]');
 
-      console.log('pendingTransactions: ', pendingTransactions);
+      //console.log('pendingTransactions: ', pendingTransactions);
       if (pendingTransactions && pendingTransactions.length > 0) {
         openModal(MODAL_STRINGS.pending);
       }
@@ -206,7 +206,7 @@ const Swap = () => {
           recipient: assetContext.address,
           feeOptionKey: FeeOption.Fast,
         };
-        console.log('swapParams: ', swapParams);
+        //console.log('swapParams: ', swapParams);
         fetchQuote();
         openModal(MODAL_STRINGS.confirmTrade);
       }
@@ -254,19 +254,19 @@ const Swap = () => {
   };
 
   let onSelectOutput = async function (asset: any) {
-    console.log('onSelectOutput');
+    //console.log('onSelectOutput');
     await app.setOutboundAssetContext(asset);
     onClose();
   };
 
   let onSelect = async function (asset:any) {
-    console.log('onSelect',asset);
+    //console.log('onSelect',asset);
     await app.setAssetContext(asset);
     onClose();
   };
 
   let onAcceptSign: any = function () {
-    console.log('onAcceptSign');
+    //console.log('onAcceptSign');
     openModal(MODAL_STRINGS.confirmTrade);
   };
 
@@ -304,6 +304,7 @@ const Swap = () => {
                 <SignTransaction
                   onClose={onClose}
                   quote={quote}
+                  setTxHash={setTxHash}
                 />
               </div>
             )}
@@ -314,7 +315,7 @@ const Swap = () => {
             )}
             {modalType === MODAL_STRINGS.pending && (
               <div>
-                <Pending onClose={onClose} />
+                <Pending setTxHash={setTxHash} onClose={onClose} />
               </div>
             )}
           </ModalBody>

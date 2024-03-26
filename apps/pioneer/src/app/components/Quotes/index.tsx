@@ -70,7 +70,7 @@ const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
   const handleQuoteSelect = (index: number) => {
     setSelectedQuote(index);
     onSelectQuote(Quotes[index]);
-    console.log(`Quote selected: ${Quotes[index].integration}`);
+    //console.log(`Quote selected: ${Quotes[index].integration}`);
   };
 
   const getAssetAvatar = (asset: string) => {

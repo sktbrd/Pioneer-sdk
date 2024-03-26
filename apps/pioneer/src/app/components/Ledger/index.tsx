@@ -35,9 +35,9 @@ export default function Ledger() {
   let handleIntent = async () => {
     try {
       const parts = intent.split(':');
-      console.log('Setting Intent Blockchain: ', parts[2]);
+      //console.log('Setting Intent Blockchain: ', parts[2]);
       const walletInfo = await app.swapKit.getWalletByChain(getChainEnumValue(parts[2]));
-      console.log('walletInfo: ', walletInfo);
+      //console.log('walletInfo: ', walletInfo);
       if (walletInfo) {
         //close
         hideModal();
@@ -147,7 +147,7 @@ export default function Ledger() {
   };
 
   let onSelect = (blockchain: any) => {
-    console.log('onSelect', blockchain);
+    //console.log('onSelect', blockchain);
     attemptConnect(blockchain);
   };
 

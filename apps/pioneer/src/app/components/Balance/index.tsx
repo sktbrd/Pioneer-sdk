@@ -28,9 +28,9 @@ export default function Balance({ onClose, balance }: BalanceProps) {
   const valueUsdFormatted = balance.valueUsd ? `$${balance.valueUsd}` : 'N/A';
 
   const handleModal = (action: string) => {
-    console.log("balance: ", balance);
+    //console.log("balance: ", balance);
     app.setAssetContext(balance);
-    console.log("action")
+    //console.log("action")
     // router.push(`/intent/${action}`);
     onClose();
   };
