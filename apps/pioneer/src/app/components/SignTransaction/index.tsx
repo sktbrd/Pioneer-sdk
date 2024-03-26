@@ -99,9 +99,9 @@ export default function SignTransaction({ setTxHash, onClose, quote }: any) {
       feeOptionKey: FeeOption.Fast,
     }
     //console.log('swapObj: ', swapObj);
-    let txHashResult = "793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23"
-    // const txHashResult = await app?.swapKit.swap(swapObj);
-    //console.log('txHash: ', txHashResult);
+    // let txHashResult = "793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23"
+    const txHashResult = await app?.swapKit.swap(swapObj);
+    console.log('txHash: ', txHashResult);
     setTxHash(txHashResult);
     onClose();
   };
