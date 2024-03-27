@@ -16,15 +16,13 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
-import Path from '../../components/Path';
-import { usePioneer } from '@coinmasters/pioneer-react';
 import Basic from '..//Basic';
 import Blockchains from '../Blockchains';
 import Paths from '../Paths';
 import Pubkeys from '../Pubkeys';
 import Cache from '../Storage';
 
-export default function Settings() {
+export default function Settings({usePioneer}:any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();

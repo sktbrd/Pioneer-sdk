@@ -19,7 +19,7 @@ import Blockchains from '../Blockchains';
 
 import { usePioneer } from '@coinmasters/pioneer-react';
 
-export default function Ledger() {
+export default function Ledger({usePioneer}: any) {
   const { state, connectWallet, clearHardwareError, hideModal } = usePioneer();
   const { app, intent, hardwareError } = state;
   const [webUsbSupported, setWebUsbSupported] = useState(true);

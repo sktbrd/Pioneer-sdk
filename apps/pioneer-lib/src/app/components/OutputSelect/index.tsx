@@ -26,13 +26,9 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
-import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-// import MiddleEllipsis from '../../components/MiddleEllipsis';
 
-const TOKEN_PLATFORMS = ['ETH', 'BSC', 'AVAX', 'ARB'];
-
-export default function OutputSelect({ onClose, onSelect }: any) {
+export default function OutputSelect({ usePioneer, onClose, onSelect }: any) {
   const { state } = usePioneer();
   const { app, balances, pubkeys } = state;
   const [assets, setAssets] = useState([]);

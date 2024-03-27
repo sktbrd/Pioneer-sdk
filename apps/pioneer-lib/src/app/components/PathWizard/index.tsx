@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { COIN_MAP_LONG, getPaths, addressNListToBIP32, bip32ToAddressNList } from '@pioneer-platform/pioneer-coins';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, InfoOutlineIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 import Path from '../../components/Path';
 
@@ -112,7 +112,6 @@ const StepTwo = ({ entry, onEntryChange }: any) => {
 };
 
 const PathWizard = () => {
-  const { state } = usePioneer();
   const toast = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [allChains, setAllChains] = useState([]);

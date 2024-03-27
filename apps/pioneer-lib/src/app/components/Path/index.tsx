@@ -4,7 +4,7 @@ import { usePioneer } from '@coinmasters/pioneer-react';
 // Ensure addressNListToBIP32 is correctly imported from your utilities or a library
 import { addressNListToBIP32 } from '@pioneer-platform/pioneer-coins';
 
-export default function Path({ path }: any) {
+export default function Path({ usePioneer, path }: any) {
   const { state } = usePioneer();
   const { app } = state;
 

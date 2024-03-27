@@ -19,14 +19,13 @@ import {
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
-import { usePioneer } from "@coinmasters/pioneer-react";
 import MiddleEllipsis from '../../components/MiddleEllipsis';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import OutputSelect from '../../components/OutputSelect';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-export default function Receive({ onClose }: any) {
+export default function Receive({ usePioneer, onClose }: any) {
   const { state } = usePioneer();
   const { app, assetContext, balances, context } = state;
   const [isModalOpen, setIsModalOpen] = useState(false);

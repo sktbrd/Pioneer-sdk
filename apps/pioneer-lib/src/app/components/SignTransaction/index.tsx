@@ -22,9 +22,6 @@ import {
 } from '@pioneer-platform/pioneer-coins';
 // @ts-ignore
 import { useEffect, useState } from 'react';
-
-// @ts-ignore
-import { usePioneer } from '@coinmasters/pioneer-react';
 // Adjust the import path according to your file structure
 
 let ChangellyImage = '/png/changelly.png'
@@ -32,7 +29,7 @@ let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
 
-export default function SignTransaction({ setTxHash, onClose, quote }: any) {
+export default function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) {
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, outboundAssetContext } = state;
   const [isPairing, setIsPairing] = useState(false);

@@ -17,7 +17,7 @@ import { usePioneer } from '@coinmasters/pioneer-react';
 // Register the necessary plugins for Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Portfolio() {
+export default function Portfolio({usePioneer}:any) {
   const { state, showModal } = usePioneer();
   const { balances } = state;
   const [showAll, setShowAll] = useState(false);

@@ -22,11 +22,9 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 
 import Balance from '../Balance';
-
-import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-export default function Balances() {
+export default function Balances({usePioneer}:any) {
   const { state } = usePioneer();
   const { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
@@ -37,8 +35,6 @@ export default function Balances() {
   const [sortOrder, setSortOrder] = useState('desc');
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
   const [selectedBalance, setSelectedBalance] = useState(null);
-  // const itemsPerPage = 6;
-  // const cardWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   const handleSelectClick = async (asset: any) => {
     try {
@@ -66,17 +62,6 @@ export default function Balances() {
       const bValue = b.valueUsd ? parseFloat(b.valueUsd) : 0;
       return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
     });
-    // // Filter by search term on asset name
-    // .filter((asset: any) => asset?.name?.toLowerCase().includes(search.toLowerCase()))
-    // // Additional filter step for blockchain based on app.blockchains
-    // // .filter((asset: any) => app.blockchains.includes(asset.networkId))
-    // // Sort by value in USD, ascending or descending
-    // .sort((a: any, b: any) => {
-    //   if (sortOrder === 'asc') {
-    //     return (a.valueUsd || 0) - (b.valueUsd || 0);
-    //   }
-    //   return (b.valueUsd || 0) - (a.valueUsd || 0);
-    // });
 
   const fetchPage = async () => {
     try {

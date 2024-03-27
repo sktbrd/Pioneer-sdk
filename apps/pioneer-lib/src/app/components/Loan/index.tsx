@@ -26,7 +26,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-const Loan = ({ openModal }: any) => {
+const Loan = ({ usePioneer, openModal }: any) => {
   const toast = useToast();
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;

@@ -5,7 +5,6 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
-import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { useRouter } from 'next/router';
 
@@ -16,7 +15,7 @@ interface BalanceProps {
   balance: any;
 }
 
-export default function Balance({ onClose, balance }: BalanceProps) {
+export default function Balance({ usePioneer, onClose, balance }: any) {
   // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context } = state;

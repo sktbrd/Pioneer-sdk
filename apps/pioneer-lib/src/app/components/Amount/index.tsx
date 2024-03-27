@@ -17,13 +17,12 @@ import {
   NumberInputStepper,
   NumberIncrementStepper, NumberDecrementStepper, Slider, SliderTrack, SliderFilledTrack, SliderThumb,
 } from '@chakra-ui/react';
-import { usePioneer } from '@coinmasters/pioneer-react';
 import { useEffect, useState } from 'react';
 
 import Asset from '../Asset';
 let TAG = " | Amount | ";
 
-export default function Amount({ onClose, asset, setInputAmount }: any) {
+export default function Amount({ usePioneer, onClose, asset, setInputAmount }: any) {
   // const router = useRouter();
   const minimumTradeAmountUSD = 10;
   const [isInputValid, setIsInputValid] = useState<boolean>(true);

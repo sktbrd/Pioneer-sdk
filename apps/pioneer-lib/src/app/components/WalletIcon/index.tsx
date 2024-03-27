@@ -1,4 +1,5 @@
 // Import React as these functions return JSX elements
+import * as React from "react"
 import { Avatar, AvatarBadge, Image } from '@chakra-ui/react';
 
 let KeepKeyImagePng = '/png/keepkey.png';

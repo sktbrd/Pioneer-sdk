@@ -48,7 +48,7 @@ import {
   getWalletBadgeContent,
   getWalletContent,
   pioneerImagePng,
-} from '../../components/WalletIcon';
+} from '../WalletIcon';
 import { usePioneer } from '@coinmasters/pioneer-react';
 
 
@@ -57,7 +57,7 @@ export interface PioneerProps
   children?: React.ReactNode;
 }
 
-export function Pioneer({ children, ...other }: PioneerProps): JSX.Element {
+export function Pioneer({ children, usePioneer }: any): JSX.Element {
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context, openModal } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -314,6 +314,7 @@ export function Pioneer({ children, ...other }: PioneerProps): JSX.Element {
             {modalType === 'XDEFI' && <div>Xdefi TODO</div>}
             {modalType === 'ONBOARDING' && (
               <Onboarding
+                usePioneer={usePioneer}
                 onClose={onClose}
                 setModalType={setModalType}
                 setWalletType={setWalletType}

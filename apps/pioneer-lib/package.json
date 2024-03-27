@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-lib",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -63,6 +63,7 @@
   "scripts": {
     "dev": "next dev",
     "publish": "tsup && npm publish --access public",
+    "tsup": "tsup",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

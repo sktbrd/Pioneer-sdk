@@ -15,11 +15,10 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
-import { usePioneer } from '@coinmasters/pioneer-react';
 import Pubkey from '../../components/Pubkey'; // Adjust the import path as needed
 import { getWalletContent } from '../../components/WalletIcon';
 
-export default function Pubkeys() {
+export default function Pubkeys({usePioneer}:any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();

@@ -3,11 +3,10 @@ import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { usePioneer } from '@coinmasters/pioneer-react';
 
 const itemsPerPage = 10; // Define how many items you want per page
 
-export default function Assets({ onSelect, onClose, filters }: any) {
+export default function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const [allAssets, setAllAssets] = useState([]);

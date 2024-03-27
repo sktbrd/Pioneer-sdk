@@ -23,7 +23,7 @@ import Assets from '../../components/Assets';
 import Pending from '../../components/Pending';
 import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
 // import ForkMeBanner from "lib/components/ForkMe";
@@ -42,7 +42,7 @@ const MODAL_STRINGS = {
   errorQuote: 'Error Quote',
 };
 
-const Swap = () => {
+const Swap = ({usePioneer}:any) => {
   const { state } = usePioneer();
   const { txid } = useParams<{ txid?: string }>();
   const { app, assetContext, outboundAssetContext, blockchainContext } = state;

@@ -23,7 +23,7 @@ import { AssetValue } from '@coinmasters/core';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { usePioneer } from '@coinmasters/pioneer-react';
 
-const Earn = ({ openModal }: any) => {
+const Earn = ({ usePioneer, openModal }: any) => {
   const toast = useToast();
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;
