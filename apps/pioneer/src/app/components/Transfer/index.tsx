@@ -28,7 +28,6 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { AssetValue, Chain } from '@coinmasters/core';
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';
