@@ -15,9 +15,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { NetworkIdToChain } from '@coinmasters/types';
-// @ts-ignore
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
-// @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useCallback } from 'react';
 
