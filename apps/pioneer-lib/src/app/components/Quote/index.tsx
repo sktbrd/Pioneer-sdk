@@ -25,7 +25,7 @@ let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
 
-const Quote = ({ quote, onAcceptSign }: any) => {
+export function Quote({ quote, onAcceptSign }: any): JSX.Element {
   // Use actual values and image paths as needed
   const topBarBg = useColorModeValue('gray.100', 'gray.700'); // Change this color to match your design
   const { hasCopied, onCopy } = useClipboard(quote.quote.id);

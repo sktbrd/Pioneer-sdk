@@ -31,13 +31,13 @@ import { AssetValue, Chain } from '@coinmasters/core';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Assets from '../Assets';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-const Transfer = () => {
+export function Transfer({usePioneer}:any): JSX.Element {
   const toast = useToast();
   const { state, setIntent, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;

@@ -4,14 +4,14 @@ import { NetworkIdToChain } from '@coinmasters/types';
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
 
-const Quotes = ({ onClose, onSelectQuote, Quotes }: any) => {
+export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
 
   useEffect(() => {

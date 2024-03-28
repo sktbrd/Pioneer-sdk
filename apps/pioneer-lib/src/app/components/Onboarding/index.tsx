@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react';
 // import pioneerImage from '../../../../public/png/pioneerMan.png';
 import Blockchains from '../../components/Blockchains';
 import { getWalletContent } from '../../components/WalletIcon';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 
 const checkKeepkeyAvailability = async () => {
   try {
@@ -32,7 +32,7 @@ const checkKeepkeyAvailability = async () => {
   return false;
 };
 
-export default function Onboarding({ onClose, setModalType, setWalletType }: any) {
+export default function Onboarding({ onClose, setModalType, setWalletType, usePioneer }: any) {
   const { state, connectWallet } = usePioneer();
   const { app } = state;
   const [server, setServer] = useState('https://pioneers.dev/spec/swagger.json');

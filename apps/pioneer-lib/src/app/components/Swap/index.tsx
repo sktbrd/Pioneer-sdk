@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FeeOption, Chain } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ErrorQuote from '../../components/ErrorQuote';
 import Assets from '../../components/Assets';
@@ -23,7 +23,7 @@ import Assets from '../../components/Assets';
 import Pending from '../../components/Pending';
 import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
 // import ForkMeBanner from "lib/components/ForkMe";
@@ -42,7 +42,7 @@ const MODAL_STRINGS = {
   errorQuote: 'Error Quote',
 };
 
-const Swap = () => {
+export function Swap({usePioneer}:any): JSX.Element {
   const { state } = usePioneer();
   const { txid } = useParams<{ txid?: string }>();
   const { app, assetContext, outboundAssetContext, blockchainContext } = state;
@@ -242,15 +242,16 @@ const Swap = () => {
       case 0:
         return (
           <SelectAssets
+            usePioneer={usePioneer}
             openModal={openModal}
             setInputAmount={setInputAmount}
             setIsContinueVisable={setIsContinueVisable}
           />
         );
       case 1:
-        return <BeginSwap onAcceptSign={onAcceptSign} quote={quote} />;
+        return <BeginSwap usePioneer={usePioneer} onAcceptSign={onAcceptSign} quote={quote} />;
       case 2:
-        return <CompleteSwap quoteId={quoteId} route={route} txHash={txHash} />;
+        return <CompleteSwap usePioneer={usePioneer} quoteId={quoteId} route={route} txHash={txHash} />;
       default:
         return null;
     }
@@ -285,12 +286,12 @@ const Swap = () => {
             {/* Render content based on modalType */}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
-                <Assets filters={{onlyOwned: true, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelect} />
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: true, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelect} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
-                <Assets filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectQuote && (
@@ -305,6 +306,7 @@ const Swap = () => {
             {modalType === MODAL_STRINGS.confirmTrade && (
               <div>
                 <SignTransaction
+                  usePioneer={usePioneer}
                   onClose={onClose}
                   quote={quote}
                   setTxHash={setTxHash}
@@ -318,7 +320,7 @@ const Swap = () => {
             )}
             {modalType === MODAL_STRINGS.pending && (
               <div>
-                <Pending setTxHash={setTxHash} onClose={onClose} />
+                <Pending usePioneer={usePioneer} setTxHash={setTxHash} onClose={onClose} />
               </div>
             )}
           </ModalBody>

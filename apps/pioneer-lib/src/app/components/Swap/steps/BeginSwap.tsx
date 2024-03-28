@@ -1,7 +1,7 @@
 'use client';
 import { Box } from '@chakra-ui/react';
 // @ts-ignore
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CalculatingComponent from '../../../components/CalculatingComponent';
 import Quote from "../../../components/Quote";

@@ -2,12 +2,18 @@ import { ChevronLeftIcon, ChevronRightIcon, Search2Icon } from '@chakra-ui/icons
 import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { usePioneer } from '@coinmasters/pioneer-react';
+import React, { useEffect, useState } from 'react';
+// import Asset from '@/app/components/Asset';
 
 const itemsPerPage = 10; // Define how many items you want per page
 
-export default function Assets({ onSelect, onClose, filters }: any) {
+export interface AssetsProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  usePioneer: any;
+  children?: React.ReactNode;
+}
+
+export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const [allAssets, setAllAssets] = useState([]);
@@ -143,4 +149,4 @@ export default function Assets({ onSelect, onClose, filters }: any) {
     </Stack>
   );
 }
-
+export default Assets;

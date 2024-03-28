@@ -5,19 +5,19 @@
 
 import { Box, Center, Flex, Text, Spinner, Button } from '@chakra-ui/react';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 
 // import { Balances } from '../Balances';
 import Balances from '../../components/Balances';
 import Assets from '../../components/Assets';
-import { usePioneer } from '@coinmasters/pioneer-react';
+import Basic from '@/app/components/Basic';
 // Adjust the import path according to your file structure
 
 // Register the necessary plugins for Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Portfolio() {
+export function Portfolio({usePioneer}:any) {
   const { state, showModal } = usePioneer();
   const { balances } = state;
   const [showAll, setShowAll] = useState(false);
@@ -163,10 +163,12 @@ export default function Portfolio() {
           </Center>
           <br/>
           <Box width="100%" maxHeight="600px" overflowY="auto" mt="20px">
-            <Assets onSelect={onSelect} filters={{onlyOwned: true, noTokens: false, hasPubkey:true }}/>
+            <Assets usePioneer={usePioneer} onSelect={onSelect} filters={{onlyOwned: true, noTokens: false, hasPubkey:true }}/>
           </Box>
         </div>
       )}
     </Flex>
   );
 }
+
+export default Portfolio;

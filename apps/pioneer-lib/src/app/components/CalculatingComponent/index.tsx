@@ -3,7 +3,7 @@
  */
 
 import { Center, Text, useBreakpointValue } from "@chakra-ui/react";
-
+import React, { useState, useEffect } from 'react';
 // @ts-ignore
 let calculatingAnimation = "/gif/calculating.gif";
 import Image from "next/image";

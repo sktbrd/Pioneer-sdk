@@ -12,15 +12,14 @@ import {
 } from '@chakra-ui/react';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import { useEffect, useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import {
   getWalletBadgeContent,
   getWalletContent,
   pioneerImagePng,
 } from '../../components/WalletIcon';
-import { usePioneer } from '@coinmasters/pioneer-react';
 
-export default function AssetSelect({ onSelect }: any) {
+export default function AssetSelect({ usePioneer, onSelect }: any) {
   const { state } = usePioneer();
   let { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);

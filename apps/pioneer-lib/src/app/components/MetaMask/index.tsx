@@ -10,13 +10,11 @@ import {
   VStack,
   Card,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
-
-import { usePioneer } from '@coinmasters/pioneer-react';
+import React, { useState, useEffect } from 'react';
 import Portfolio from '../Portfolio';
 
 // @ts-ignore
-export default function MetaMask({ onClose, setIsOpenSide }: any) {
+export default function MetaMask({ usePioneer, onClose, setIsOpenSide }: any) {
   const { state, connectWallet } = usePioneer();
   const { app, balances } = state;
   const [isSnapEnabled, setIsSnapEnabled] = useState(true); // Assuming the snap plugin is enabled by default

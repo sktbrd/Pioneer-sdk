@@ -1,11 +1,10 @@
 import { CheckIcon } from '@chakra-ui/icons'; // Make sure to import the icons you need
 import { Box, Spinner, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { usePioneer } from '@coinmasters/pioneer-react';
 import Portfolio from '../Portfolio';
 
-export default function KeepKey({ onClose }: any) {
+export default function KeepKey({ usePioneer, onClose }: any) {
   const { state, connectWallet } = usePioneer();
   const { app, balances, pubkeys, status } = state;
   const [isSyncing, setIsSyncing] = useState(false);

@@ -24,7 +24,6 @@ import React, { useEffect, useState } from 'react';
 import Asset from '../../Asset';
 import Amount from '../../Amount';
 // @ts-ignore
-import { usePioneer } from '@coinmasters/pioneer-react';
 
 const labelStyles = {
   mt: '2',
@@ -43,6 +42,7 @@ interface BeginSwapProps {
 }
 
 const BeginSwap: any = ({
+  usePioneer,
   openModal,
   setIsContinueVisable,
   setInputAmount
@@ -137,11 +137,11 @@ const BeginSwap: any = ({
         </HStack>
       </Flex>
       {assetConfirmed ? (<>
-        <Amount setInputAmount={setInputAmount} asset={app?.assetContext} ></Amount>
+        <Amount usePioneer={usePioneer} setInputAmount={setInputAmount} asset={app?.assetContext} ></Amount>
       </>) : (
         <>
-          <Asset onClose={onClose} onSelect={onSelect} asset={app?.assetContext} ></Asset>
-          <Asset onClose={onClose} onSelect={onSelect} asset={app?.outboundAssetContext} ></Asset>
+          <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={app?.assetContext} ></Asset>
+          <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={app?.outboundAssetContext} ></Asset>
           Confirm Asset Selection
           <Button onClick={() => confirmAssetSelection(true)}>Confirm</Button>
         </>

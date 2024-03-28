@@ -19,14 +19,14 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 import Path from '../../components/Path';
 import PathWizard from '../../components/PathWizard';
 // import { getWalletContent } from '../../components/WalletIcon';
 //@ts-ignore
 import { addressNListToBIP32, getPaths } from '@pioneer-platform/pioneer-coins';
 
-export default function Paths() {
+export default function Paths({usePioneer}: any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();

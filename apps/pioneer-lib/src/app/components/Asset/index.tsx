@@ -5,19 +5,21 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
+import Basic from '@/app/components/Basic';
 // import { useRouter } from 'next/router';
 
 let TAG = " | asset | ";
 
-interface BalanceProps {
+interface AssetProps {
   onClose: () => void;
+  usePioneer: () => any;
   onSelect: (asset: any) => void;
   asset: any;
 }
 
-export default function Asset({ onClose, onSelect, asset }: BalanceProps) {
+export function Asset({ usePioneer, onClose, onSelect, asset }: AssetProps) {
   // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, assets, context } = state;
@@ -70,3 +72,4 @@ export default function Asset({ onClose, onSelect, asset }: BalanceProps) {
     </Stack>
   );
 }
+export default Asset;

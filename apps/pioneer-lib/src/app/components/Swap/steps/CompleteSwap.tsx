@@ -3,7 +3,7 @@
   Comlete swap step
  */
 import { Link, Card, CardBody, Text } from "@chakra-ui/react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import NextLink from "next/link";
 import Track from "../../../components/Track";
 

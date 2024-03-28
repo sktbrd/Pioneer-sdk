@@ -1,10 +1,7 @@
 import { Button, Link } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import NextLink from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import { usePioneer } from '@coinmasters/pioneer-react';
-
-const Pending = ({ onClose, setTxHash }: any) => {
+const Pending = ({ usePioneer, onClose, setTxHash }: any) => {
   const { createTx, readTx } = usePioneer();
   const [pendingTransactions, setPendingTransactions] = useState<string[]>([]);
 

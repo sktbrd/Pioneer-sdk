@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletContent } from '../WalletIcon';
 
-export default function WalletList() {
+export default function WalletList({usePioneer}:any) {
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
   const { state } = usePioneer();

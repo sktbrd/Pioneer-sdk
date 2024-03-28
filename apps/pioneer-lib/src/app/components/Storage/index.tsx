@@ -1,5 +1,5 @@
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr, VStack } from '@chakra-ui/react';
-
+import React, { useEffect, useState } from "react";
 
 const Cache = () => {
 

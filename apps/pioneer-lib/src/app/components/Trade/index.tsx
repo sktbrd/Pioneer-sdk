@@ -20,8 +20,7 @@ import {
 } from "@chakra-ui/react";
 // @ts-ignore
 import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
-import { useState } from "react";
-import type React from "react";
+import React, { useState } from "react";
 
 const Trade: React.FC<any> = ({ trade }) => {
   const [showDetails, setShowDetails] = useState(false);

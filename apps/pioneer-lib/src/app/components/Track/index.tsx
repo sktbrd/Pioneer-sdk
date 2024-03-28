@@ -719,7 +719,7 @@ function makeState(
 // Track
 /// /////////////////////////////////////////////////////////////////////////////////////
 
-function Track({ txHash }: any) {
+export function Track({ txHash }: any) {
   // ------------------------------ params ------------------------------
   let txid = txHash;
   // strip 0x prefix

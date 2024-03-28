@@ -12,9 +12,9 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-import { usePioneer } from '@coinmasters/pioneer-react';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 
-export default function Blockchains({onSelect}: any) {
+export default function Blockchains({usePioneer, onSelect}: any) {
   const { state } = usePioneer();
   const { app } = state;
 

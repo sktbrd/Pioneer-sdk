@@ -28,7 +28,7 @@ import {
   AvatarGroup,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
@@ -48,8 +48,8 @@ import {
   getWalletBadgeContent,
   getWalletContent,
   pioneerImagePng,
-} from '../../components/WalletIcon';
-import { usePioneer } from '@coinmasters/pioneer-react';
+} from '../WalletIcon';
+// import { usePioneer } from '@coinmasters/pioneer-react';
 
 
 export interface PioneerProps
@@ -57,7 +57,7 @@ export interface PioneerProps
   children?: React.ReactNode;
 }
 
-export function Pioneer({ children, ...other }: PioneerProps): JSX.Element {
+export function Pioneer({ children, usePioneer }: any): JSX.Element {
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context, openModal } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -267,53 +267,54 @@ export function Pioneer({ children, ...other }: PioneerProps): JSX.Element {
             {/* Render content based on modalType */}
             {modalType === 'KEEPKEY' && (
               <div>
-                <KeepKey onClose={onClose} />
+                <KeepKey usePioneer={usePioneer} onClose={onClose} />
               </div>
             )}
             {modalType === 'METAMASK' && (
               <div>
-                <MetaMask onClose={onClose} />
+                <MetaMask usePioneer={usePioneer} onClose={onClose} />
               </div>
             )}
             {modalType === 'LEDGER' && (
               <div>
-                <Ledger />
+                <Ledger usePioneer={usePioneer} />
               </div>
             )}
             {modalType === 'TRANSFER' && (
               <div>
-                <Transfer />
+                <Transfer usePioneer={usePioneer} />
               </div>
             )}
             {modalType === 'SELECT' && (
               <div>
-                <AssetSelect onlyOwned onClose={onClose} />
+                <AssetSelect usePioneer={usePioneer} onlyOwned onClose={onClose} />
               </div>
             )}
             {modalType === 'RECEIVE' && (
               <div>
-                <Receive />
+                <Receive usePioneer={usePioneer}/>
               </div>
             )}
             {modalType === 'PORTFOLIO' && (
               <div>
-                <Portfolio />
+                <Portfolio usePioneer={usePioneer}/>
               </div>
             )}
             {modalType === 'SWAP' && (
               <div>
-                <Swap />
+                <Swap usePioneer={usePioneer}/>
               </div>
             )}
             {modalType === 'SETTINGS' && (
               <div>
-                <Settings />
+                <Settings usePioneer={usePioneer}/>
               </div>
             )}
             {modalType === 'TREZOR' && <div>Trezor TODO</div>}
             {modalType === 'XDEFI' && <div>Xdefi TODO</div>}
             {modalType === 'ONBOARDING' && (
               <Onboarding
+                usePioneer={usePioneer}
                 onClose={onClose}
                 setModalType={setModalType}
                 setWalletType={setWalletType}
