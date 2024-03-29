@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-wallet-package-keystore",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

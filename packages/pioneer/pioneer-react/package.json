@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-react",
-  "version": "0.5.6",
+  "version": "0.6.0",
   "author": "swapkit-oss-team",
   "description": "Pioneer-sdk react provider",
   "devDependencies": {
@@ -44,9 +44,9 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@coinmasters/pioneer-sdk": "latest",
-    "@coinmasters/types": "latest",
-    "@pioneer-platform/pioneer-coins": "latest",
+    "@coinmasters/pioneer-sdk": "workspace:*",
+    "@coinmasters/types": "workspace:*",
+    "@pioneer-platform/pioneer-coins": "^9.2.15",
     "@types/node": "18.15.13",
     "@vitest/coverage-istanbul": "0.34.6",
     "ethers": "^6.11.1",

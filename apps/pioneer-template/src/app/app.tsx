@@ -18,7 +18,23 @@ import {
   Swap,
   Track,
   SignTransaction
-} from '@coinmasters/pioneer-lib';
+  //@ts-ignore
+} from '../../../pioneer-lib/src/index';
+// import {
+//   Pioneer,
+//   Basic,
+//   Portfolio,
+//   Transfer,
+//   Assets,
+//   Asset,
+//   Amount,
+//   Quote,
+//   Quotes,
+//   Swap,
+//   Track,
+//   SignTransaction
+//   //@ts-ignore
+// } from '@coinmasters/pioneer-lib';
 import Image from 'next/image';
 
 let SAMPLE_DATA: any = [

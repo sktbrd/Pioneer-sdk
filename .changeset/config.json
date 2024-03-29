@@ -4,7 +4,7 @@
   "baseBranch": "master",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "thorswap/SwapKit" }
+    { "repo": "coinmasters/SwapKit" }
   ],
   "commit": false,
   "fixed": [],
