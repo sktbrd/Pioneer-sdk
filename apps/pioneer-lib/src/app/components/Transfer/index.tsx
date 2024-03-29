@@ -138,10 +138,12 @@ export function Transfer({usePioneer}:any): JSX.Element {
         // let assetValue;
         //console.log("sendPayload: ", sendPayload)
         const txHash = await app.swapKit.transfer(sendPayload);
-        window.open(
-          `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
-          '_blank',
-        );
+        if (typeof window !== 'undefined') {
+          window.open(
+            `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
+            '_blank',
+          );
+        }
       }
     } catch (e: any) {
       console.error(e);
@@ -239,7 +241,7 @@ export function Transfer({usePioneer}:any): JSX.Element {
           <ModalBody>
             {modalType === 'SELECT' && (
               <div>
-                <Assets onClose={onClose} onSelect={onSelect} filters={{onlyOwned: true, noTokens: true, hasPubkey:true }}/>
+                <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: true, noTokens: true, hasPubkey:true }}/>
               </div>
             )}
           </ModalBody>

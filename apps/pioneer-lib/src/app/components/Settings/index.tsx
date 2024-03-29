@@ -62,7 +62,7 @@ export default function Settings({usePioneer}:any) {
             <Pubkeys usePioneer={usePioneer}/>
           </TabPanel>
           <TabPanel>
-            <Cache usePioneer={usePioneer}/>
+            <Cache/>
           </TabPanel>
         </TabPanels>
       </Tabs>

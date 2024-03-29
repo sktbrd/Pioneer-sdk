@@ -4,17 +4,19 @@ import React, { useEffect, useState } from "react";
 const Cache = () => {
 
   const clearLocalStorage = (key: string) => {
-    if (key === 'all') {
-      localStorage.clear();
-      // Reload the page to force restart the application
-      window.location.reload();
-    } else {
-      const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
-      if (key === 'walletCache' && lastConnectedWallet) {
-        localStorage.removeItem(`${lastConnectedWallet}:balanceCache`);
-        localStorage.removeItem(`${lastConnectedWallet}:pubkeyCache`);
+    if (typeof window !== 'undefined') {
+      if (key === 'all') {
+        window.localStorage.clear();
+        // Reload the page to force restart the application
+        window.location.reload();
       } else {
-        localStorage.removeItem(key);
+        const lastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
+        if (key === 'walletCache' && lastConnectedWallet) {
+          window.localStorage.removeItem(`${lastConnectedWallet}:balanceCache`);
+          window.localStorage.removeItem(`${lastConnectedWallet}:pubkeyCache`);
+        } else {
+          window.localStorage.removeItem(key);
+        }
       }
     }
   };

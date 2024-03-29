@@ -94,7 +94,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
   useEffect(() => {
     if (typeof window !== 'undefined') {
 
-      let pioneerUrl = localStorage.getItem('pioneerUrl');
+      let pioneerUrl = window.localStorage.getItem('pioneerUrl');
       if (balances.length === 0 && !pioneerUrl) {
         onOpen();
         setModalType('ONBOARDING');
@@ -182,7 +182,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
         );
 
       // Retrieve and parse paired wallets
-      let pairedWallets: any = localStorage.getItem('pairedWallets');
+      let pairedWallets: any = window.localStorage.getItem('pairedWallets');
       if (pairedWallets) {
         pairedWallets = JSON.parse(pairedWallets).map((pw: any) => pw.split(':')[0].toUpperCase());
       } else {
@@ -218,11 +218,14 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
         setIsPioneer(true);
         setPioneerImage(app.isPioneer);
       }
-      const pioneerCache = localStorage.getItem('isPioneer');
-      if (pioneerCache) {
-        setIsPioneer(true);
-        setPioneerImage(pioneerCache);
+      if (typeof window !== 'undefined') {
+        const pioneerCache = window.localStorage.getItem('isPioneer');
+        if (pioneerCache) {
+          setIsPioneer(true);
+          setPioneerImage(pioneerCache);
+        }
       }
+
       if (balances && balances.length > 0) {
         console.log('balances: ', balances);
       }

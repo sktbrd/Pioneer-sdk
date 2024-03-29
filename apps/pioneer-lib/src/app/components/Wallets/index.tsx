@@ -15,9 +15,11 @@ export default function WalletList({usePioneer}:any) {
 
   useEffect(() => {
     try {
-      const storedWallets = localStorage.getItem('pairedWallets');
-      if (storedWallets) {
-        setWallets(JSON.parse(storedWallets));
+      if (typeof window !== 'undefined') {
+        const storedWallets = window.localStorage.getItem('pairedWallets');
+        if (storedWallets) {
+          setWallets(JSON.parse(storedWallets));
+        }
       }
     } catch (e) {
       console.error('Failed to load wallets from local storage:', e);

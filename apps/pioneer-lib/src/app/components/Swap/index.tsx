@@ -187,11 +187,13 @@ export function Swap({usePioneer}:any): JSX.Element {
       setStep(2);
     } else {
       // check pending
-      const pendingTransactions = JSON.parse(localStorage.getItem('pendingTransactions') ?? '[]');
+      if (typeof window !== 'undefined') {
+        const pendingTransactions = JSON.parse(window.localStorage.getItem('pendingTransactions') ?? '[]');
 
-      //console.log('pendingTransactions: ', pendingTransactions);
-      if (pendingTransactions && pendingTransactions.length > 0) {
-        openModal(MODAL_STRINGS.pending);
+        //console.log('pendingTransactions: ', pendingTransactions);
+        if (pendingTransactions && pendingTransactions.length > 0) {
+          openModal(MODAL_STRINGS.pending);
+        }
       }
     }
   }, []);

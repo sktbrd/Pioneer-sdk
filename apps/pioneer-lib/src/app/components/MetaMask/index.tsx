@@ -58,7 +58,7 @@ export default function MetaMask({ usePioneer, onClose, setIsOpenSide }: any) {
 
   return (
     <div>
-      <Portfolio />
+      <Portfolio usePioneer={usePioneer}/>
       {!hasConfirmed && (
         <VStack spacing={4}>
           <Card>

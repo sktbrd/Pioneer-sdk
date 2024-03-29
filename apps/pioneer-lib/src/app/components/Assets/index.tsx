@@ -62,12 +62,16 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
     fetchAssets();
   }, [app, onlyOwned, noTokens]);
 
-  const filteredAssets = allAssets.filter((asset: any) =>
-    asset.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
-    (!noTokens || (noTokens && asset.type !== 'token')) &&
-    (!hasPubkey || (hasPubkey && asset.pubkey))
-  );
+  const filteredAssets = allAssets.filter((asset: any) => {
+    // Ensure asset.name and searchQuery are both strings before calling toLowerCase()
+    const assetName = asset.name ? asset.name.toLowerCase() : '';
+    const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
+
+    return assetName.includes(normalizedSearchQuery) &&
+      (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
+      (!noTokens || (noTokens && asset.type !== 'token')) &&
+      (!hasPubkey || (hasPubkey && asset.pubkey));
+  });
 
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
 

@@ -8,7 +8,7 @@ const Pending = ({ usePioneer, onClose, setTxHash }: any) => {
   let getTxs = async function () {
     try {
       // Retrieve and parse data from local storage
-      let storedData: any = localStorage.getItem('pendingTransactions');
+      let storedData: any = window.localStorage.getItem('pendingTransactions');
       if (storedData && storedData.length > 0) {
         setPendingTransactions(JSON.parse(storedData));
         //get txs
@@ -36,18 +36,18 @@ const Pending = ({ usePioneer, onClose, setTxHash }: any) => {
     getTxs();
   }, []);
 
-  const handleMark = (txId: string, status: 'success' | 'failed') => {
-    // Remove the transaction from the list
-    const updatedTransactions = pendingTransactions.filter((tx) => tx !== txId);
-
-    // Update state and local storage
-    setPendingTransactions(updatedTransactions);
-    localStorage.setItem('pendingTransactions', JSON.stringify(updatedTransactions));
-
-    // Optionally, handle additional logic based on the status
-    //console.log(`Transaction ${txId} marked as ${status}`);
-    onClose();
-  };
+  // const handleMark = (txId: string, status: 'success' | 'failed') => {
+  //   // Remove the transaction from the list
+  //   const updatedTransactions = pendingTransactions.filter((tx) => tx !== txId);
+  //
+  //   // Update state and local storage
+  //   setPendingTransactions(updatedTransactions);
+  //   window.localStorage.setItem('pendingTransactions', JSON.stringify(updatedTransactions));
+  //
+  //   // Optionally, handle additional logic based on the status
+  //   //console.log(`Transaction ${txId} marked as ${status}`);
+  //   onClose();
+  // };
 
   return (
     <div>

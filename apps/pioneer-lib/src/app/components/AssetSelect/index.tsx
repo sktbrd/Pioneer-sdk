@@ -19,7 +19,7 @@ import {
   pioneerImagePng,
 } from '../../components/WalletIcon';
 
-export default function AssetSelect({ usePioneer, onSelect }: any) {
+export function AssetSelect({ usePioneer, onSelect }: any) {
   const { state } = usePioneer();
   let { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
@@ -165,3 +165,4 @@ export default function AssetSelect({ usePioneer, onSelect }: any) {
     </Stack>
   );
 }
+export default AssetSelect;

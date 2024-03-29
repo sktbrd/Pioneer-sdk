@@ -120,15 +120,17 @@ const PathWizard = () => {
   const [pathName, setPathName] = useState('');
 
   const onStart = async () => {
-    const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
-    if (lastConnectedWallet) {
-      const walletType = lastConnectedWallet.split(':')[0];
-      let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-      let allByCaip = blockchainsForContext.map((chainStr:any) => {
-        const chainEnum = getChainEnumValue(chainStr);
-        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-      }).filter(Boolean);
-      setAllChains(allByCaip);
+    if (typeof window !== 'undefined') {
+      const lastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
+      if (lastConnectedWallet) {
+        const walletType = lastConnectedWallet.split(':')[0];
+        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+        let allByCaip = blockchainsForContext.map((chainStr:any) => {
+          const chainEnum = getChainEnumValue(chainStr);
+          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+        }).filter(Boolean);
+        setAllChains(allByCaip);
+      }
     }
   };
 
@@ -163,50 +165,50 @@ const PathWizard = () => {
   const prevStep = () => setCurrentStep(currentStep > 1 ? currentStep - 1 : currentStep);
 
   const handleSave = () => {
-    const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
-    if (!lastConnectedWallet) {
-      // Handle the case where there is no last connected wallet, if necessary
-      return;
+    if (typeof window !== 'undefined') {
+      const lastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
+      if (!lastConnectedWallet) {
+        // Handle the case where there is no last connected wallet, if necessary
+        return;
+      }
+
+      const walletType = lastConnectedWallet.split(':')[0];
+
+      // Retrieve the existing paths array from localStorage, or initialize it as an empty array if not present
+      const existingPathsStr = window.localStorage.getItem(walletType + ':paths:add');
+      const existingPaths = existingPathsStr ? JSON.parse(existingPathsStr) : [];
+
+      // Check if a path with the same addressNList already exists
+      const isDuplicate = existingPaths.some((existingPath: any) =>
+        JSON.stringify(existingPath.addressNList) === JSON.stringify(path.addressNList)
+      );
+
+      if (!isDuplicate) {
+        // Push the new path into the array if it's not a duplicate
+        existingPaths.push(path);
+
+        // Save the updated array back to localStorage
+        window.localStorage.setItem(walletType + ':paths:add', JSON.stringify(existingPaths));
+
+        toast({
+          title: "Path Created",
+          description: "Your new path has been saved successfully.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        window.location.reload();
+      } else {
+        // Optionally notify the user that the path was not added because it's a duplicate
+        toast({
+          title: "Duplicate Path",
+          description: "This path already exists and was not added again.",
+          status: "info",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
-
-    const walletType = lastConnectedWallet.split(':')[0];
-
-    // Retrieve the existing paths array from localStorage, or initialize it as an empty array if not present
-    const existingPathsStr = localStorage.getItem(walletType + ':paths:add');
-    const existingPaths = existingPathsStr ? JSON.parse(existingPathsStr) : [];
-
-    // Check if a path with the same addressNList already exists
-    const isDuplicate = existingPaths.some((existingPath: any) =>
-      JSON.stringify(existingPath.addressNList) === JSON.stringify(path.addressNList)
-    );
-
-    if (!isDuplicate) {
-      // Push the new path into the array if it's not a duplicate
-      existingPaths.push(path);
-
-      // Save the updated array back to localStorage
-      localStorage.setItem(walletType + ':paths:add', JSON.stringify(existingPaths));
-
-      toast({
-        title: "Path Created",
-        description: "Your new path has been saved successfully.",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
-      window.location.reload();
-    } else {
-      // Optionally notify the user that the path was not added because it's a duplicate
-      toast({
-        title: "Duplicate Path",
-        description: "This path already exists and was not added again.",
-        status: "info",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-
-
   };
 
   return (

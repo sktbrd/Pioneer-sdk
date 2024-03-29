@@ -36,46 +36,46 @@ export default function Paths({usePioneer}: any) {
   const [pathDetails, setPathDetails] = useState<any>(selectedPath || {});
   const [isEditMode, setIsEditMode] = useState(false);
 
-  let loadPathsView = async function(){
-    try{
-      if (app?.paths.length !== 0) {
-        // //console.log('app?.paths: ', app);
-        //console.log('app?.paths: ', app?.paths);
-        //console.log('app?.blockchains: ', app?.blockchains);
-        setPaths(app?.paths);
-      } else {
-        //console.log("Load paths for last connected wallet")
-        //get last paired wallet
-        let lastPairedWallet = localStorage.getItem('lastPairedWallet');
-        // Retrieve custom and disabled paths for the wallet from localStorage
-        const customPathsForWalletStr = localStorage.getItem(lastPairedWallet + ':paths:add');
-        const disabledPathsForWalletStr = localStorage.getItem(lastPairedWallet + ':paths:removed');
+  const loadPathsView = async () => {
+    try {
+      // Ensure this code runs only in a browser environment
+      if (typeof window === 'undefined') return;
 
-        // Parse the retrieved strings as arrays
-        const customPathsForWallet = customPathsForWalletStr ? JSON.parse(customPathsForWalletStr) : [];
-        const disabledPathsForWallet = disabledPathsForWalletStr ? JSON.parse(disabledPathsForWalletStr) : [];
-
-        //get default paths
-        let defaultPaths = getPaths(app?.blockchains);
-        //console.log("defaultPaths: ",defaultPaths)
-
-        // Combine default paths with custom paths, ensuring unique values
-        const combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
-
-
-        // Filter out disabled paths
-        const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
-
-        //console.log("pathsView: ", pathsView);
-
-        // Assuming setPaths is a function defined to update your paths state
-        setPaths(pathsView || []);
-        //get disabled paths for wallet
+      // If app.paths is not empty, update the paths state directly
+      if (app?.paths?.length > 0) {
+        //console.log('app.paths: ', app.paths);
+        //console.log('app.blockchains: ', app.blockchains);
+        setPaths(app.paths);
+        return; // Exit the function early
       }
-    }catch(e){
-      console.error("Failed to load paths view: ", e);
+
+      // Log when loading paths for the last connected wallet
+      //console.log("Load paths for last connected wallet");
+
+      // Get the last paired wallet from localStorage
+      const lastPairedWallet = window.localStorage.getItem('lastPairedWallet');
+
+      // Retrieve custom and disabled paths for the wallet from localStorage
+      const customPathsForWallet = JSON.parse(window.localStorage.getItem(`${lastPairedWallet}:paths:add`) || '[]');
+      const disabledPathsForWallet = JSON.parse(window.localStorage.getItem(`${lastPairedWallet}:paths:removed`) || '[]');
+
+      // Get default paths based on app.blockchains
+      const defaultPaths = getPaths(app?.blockchains);
+      //console.log("defaultPaths: ", defaultPaths);
+
+      // Combine default paths with custom paths, ensuring unique values
+      const combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
+
+      // Filter out disabled paths
+      const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
+      //console.log("pathsView: ", pathsView);
+
+      // Update the paths state
+      setPaths(pathsView);
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
   useEffect(() => {
     loadPathsView();

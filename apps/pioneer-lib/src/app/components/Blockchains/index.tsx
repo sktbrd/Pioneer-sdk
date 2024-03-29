@@ -25,21 +25,23 @@ export default function Blockchains({usePioneer, onSelect}: any) {
 
   let onStart = async function(){
     try{
-      const lastConnectedWallet = localStorage.getItem('lastConnectedWallet');
-      setWallet(lastConnectedWallet || '');
-      if(lastConnectedWallet){
-        console.log('lastConnectedWallet: ', lastConnectedWallet);
-        await app.setContext(lastConnectedWallet);
-        //get wallet type
-        const walletType = lastConnectedWallet.split(':')[0];
-        console.log('walletType: ', walletType);
-        //set blockchains
-        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        let allByCaip = blockchainsForContext.map((chainStr: any) => {
-          const chainEnum = getChainEnumValue(chainStr);
-          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-        });
-        setAllChains(allByCaip)
+      if (typeof window !== 'undefined') {
+        const lastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
+        setWallet(lastConnectedWallet || '');
+        if(lastConnectedWallet){
+          console.log('lastConnectedWallet: ', lastConnectedWallet);
+          await app.setContext(lastConnectedWallet);
+          //get wallet type
+          const walletType = lastConnectedWallet.split(':')[0];
+          console.log('walletType: ', walletType);
+          //set blockchains
+          let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+          let allByCaip = blockchainsForContext.map((chainStr: any) => {
+            const chainEnum = getChainEnumValue(chainStr);
+            return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+          });
+          setAllChains(allByCaip)
+        }
       }
     }catch(e){
       console.error(e)
@@ -81,10 +83,12 @@ export default function Blockchains({usePioneer, onSelect}: any) {
       console.log('Enabled chains to save:', enabledChains);
       app.setBlockchains(enabledChains);
       let walletType = wallet.split(':')[0];
-      localStorage.setItem("cache:blockchains:"+walletType, JSON.stringify(enabledChains));
-      // Logic to update the global state or perform another action with enabledChains
-      // Reload the page to force restart the application
-      window.location.reload();
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem("cache:blockchains:"+walletType, JSON.stringify(enabledChains));
+        // Logic to update the global state or perform another action with enabledChains
+        // Reload the page to force restart the application
+        window.location.reload();
+      }
     }catch(e){
       console.error(e)
     }

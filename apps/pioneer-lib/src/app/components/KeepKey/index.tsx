@@ -44,7 +44,7 @@ export default function KeepKey({ usePioneer, onClose }: any) {
         <CheckIcon color="green.500" h={5} mr={2} w={5} />
         <Text>Pairing Successful</Text>
       </Box>
-      <Portfolio />
+      <Portfolio usePioneer={usePioneer}/>
     </div>
   );
 

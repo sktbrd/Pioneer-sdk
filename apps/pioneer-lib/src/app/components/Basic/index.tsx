@@ -12,6 +12,15 @@ export function Basic({ children, usePioneer }: any): JSX.Element {
     const { app, context, assetContext } = state;
     const [pioneerUrl, setPioneerUrl] = useState('Copy');
     const [copyButtonText, setCopyButtonText] = useState('Copy');
+    const [lastConnectedWallet, setLastConnectedWallet] = useState('');
+
+  useEffect(() => {
+    // Step 2: Retrieve the value in useEffect
+    if (typeof window !== 'undefined') {
+      const storedLastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
+      setLastConnectedWallet(storedLastConnectedWallet || '');
+    }
+  }, []); // Empty array means this runs once on mount
 
     // Variable to store the timeout ID
     let timeoutId: any = null;
@@ -30,12 +39,14 @@ export function Basic({ children, usePioneer }: any): JSX.Element {
     };
 
     useEffect(() => {
-      let pioneerUrlLocal = window.localStorage.getItem('pioneerUrl');
-      setPioneerUrl(pioneerUrlLocal || '');
-      // Cleanup function to clear the timeout when the component unmounts
-      return () => {
-        if (timeoutId) clearTimeout(timeoutId);
-      };
+      if (typeof window !== 'undefined') {
+        let pioneerUrlLocal = window.localStorage.getItem('pioneerUrl');
+        setPioneerUrl(pioneerUrlLocal || '');
+        // Cleanup function to clear the timeout when the component unmounts
+        return () => {
+          if (timeoutId) clearTimeout(timeoutId);
+        };
+      }
     }, []);
 
     return (
@@ -71,7 +82,7 @@ export function Basic({ children, usePioneer }: any): JSX.Element {
               </Tr>
               <Tr>
                 <Td>lastConnected</Td>
-                <Td>{localStorage.getItem('lastConnectedWallet')}</Td>
+                <Td>{lastConnectedWallet}</Td>
                 <Td />
               </Tr>
               <Tr>

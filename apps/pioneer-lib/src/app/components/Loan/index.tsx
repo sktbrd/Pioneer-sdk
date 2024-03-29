@@ -110,10 +110,12 @@ const Loan = ({ usePioneer, openModal }: any) => {
           memo: '',
           recipient,
         });
-        window.open(
-          `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
-          '_blank',
-        );
+        if (typeof window !== 'undefined') {
+          window.open(
+            `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
+            '_blank',
+          );
+        }
       }
     } catch (e: any) {
       console.error(e);

@@ -1,3 +1,4 @@
+'use-client';
 import { CheckIcon } from '@chakra-ui/icons';
 import {
   Avatar,
@@ -13,11 +14,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-//@ts-ignore
-// import pioneerImage from '../../../../public/png/pioneerMan.png';
 import Blockchains from '../../components/Blockchains';
 import { getWalletContent } from '../../components/WalletIcon';
-// import { usePioneer } from '@coinmasters/pioneer-react';
 
 const checkKeepkeyAvailability = async () => {
   try {
@@ -57,21 +55,18 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
   }, [app, app?.wallets, app?.isPioneer]);
 
   let checkStartup = async function () {
-    if (typeof window !== 'undefined') {
-      // Perform localStorage action
-     
-    
-    let pioneerUrl = localStorage.getItem('pioneerUrl');
-    if (pioneerUrl) {
-      //check for kkAPI
-      let isKeepkeyAvailable = await checkKeepkeyAvailability();
-      if (isKeepkeyAvailable) {
-        handleWalletClick('KEEPKEY');
-      } else {
-        setShowBlockchainSelection(true);
-      }
+      if (typeof window !== 'undefined') {
+        let pioneerUrl = window.localStorage.getItem('pioneerUrl');
+        if (pioneerUrl) {
+          //check for kkAPI
+          let isKeepkeyAvailable = await checkKeepkeyAvailability();
+          if (isKeepkeyAvailable) {
+            handleWalletClick('KEEPKEY');
+          } else {
+            setShowBlockchainSelection(true);
+          }
+        }
     }
-  }
   };
 
   useEffect(() => {
@@ -93,9 +88,11 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
   };
 
   const handleSubmit = async () => {
-    localStorage.setItem('pioneerUrl', server);
-    console.log('Server:', server);
-    checkStartup();
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('pioneerUrl', server);
+      console.log('Server:', server);
+      checkStartup();
+    }
   };
 
   const isDefaultServer = server === 'https://pioneers.dev/spec/swagger.json';

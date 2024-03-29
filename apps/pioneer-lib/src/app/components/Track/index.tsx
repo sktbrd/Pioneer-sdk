@@ -730,7 +730,7 @@ export function Track({ txHash }: any) {
   // ---------- query ----------
 
   // chain can be provided to show status before observation in thorchain
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(txid);
   const queryChain = params.get('chain');
   const queryNetwork = params.get('network');
   if (queryNetwork === 'stagenet') {
@@ -1063,9 +1063,9 @@ export function Track({ txHash }: any) {
         <Text>Detected Outbound Transaction</Text>
         <Button
           colorScheme="blue"
-          onClick={() => {
-            window.location.href = state.inbound;
-          }}
+          // onClick={() => {
+          //   window.location.href = state.inbound;
+          // }}
           size="sm"
         >
           Go to Inbound
@@ -1616,11 +1616,11 @@ export function Track({ txHash }: any) {
                           fontFamily="mono"
                           onClick={() => {
                             const path = `/${row.tx_id}`;
-                            if (queryNetwork) {
-                              window.location.href = `${path}?network=${queryNetwork}`;
-                            } else {
-                              window.location.href = path;
-                            }
+                            // if (queryNetwork) {
+                            //   window.location.href = `${path}?network=${queryNetwork}`;
+                            // } else {
+                            //   window.location.href = path;
+                            // }
                           }}
                         >
                           <Td p={1}>{row.tx_id.slice(-6)}</Td>
@@ -1694,11 +1694,11 @@ export function Track({ txHash }: any) {
                             fontFamily="mono"
                             onClick={() => {
                               const path = `/${row.source}`;
-                              if (queryNetwork) {
-                                window.location.href = `${path}?network=${queryNetwork}`;
-                              } else {
-                                window.location.href = path;
-                              }
+                              // if (queryNetwork) {
+                              //   window.location.href = `${path}?network=${queryNetwork}`;
+                              // } else {
+                              //   window.location.href = path;
+                              // }
                             }}
                             key={row.source} // Add key prop with a unique value
                           >
