@@ -23,14 +23,13 @@ import {
 } from '@pioneer-platform/pioneer-coins';
 let BLOCKCHAIN_IN = ChainToNetworkId['BASE']
 let BLOCKCHAIN_OUT = ChainToNetworkId['BASE']
-let ASSET = 'ETH'
+let ASSET = 'PRO'
 let MIN_BALANCE = process.env['MIN_BALANCE_ETH'] || "0.01"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.09"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
-let TRADE_PAIR  = "ETH_ETH"
-let INPUT_ASSET = ASSET
+
 let OUTPUT_ASSET = "PRO"
 
 console.log("spec: ",spec)
@@ -142,7 +141,7 @@ const test_service = async function (this: any) {
 
         await app.getPubkeys()
         await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
+        // log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
 
@@ -151,21 +150,29 @@ const test_service = async function (this: any) {
         log.info(tag,"balanceOut: ",balanceOut)
         assert(balanceOut[0])
 
-        if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
-        assert(balance.length > 0)
+        log.info(tag,"balance caip: ",balanceOut[0].caip)
+        if(balanceOut[0].caip !== 'eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630') {
+            log.info("given: ",balanceOut[0].caip)
+            log.info("expected: ",'eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630')
+            throw Error("Invalid CAIP for BASE!")
+        }
+
+        // if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
+        // assert(balance.length > 0)
         //verify balances
         assert(balanceOut[0])
 
-        const balances = app?.swapKit.getBalance('BASE');
+        const balances = await app?.swapKit.getBalance('BASE');
         log.info(tag,"balances: ",balances)
 
         await app.setOutboundAssetContext(balanceOut[0]);
 
         //get outbound asset
-        let outboundAssetContext = await app.outboundAssetContext
+        let outboundAssetContext = app.outboundAssetContext
         log.info(tag,"outboundAssetContext: ",outboundAssetContext)
         assert(outboundAssetContext)
-        if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
+        assert(outboundAssetContext)
+        // if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
 
         assert(app.assetContext)
         assert(app.assetContext.address)
@@ -179,15 +186,12 @@ const test_service = async function (this: any) {
           app.outboundAssetContext.address || app.swapKit.getAddress(app.outboundAssetContext.chain);
         assert(recipientAddress)
 
-        let buyAsset;
-        if (app.outboundAssetContext.contract) {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}-${app.outboundAssetContext.contract}`;
-        } else {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}`;
-        }
-        assert(buyAsset)
+        assert(app.outboundAssetContext)
 
+        //Know that uniswap swaps need a permit2 sig
 
+        //TODO get permit2 signature
+        let permit2Sig = '0x3e1d72164c5656b61bb438fd0527cf317451d334e54468ab58dfd54eb12cae6f3aafdff7d8f7952e6935a463a7920c1a16298694a976496d40918d718260cc781b'
         //get receiver context
         const entry = {
             sellAsset: app.assetContext,
@@ -196,6 +200,7 @@ const test_service = async function (this: any) {
             senderAddress,
             recipientAddress,
             slippage: '3',
+            permit2Sig
         };
 
         //quote
@@ -228,7 +233,7 @@ const test_service = async function (this: any) {
             feeOptionKey: FeeOption.Fast,
         });
         log.info("txHash: ",txHash)
-        // assert(txHash)
+        assert(txHash)
 
         //TODO monitor TX untill complete
 

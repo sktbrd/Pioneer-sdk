@@ -727,6 +727,14 @@ export function Track({ txHash }: any) {
     txid = txid.slice(2);
   }
 
+  // ------------------------------ onStart ------------------------------
+
+  React.useEffect(() => {
+    console.log('Component mounted');
+    // Your data fetching logic here
+    console.log('Data fetching initiated');
+  }, []);
+
   // ---------- query ----------
 
   // chain can be provided to show status before observation in thorchain
@@ -954,17 +962,22 @@ export function Track({ txHash }: any) {
       }
 
       // TODO: should go away after status provides finalized height
-      const inDetails = (await axios.get(`${ThornodeURL}/thorchain/tx/details/${txid}`)).data;
-      inboundDetailsRef.current = inDetails;
-      if (partialState?.outbound.txid && partialState?.outbound.asset.chain !== 'THOR') {
-        const outDetails = (
-          await axios.get(`${ThornodeURL}/thorchain/tx/details/${partialState?.outbound.txid}`)
-        ).data;
-        outboundDetailsRef.current = outDetails;
+      try{
+        const inDetails = (await axios.get(`${ThornodeURL}/thorchain/tx/details/${txid}`)).data;
+        inboundDetailsRef.current = inDetails;
+        if (partialState?.outbound.txid && partialState?.outbound.asset.chain !== 'THOR') {
+          const outDetails = (
+            await axios.get(`${ThornodeURL}/thorchain/tx/details/${partialState?.outbound.txid}`)
+          ).data;
+          outboundDetailsRef.current = outDetails;
+        }
+
+        // this triggers the state update,
+        setStatus(res.data);
+      }catch(e){
+        console.error("Tx not found yet. Waiting for it to be indexed.");
       }
 
-      // this triggers the state update,
-      setStatus(res.data);
     };
 
     update();

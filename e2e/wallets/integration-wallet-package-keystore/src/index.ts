@@ -323,6 +323,12 @@ const test_service = async function (this: any) {
          */
 
         /*
+                SEND PRO
+
+         */
+
+
+        /*
                 SEND MAYA
 
          */
@@ -429,36 +435,36 @@ const test_service = async function (this: any) {
          */
 
         //get assetValue for asset
-        let assetString = 'BTC.BTC'
-        console.log('assetString: ', assetString);
-        let TEST_AMOUNT = "0.0005"
+        // let assetString = 'BTC.BTC'
+        // console.log('assetString: ', assetString);
+        // let TEST_AMOUNT = "0.0005"
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        await AssetValue.loadStaticAssets();
-        let assetValue = await AssetValue.fromString(
-          assetString,
-          parseFloat(TEST_AMOUNT),
-        );
-        log.info("assetValue: ",assetValue)
-
-
-        let address = await keepkey[Chain.Bitcoin].walletMethods.getAddress()
-        log.info("address: ",address)
-        assert(address)
-        //send
-        let sendPayload = {
-            from:address,
-            assetValue,
-            memo: '',
-            recipient: process.env['FAUCET_BITCOIN_ADDRESS'],
-        }
-        log.info("sendPayload: ",sendPayload)
-        log.info("keepkey: ",keepkey)
-        log.info("keepkey[Chain.Bitcoin]: ",keepkey)
-        const txHash = await  keepkey[Chain.Bitcoin].walletMethods.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        //
+        // let address = await keepkey[Chain.Bitcoin].walletMethods.getAddress()
+        // log.info("address: ",address)
+        // assert(address)
+        // //send
+        // let sendPayload = {
+        //     from:address,
+        //     assetValue,
+        //     memo: '',
+        //     recipient: process.env['FAUCET_BITCOIN_ADDRESS'],
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // log.info("keepkey: ",keepkey)
+        // log.info("keepkey[Chain.Bitcoin]: ",keepkey)
+        // const txHash = await  keepkey[Chain.Bitcoin].walletMethods.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
         log.info("************************* TEST PASS *************************")

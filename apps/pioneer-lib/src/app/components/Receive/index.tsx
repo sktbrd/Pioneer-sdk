@@ -102,7 +102,7 @@ export default function Receive({ usePioneer, onClose }: any) {
           <ModalHeader>Output Selection</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <OutputSelect onClose={closeModal} onSelect={onSelect}/>
+            <OutputSelect usePioneer={usePioneer} onClose={closeModal} onSelect={onSelect}/>
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -102,7 +102,9 @@ export class SwapKitCore<T = ''> {
 
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
     const tag = TAG + ' | swap | ';
-    //console.log(tag, 'route: ', route);
+    console.log(tag, 'route: ', route);
+    if (!route) throw new SwapKitError('core_swap_route_not_found');
+    if (!route.meta && route.quote) route = route.quote;
     const { quoteMode } = route.meta;
     //console.log(tag, 'quoteMode: ', quoteMode);
 
@@ -123,7 +125,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       const swapType = classifySwap(quoteMode);
-      //console.log(tag, 'swapType: ', swapType);
+      console.log(tag, 'swapType: ', swapType);
 
       switch (swapType) {
         case 'AGG_SWAP': {
@@ -149,6 +151,7 @@ export class SwapKitCore<T = ''> {
         }
 
         case 'SWAP_OUT': {
+          console.log("route: ", route)
           if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
           const asset = await AssetValue.fromString(route.calldata.fromAsset);
           if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
@@ -215,6 +218,22 @@ export class SwapKitCore<T = ''> {
         case 'UXTO_SWAP': {
           //console.log(tag, 'UXTO_SWAP route: ', route);
           //log.info(tag,"OSMOSIS_SWAP route: ",JSON.stringify(route))
+          return await this.performTx(route.txs[0]);
+        }
+        case 'ETH_TO_ETH': {
+          //Placeholder UNISWAP swaps
+          console.log(' ETH_TO_ETH  Detected! ');
+          // const walletMethods = this.connectedWallets[Chain.Ethereum];
+          // console.log("walletMethods: ", walletMethods)
+          // //Uniswap needs permit2
+          // let permit2Sig = await walletMethods.signTypedData(route.txs[0].txParams);
+          // console.log('permit2Sig: ', permit2Sig);
+          // //get txData to sign and broadcast
+
+          //broadcast
+
+          //console.log('route: ', route);
+          //perform
           return await this.performTx(route.txs[0]);
         }
         case 'MAYA_SUPPORTED_TO_MAYA_SUPPORTED': {
@@ -353,10 +372,10 @@ export class SwapKitCore<T = ''> {
         //console.log(tag, 'balance: ' + balance);
 
         //console.log('Get balance for Address! chain: ' + chain);
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < balance.length; i++) {
-          balance[i].address = address;
-        }
+
+        // for (let i = 0; i < balance.length; i++) {
+        //   balance[i].address = address;
+        // }
       } else {
         //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
         /*

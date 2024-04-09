@@ -2,12 +2,15 @@
 /*
   Comlete swap step
  */
-import { Link, Card, CardBody, Text } from "@chakra-ui/react";
+import { Button, Link, Card, CardBody, Text } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import NextLink from "next/link";
 import Track from "../../../components/Track";
 
-const CompleteSwap = ({ txHash }: any) => {
+const CompleteSwap = ({ usePioneer, txHash }: any) => {
+  const { state } = usePioneer();
+  const { app, assetContext } = state;
+
   const saveToPendingTransactions = () => {
     if (typeof window !== 'undefined') {
       const storedData = window.localStorage.getItem("pendingTransactions");
@@ -41,16 +44,27 @@ const CompleteSwap = ({ txHash }: any) => {
       }
     }
   };
+
+  let openLink = (e: any) => {
+    if (typeof window !== 'undefined') {
+      window.open(
+        `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
+        '_blank',
+      );
+    }
+  }
+
   useEffect(() => {
     if (txHash) {
       saveToPendingTransactions();
     }
   }, [txHash]);
+
   return (
     <div>
       <Card>
         <CardBody>
-          <Text>Your Swaps TXID: {txHash}</Text>
+          <Text>Your input TXID: {txHash} </Text>
         </CardBody>
       </Card>
       <br />

@@ -15,6 +15,7 @@ export default function KeepKey({ usePioneer, onClose }: any) {
       await connectWallet('KEEPKEY');
       await app.getPubkeys();
       await app.getBalances();
+
     } catch (e) {
       console.error(e);
     }

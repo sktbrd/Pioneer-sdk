@@ -173,7 +173,7 @@ export const getAssetType = ({ chain, symbol }: { chain: Chain; symbol: string }
     case Chain.Polygon:
       return symbol === Chain.Polygon ? 'Native' : 'POLYGON';
     case Chain.Base:
-      return 'Native';
+      return symbol === Chain.Ethereum ? 'Native' : 'ERC20';
     case Chain.Arbitrum:
       return [Chain.Ethereum, Chain.Arbitrum].includes(symbol as Chain) ? 'Native' : 'ARBITRUM';
     case Chain.Optimism:

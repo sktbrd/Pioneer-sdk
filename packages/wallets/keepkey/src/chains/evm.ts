@@ -34,10 +34,12 @@ export class KeepKeySigner extends AbstractSigner {
         address: this.address,
         typedData: typedData,
       };
+      console.log('signTypedData input: ', input);
       const responseSign = await this.sdk.eth.ethSignTypedData(input);
       //console.log('responseSign: ', responseSign);
       return responseSign;
     } catch (error) {
+      console.error('error: signTypedData: ', error);
       // Handle error if needed
       throw error; // Or any other error handling mechanism
     }
@@ -91,10 +93,6 @@ export class KeepKeySigner extends AbstractSigner {
     const fixBuggedGasLimit = (gasLimit: any): bigint => typeof gasLimit === 'bigint' ? gasLimit : BigInt(String(gasLimit).replace(/^0x0x/, '0x'));
     gasLimit = fixBuggedGasLimit(gasLimit);
 
-
-
-
-
     const input = {
       gas: toHexString(BigInt(gasLimit)),
       addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
@@ -114,7 +112,9 @@ export class KeepKeySigner extends AbstractSigner {
               'gasPrice' in restTx ? toHexString(BigInt(gasPrice?.toString() || '0')) : undefined, // Fixed syntax error and structure here
           }),
     };
+    console.log('KEEPKEY input: ', input);
     const responseSign = await this.sdk.eth.ethSignTransaction(input);
+    console.log('KEEPKEY responseSign: ', input);
     return responseSign.serialized;
   };
 

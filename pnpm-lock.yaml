@@ -430,6 +430,58 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/swaps/e2e-swap-base-eth:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.25
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/swaps/e2e-swap-base-pro:
     dependencies:
       '@coinmasters/core':
@@ -453,6 +505,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.16)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.25
+        version: 9.2.25
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.15(@types/node@20.11.16)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.16
@@ -511,6 +569,9 @@ importers:
       assert:
         specifier: ^2.1.0
         version: 2.1.0
+      axios:
+        specifier: ^1.6.7
+        version: 1.6.8
       dotenv:
         specifier: ^6.2.0
         version: 6.2.0
@@ -574,6 +635,61 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/swaps/e2e-swap-doge-bitcoincash:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.23
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      axios:
+        specifier: ^1.6.7
+        version: 1.6.8
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/swaps/e2e-swap-eth-base:
     dependencies:
       '@coinmasters/core':
@@ -597,6 +713,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.6)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.25
+        version: 9.2.25
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.11.6)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.6
@@ -845,6 +967,58 @@ importers:
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/swaps/e2e-swap-pro-base:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.25
+        version: 9.2.25
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -2253,11 +2427,11 @@ importers:
         specifier: ^9.2.3
         version: 9.2.3
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.15(@types/node@20.10.0)
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.10.0)
       '@pioneer-platform/pioneer-discovery':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.0.6
+        version: 0.0.6
     devDependencies:
       '@internal/config':
         specifier: workspace:*
@@ -6835,7 +7009,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dev: false
 
-  /@metamask/eslint-config@12.2.0(eslint-config-prettier@8.5.0)(eslint-plugin-import@2.26.0)(eslint-plugin-jsdoc@43.2.0)(eslint-plugin-prettier@5.0.1)(eslint-plugin-promise@6.1.1)(eslint@8.57.0)(prettier@3.1.0):
+  /@metamask/eslint-config@12.2.0(eslint-config-prettier@8.10.0)(eslint-plugin-import@2.26.0)(eslint-plugin-jsdoc@43.2.0)(eslint-plugin-prettier@5.0.1)(eslint-plugin-promise@6.1.1)(eslint@8.57.0)(prettier@3.1.0):
     resolution: {integrity: sha512-BurYsht8MKdhvW2itUPPF8NkAhYtDdsCGHTSY7EzVvlmGP4jc9XrRZyfNwlt0zhB6MCMjHB1uNWwchtX7vBFjw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -6848,10 +7022,10 @@ packages:
       prettier: ^2.7.1
     dependencies:
       eslint: 8.57.0
-      eslint-config-prettier: 8.5.0(eslint@8.57.0)
+      eslint-config-prettier: 8.10.0(eslint@8.57.0)
       eslint-plugin-import: 2.26.0(@typescript-eslint/parser@6.12.0)(eslint@8.57.0)
       eslint-plugin-jsdoc: 43.2.0(eslint@8.57.0)
-      eslint-plugin-prettier: 5.0.1(eslint-config-prettier@8.5.0)(eslint@8.57.0)(prettier@3.1.0)
+      eslint-plugin-prettier: 5.0.1(eslint-config-prettier@8.10.0)(eslint@8.57.0)(prettier@3.1.0)
       eslint-plugin-promise: 6.1.1(eslint@8.57.0)
       prettier: 3.1.0
     dev: false
@@ -8135,6 +8309,10 @@ packages:
     resolution: {integrity: sha512-4JJvZ4rNjjpG3ZEXOKPow2IBu2lR1mdV+YDszAhEnizx7VoVxkmXvLLuAxVZf1Hv8Mf55epZSd/exTdUEQ0Bgw==}
     dev: false
 
+  /@pioneer-platform/pioneer-caip@9.2.26:
+    resolution: {integrity: sha512-CtJDwZXWYVogrbRZV6e5Bkrp/54xpoNufkAsvTQ83vPuJ0oz434NWaxFgfXAUy+ipdfhRwp/dF1JyjLm/zP+2g==}
+    dev: false
+
   /@pioneer-platform/pioneer-client@9.2.3:
     resolution: {integrity: sha512-S7psBzQ7S4/38AaxsCS/NbZDOU8cUtpzUjb7ku6vQYS0wR9ZiEjIfuPet0CfpsGEMnnJUedPYM9Eeiv5G/QIRQ==}
     dependencies:
@@ -8301,8 +8479,44 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/pioneer-discovery@0.0.5:
-    resolution: {integrity: sha512-b5U4Ed+4/zL24KfUYGlgfEms3xTTsCdewV8VTUGplD643eX9suBnLS1z59vY/xr+i+zdPTDS2Kgplo9NCa5S2w==}
+  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.10.0):
+    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.30):
+    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.30)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.6):
+    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.6)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-discovery@0.0.6:
+    resolution: {integrity: sha512-0yzWvrPZS5h3yjsjfX/YKkkBx0CaXwRAXkQkT9TyNo8zPyUlHPrPkUJ9pzIrquBRHZRUxmuCnHah65LGGVtM4Q==}
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -9105,7 +9319,7 @@ packages:
       '@babel/core': 7.23.3
       '@ethersproject/providers': 5.7.2
       '@metamask/detect-provider': 2.0.0
-      '@metamask/eslint-config': 12.2.0(eslint-config-prettier@8.5.0)(eslint-plugin-import@2.26.0)(eslint-plugin-jsdoc@43.2.0)(eslint-plugin-prettier@5.0.1)(eslint-plugin-promise@6.1.1)(eslint@8.57.0)(prettier@3.1.0)
+      '@metamask/eslint-config': 12.2.0(eslint-config-prettier@8.10.0)(eslint-plugin-import@2.26.0)(eslint-plugin-jsdoc@43.2.0)(eslint-plugin-prettier@5.0.1)(eslint-plugin-promise@6.1.1)(eslint@8.57.0)(prettier@3.1.0)
       '@metamask/key-tree': 9.0.0
       '@metamask/snaps-types': 1.0.2(@metamask/approval-controller@3.5.2)
       '@metamask/snaps-ui': 1.0.2
@@ -9121,7 +9335,7 @@ packages:
       eslint: 8.57.0
       eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@6.12.0)(eslint@8.57.0)(typescript@5.2.2)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
-      eslint-plugin-prettier: 5.0.1(eslint-config-prettier@8.5.0)(eslint@8.57.0)(prettier@3.1.0)
+      eslint-plugin-prettier: 5.0.1(eslint-config-prettier@8.10.0)(eslint@8.57.0)(prettier@3.1.0)
       eslint-plugin-react: 7.33.2(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
       eth-rpc-errors: 4.0.3
@@ -11850,9 +12064,9 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       call-bind: 1.0.7
-      define-properties: 1.2.0
+      define-properties: 1.2.1
       es-abstract: 1.22.1
-      get-intrinsic: 1.2.1
+      get-intrinsic: 1.2.4
       is-string: 1.0.7
 
   /array-includes@3.1.8:
@@ -12054,10 +12268,6 @@ packages:
       postcss: 8.4.38
       postcss-value-parser: 4.2.0
     dev: true
-
-  /available-typed-arrays@1.0.6:
-    resolution: {integrity: sha512-j1QzY8iPNPG4o4xmO3ptzpRxTciqD3MgEHtifP/YnJpIo58Xu+ne4BejlbkuaLfXn/nz6HFiw29bLpj2PNMdGg==}
-    engines: {node: '>= 0.4'}
 
   /available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
@@ -13552,14 +13762,6 @@ packages:
     dependencies:
       clone: 1.0.4
 
-  /define-data-property@1.1.1:
-    resolution: {integrity: sha512-E7uGkTzkk1d0ByLeSc6ZsFS79Axg+m1P/VsgYsxHgiuc3tFSj+MjMIwe90FC4lOAZzNBdY7kkO2P2wKdsQ1vgQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      get-intrinsic: 1.2.4
-      gopd: 1.0.1
-      has-property-descriptors: 1.0.1
-
   /define-data-property@1.1.4:
     resolution: {integrity: sha512-rBMvIzlpA8v6E+SJZoo++HAYqsLrkg7MSfIinMPFhmkorw7X+dOXVJQs+QT69zGkzMyfDnIMN2Wid1+NbL3T+A==}
     engines: {node: '>= 0.4'}
@@ -13567,13 +13769,6 @@ packages:
       es-define-property: 1.0.0
       es-errors: 1.3.0
       gopd: 1.0.1
-
-  /define-properties@1.2.0:
-    resolution: {integrity: sha512-xvqAVKGfT1+UAvPwKTVw/njhdQ8ZhXK4lI0bCIuCMrp2up9nPnaDftrLtmpTazqd1o+UY4zgzU+avtMbDP+ldA==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      has-property-descriptors: 1.0.1
-      object-keys: 1.1.1
 
   /define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
@@ -13965,7 +14160,7 @@ packages:
       typed-array-byte-offset: 1.0.0
       typed-array-length: 1.0.4
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /es-abstract@1.22.3:
     resolution: {integrity: sha512-eiiY8HQeYfYH2Con2berK+To6GrK2RxbPawDkGq4UiCQQfZHb6wX9qQqkbpPqaxQFcl8d9QzZqo0tGE0VcrdwA==}
@@ -13973,7 +14168,7 @@ packages:
     dependencies:
       array-buffer-byte-length: 1.0.1
       arraybuffer.prototype.slice: 1.0.2
-      available-typed-arrays: 1.0.6
+      available-typed-arrays: 1.0.7
       call-bind: 1.0.7
       es-set-tostringtag: 2.0.2
       es-to-primitive: 1.2.1
@@ -13982,8 +14177,8 @@ packages:
       get-symbol-description: 1.0.0
       globalthis: 1.0.3
       gopd: 1.0.1
-      has-property-descriptors: 1.0.1
-      has-proto: 1.0.1
+      has-property-descriptors: 1.0.2
+      has-proto: 1.0.3
       has-symbols: 1.0.3
       hasown: 2.0.2
       internal-slot: 1.0.6
@@ -14009,7 +14204,7 @@ packages:
       typed-array-byte-offset: 1.0.0
       typed-array-length: 1.0.4
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /es-abstract@1.22.4:
     resolution: {integrity: sha512-vZYJlk2u6qHYxBOTjAeg7qUxHdNfih64Uu2J8QqWgXZ2cri0ZpJAkzDUK/q593+mvKwlxyaxr6F1Q+3LKoQRgg==}
@@ -14055,7 +14250,7 @@ packages:
       typed-array-byte-offset: 1.0.2
       typed-array-length: 1.0.5
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /es-abstract@1.22.5:
     resolution: {integrity: sha512-oW69R+4q2wG+Hc3KZePPZxOiisRIqfKBVo/HLx94QcJeWGU/8sZhCvc829rd1kS366vlJbzBfXf9yWwf0+Ko7w==}
@@ -14436,8 +14631,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-config-prettier@8.5.0(eslint@8.57.0):
-    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
+  /eslint-config-prettier@8.10.0(eslint@8.57.0):
+    resolution: {integrity: sha512-SM8AMJdeQqRYT9O9zguiruQZaN7+z+E4eAP9oiLNGKMtomwaB1E9dcgUD6ZAn/eQAb52USbvezbiljfZUhbJcg==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
@@ -14728,7 +14923,7 @@ packages:
       object.entries: 1.1.8
       object.fromentries: 2.0.8
 
-  /eslint-plugin-prettier@5.0.1(eslint-config-prettier@8.5.0)(eslint@8.57.0)(prettier@3.1.0):
+  /eslint-plugin-prettier@5.0.1(eslint-config-prettier@8.10.0)(eslint@8.57.0)(prettier@3.1.0):
     resolution: {integrity: sha512-m3u5RnR56asrwV/lDC4GHorlW75DsFfmUcjfCYylTUs85dBRnB7VM6xG8eCMJdeDRnppzmxZVf1GEPJvl1JmNg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -14743,7 +14938,7 @@ packages:
         optional: true
     dependencies:
       eslint: 8.57.0
-      eslint-config-prettier: 8.5.0(eslint@8.57.0)
+      eslint-config-prettier: 8.10.0(eslint@8.57.0)
       prettier: 3.1.0
       prettier-linter-helpers: 1.0.0
       synckit: 0.8.8
@@ -15683,14 +15878,6 @@ packages:
   /get-func-name@2.0.2:
     resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
 
-  /get-intrinsic@1.2.1:
-    resolution: {integrity: sha512-2DcsyfABl+gVHEfCOaTrWgyt+tb6MSEGmKq+kI5HwLbIYgjgmMcV8KQ41uaKz1xxUcn9tJtgFbQUEVcEbd0FYw==}
-    dependencies:
-      function-bind: 1.1.2
-      has: 1.0.3
-      has-proto: 1.0.1
-      has-symbols: 1.0.3
-
   /get-intrinsic@1.2.4:
     resolution: {integrity: sha512-5uYhsJH8VJBTv7oslg4BznJYhDoRI6waYCxMmCdnTrcCrHA/fCFKoTFz2JKKE0HdDFUF7/oQuhzumXJK7paBRQ==}
     engines: {node: '>= 0.4'}
@@ -16085,19 +16272,10 @@ packages:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
 
-  /has-property-descriptors@1.0.1:
-    resolution: {integrity: sha512-VsX8eaIewvas0xnvinAe9bw4WfIeODpGYikiWYLH+dma0Jw6KHYqWiWfhQlgOVK8D6PvjubK5Uc4P0iIhIcNVg==}
-    dependencies:
-      get-intrinsic: 1.2.4
-
   /has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
     dependencies:
       es-define-property: 1.0.0
-
-  /has-proto@1.0.1:
-    resolution: {integrity: sha512-7qE+iP+O+bgF9clE5+UoBFzE65mlBiVj3tKCrlNQ0Ogwm0BjpT/gK4SlLYDMybDh5I3TCTKnPPa0oMG7JDYrhg==}
-    engines: {node: '>= 0.4'}
 
   /has-proto@1.0.3:
     resolution: {integrity: sha512-SJ1amZAJUiZS+PhsVLf5tGydlaVB8EdFpaSO4gmiUKUOxk8qzn5AIy4ZeJUmh22znIdk/uMAUT2pl3FxzVUH+Q==}
@@ -16738,7 +16916,7 @@ packages:
     resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
     engines: {node: '>= 0.4'}
     dependencies:
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /is-typedarray@1.0.0:
     resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
@@ -20420,9 +20598,9 @@ packages:
     resolution: {integrity: sha512-tMNCiqYVkXIZgc2Hnoy2IvC/f8ezc5koaRFkCjrpWzGpCd3qbZXPzVy9MAZzK1ch/X0jvSkojys3oqJN0qCmdA==}
     engines: {node: '>= 0.4'}
     dependencies:
-      define-data-property: 1.1.1
+      define-data-property: 1.1.4
       functions-have-names: 1.2.3
-      has-property-descriptors: 1.0.1
+      has-property-descriptors: 1.0.2
 
   /set-function-name@2.0.2:
     resolution: {integrity: sha512-7PGFlmtwsEADb0WYyvCMa1t+yke6daIG4Wirafur5kcf+MhUnPms1UeR0CKQdTZD81yESwMHbtn+TR+dMviakQ==}
@@ -22503,7 +22681,7 @@ packages:
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
       is-typed-array: 1.1.13
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /utility-types@3.10.0:
     resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
@@ -23518,7 +23696,7 @@ packages:
       isarray: 2.0.5
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.1
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /which-collection@1.0.1:
     resolution: {integrity: sha512-W8xeTUwaln8i3K/cY1nGXzdnVZlidBcagyNFtBdD5kxnb4TvGKR7FfSIS3mYpwWS1QUCutfKz8IY8RjftB0+1A==}
@@ -23538,16 +23716,6 @@ packages:
       load-yaml-file: 0.2.0
       path-exists: 4.0.0
     dev: true
-
-  /which-typed-array@1.1.14:
-    resolution: {integrity: sha512-VnXFiIW8yNn9kIHN88xvZ4yOWchftKDsRJ8fEPacX/wl1lOvBrhsJ/OeJCXq7B0AaijRuqgzSKalJoPk+D8MPg==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-tostringtag: 1.0.2
 
   /which-typed-array@1.1.15:
     resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}

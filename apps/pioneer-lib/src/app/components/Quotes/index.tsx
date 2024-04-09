@@ -10,6 +10,9 @@ let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
+let UniswapImage = '/png/uniswap.png'
+let RangoImage = '/png/rango.png'
+let AcrossImage = '/png/across.png'
 
 export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
@@ -23,6 +26,9 @@ export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
     changelly: ChangellyImage,
     mayachain: MayachainImage,
     osmosis: OsmosisImage,
+    uniswap: UniswapImage,
+    rango: RangoImage,
+    across: AcrossImage,
   };
 
   const integrationColors: { [key: string]: string } = {
@@ -30,6 +36,9 @@ export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
     changelly: '#19212d', // Changelly theme color
     mayachain: '#f4b728', // MayaChain theme color
     osmosis: '#00a3ff', // Osmosis theme color
+    uniswap: '#e600ff', // Osmosis theme color
+    rango: 'rgba(27,255,0,0.3)', // Osmosis theme color
+    across: '#00ff0d', // Osmosis theme color
   };
 
   const formatUSD = (amount?: number) => {

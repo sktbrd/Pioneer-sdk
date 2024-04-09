@@ -408,12 +408,14 @@ let SAMPLE_DATA: any = [
   }
 ]
 
-let SAMPLE_SWAP_TXID = '793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23'
+// let SAMPLE_SWAP_TXID = '793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23'
+let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800ea779e95'
+//3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800ea779e95
 
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('basic');
+  const [intent, setIntent] = useState('swap');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });

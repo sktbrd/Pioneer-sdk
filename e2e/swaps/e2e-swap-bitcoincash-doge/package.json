@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-swap-bitcoincash-doge",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -28,6 +28,7 @@
     "@pioneer-platform/pioneer-coins": "^9.2.15",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
+    "axios": "^1.6.7",
     "dotenv": "^6.2.0",
     "typescript": "5.2.2",
     "wait-promise": "^0.4.1"

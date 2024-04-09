@@ -11,7 +11,6 @@ const BeginSwap = ({ quote, onAcceptSign }: any) => {
 
   // wait for routes
   useEffect(() => {
-    console.log("Quote changed: ", quote);
     if (quote && quote.quote) {
       setShowGif(false);
     }

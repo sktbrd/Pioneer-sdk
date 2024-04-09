@@ -15,10 +15,10 @@ import { KeepKeySdk } from '@keepkey/keepkey-sdk';
 import { binanceWalletMethods } from './chains/binance.js';
 import { cosmosWalletMethods } from './chains/cosmos.js';
 import { KeepKeySigner } from './chains/evm.ts';
+import { mayachainWalletMethods } from './chains/mayachain.ts';
 import { osmosisWalletMethods } from './chains/osmosis.js';
 import { rippleWalletMethods } from './chains/ripple.js';
 import { thorchainWalletMethods } from './chains/thorchain.ts';
-import { mayachainWalletMethods } from './chains/mayachain.ts';
 import { utxoWalletMethods } from './chains/utxo.js';
 export type { PairingInfo } from '@keepkey/keepkey-sdk';
 
@@ -74,19 +74,54 @@ const getEVMWalletMethods = async ({
 
   switch (chain) {
     case Chain.Ethereum:
-      return { ...ETHToolbox({ ...evmParams, ethplorerApiKey }), getAddress: () => address };
+      return {
+        ...ETHToolbox({ ...evmParams, ethplorerApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.BinanceSmartChain:
-      return { ...BSCToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...BSCToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.Arbitrum:
-      return { ...ARBToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...ARBToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.Optimism:
-      return { ...OPToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...OPToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.Polygon:
-      return { ...MATICToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...MATICToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.Avalanche:
-      return { ...AVAXToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...AVAXToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     case Chain.Base:
-      return { ...BASEToolbox({ ...evmParams, covalentApiKey }), getAddress: () => address };
+      return {
+        ...BASEToolbox({ ...evmParams, covalentApiKey }),
+        getAddress: () => address,
+        signMessage: signer.signMessage,
+        signTypedData: signer.signTypedData,
+      };
     default:
       throw new Error('getEVMWalletMethods Chain not supported');
   }
@@ -223,7 +258,7 @@ const connectKeepkey =
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
     console.log('keepKeySdk: ', keepKeySdk);
-    let features = await keepKeySdk.system.info.getFeatures()
+    let features = await keepKeySdk.system.info.getFeatures();
     console.log('features: ', features);
 
     const chainPromises = chains.map(async (chain) => {

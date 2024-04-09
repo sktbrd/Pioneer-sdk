@@ -32,6 +32,7 @@ export const MAX_APPROVAL = MaxInt256;
 
 const baseAssetAddress: Record<EVMChain, string> = {
   [Chain.Arbitrum]: ContractAddress.ARB,
+  [Chain.Base]: ContractAddress.ETH,
   [Chain.Ethereum]: ContractAddress.ETH,
   [Chain.Avalanche]: ContractAddress.AVAX,
   [Chain.BinanceSmartChain]: ContractAddress.BSC,
@@ -403,7 +404,7 @@ const sendTransaction = async (
   //console.log("TOOLBOX: checkpoint: ")
   if (!signer) throw new Error('Signer is not defined');
   const { from, to, data, value, ...transaction } = tx;
-  //console.log("TOOLBOX: tx: ",tx)
+  console.log('TOOLBOX: tx: ', tx);
   if (!to) throw new Error('No to address provided');
 
   const parsedTxObject = {
@@ -421,7 +422,7 @@ const sendTransaction = async (
 
   const address = from || (await signer.getAddress());
   const nonce = tx.nonce || (await provider.getTransactionCount(address));
-  const chainId = (await provider.getNetwork()).chainId;
+  const chainId = parseInt((await provider.getNetwork()).chainId.toString());
 
   const isEIP1559 = isEIP1559Transaction(parsedTxObject) || isEIP1559Compatible;
 
@@ -441,17 +442,29 @@ const sendTransaction = async (
           },
         )
       : {};
+
   let gasLimit: string;
+
   try {
+    if(parsedTxObject.gasLimit.indexOf('0x0x') > -1) parsedTxObject.gasLimit.replace('0x0x', '0x')
     gasLimit = toHexString(
       parsedTxObject.gasLimit || ((await provider.estimateGas(parsedTxObject)) * 11n) / 10n,
     );
   } catch (error) {
-    throw new Error(`Error estimating gas limit: ${JSON.stringify(error)}`);
+    console.error('Failed to estimate gas');
+    if (chainId === 1) {
+      gasLimit = toHexString(221000n);
+    } else if (chainId === 8453) {
+      gasLimit = toHexString(121000n);
+    } else {
+      gasLimit = toHexString(1000000n);
+    }
   }
 
   try {
-    const txObject = {
+    console.log('TOOLBOX: checkpoint: parsedTxObject: ', parsedTxObject);
+
+    const txObject: any = {
       ...parsedTxObject,
       chainId,
       type: isEIP1559 ? 2 : 0,
@@ -459,12 +472,15 @@ const sendTransaction = async (
       nonce: nonce.toString(),
       ...feeData,
     };
-    //console.log("TOOLBOX: txObject: ",txObject)
+    if(isEIP1559) delete txObject.gasPrice;
+    console.log('TOOLBOX: txObject: ', txObject);
     try {
       const response = await signer.sendTransaction(txObject);
       //console.log("TOOLBOX: response: ",response)
       return typeof response?.hash === 'string' ? response.hash : response;
     } catch (error) {
+      //
+      console.log('TOOLBOX: sendTransaction failed, doing manual sign/broadcast: ', error);
       const txHex = await signer.signTransaction({
         ...txObject,
         from: address,
@@ -475,7 +491,7 @@ const sendTransaction = async (
       return typeof response?.hash === 'string' ? response.hash : response;
     }
   } catch (error) {
-    console.error("sendTransaction: BaseEVMToolbox: ",error)
+    console.error('sendTransaction: BaseEVMToolbox: ', error);
     throw new Error(`Error sending transaction: ${JSON.stringify(error)}`);
   }
 };

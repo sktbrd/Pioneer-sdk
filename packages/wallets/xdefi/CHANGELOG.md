@@ -1,5 +1,18 @@
 # @coinmasters/wallet-xdefi
 
+## 10.0.1
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@10.0.1
+  - @coinmasters/helpers@10.0.1
+  - @coinmasters/toolbox-utxo@10.0.1
+  - @coinmasters/types@4.6.1
+  - @coinmasters/toolbox-evm@10.0.1
+
 ## 10.0.0
 
 ### Minor Changes

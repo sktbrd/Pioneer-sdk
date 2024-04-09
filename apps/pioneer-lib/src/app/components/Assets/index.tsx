@@ -27,32 +27,12 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
     const fetchAssets = async () => {
       try {
         let assets = await app.getAssets();
-
         //pubkeys
         console.log("app.pubkeys: ", app.pubkeys);
-        console.log("assets: ", assets);
-        assets = assets.map((asset: any) => {
-          // Find the corresponding balance object for the asset
-          const balanceObj = app.balances.find((balance: any) => balance.caip === asset.caip);
-          const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          const balance = balanceObj ? balanceObj.balance : '';
-
-          // Attempt to find a corresponding pubkey object that includes the asset's networkId
-          const pubkeyObj = app.pubkeys.find((pubkey: any) => pubkey.networks.includes(asset.networkId));
-
-          // Extract the pubkey value if the pubkeyObj is found
-          const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-
-          // Set the asset's address to pubkey.master or pubkey.address if available
-          const address = pubkeyObj ? (pubkeyObj.master || pubkeyObj.address) : null;
-
-          // Return the enriched asset object, including balance, valueUsd, pubkey, and the new address
-          return { ...asset, valueUsd, balance, pubkey, address };
-        });
-
 
         // Sort by valueUsd in descending order
         assets.sort((a: any, b: any) => b.valueUsd - a.valueUsd);
+        console.log("assets: ", assets);
 
         setAllAssets(assets);
       } catch (e) {
@@ -79,6 +59,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
 
   const handleSearchChange = (event: any) => {
     setSearchQuery(event.target.value);

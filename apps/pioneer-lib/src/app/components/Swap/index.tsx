@@ -120,14 +120,22 @@ export function Swap({usePioneer}:any): JSX.Element {
         throw Error('must have recipient address');
       }
       //console.log("SELECT INPUT AMOUNT: ", inputAmount);
+      console.log("app.pubkeys: ",app.pubkeys)
+      let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
+      console.log("ethPubkey: ",ethPubkey)
+      let trader = ethPubkey.address
+      console.log("app.pubkeys: ",app.pubkeys)
+
+      if(!trader){
+        alert('unable to get traderId')
+      }
 
       if(!inputAmount || inputAmount <= 0) {
         throw Error('Invalid amount!');
       }
       //if pro enabled
       //TODO get pro enabled from context
-      let trader = app.swapKit.getAddress(Chain.Ethereum);
-      //console.log("trader: ", trader);
+
 
       //validate input amount
       if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
@@ -135,6 +143,7 @@ export function Swap({usePioneer}:any): JSX.Element {
       if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
 
       const entry = {
+        trader,
         affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,
         // @ts-ignore
@@ -189,10 +198,10 @@ export function Swap({usePioneer}:any): JSX.Element {
       // check pending
       if (typeof window !== 'undefined') {
         const pendingTransactions = JSON.parse(window.localStorage.getItem('pendingTransactions') ?? '[]');
-
+        console.log("pendingTransactions: ", pendingTransactions);
         //console.log('pendingTransactions: ', pendingTransactions);
         if (pendingTransactions && pendingTransactions.length > 0) {
-          openModal(MODAL_STRINGS.pending);
+          // openModal(MODAL_STRINGS.pending);
         }
       }
     }

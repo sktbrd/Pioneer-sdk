@@ -22,7 +22,7 @@ import {
 } from '@pioneer-platform/pioneer-coins';
 // @ts-ignore
 import React, { useEffect, useState } from 'react';
-import Basic from '@/app/components/Basic';
+//import Basic from '@/app/components/Basic';
 // Adjust the import path according to your file structure
 
 let ChangellyImage = '/png/changelly.png'
@@ -90,7 +90,7 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
     const address = app?.swapKit.getAddress(outputChain);
     //console.log('address: ', address);
 
-    //console.log('quote: ', quote);
+    console.log('quote: ', quote);
     let swapObj = {
       route: quote.quote.route,
       recipient: address,
@@ -100,6 +100,25 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
     // let txHashResult = "793156d36e0ea7789b6f048c6e6bda8a9ef09602aa2b8f571319cccfda1bec23"
     const txHashResult = await app?.swapKit.swap(swapObj);
     console.log('txHash: ', txHashResult);
+
+    if (typeof window !== 'undefined') {
+      // Retrieve existing transactions or set an empty array if none exist
+      let pendingTransactions = JSON.parse(localStorage.getItem('pendingTransactions') || '[]');
+
+      // Create a new transaction object
+      const newTransaction = {
+        txId: txHashResult,
+        timestamp: new Date().getTime(), // Current time in milliseconds
+        status: "pending"
+      };
+
+      // Add the new transaction to the list
+      pendingTransactions.push(newTransaction);
+
+      // Save the updated transactions list back to localStorage
+      localStorage.setItem('pendingTransactions', JSON.stringify(pendingTransactions));
+    }
+
     setTxHash(txHashResult);
     onClose();
   };
@@ -235,7 +254,8 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
           <Spinner size="xl" />
           <Card>
             <CardHeader>
-              Pairing and Syncing Wallet... wallet:{assetContext.context} <br />
+              Pairing and Syncing Wallet... <br />
+              <Button onClick={approveTransaction}>Retry</Button>
             </CardHeader>
           </Card>
         </div>

@@ -1031,12 +1031,6 @@ export const list = {
       decimals: 18,
     },
     {
-      address: '0x226bb599a12C826476e3A771454697EA52E9E220',
-      chain: 'ETH',
-      identifier: 'ETH.PRO-0X226BB599A12C826476E3A771454697EA52E9E220',
-      decimals: 8,
-    },
-    {
       address: '0x362bc847A3a9637d3af6624EeC853618a43ed7D2',
       chain: 'ETH',
       identifier: 'ETH.PRQ-0X362BC847A3A9637D3AF6624EEC853618A43ED7D2',

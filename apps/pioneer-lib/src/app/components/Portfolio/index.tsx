@@ -11,7 +11,7 @@ import { Doughnut } from 'react-chartjs-2';
 // import { Balances } from '../Balances';
 import Balances from '../../components/Balances';
 import Assets from '../../components/Assets';
-import Basic from '@/app/components/Basic';
+//import Basic from '@/app/components/Basic';
 // Adjust the import path according to your file structure
 
 // Register the necessary plugins for Chart.js

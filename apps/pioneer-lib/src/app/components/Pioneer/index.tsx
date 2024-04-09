@@ -373,31 +373,31 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
         <MenuList>
           <Box borderBottomWidth="1px" p="4">
             <Flex align="center" justify="space-between">
-              <Stack direction="row" spacing={-3} align="center">
-                <AvatarGroup size="md" max={4}>
-                  {app?.blockchains.slice(0, 4).map((chain: any, index: any) => { // Limit to first 4 chains
+              {/*<Stack direction="row" spacing={-3} align="center">*/}
+              {/*  <AvatarGroup size="md" max={4}>*/}
+              {/*    {app?.blockchains.slice(0, 4).map((chain: any, index: any) => { // Limit to first 4 chains*/}
 
-                    // @ts-ignore
-                    const chainKey = NetworkIdToChain[chain];
-                    // @ts-ignore
-                    const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;
+              {/*      // @ts-ignore*/}
+              {/*      const chainKey = NetworkIdToChain[chain];*/}
+              {/*      // @ts-ignore*/}
+              {/*      const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;*/}
 
-                    return (
-                      <Avatar
-                        key={index}
-                        src={imageUrl}
-                        name={chainKey} // Optional: Use the chainKey or another property for the avatar's tooltip
-                        onClick={() => modalSelected('SETTINGS')}
-                      />
-                    );
-                  })}
-                  {app?.blockchains.length > 4 && ( // Conditionally render this if there are more than 4 chains
-                    <Text pl="3" alignSelf="center">
-                      +{app.blockchains.length - 4}
-                    </Text>
-                  )}
-                </AvatarGroup>
-              </Stack>
+              {/*      return (*/}
+              {/*        <Avatar*/}
+              {/*          key={index}*/}
+              {/*          src={imageUrl}*/}
+              {/*          name={chainKey} // Optional: Use the chainKey or another property for the avatar's tooltip*/}
+              {/*          onClick={() => modalSelected('SETTINGS')}*/}
+              {/*        />*/}
+              {/*      );*/}
+              {/*    })}*/}
+              {/*    {app?.blockchains.length > 4 && ( // Conditionally render this if there are more than 4 chains*/}
+              {/*      <Text pl="3" alignSelf="center">*/}
+              {/*        +{app.blockchains.length - 4}*/}
+              {/*      </Text>*/}
+              {/*    )}*/}
+              {/*  </AvatarGroup>*/}
+              {/*</Stack>*/}
               <Spacer />
               <IconButton
                 isRound
@@ -407,7 +407,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
                 size="md"
               />
             </Flex>
-            {app?.blockchains.length === 0 && <Text>No blockchains enabled.</Text>}
+            {/*{app?.blockchains.length === 0 && <Text>No blockchains enabled.</Text>}*/}
           </Box>
           <Box
             borderRadius="md"
@@ -460,26 +460,26 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
                 <Text fontSize="xs">Receive</Text>
               </Flex>
               {/* Swap Button */}
-              <Flex align="center" direction="column" m={2}>
-                <IconButton
-                  aria-label="Swap"
-                  colorScheme="green"
-                  icon={<FaExchangeAlt />}
-                  onClick={() => modalSelected('SWAP')}
-                  rounded="full"
-                  size="lg"
-                  variant="solid"
-                />
-                <Text fontSize="xs">Swap</Text>
-              </Flex>
+              {/*<Flex align="center" direction="column" m={2}>*/}
+              {/*  <IconButton*/}
+              {/*    aria-label="Swap"*/}
+              {/*    colorScheme="green"*/}
+              {/*    icon={<FaExchangeAlt />}*/}
+              {/*    onClick={() => modalSelected('SWAP')}*/}
+              {/*    rounded="full"*/}
+              {/*    size="lg"*/}
+              {/*    variant="solid"*/}
+              {/*  />*/}
+              {/*  <Text fontSize="xs">Swap</Text>*/}
+              {/*</Flex>*/}
             </Flex>
           </Box>
           <MenuItem>
             <SimpleGrid columns={3} maxWidth="280px" row={1}>
               {renderWallets()}
-              <Text color="blue.500" cursor="pointer" fontSize="sm" onClick={toggleShowAllWallets}>
-                {showAllWallets ? 'Hide Wallets' : 'more'}
-              </Text>
+              {/*<Text color="blue.500" cursor="pointer" fontSize="sm" onClick={toggleShowAllWallets}>*/}
+              {/*  {showAllWallets ? 'Hide Wallets' : 'more'}*/}
+              {/*</Text>*/}
             </SimpleGrid>
           </MenuItem>
         </MenuList>

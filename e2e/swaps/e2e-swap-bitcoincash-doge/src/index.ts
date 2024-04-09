@@ -18,6 +18,8 @@ let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
 let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
+import axios from 'axios';
+
 import {
     getPaths,
     // @ts-ignore
@@ -32,6 +34,9 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_DOGE_ADDRESS = process.env['FAUCET_DOGE_ADDRESS']
 if(!FAUCET_DOGE_ADDRESS) throw Error("Need Faucet Address!")
 let FAUCET_ADDRESS = FAUCET_DOGE_ADDRESS
+
+let TRADER_ADDRESS = process.env['TRADER_ADDRESS']
+if(!TRADER_ADDRESS) throw Error("Need TRADER_ADDRESS!")
 
 let TRADE_PAIR  = "BCH_DOGE"
 let INPUT_ASSET = ASSET
@@ -180,7 +185,8 @@ const test_service = async function (this: any) {
 
         //get receiver context
         const entry = {
-            affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
+            trader: TRADER_ADDRESS,
+            affiliate: TRADER_ADDRESS,
             sellAsset: app.assetContext,
             sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
             buyAsset:app.outboundAssetContext,
@@ -194,8 +200,25 @@ const test_service = async function (this: any) {
         let result = await app.pioneer.Quote(entry);
         result = result?.data;
         log.info(tag,"result: ",result)
+        log.info(tag,"result: ",result[0].quote)
+        log.info(tag,"result: ",result[0].quote.id)
+        let quoteId = result[0].quote.id
+        assert(quoteId)
+        log.info(tag,'quoteId: ',quoteId)
 
-        //
+        //quoteId
+        //verify quote exists
+        const quoteResponse = await axios.get(`https://swaps.pro/api/v1/quotes/${quoteId}`);
+        log.info('Quote details:', quoteResponse.data);
+        assert(quoteResponse.data);
+
+
+        //verify trader exists
+        const traderResponse = await axios.get(`https://swaps.pro/api/v1/traders/${TRADER_ADDRESS}`);
+        log.info('Trader details:', traderResponse.data);
+        assert(traderResponse.data);
+
+
         let selected
         //user selects route
         for(let i = 0; i < result?.length; i++){
@@ -203,7 +226,7 @@ const test_service = async function (this: any) {
             console.log("route: ", route)
             //detect if erroed
             if(route.integration === 'thorswap'){
-                selected = route.quote.routes[0]
+                selected = route.quote.route
                 break;
             }
             //log amountOut
@@ -221,10 +244,22 @@ const test_service = async function (this: any) {
         log.info("txHash: ",txHash)
         assert(txHash)
 
-        //TODO monitor TX untill complete
+        let isComplete = false
+
+        // monitor TX untill complete
+        // while(!isComplete){
+        //     await sleep(1000)
+        //
+        //     //check tx by hash
+        //     const tx = await app?.pioneer.GetTransaction('',txHash);
+        //
+        // }
 
         //TODO check balance
 
+        //verify trade exists
+
+        //verify PRO
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

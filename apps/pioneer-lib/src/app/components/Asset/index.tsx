@@ -6,8 +6,8 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
 // import { usePioneer } from '@coinmasters/pioneer-react';
-import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import Basic from '@/app/components/Basic';
+// import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
+// import Basic from '@/app/components/Basic';
 // import { useRouter } from 'next/router';
 
 let TAG = " | asset | ";

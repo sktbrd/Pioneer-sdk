@@ -1,7 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-sdk",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "dependencies": {
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
@@ -15,8 +15,8 @@
     "@pioneer-platform/loggerdog": "^8.3.1",
     "@pioneer-platform/pioneer-caip": "^9.2.25",
     "@pioneer-platform/pioneer-client": "^9.2.3",
-    "@pioneer-platform/pioneer-coins": "^9.2.15",
-    "@pioneer-platform/pioneer-discovery": "^0.0.5"
+    "@pioneer-platform/pioneer-coins": "^9.2.16",
+    "@pioneer-platform/pioneer-discovery": "^0.0.6"
   },
   "description": "Pioneer Core SDK",
   "devDependencies": {

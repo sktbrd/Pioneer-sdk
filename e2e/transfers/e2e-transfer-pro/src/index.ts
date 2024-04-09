@@ -23,7 +23,7 @@ let BLOCKCHAIN = ChainToNetworkId['BASE']
 if(!BLOCKCHAIN) throw Error("unknown Chain! "+BLOCKCHAIN)
 let ASSET = 'BASE'
 let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "100"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_BASE_ADDRESS = process.env['FAUCET_BASE_ADDRESS']
@@ -42,8 +42,8 @@ let IS_SIGNED: boolean
 
 //TEST MODE
 let WALLET_SEED:any
-// let TEST_MODE = 'KEEPKEY'
-let TEST_MODE = 'KEYSTORE'
+let TEST_MODE = 'KEEPKEY'
+// let TEST_MODE = 'KEYSTORE'
 if(TEST_MODE == "KEYSTORE"){
     WALLET_SEED=process.env['WALLET_SEED']
     if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")

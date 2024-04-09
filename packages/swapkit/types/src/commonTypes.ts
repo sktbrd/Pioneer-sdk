@@ -131,7 +131,8 @@ export enum QuoteMode {
 }
 
 export const SWAP_TYPES = {
-  AGG_SWAP: [QuoteMode.ETH_TO_ETH, QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC],
+  AGG_SWAP: [QuoteMode.AVAX_TO_AVAX, QuoteMode.BSC_TO_BSC],
+  ETH_TO_ETH: [QuoteMode.ETH_TO_ETH],
   SWAP_IN: [
     QuoteMode.ETH_TO_TC_SUPPORTED,
     QuoteMode.ETH_TO_AVAX,

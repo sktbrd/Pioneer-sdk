@@ -16,7 +16,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['BASE']
@@ -173,8 +173,28 @@ const test_service = async function (this: any) {
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         log.info(tag,"balances: ",app.balances.length)
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
+        let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
         log.info(tag,"balance: ",balance[0])
+
+        assert(balance[0])
+        assert(balance[0].caip)
+        assert(balance[0].ticker)
+
+        //
+        await app.getAssets()
+        log.info(tag,"assets: ",app.assets.length)
+        log.info(tag,"caip: ",ChainToCaip[BLOCKCHAIN])
+        let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Base])
+        log.info(tag,"asset: ",asset)
+        assert(asset[0])
+        assert(asset[0].caip)
+        assert(asset[0].ticker)
+
+        await app.setAssetContext(asset[0])
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+        assert(app.assetContext.ticker)
 
         // assert(balance.length > 0)
         //verify balances
