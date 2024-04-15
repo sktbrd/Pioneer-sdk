@@ -21,6 +21,7 @@ import {
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
+import SwapInput from '../components/SwapInput';
 import Asset from '../../Asset';
 import Amount from '../../Amount';
 // @ts-ignore
@@ -45,11 +46,24 @@ const BeginSwap: any = ({
   usePioneer,
   openModal,
   setIsContinueVisable,
-  setInputAmount
+  setInputAmount,
+  setAmountSelected,
+  memoless,
+  setMemoless,
 }: any) => {
   const { state } = usePioneer();
   const [assetConfirmed, setAssetsConfirmed] = useState(false);
-  const { assetContext, outboundAssetContext, app, balances } = state;
+  const { app } = state;
+  const [assetContext, setAssetContext] = useState<any>(null);
+  const [outputQuote, setOutputQuote] = useState<any>(null);
+  const [outboundAssetContext, setOutboundAssetContext] = useState<any>(null);
+
+  useEffect(() => {
+    if (app?.assetContext) setAssetContext(app?.assetContext);
+    if (app?.outboundAssetContext) setOutboundAssetContext(app?.outboundAssetContext);
+    calculateQuote();
+  }, [app, app?.assets, app?.assetContext, app?.outboundAssetContext]);
+
 
   const switchAssets = function () {
     const currentInput = assetContext;
@@ -63,8 +77,13 @@ const BeginSwap: any = ({
 
   //
   const confirmAssetSelection = async function(isConfirmed: boolean){
-    setAssetsConfirmed(true)
-    setIsContinueVisable(true);
+    if(!app.assetContext.address){
+      setMemoless(true);
+    }
+    if(app.outboundAssetContext.address){
+      setAssetsConfirmed(true)
+      setIsContinueVisable(true);
+    }
   }
 
   let onSelect = function (asset: any) {
@@ -75,10 +94,27 @@ const BeginSwap: any = ({
     console.log('onClose: ')
   }
 
+  const calculateQuote = () => {
+    if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
+      const rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
+      setOutputQuote(`1 ${app.assetContext.name} ≈ ${rate.toFixed(4)} ${app.outboundAssetContext.name}`);
+    }
+  };
+
   return (
     <div>
-      <Flex alignItems="center" bg="black" justifyContent="center" mx="auto" p="2rem">
-        <HStack maxWidth="35rem" spacing={4} width="100%">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        p="4" // Padding around the text
+        border="1px solid #ccc" // Change the color and thickness as needed
+        borderRadius="md" // Rounded corners
+        m="4" // Margin around the box
+        width="auto" // Adjust width based on content or set a specific width
+      > {outputQuote} </Box>
+      <Flex justifyContent="center" mx="auto" p="2rem">
+        <HStack maxWidth="35rem" width="100%">
           {/* Asset selection box */}
           <Box
             _hover={{ color: 'rgb(128,128,128)' }}
@@ -100,9 +136,9 @@ const BeginSwap: any = ({
               <>
                 <Avatar
                   size="xl"
-                  src={assetContext.icon}
+                  src={assetContext?.icon}
                 />
-                <Text noOfLines={1}>{assetContext.name}</Text>
+                <Text noOfLines={1}>{assetContext?.name}</Text>
               </>
             )}
           </Box>
@@ -136,16 +172,12 @@ const BeginSwap: any = ({
           </Box>
         </HStack>
       </Flex>
-      {assetConfirmed ? (<>
-        <Amount usePioneer={usePioneer} setInputAmount={setInputAmount} asset={app?.assetContext} ></Amount>
-      </>) : (
-        <>
-          <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={app?.assetContext} ></Asset>
-          <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={app?.outboundAssetContext} ></Asset>
-          Confirm Asset Selection
-          <Button onClick={() => confirmAssetSelection(true)}>Confirm</Button>
-        </>
-      )}
+      <SwapInput usePioneer={usePioneer} setAmountSelected={setAmountSelected}></SwapInput>
+      {/*{(app?.outboundAssetContext && app?.outboundAssetContext.address) &&(*/}
+      {/*  <>*/}
+      {/*    <Button onClick={() => confirmAssetSelection(true)}>Confirm</Button>*/}
+      {/*  </>*/}
+      {/*)}*/}
     </div>
   );
 };

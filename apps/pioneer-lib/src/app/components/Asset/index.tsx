@@ -1,75 +1,106 @@
 import React, { useState } from 'react';
 import {
-  Avatar, Box, Stack, Flex, Text, Button, Collapse, IconButton, Spinner,
-  useColorModeValue, Badge, Table, Thead, Tbody, Tr, Th, Td
+  Avatar, Box, Stack, Flex, Text, Heading, useColorModeValue, Spinner, Button, AvatarGroup, Divider, Input
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { getWalletBadgeContent } from '../WalletIcon';
-// import { usePioneer } from '@coinmasters/pioneer-react';
-// import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-// import Basic from '@/app/components/Basic';
-// import { useRouter } from 'next/router';
 
-let TAG = " | asset | ";
+const Card = ({ children }:any) => (
+  <Box
+    border="1px solid"
+    borderColor={useColorModeValue('gray.200', 'gray.700')}
+    borderRadius="lg"
+    overflow="hidden"
+    bg={useColorModeValue('white', 'gray.800')}
+  >
+    {children}
+  </Box>
+);
 
-interface AssetProps {
-  onClose: () => void;
-  usePioneer: () => any;
-  onSelect: (asset: any) => void;
-  asset: any;
-}
+const CardHeader = ({ children }:any) => (
+  <Box bg={useColorModeValue('gray.50', 'gray.900')} px={4} py={2}>
+    {children}
+  </Box>
+);
 
-export function Asset({ usePioneer, onClose, onSelect, asset }: AssetProps) {
-  // const router = useRouter();
-  const { state, hideModal, resetState } = usePioneer();
-  const { api, app, assets, context } = state;
+const CardBody = ({ children }:any) => (
+  <Box p={4}>
+    {children}
+  </Box>
+);
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const data = typeof asset === 'object' && asset !== null ? asset : JSON.parse(asset || '{}');
-
-  const assetFormatted = asset ? (asset.balance || 'N/A') : 'N/A';
-  const valueUsdFormatted = asset && asset.valueUsd ? `$${asset.valueUsd}` : 'N/A';
-
-  const handleModal = (action: string) => {
-    console.log("asset: ", asset);
-    // router.push(`/intent/${action}`);
-    onClose();
-  };
-
-  const handleCloseModal = () => {
-    hideModal();
-    resetState();
-  };
+export function Asset({ asset }:any) {
+  const [showManualAddressForm, setShowManualAddressForm] = useState(false);
 
   return (
-    <Stack spacing={4}>
-      {asset ? (<>
-        <Flex align="center">
-          <Avatar size='xl' src={asset.icon} />
-          <Box ml={3}>
-            <Text fontWeight="bold">{asset.name}</Text>
-            <Text fontSize="sm">Symbol: {asset.symbol}</Text>
-            <Text fontSize="sm">CAIP: {asset.caip}</Text>
-            <Text fontSize="sm">Type: {asset.type}</Text>
-            <Text fontSize="sm">priceUsd: {asset.priceUsd}</Text>
-            {asset.address && (
-              <Text fontSize="sm">Address: {asset.address}</Text>
-            )}
-            {asset.balance && asset.valueUsd > 0 && (
-              <Text fontSize="sm">Balance: {asset.balance} ({parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
-            )}
-          </Box>
-          <Button ml="auto" onClick={() => onSelect(asset)}>
-            Select
-          </Button>
-        </Flex>
-      </>) : (<>
-        No asset selected
-        <Spinner></Spinner>
-      </>)}
-      <div>
-      </div>
+    <Stack spacing={4} width="100%">
+      <Card>
+        <CardHeader>
+          <Heading size='md'><Text fontWeight="bold">{asset?.name}</Text></Heading>
+        </CardHeader>
+        <CardBody>
+          {asset ? (
+            <Flex align="center" justifyContent="space-between">
+              <Avatar size='xl' src={asset.icon} />
+              <Box ml={3} flex="1">
+                <Text fontSize="sm">Symbol: {asset.symbol}</Text>
+                <Text fontSize="sm" textAlign="right">CAIP: {asset.caip}</Text>
+                <Text fontSize="sm">Type: {asset.type}</Text>
+                <Text fontSize="sm">Price USD: ${parseFloat(asset.priceUsd).toFixed(2)}</Text>
+                {asset.address ? (
+                  <Text fontSize="sm">Address: {asset.address}</Text>
+                ) : (
+                  <>
+                    <Flex mt={2} justifyContent="flex-end" alignItems="center">
+                      <AvatarGroup size="md" max={3}>
+                        {/*<Avatar name="Wallet 1" src="" />*/}
+                        {/*<Avatar name="Wallet 2" src="" />*/}
+                        {/*<Avatar name="Wallet 3" src="" />*/}
+                      </AvatarGroup>
+                      {/*<Button*/}
+                      {/*  ml={2}*/}
+                      {/*  colorScheme="blue"*/}
+                      {/*  borderRadius="full"*/}
+                      {/*  onClick={() => setShowManualAddressForm(!showManualAddressForm)}*/}
+                      {/*>*/}
+                      {/*  Pair Wallet*/}
+                      {/*</Button>*/}
+                    </Flex>
+                    {/*{showManualAddressForm && (*/}
+                    {/*  <>*/}
+                    {/*    <Input*/}
+                    {/*      placeholder="Enter address manually"*/}
+                    {/*      size="md"*/}
+                    {/*      mt={2}*/}
+                    {/*    />*/}
+                    {/*    <Button mt={2} colorScheme="teal">Submit Address</Button>*/}
+                    {/*  </>*/}
+                    {/*)}*/}
+                    <Divider my={2} />
+                    <Text fontSize="sm" color="red.500" mt={2}>No address found</Text>
+                    {/*<Button*/}
+                    {/*  mt={2}*/}
+                    {/*  borderRadius="full"*/}
+                    {/*  colorScheme="gray" // Ensure no green colors*/}
+                    {/*  onClick={() => setShowManualAddressForm(true)}*/}
+                    {/*>*/}
+                    {/*  Add Address Manually*/}
+                    {/*</Button>*/}
+                  </>
+                )}
+                {asset.balance && asset.valueUsd > 0 && (
+                  <Text fontSize="sm">Balance: {asset.balance} (${parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
+                )}
+              </Box>
+            </Flex>
+          ) : (
+            <Flex justifyContent="center" p={5}>
+              No asset selected
+              <Spinner ml={4} />
+            </Flex>
+          )}
+        </CardBody>
+      </Card>
     </Stack>
   );
 }
+
 export default Asset;

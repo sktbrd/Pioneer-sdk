@@ -139,6 +139,8 @@ export class SDK {
 
   public assets: any[];
 
+  public assetsMap: any;
+
   // @ts-ignore
   public nfts: any[];
 
@@ -184,7 +186,7 @@ export class SDK {
   public init: (walletsVerbose: any, setup: any) => Promise<any>;
   public verifyWallet: () => Promise<void>;
   public setPaths: (blockchains: any) => Promise<void>;
-  public getAssets: (filter: string) => Promise<any>;
+  public getAssets: (filter?: string) => Promise<any>;
   constructor(spec: string, config: PioneerSDKConfig) {
     this.status = 'preInit';
     this.appName = 'pioneer-sdk';
@@ -236,6 +238,7 @@ export class SDK {
         //this.wallets = walletsVerbose
         this.wallets = walletsVerbose;
         let walletArray = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.wallets.length; i++) {
           let walletVerbose = this.wallets[i];
           let wallet = walletVerbose.wallet;
@@ -279,17 +282,11 @@ export class SDK {
         // this.refresh()
         if (!this.pioneer) throw Error('Failed to init pioneer server!');
 
-        //get user info
-        // let userInfo = await this.pioneer.User();
-        // userInfo = userInfo.data;
-        //
-        // if (userInfo) {
-        //   log.debug('userInfo: ', userInfo);
-        //   if (userInfo.pubkeys) this.pubkeys = userInfo.pubkeys;
-        //   if (userInfo.context) this.context = userInfo.context;
-        //   if (userInfo.balances) this.balances = userInfo.balances;
-        //   if (userInfo.nfts) this.nfts = userInfo.nfts;
-        // }
+        await this.getAssets();
+        this.setAssetContext(
+          this.assetsMap.get('bip122:000000000019d6689c085ae165831e93/slip44:0'),
+        );
+        this.setOutboundAssetContext(this.assetsMap.get('eip155:1/slip44:60'));
 
         return this.pioneer;
       } catch (e) {
@@ -552,16 +549,17 @@ export class SDK {
       }
     };
     //@ts-ignore
-    this.getAssets = function () {
+    this.getAssets = function (filter?: string) {
       try {
-        // const tag = `${TAG} | getAssets | `;
-        //log.info(tag, "filter: ", filter);
+        const tag = `${TAG} | getAssets | `;
+        console.log(tag, 'filter: ', filter);
 
-        console.log('ASSET)DATA: ', Object.keys(assetData).length);
+        console.log('ASSET DATA: ', Object.keys(assetData).length);
 
         let tokenMap: any = {};
         let chains = new Set();
         let chainTokenCounts: any = {};
+        this.assetsMap = new Map();
 
         // Function to add tokens with their source list
         const addTokens = (tokens: any, sourceList: any) => {
@@ -574,12 +572,15 @@ export class SDK {
               expandedInfo.sourceList = sourceList;
               //console.log('expandedInfo: ', expandedInfo);
               //get extended info
+              //console.log('expandedInfo.caip.toLowerCase(): ', expandedInfo.caip.toLowerCase());
               let assetInfo = assetData[expandedInfo.caip.toLowerCase()];
               if (assetInfo) {
                 let combinedInfo = { ...expandedInfo, ...assetInfo };
+                //console.log('combinedInfo: ', combinedInfo);
                 tokenMap[token.identifier] = combinedInfo;
+                this.assetsMap.set(expandedInfo.caip.toLowerCase(), combinedInfo); // Populate the Map
               } else {
-                // console.error('UNABLE TO name: ', expandedInfo.caip);
+                //console.error('UNABLE TO name: ', expandedInfo.caip);
               }
             } else {
               // console.error('UNABLE TO MAKE CAIP: ', token);
@@ -710,6 +711,8 @@ export class SDK {
     this.getBalances = async function () {
       const tag = `${TAG} | getBalances | `;
       try {
+        if (!this.assets || this.assets.length === 0) await this.getAssets();
+        const assetDetailsMap = this.assets;
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
         console.log('this.blockchains: ', this.blockchains);
@@ -789,7 +792,12 @@ export class SDK {
                       console.error("invalid balance! doesn't have toFixed: ", balance);
                       throw Error('Invalid balance!');
                     }
-                    balances.push(balanceString);
+                    let assetInfo = assetDetailsMap.filter(
+                      (e: any) => e.caip.toLowerCase() === caip.toLowerCase(),
+                    );
+                    assetInfo = assetInfo[0];
+                    console.log('assetInfo: ', assetInfo);
+                    balances.push({ ...assetInfo, ...balanceString });
                   } else {
                     console.error('Failed to get caip for balance: ', balance);
                   }
@@ -820,7 +828,7 @@ export class SDK {
           provider: 'lol',
         };
         //log.debug('register: ', register);
-        //log.debug('register: ', JSON.stringify(register));
+        console.log('register: ', JSON.stringify(register));
         const result = await this.pioneer.Register(register);
         //log.debug('result: ', result);
         //log.debug('result: ', result.data);
@@ -871,8 +879,18 @@ export class SDK {
     this.setAssetContext = async function (asset: any) {
       const tag = `${TAG} | setAssetContext | `;
       try {
+        if (!asset.caip) {
+          console.error('Invalid asset caip is required!');
+          throw Error('Invalid asset caip is required!');
+        }
         //get verbose info
-        let allAssets = await this.getAssets('');
+        if (!this.assets || this.assets.length === 0) await this.getAssets();
+        //
+        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        priceData = priceData.data || {};
+        console.log('priceData: ', priceData);
+
+        let allAssets = this.assets;
         let assetInfo = allAssets.find(
           (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
         );
@@ -881,7 +899,7 @@ export class SDK {
         );
         console.log('balanceObj: ', balanceObj);
         const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-        const priceUsd = balanceObj ? parseFloat(balanceObj.priceUsd) : 0;
+        const priceUsd = priceData.priceUsd || 0;
         const context = balanceObj ? balanceObj.context : 'external';
         const balance = balanceObj ? balanceObj.balance : '';
 
@@ -925,8 +943,16 @@ export class SDK {
     this.setOutboundAssetContext = async function (asset: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
+        if (!asset.caip) {
+          console.error('Invalid asset caip is required!');
+          throw Error('Invalid asset caip is required!');
+        }
+        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        priceData = priceData.data || {};
+        console.log('priceData: ', priceData);
         if (asset && this.outboundAssetContext !== asset) {
-          let allAssets = await this.getAssets('');
+          if (!this.assets || this.assets.length === 0) await this.getAssets();
+          let allAssets = this.assets;
           let assetInfo = allAssets.find(
             (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
           );
@@ -934,7 +960,7 @@ export class SDK {
             (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
           );
           const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          const priceUsd = balanceObj ? parseFloat(balanceObj.priceUsd) : 0;
+          const priceUsd = priceData.priceUsd || 0;
           const context = balanceObj ? balanceObj.context : 'external';
           const balance = balanceObj ? balanceObj.balance : '';
           // Attempt to find a corresponding pubkey object that includes the asset's networkId

@@ -17,7 +17,8 @@ import {
   Quotes,
   Swap,
   Track,
-  SignTransaction
+  SignTransaction,
+  Wallets
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 // import {
@@ -415,13 +416,14 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('swap');
+  const [intent, setIntent] = useState('swaps');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
 
   let onStartApp = async function(){
     try{
+      console.log("onStartApp")
       let walletsVerbose = []
       const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
       //console.log('keepkeyWallet: ', keepkeyWallet);
@@ -490,6 +492,9 @@ export default function App() {
       case 'assets':
         return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:true }}/>;
         break;
+      case 'wallets':
+        return <Wallets usePioneer={usePioneer} />;
+        break;
       case 'transfer':
         return <Transfer usePioneer={usePioneer} />;
         break;
@@ -507,6 +512,7 @@ export default function App() {
         break;
       case 'track':
         return <Track txHash={SAMPLE_SWAP_TXID}/>;
+      case 'swaps':
       case 'swap':
         return <Swap usePioneer={usePioneer}/>;
         break;
@@ -537,6 +543,7 @@ export default function App() {
             <option value="asset">Asset</option>
             <option value="amount">amount</option>
             <option value="sign">sign</option>
+            <option value="wallets">Wallets</option>
             <option value="assets">Assets</option>
             <option value="track">Track</option>
             <option value="swap">Swap</option>
@@ -552,7 +559,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="w-full px-10 py-5 bg-gray-200 dark:bg-gray-900 text-center">
-        Powered by <a href="https://pioneers.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500">Pioneers</a>
+        Powered by <a href="https://pioneers.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500 keychainify-checked">Pioneers</a>
       </footer>
     </>
   );

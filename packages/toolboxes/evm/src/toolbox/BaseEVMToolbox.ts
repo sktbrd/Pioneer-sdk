@@ -455,7 +455,7 @@ const sendTransaction = async (
     if (chainId === 1) {
       gasLimit = toHexString(221000n);
     } else if (chainId === 8453) {
-      gasLimit = toHexString(121000n);
+      gasLimit = toHexString(921000n);
     } else {
       gasLimit = toHexString(1000000n);
     }

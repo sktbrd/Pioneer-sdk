@@ -92,7 +92,7 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
 
     console.log('quote: ', quote);
     let swapObj = {
-      route: quote.quote.route,
+      route: quote.quote.route || quote.quote,
       recipient: address,
       feeOptionKey: FeeOption.Fast,
     }

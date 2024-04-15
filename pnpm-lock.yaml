@@ -2430,8 +2430,8 @@ importers:
         specifier: ^9.2.16
         version: 9.2.16(@types/node@20.10.0)
       '@pioneer-platform/pioneer-discovery':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.7
+        version: 0.0.7
     devDependencies:
       '@internal/config':
         specifier: workspace:*
@@ -8515,8 +8515,8 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/pioneer-discovery@0.0.6:
-    resolution: {integrity: sha512-0yzWvrPZS5h3yjsjfX/YKkkBx0CaXwRAXkQkT9TyNo8zPyUlHPrPkUJ9pzIrquBRHZRUxmuCnHah65LGGVtM4Q==}
+  /@pioneer-platform/pioneer-discovery@0.0.7:
+    resolution: {integrity: sha512-6GPVUDhc6XQBGhMHpopo2Qlp6+HZ13yBQojb/Trxu8spSKorh7+geVIf1oZXC4l3tstBKKqW04vWTn4lLUs/pg==}
     dev: false
 
   /@pkgjs/parseargs@0.11.0:

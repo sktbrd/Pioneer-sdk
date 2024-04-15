@@ -158,6 +158,14 @@ const test_service = async function (this: any) {
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
+        await app.getAssets()
+        let asset = app.assets.filter((e:any) => e.identifier === 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630')
+        log.info(tag,"asset: ",asset)
+        let assetPro = asset[0]
+        assert(assetPro)
+        assert(assetPro.identifier)
+        assert.strictEqual(assetPro.identifier, 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630', 'balancePro.identifier should match the expected value');
+        assert.strictEqual(assetPro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
 
         //
         await app.getPubkeys()
@@ -169,10 +177,17 @@ const test_service = async function (this: any) {
         // assert(pubkey.length > 0)
         //verify pubkeys
 
+
+
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
-        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"balance: ",balance)
+        let balance = app.balances.filter((e:any) => e.identifier === 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630')
+        log.info(tag,"balance: ",balance)
+        let balancePro = balance[0]
+        assert(balancePro)
+        assert(balancePro.identifier)
+        assert.strictEqual(balancePro.identifier, 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630', 'balancePro.identifier should match the expected value');
+        assert.strictEqual(balancePro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
         // assert(balance.length > 0)
         //verify balances
 

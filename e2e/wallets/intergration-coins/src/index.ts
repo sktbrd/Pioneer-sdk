@@ -74,76 +74,6 @@ const test_service = async function (this: any) {
         //console.log(tag,' CHECKPOINT 2');
         //console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
-        const walletsVerbose: any = [];
-        const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-        //log.info(tag,"walletKeepKey: ",keepkeyWallet)
-        const walletKeepKey = {
-            type: WalletOption.KEEPKEY,
-            icon: "https://pioneers.dev/coins/keepkey.png",
-            chains: availableChainsByWallet[WalletOption.KEEPKEY],
-            wallet: keepkeyWallet,
-            status: "offline",
-            isConnected: false,
-        };
-        walletsVerbose.push(walletKeepKey);
-        console.time('start2init');
-        let resultInit = await app.init(walletsVerbose, {})
-        console.timeEnd('start2init');
-        // log.info(tag,"resultInit: ",resultInit)
-        log.info(tag,"wallets: ",app.wallets.length)
-
-        // const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        const AllChainsSupported = [Chain.Ethereum, Chain.Base];
-        let blockchains = AllChainsSupported.map(
-          // @ts-ignore
-          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        );
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
-        // //connect
-        // assert(blockchains)
-        // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains.length)
-        console.time('start2paired');
-        let pairObject = {
-            type:WalletOption.KEEPKEY,
-            blockchains
-        }
-        resultInit = await app.pairWallet(pairObject)
-        console.timeEnd('start2paired'); // End timing for pairing
-        log.debug(tag,"resultInit: ",resultInit)
-
-        //check pairing
-        // //context should match first account
-        let context = await app.context
-        log.info(tag,"context: ",context)
-        assert(context)
-
-        console.time('start2getPubkeys');
-        await app.getPubkeys()
-        console.timeEnd('start2getPubkeys');
-        log.info(tag,"pubkeys: ",app.pubkeys.length)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
-
-        console.time('start2getBalances');
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances.length)
-        console.timeEnd('start2getBalances');
 
         //get all assets
         let assets = await app.getAssets()
@@ -152,7 +82,6 @@ const test_service = async function (this: any) {
 
         //filter by base blockchain
         log.info(tag,"assets: ",assets)
-
 
         const baseNetworkId = 'eip155:8453';
         const filteredAssets2 = assets.filter((asset: any) => {
@@ -164,8 +93,6 @@ const test_service = async function (this: any) {
             return isBaseAsset;
         });
         log.info(tag,"filteredAssets: ",filteredAssets2)
-
-
 
         let onlyOwned = true
         let noTokens = false
@@ -184,6 +111,118 @@ const test_service = async function (this: any) {
         log.info('filteredAssets: ',filteredAssets.length)
         log.info('filteredAssets: ',filteredAssets[0])
         log.info('filteredAssets: ',filteredAssets)
+
+
+
+
+
+        // const walletsVerbose: any = [];
+        // const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+        // //log.info(tag,"walletKeepKey: ",keepkeyWallet)
+        // const walletKeepKey = {
+        //     type: WalletOption.KEEPKEY,
+        //     icon: "https://pioneers.dev/coins/keepkey.png",
+        //     chains: availableChainsByWallet[WalletOption.KEEPKEY],
+        //     wallet: keepkeyWallet,
+        //     status: "offline",
+        //     isConnected: false,
+        // };
+        // walletsVerbose.push(walletKeepKey);
+        // console.time('start2init');
+        // let resultInit = await app.init(walletsVerbose, {})
+        // console.timeEnd('start2init');
+        // // log.info(tag,"resultInit: ",resultInit)
+        // log.info(tag,"wallets: ",app.wallets.length)
+        //
+        // // const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        // const AllChainsSupported = [Chain.Ethereum, Chain.Base];
+        // let blockchains = AllChainsSupported.map(
+        //   // @ts-ignore
+        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        // );
+        //
+        // //get paths for wallet
+        // let paths = getPaths(blockchains)
+        // log.info("paths: ",paths.length)
+        // // @ts-ignore
+        // //HACK only use 1 path per chain
+        // //TODO get user input (performance or find all funds)
+        // let optimized:any = [];
+        // blockchains.forEach((network: any) => {
+        //     const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+        //     if (pathForNetwork) {
+        //         optimized.push(pathForNetwork);
+        //     }
+        // });
+        // log.info("optimized: ", optimized.length);
+        // app.setPaths(optimized)
+        // // //connect
+        // // assert(blockchains)
+        // // assert(blockchains[0])
+        // log.info(tag,"blockchains: ",blockchains.length)
+        // console.time('start2paired');
+        // let pairObject = {
+        //     type:WalletOption.KEEPKEY,
+        //     blockchains
+        // }
+        // resultInit = await app.pairWallet(pairObject)
+        // console.timeEnd('start2paired'); // End timing for pairing
+        // log.debug(tag,"resultInit: ",resultInit)
+        //
+        // //check pairing
+        // // //context should match first account
+        // let context = await app.context
+        // log.info(tag,"context: ",context)
+        // assert(context)
+        //
+        // console.time('start2getPubkeys');
+        // await app.getPubkeys()
+        // console.timeEnd('start2getPubkeys');
+        // log.info(tag,"pubkeys: ",app.pubkeys.length)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
+        //
+        // console.time('start2getBalances');
+        // await app.getBalances()
+        // log.info(tag,"balances: ",app.balances.length)
+        // console.timeEnd('start2getBalances');
+        //
+        // //get all assets
+        // let assets = await app.getAssets()
+        // log.info(tag,"assets: ",assets.length)
+        // assert(assets)
+        //
+        // //filter by base blockchain
+        // log.info(tag,"assets: ",assets)
+        //
+        // const baseNetworkId = 'eip155:8453';
+        // const filteredAssets2 = assets.filter((asset: any) => {
+        //     // Check if asset belongs to BASE blockchain by networkId
+        //     const isBaseAsset = asset.networkId === baseNetworkId;
+        //
+        //     // Additional conditions can be included if needed, e.g., onlyOwned, noTokens, etc.
+        //     // For simplicity, this example focuses on filtering by BASE networkId
+        //     return isBaseAsset;
+        // });
+        // log.info(tag,"filteredAssets: ",filteredAssets2)
+        //
+        // let onlyOwned = true
+        // let noTokens = false
+        // let hasPubkey = true
+        // let searchQuery = ""
+        // const filteredAssets = assets.filter((asset: any) => {
+        //     // Ensure asset.name and searchQuery are both strings before calling toLowerCase()
+        //     const assetName = asset.name ? asset.name.toLowerCase() : '';
+        //     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
+        //
+        //     return assetName.includes(normalizedSearchQuery) &&
+        //       (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
+        //       (!noTokens || (noTokens && asset.type !== 'token')) &&
+        //       (!hasPubkey || (hasPubkey && asset.pubkey));
+        // });
+        // log.info('filteredAssets: ',filteredAssets.length)
+        // log.info('filteredAssets: ',filteredAssets[0])
+        // log.info('filteredAssets: ',filteredAssets)
 
         // //setAssetContext
         // let allAssets = await app.getAssets()

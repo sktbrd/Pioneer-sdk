@@ -418,7 +418,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const keepkeyApiKey: string | null = localStorage.getItem('keepkeyApiKey');
       // @ts-ignore
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
-      // if auto connecting
+      // @ts-ignore
       const lastConnectedWallet: string | null = localStorage.getItem('lastConnectedWallet');
 
       if (!queryKey) {
@@ -431,14 +431,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('username', username);
       }
       const blockchains: any = [];
-
-      // @TODO add custom paths from localstorage
       const paths: any = [];
       const spec =
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
         'https://pioneers.dev/spec/swagger.json';
-      // @ts-ignore
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
       const configPioneer: any = {
@@ -471,17 +468,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       };
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
-
+      //Network actions
       if (appInit.keepkeyApiKey !== keepkeyApiKey) {
         console.log('SAVING API KEY. ');
         localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
       }
-
-      // @ts-ignore
-      console.log('wallets: ', wallets);
       const api = await appInit.init(wallets, setup);
-
-      // set wallets to available wallets
       // @ts-ignore
       console.log('appInit.wallets: ', appInit.wallets);
       // @ts-ignore
@@ -489,120 +481,114 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
-      // setTimeout(() => {
-      //   console.log('STARTING KEEPKEY BRO');
-      //   connectWallet('KEEPKEY');
-      // }, 2000); // 1000 milliseconds = 1 second
-
-      // events
-      // @ts-ignore
-      const { events } = appInit;
-
-      const walletActionsArray = Object.values(WalletActions);
-
-      walletActionsArray.forEach((action) => {
-        events.on(action, (data: any) => {
-          // SET_BALANCES
-          if (action === WalletActions.SET_BALANCES) {
-            console.log('setting balances for context: ', appInit.context);
-            console.log('setting balances: ', data);
-
-            // Remove duplicates based on .caip property
-            const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
-              if (!acc.some((item: any) => item.caip === currentItem.caip)) {
-                acc.push(currentItem);
-              }
-              return acc;
-            }, []);
-
-            let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
-            console.log('balance cacheKey: ', cacheKeyBalances);
-            localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
-          }
-
-          // SET_PUBKEYS
-          if (action === WalletActions.SET_PUBKEYS) {
-            console.log('setting pubkeys: ', data);
-
-            let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
-            console.log('pubkey cacheKey: ', cacheKeyPubkeys);
-            localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
-          }
-          // @ts-ignore
-          dispatch({
-            type: action,
-            payload: data,
-          });
-        });
-      });
-
-      if (lastConnectedWallet) {
-        console.log('lastConnectedWallet');
-        console.log('Loading from cache!');
-        await appInit.setContext(lastConnectedWallet);
-        // //get wallet type
-        const walletType = lastConnectedWallet.split(':')[0];
-        let blockchainsCached = JSON.parse(
-          localStorage.getItem('cache:blockchains:' + walletType) || '[]',
-        );
-        await appInit.setBlockchains(blockchainsCached);
-        console.log('blockchainsCached: ', blockchainsCached);
-        //get paths for wallet
-        let paths = getPaths(blockchainsCached);
-
-        //get paths for blockchains
-        let addedChainsStr = localStorage.getItem(walletType + ':paths:add');
-        let addedChains;
-
-        // Safely parse addedChainsStr, ensuring it's not null before parsing
-        if (addedChainsStr) {
-          addedChains = JSON.parse(addedChainsStr);
-        } else {
-          addedChains = [];
-        }
-        //fitler by chain
-        addedChains = addedChains.filter((chain: any) => blockchainsCached.includes(chain.network));
-        paths = paths.concat(addedChains);
-        console.log('onStart paths: ', paths);
-
-        appInit.setPaths(paths);
-
-        //get pubkeys from cache
-        let pubkeyCache = localStorage.getItem('cache:pubkeys:' + walletType.toLowerCase());
-        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-
-        //@TODO filter by blockchain
-
-        //set pubkeys
-        console.log('pubkeyCache: ', pubkeyCache);
-        if (pubkeyCache && pubkeyCache.length > paths.length) {
-          console.log('I know im out of sync!');
-          //force a resync
-          //await connectWallet(lastConnectedWallet);
-        }
-
-        if (pubkeyCache && pubkeyCache.length > 0) {
-          await appInit.loadPubkeyCache(pubkeyCache);
-        } else {
-          console.error('Empty pubkey cache!');
-        }
-
-        //get balances from cache
-        let balanceCacheKey = 'cache:balance:' + walletType.toLowerCase();
-        console.log('balanceCacheKey: ', balanceCacheKey);
-        let balanceCache = localStorage.getItem(balanceCacheKey);
-        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-
-        //@TODO filter by blockchain
-
-        //set balances
-        console.log('balanceCache: ', balanceCache);
-        if (balanceCache && balanceCache.length > 0) {
-          await appInit.loadBalanceCache(balanceCache);
-        } else {
-          console.error('Empty balance cache!');
-        }
-      }
+      // // @ts-ignore
+      // const { events } = appInit;
+      //
+      // const walletActionsArray = Object.values(WalletActions);
+      //
+      // walletActionsArray.forEach((action) => {
+      //   events.on(action, (data: any) => {
+      //     // SET_BALANCES
+      //     if (action === WalletActions.SET_BALANCES) {
+      //       console.log('setting balances for context: ', appInit.context);
+      //       console.log('setting balances: ', data);
+      //
+      //       // Remove duplicates based on .caip property
+      //       const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
+      //         if (!acc.some((item: any) => item.caip === currentItem.caip)) {
+      //           acc.push(currentItem);
+      //         }
+      //         return acc;
+      //       }, []);
+      //
+      //       let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
+      //       console.log('balance cacheKey: ', cacheKeyBalances);
+      //       localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
+      //     }
+      //
+      //     // SET_PUBKEYS
+      //     if (action === WalletActions.SET_PUBKEYS) {
+      //       console.log('setting pubkeys: ', data);
+      //
+      //       let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
+      //       console.log('pubkey cacheKey: ', cacheKeyPubkeys);
+      //       localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
+      //     }
+      //     // @ts-ignore
+      //     dispatch({
+      //       type: action,
+      //       payload: data,
+      //     });
+      //   });
+      // });
+      //
+      // if (lastConnectedWallet) {
+      //   console.log('lastConnectedWallet');
+      //   console.log('Loading from cache!');
+      //   await appInit.setContext(lastConnectedWallet);
+      //   // //get wallet type
+      //   const walletType = lastConnectedWallet.split(':')[0];
+      //   let blockchainsCached = JSON.parse(
+      //     localStorage.getItem('cache:blockchains:' + walletType) || '[]',
+      //   );
+      //   await appInit.setBlockchains(blockchainsCached);
+      //   console.log('blockchainsCached: ', blockchainsCached);
+      //   //get paths for wallet
+      //   let paths = getPaths(blockchainsCached);
+      //
+      //   //get paths for blockchains
+      //   let addedChainsStr = localStorage.getItem(walletType + ':paths:add');
+      //   let addedChains;
+      //
+      //   // Safely parse addedChainsStr, ensuring it's not null before parsing
+      //   if (addedChainsStr) {
+      //     addedChains = JSON.parse(addedChainsStr);
+      //   } else {
+      //     addedChains = [];
+      //   }
+      //   //fitler by chain
+      //   addedChains = addedChains.filter((chain: any) => blockchainsCached.includes(chain.network));
+      //   paths = paths.concat(addedChains);
+      //   console.log('onStart paths: ', paths);
+      //
+      //   appInit.setPaths(paths);
+      //
+      //   //get pubkeys from cache
+      //   let pubkeyCache = localStorage.getItem('cache:pubkeys:' + walletType.toLowerCase());
+      //   pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+      //
+      //   //@TODO filter by blockchain
+      //
+      //   //set pubkeys
+      //   console.log('pubkeyCache: ', pubkeyCache);
+      //   if (pubkeyCache && pubkeyCache.length > paths.length) {
+      //     console.log('I know im out of sync!');
+      //     //force a resync
+      //     //await connectWallet(lastConnectedWallet);
+      //   }
+      //
+      //   if (pubkeyCache && pubkeyCache.length > 0) {
+      //     await appInit.loadPubkeyCache(pubkeyCache);
+      //   } else {
+      //     console.error('Empty pubkey cache!');
+      //   }
+      //
+      //   //get balances from cache
+      //   let balanceCacheKey = 'cache:balance:' + walletType.toLowerCase();
+      //   console.log('balanceCacheKey: ', balanceCacheKey);
+      //   let balanceCache = localStorage.getItem(balanceCacheKey);
+      //   balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+      //
+      //   //@TODO filter by blockchain
+      //
+      //   //set balances
+      //   console.log('balanceCache: ', balanceCache);
+      //   if (balanceCache && balanceCache.length > 0) {
+      //     await appInit.loadBalanceCache(balanceCache);
+      //   } else {
+      //     console.error('Empty balance cache!');
+      //   }
+      // }
     } catch (e) {
       console.error(e);
     }

@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
-// import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletContent } from '../WalletIcon';
 
-export default function WalletList({usePioneer}:any) {
+
+export function Wallets({usePioneer}:any) {
+  const { state, setIntent, connectWallet } = usePioneer();
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
-  const { state } = usePioneer();
   const { app } = state;
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export default function WalletList({usePioneer}:any) {
     try {
       //console.log('wallet: ', wallet);
       //console.log('wallet: ', wallet.split(':')[0]);
-      setSelectedWallet(wallet.split(':')[0]);
-      app.setContext(wallet);
+      // setSelectedWallet(wallet.split(':')[0]);
+      // app.setContext(wallet);
       // Load public keys and balances as needed
     } catch (e) {
       console.error(e);
@@ -83,3 +83,4 @@ export default function WalletList({usePioneer}:any) {
     </div>
   );
 }
+export default Wallets;

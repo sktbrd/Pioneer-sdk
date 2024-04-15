@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
+  VStack
 } from '@chakra-ui/react';
 import { FeeOption, Chain } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
@@ -23,6 +24,8 @@ import Assets from '../../components/Assets';
 import Pending from '../../components/Pending';
 import Quotes from '../../components/Quotes';
 import SignTransaction from '../../components/SignTransaction';
+import PubkeyAdd from '../../components/PubkeyAdd';
+import Wallets from '../../components/Wallets';
 // import { usePioneer } from '@coinmasters/pioneer-react';
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
@@ -35,6 +38,9 @@ import Quote from '../Quote';
 
 const MODAL_STRINGS = {
   selectAsset: 'Select Asset',
+  memolessWarning: 'Memoless Warning',
+  pairWallet: 'Pair Wallet',
+  addDestination: 'Add Destination',
   selectQuote: 'Select Quote',
   selectOutbound: 'Select Outbound',
   confirmTrade: 'Confirm Trade',
@@ -54,10 +60,12 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
+  const [memoless, setMemoless] = useState(null);
   const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
   const [txHash, setTxHash] = useState(null);
+  const [amountSelected, setAmountSelected] = useState(false);
   const [sliderValue, setSliderValue] = useState(50);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0); // New state for current route index
@@ -65,21 +73,9 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [isContinueDisabled, setIsContinueDisabled] = useState(true); // Initial continue button is disabled
   const [isContinueVisable, setIsContinueVisable] = useState(false); // Initial continue button is disabled
   const [quotesData, setQuotesData] = useState<typeof Quote[]>([]);
-
-  // const handleSliderChange = (event) => {
-  //   setTabIndex(parseInt(event.target.value, 10));
-  // };
-
-  const handleTabsChange = (index: any) => {
-    setTabIndex(index);
-  };
-
-  const handleClick = (button: any) => {
-    setSelectedButton(button);
-  };
-  const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
-  // const [assets] = useState([]); // Array to store assets
   const [showGoBack, setShowGoBack] = useState(false);
+  const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
+
 
   useEffect(() => {
     if (app && app.swapKit && assetContext && outboundAssetContext && step === 0) {
@@ -106,6 +102,10 @@ export function Swap({usePioneer}:any): JSX.Element {
   useEffect(() => {
     //console.log("**** inputAmount: ", inputAmount);
   }, [inputAmount]);
+
+  useEffect(() => {
+    if(!app?.assetContext?.balance) setMemoless(true);
+  }, [app, app?.assetContext, app?.assetContext?.balance]);
 
   const fetchQuote = async () => {
     try {
@@ -207,6 +207,18 @@ export function Swap({usePioneer}:any): JSX.Element {
     }
   }, []);
 
+  // // start the context provider
+  useEffect(() => {
+    if (amountSelected) {
+      console.log('amountSelected: ', amountSelected);
+      setIsContinueVisable(true);
+      if(memoless && app?.outboundAssetContext?.address){
+        setIsContinueDisabled(false)
+      }
+      // showContinueButton();
+    }
+  }, [amountSelected]);
+
   const handleClickContinue = () => {
     try {
       if (step === 0) {
@@ -257,6 +269,9 @@ export function Swap({usePioneer}:any): JSX.Element {
             openModal={openModal}
             setInputAmount={setInputAmount}
             setIsContinueVisable={setIsContinueVisable}
+            memoless={memoless}
+            setMemoless={setMemoless}
+            setAmountSelected={setAmountSelected}
           />
         );
       case 1:
@@ -295,9 +310,24 @@ export function Swap({usePioneer}:any): JSX.Element {
           <ModalCloseButton />
           <ModalBody>
             {/* Render content based on modalType */}
+            {modalType === MODAL_STRINGS.pairWallet && (
+              <div>
+                <Wallets usePioneer={usePioneer}/>
+              </div>
+            )}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
                 <Assets usePioneer={usePioneer} filters={{onlyOwned: true, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelect} />
+              </div>
+            )}
+            {modalType === MODAL_STRINGS.selectOutbound && (
+              <div>
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
+              </div>
+            )}
+            {modalType === MODAL_STRINGS.addDestination && (
+              <div>
+                <PubkeyAdd usePioneer={usePioneer} onClose={onClose}> </PubkeyAdd>
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
@@ -324,6 +354,12 @@ export function Swap({usePioneer}:any): JSX.Element {
                 />
               </div>
             )}
+            {modalType === MODAL_STRINGS.memolessWarning && (
+              <div>
+                Warning: This trade is memoless. Are you sure you want to continue?
+                Pairing a wallet will enable a greater access to protocols for swapping
+              </div>
+            )}
             {modalType === MODAL_STRINGS.errorQuote && (
               <div>
                 <ErrorQuote error={error} onClose={onClose} />
@@ -347,6 +383,51 @@ export function Swap({usePioneer}:any): JSX.Element {
         {renderStepContent()}
       </Box>
       <Flex alignItems="center" bg="black" flexDirection="column" mx="auto">
+        {/*{memoless ? (*/}
+        {/*  <>This trade is memoless</>*/}
+        {/*) : null}*/}
+        {/*{(app?.outboundAssetContext && !app?.outboundAssetContext?.address) &&(*/}
+        {/*  <>*/}
+        {/*    <Button onClick={() => openModal(MODAL_STRINGS.addDestination)}>Add An Destination Address</Button>*/}
+        {/*  </>*/}
+        {/*)}*/}
+
+
+
+              {app?.outboundAssetContext && !app?.outboundAssetContext?.address && (
+                <Box
+                  p={4}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  boxShadow="sm"
+                >
+                <VStack spacing={4} align="stretch">
+                  <Flex justifyContent="flex-end" alignItems="center">
+                    <Box flex="1" textAlign="left" mr={2}>To continue...</Box>
+                  </Flex>
+                  <Flex justifyContent="flex-end">
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      onClick={() => openModal(MODAL_STRINGS.addDestination)}
+                    >
+                      Add A Destination Address
+                    </Button>
+                  {memoless && (
+                      <Button
+                        size="sm"
+                        colorScheme="blue"
+                        onClick={() => console.log('Pair Wallet Clicked')}
+                      >
+                        Pair Wallet
+                      </Button>
+                  )}
+                  </Flex>
+                </VStack>
+                </Box>
+              )}
+
+
         {showGoBack && (
           <div>
             <Button onClick={goBack}>Go Back</Button>

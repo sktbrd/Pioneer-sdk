@@ -23,7 +23,7 @@ import Asset from '../Asset';
 // import Basic from '@/app/components/Basic';
 let TAG = " | Amount | ";
 
-export function Amount({ usePioneer, onClose, setInputAmount }: any) {
+export function Amount({ usePioneer, onClose, setInputAmount, memoless }: any) {
   // const router = useRouter();
   const minimumTradeAmountUSD = 10;
   const [isInputValid, setIsInputValid] = useState<boolean>(true);
@@ -42,23 +42,33 @@ export function Amount({ usePioneer, onClose, setInputAmount }: any) {
 
   const onSliderChange = (value: number) => {
     if (!assetContext) return;
+    let amount
+    if(memoless){
+      amount = '10'
+    }else{
+      amount = assetContext.balance
+    }
     // console.log(value)
     setSliderValue(value);
     let newAmount;
     let newAmountUsd;
     newAmountUsd = (value / 100) * parseFloat(assetContext.valueUsd);
-    newAmount = (value / 100) * parseFloat(assetContext.balance);
+    newAmount = (value / 100) * parseFloat(amount);
     setInputAmount(newAmount);
     setInputAmountNative(newAmount);
     setInputAmountUsd(newAmountUsd);
-
   };
 
   const updateInputAmount = (value: number) => {
     if (!assetContext) return;
+    let amount
+    if(memoless){
+      amount = '10'
+    }else{
+      amount = assetContext.balance
+    }
 
     let newSliderValue;
-
     if (inputCurrency === 'Native') {
       // Input is in native currency.
       setInputAmount(value);
@@ -94,39 +104,15 @@ export function Amount({ usePioneer, onClose, setInputAmount }: any) {
     }
   };
 
-  // const updateInputAmount = (value) => {
-  //   if (!assetContext) return;
-  //
-  //   let newSliderValue;
-  //
-  //   if (inputCurrency === 'Native') {
-  //     const newAmountUsd = (value * parseFloat(assetContext.priceUsd)) / parseFloat(assetContext.balance);
-  //     newSliderValue = (value / parseFloat(assetContext.balance)) * 100;
-  //
-  //     setInputAmount(value);
-  //     setInputAmountNative(value);
-  //     setInputAmountUsd(newAmountUsd);
-  //   } else {
-  //     const newAmountNative = (value * parseFloat(assetContext.balance)) / parseFloat(assetContext.valueUsd);
-  //     newSliderValue = (value / parseFloat(assetContext.valueUsd)) * 100;
-  //
-  //     setInputAmount(newAmountNative);
-  //     setInputAmountUsd(value);
-  //     setInputAmountNative(newAmountNative);
-  //   }
-  //
-  //   setSliderValue(newSliderValue);
-  // };
-
   let onSelect = function(asset: any){
     console.log(TAG, "onSelect", asset);
   }
 
   return (
     <Stack spacing={4}>
-      <div>
-        <Asset usePioneer={usePioneer} onSelect={onSelect} onClose={onClose} asset={assetContext} />
-      </div>
+      {/*<div>*/}
+      {/*  <Asset usePioneer={usePioneer} onSelect={onSelect} onClose={onClose} asset={assetContext} />*/}
+      {/*</div>*/}
       <Text fontSize="md" mb="2">
         Select Amount To Trade:
       </Text>
@@ -163,7 +149,7 @@ export function Amount({ usePioneer, onClose, setInputAmount }: any) {
           </NumberInputStepper>
         </NumberInput>
         <div>{inputCurrency === 'USD' ? (<>{inputAmountNative} ({assetContext?.chain})</>):(<>{inputAmountUsd} (USD)</>)}</div>
-        <Button onClick={toggleCurrency}>input as {inputCurrency}</Button>
+        <Button onClick={toggleCurrency}>input as {inputCurrency === 'USD' ? 'Native' : 'USD'}</Button>
         <Slider
           flex="1"
           focusThumbOnChange={false}

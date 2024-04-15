@@ -26,31 +26,32 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        let assets = await app.getAssets();
-        //pubkeys
-        console.log("app.pubkeys: ", app.pubkeys);
-
-        // Sort by valueUsd in descending order
-        assets.sort((a: any, b: any) => b.valueUsd - a.valueUsd);
-        console.log("assets: ", assets);
-
-        setAllAssets(assets);
+        console.log("rendering assets!")
+        if(app && app.assets){
+          console.log("app: ", app)
+          console.log("app.assets: ", app.assets.length)
+          let assets = app.assets
+          assets.sort((a: any, b: any) => b.valueUsd - a.valueUsd);
+          console.log("assets: ", app.assets.length)
+          setAllAssets(assets);
+        }
       } catch (e) {
         console.error(e);
       }
     };
     fetchAssets();
-  }, [app, onlyOwned, noTokens]);
+  }, [app, app?.assets, onlyOwned, hasPubkey, noTokens]);
 
   const filteredAssets = allAssets.filter((asset: any) => {
     // Ensure asset.name and searchQuery are both strings before calling toLowerCase()
     const assetName = asset.name ? asset.name.toLowerCase() : '';
     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
 
-    return assetName.includes(normalizedSearchQuery) &&
-      (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
-      (!noTokens || (noTokens && asset.type !== 'token')) &&
-      (!hasPubkey || (hasPubkey && asset.pubkey));
+    return assetName.includes(normalizedSearchQuery);
+    // return assetName.includes(normalizedSearchQuery) &&
+    //   (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
+    //   (!noTokens || (noTokens && asset.type !== 'token')) &&
+    //   (!hasPubkey || (hasPubkey && asset.pubkey));
   });
 
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);

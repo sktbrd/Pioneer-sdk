@@ -1,5 +1,33 @@
 # @coinmasters/e2e-swap-bitcoincash-doge
 
+## 1.7.0
+
+### Minor Changes
+
+- bump
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.0
+  - @coinmasters/wallet-keystore@11.0.0
+  - @coinmasters/wallet-keepkey@13.0.0
+  - @coinmasters/types@4.7.0
+  - @coinmasters/core@11.0.0
+
+## 1.6.2
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.6.2
+  - @coinmasters/wallet-keystore@10.0.2
+  - @coinmasters/wallet-keepkey@12.0.2
+  - @coinmasters/types@4.6.2
+  - @coinmasters/core@10.0.2
+
 ## 1.6.1
 
 ### Patch Changes

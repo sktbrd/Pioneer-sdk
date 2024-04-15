@@ -45,7 +45,8 @@ export default function OutputSelect({ usePioneer, onClose, onSelect }: any) {
     try {
       if (app) {
         console.log('app: ', app.pubkeys);
-        let allTokens = await app.getAssets();
+        console.log('app: ', app.assets.length);
+        let allTokens = await app.assets;
 
         //remove tokens that are not native
         allTokens = allTokens.filter((token: any) => token.type === 'native');
