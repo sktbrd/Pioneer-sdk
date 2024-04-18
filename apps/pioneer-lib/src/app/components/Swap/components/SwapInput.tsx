@@ -16,12 +16,12 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
-function SwapInput({ usePioneer, setAmountSelected }:any) {
+function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
   const { state, hideModal, resetState } = usePioneer();
   const { app } = state;
   const [depositAmount, setDepositAmount] = useState('');
   const [receiveAmount, setReceiveAmount] = useState('');
-  const [exchangeRate, setExchangeRate] = useState(null);
+  const [exchangeRate, setExchangeRate] = useState<any>(null);
 
   // Calculate exchange rate from the app context
   useEffect(() => {
@@ -29,30 +29,32 @@ function SwapInput({ usePioneer, setAmountSelected }:any) {
       let rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
       console.log("rate: ",rate)
       rate = 1/rate
-      setExchangeRate(rate);
+      setExchangeRate(rate || 0);
     } else {
       console.log("input: ",app?.assetContext?.priceUsd)
       console.log("output: ",app?.outboundAssetContext?.priceUsd)
     }
   }, [app, app?.assetContext, app?.outboundAssetContext]);
 
-  const handleDepositChange = (valueAsString) => {
+  const handleDepositChange = (valueAsString:any) => {
     console.log("valueAsString: ", valueAsString);
     setDepositAmount(valueAsString);
     if (exchangeRate !== null) {
       setAmountSelected(true)
       const depositValue = parseFloat(valueAsString) || 0;
+      setInputAmount(depositValue);
       const receiveValue = depositValue / exchangeRate;
       setReceiveAmount(receiveValue.toFixed(4));
     }
   };
 
-  const handleReceiveChange = (valueAsString) => {
+  const handleReceiveChange = (valueAsString:any) => {
     setReceiveAmount(valueAsString);
     if (exchangeRate !== null) {
-      amountSelected(true)
+      setAmountSelected(true)
       const receiveValue = parseFloat(valueAsString) || 0;
       const depositValue = receiveValue * exchangeRate;
+      setInputAmount(depositValue);
       setDepositAmount(depositValue.toFixed(4));
     }
   };
@@ -67,7 +69,6 @@ function SwapInput({ usePioneer, setAmountSelected }:any) {
               <Icon as={ChevronRightIcon} />
             </HStack>
             <NumberInput
-              placeholder="0.00"
               variant="filled"
               mb={2}
               value={depositAmount}
@@ -89,7 +90,6 @@ function SwapInput({ usePioneer, setAmountSelected }:any) {
               <Icon as={ChevronRightIcon} />
             </HStack>
             <NumberInput
-              placeholder="0.00"
               variant="filled"
               mb={2}
               value={receiveAmount}
@@ -103,6 +103,15 @@ function SwapInput({ usePioneer, setAmountSelected }:any) {
               </NumberInputStepper>
             </NumberInput>
             <Text fontSize="sm" color="gray.500">{app?.outboundAssetContext?.name} on {app?.outboundAssetContext?.chain}</Text>
+            {app?.outboundAssetContext?.address && (
+              <Text fontSize='xs'>{`address: ${app.outboundAssetContext.address}`}</Text>
+            )}
+            {app?.outboundAssetContext?.label && (
+              <Text mt={2} fontSize='md'>{`Label: ${app.outboundAssetContext.label}`}</Text>
+            )}
+            {app?.outboundAssetContext?.context === 'external' && (
+              <Text mt={2} fontStyle="italic">External</Text>
+            )}
           </Box>
         </VStack>
       </Box>

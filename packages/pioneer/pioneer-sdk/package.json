@@ -14,7 +14,7 @@
     "@coinmasters/types": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.3.1",
     "@pioneer-platform/pioneer-caip": "^9.2.25",
-    "@pioneer-platform/pioneer-client": "^9.2.3",
+    "@pioneer-platform/pioneer-client": "^9.2.5",
     "@pioneer-platform/pioneer-coins": "^9.2.16",
     "@pioneer-platform/pioneer-discovery": "^0.0.7"
   },

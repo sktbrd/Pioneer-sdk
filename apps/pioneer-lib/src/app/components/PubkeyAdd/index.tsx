@@ -6,7 +6,7 @@ import { Box, Stack, Avatar,   FormControl,
   Text,
   VStack, Button } from '@chakra-ui/react';
 
-export default function PubkeyAdd({ usePioneer, onClose, pubkey }: any) {
+export default function PubkeyAdd({ usePioneer, onClose, setIsContinueVisable }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const [address, setAddress] = useState('');
@@ -19,7 +19,7 @@ export default function PubkeyAdd({ usePioneer, onClose, pubkey }: any) {
     }
   }, [app, app?.pubkeys]);
 
-  const handleSave = () => {
+  const handleSave = async function(){
     //TODO validate address!
     // Implement the save logic here
     console.log('Address:', address);
@@ -31,8 +31,14 @@ export default function PubkeyAdd({ usePioneer, onClose, pubkey }: any) {
     let data = pubkeyCache ? JSON.parse(pubkeyCache) : [];
     data.push({ address, label, caip: app.outboundAssetContext.caip, networks: [app.outboundAssetContext.networkId] });
     localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
-    app.outboundAssetContext.address = address;
+    let outboundAssetContext = app.outboundAssetContext;
+    outboundAssetContext.context = 'external'
+    outboundAssetContext.label = label;
+    outboundAssetContext.address = address;
+    outboundAssetContext.pubkey = address;
+    await app.setOutboundAssetContext(outboundAssetContext);
     console.log('pubkey cacheKey: ', data);
+    setIsContinueVisable(true);
     onClose(); // Close the modal after saving
   };
 

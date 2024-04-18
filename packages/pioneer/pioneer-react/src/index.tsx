@@ -420,6 +420,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
       // @ts-ignore
       const lastConnectedWallet: string | null = localStorage.getItem('lastConnectedWallet');
+      // @ts-ignore
+      let cacheKeyPubkeys = 'cache:pubkeys';
+      let cachedPubkeys = localStorage.getItem(cacheKeyPubkeys);
+      cachedPubkeys = cachedPubkeys ? JSON.parse(cachedPubkeys) : [];
 
       if (!queryKey) {
         queryKey = `key:${uuidv4()}`;
@@ -474,6 +478,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
       }
       const api = await appInit.init(wallets, setup);
+      //load pubkey cache
+      if (cachedPubkeys && cachedPubkeys.length > 0) {
+        appInit.loadPubkeyCache(cachedPubkeys);
+      }
+
       // @ts-ignore
       console.log('appInit.wallets: ', appInit.wallets);
       // @ts-ignore
@@ -481,46 +490,48 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
+
+
       // // @ts-ignore
-      // const { events } = appInit;
-      //
-      // const walletActionsArray = Object.values(WalletActions);
-      //
-      // walletActionsArray.forEach((action) => {
-      //   events.on(action, (data: any) => {
-      //     // SET_BALANCES
-      //     if (action === WalletActions.SET_BALANCES) {
-      //       console.log('setting balances for context: ', appInit.context);
-      //       console.log('setting balances: ', data);
-      //
-      //       // Remove duplicates based on .caip property
-      //       const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
-      //         if (!acc.some((item: any) => item.caip === currentItem.caip)) {
-      //           acc.push(currentItem);
-      //         }
-      //         return acc;
-      //       }, []);
-      //
-      //       let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
-      //       console.log('balance cacheKey: ', cacheKeyBalances);
-      //       localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
-      //     }
-      //
-      //     // SET_PUBKEYS
-      //     if (action === WalletActions.SET_PUBKEYS) {
-      //       console.log('setting pubkeys: ', data);
-      //
-      //       let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
-      //       console.log('pubkey cacheKey: ', cacheKeyPubkeys);
-      //       localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
-      //     }
-      //     // @ts-ignore
-      //     dispatch({
-      //       type: action,
-      //       payload: data,
-      //     });
-      //   });
-      // });
+      const { events } = appInit;
+
+      const walletActionsArray = Object.values(WalletActions);
+
+      walletActionsArray.forEach((action) => {
+        events.on(action, (data: any) => {
+          // SET_BALANCES
+          if (action === WalletActions.SET_BALANCES) {
+            console.log('setting balances for context: ', appInit.context);
+            console.log('setting balances: ', data);
+
+            // Remove duplicates based on .caip property
+            const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
+              if (!acc.some((item: any) => item.caip === currentItem.caip)) {
+                acc.push(currentItem);
+              }
+              return acc;
+            }, []);
+
+            let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
+            console.log('balance cacheKey: ', cacheKeyBalances);
+            localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
+          }
+
+          // SET_PUBKEYS
+          if (action === WalletActions.SET_PUBKEYS) {
+            console.log('setting pubkeys: ', data);
+
+            let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
+            console.log('pubkey cacheKey: ', cacheKeyPubkeys);
+            localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
+          }
+          // @ts-ignore
+          dispatch({
+            type: action,
+            payload: data,
+          });
+        });
+      });
       //
       // if (lastConnectedWallet) {
       //   console.log('lastConnectedWallet');

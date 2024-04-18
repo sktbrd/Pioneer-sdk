@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import CalculatingComponent from '../../../components/CalculatingComponent';
 import Quote from "../../../components/Quote";
 
-const BeginSwap = ({ quote, onAcceptSign }: any) => {
+const BeginSwap = ({ quote, onAcceptSign, memoless}: any) => {
   const [showGif, setShowGif] = useState(true);
 
   // wait for routes
@@ -24,7 +24,7 @@ const BeginSwap = ({ quote, onAcceptSign }: any) => {
         </Box>
       ) : (
         <div>
-          <Quote quote={quote} onAcceptSign={onAcceptSign} />
+          <Quote quote={quote} onAcceptSign={onAcceptSign} memoless={memoless}/>
         </div>
       )}
     </Box>

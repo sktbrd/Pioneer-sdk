@@ -19,13 +19,14 @@ import { NetworkIdToChain } from '@coinmasters/types';
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useCallback } from 'react';
+import QRCode from 'react-qr-code'; // Ensure you have a QR code library
 
 let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
 
-export function Quote({ quote, onAcceptSign }: any): JSX.Element {
+export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
   // Use actual values and image paths as needed
   const topBarBg = useColorModeValue('gray.100', 'gray.700'); // Change this color to match your design
   const { hasCopied, onCopy } = useClipboard(quote.quote.id);
@@ -169,17 +170,29 @@ export function Quote({ quote, onAcceptSign }: any): JSX.Element {
             </Badge>
           </Stack>
 
-          <Flex align="center" justify="center">
-            <Badge borderRadius="full" colorScheme="green" p={2}>
-              <HStack spacing={2}>
-                <Text fontSize="md">I agree to the Terms</Text>
-              </HStack>
-            </Badge>
-          </Flex>
+          {/*<Flex align="center" justify="center">*/}
+          {/*  <Badge borderRadius="full" colorScheme="green" p={2}>*/}
+          {/*    <HStack spacing={2}>*/}
+          {/*      <Text fontSize="md">I agree to the Terms</Text>*/}
+          {/*    </HStack>*/}
+          {/*  </Badge>*/}
+          {/*</Flex>*/}
+          {memoless ? (
+            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+              <Box borderWidth="1px" borderColor="white" p={3} textAlign="center">
+                <QRCode value={`address: ${quote.quote.inboundAddress}, amount: ${quote.quote.sellAmount}`} />
+              </Box>
+              <Box p={3}>
+                <Text fontWeight="bold">Pay to Address: Bla</Text>
+                <Text>Address: {quote.quote.inboundAddress}</Text>
+                <Text>Amount: {formatNumber(quote.quote.sellAmount)}</Text>
+                <Text>Please send exactly this amount</Text>
+              </Box>
+            </Grid>
+          ) : (
+            <Button colorScheme="blue" onClick={handleSignTransaction}>Sign Transaction</Button>
+          )}
 
-          <Button colorScheme="blue" onClick={handleSignTransaction}>
-            Sign Transaction
-          </Button>
         </VStack>
       </VStack>
     </Box>

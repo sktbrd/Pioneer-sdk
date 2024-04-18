@@ -75,25 +75,6 @@ const BeginSwap: any = ({
     app.setAssetContext(currentOutput);
   };
 
-  //
-  const confirmAssetSelection = async function(isConfirmed: boolean){
-    if(!app.assetContext.address){
-      setMemoless(true);
-    }
-    if(app.outboundAssetContext.address){
-      setAssetsConfirmed(true)
-      setIsContinueVisable(true);
-    }
-  }
-
-  let onSelect = function (asset: any) {
-    console.log('asset: ',asset)
-  }
-
-  let onClose = function () {
-    console.log('onClose: ')
-  }
-
   const calculateQuote = () => {
     if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
       const rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
@@ -172,7 +153,7 @@ const BeginSwap: any = ({
           </Box>
         </HStack>
       </Flex>
-      <SwapInput usePioneer={usePioneer} setAmountSelected={setAmountSelected}></SwapInput>
+      <SwapInput usePioneer={usePioneer} setAmountSelected={setAmountSelected} setInputAmount={setInputAmount}></SwapInput>
       {/*{(app?.outboundAssetContext && app?.outboundAssetContext.address) &&(*/}
       {/*  <>*/}
       {/*    <Button onClick={() => confirmAssetSelection(true)}>Confirm</Button>*/}

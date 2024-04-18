@@ -152,6 +152,9 @@ importers:
       react-icons:
         specifier: ^5.0.1
         version: 5.0.1(react@18.2.0)
+      react-qr-code:
+        specifier: ^2.0.12
+        version: 2.0.12(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0)(react@18.2.0)
@@ -2424,8 +2427,8 @@ importers:
         specifier: ^9.2.25
         version: 9.2.25
       '@pioneer-platform/pioneer-client':
-        specifier: ^9.2.3
-        version: 9.2.3
+        specifier: ^9.2.5
+        version: 9.2.5
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.16
         version: 9.2.16(@types/node@20.10.0)
@@ -8313,8 +8316,8 @@ packages:
     resolution: {integrity: sha512-CtJDwZXWYVogrbRZV6e5Bkrp/54xpoNufkAsvTQ83vPuJ0oz434NWaxFgfXAUy+ipdfhRwp/dF1JyjLm/zP+2g==}
     dev: false
 
-  /@pioneer-platform/pioneer-client@9.2.3:
-    resolution: {integrity: sha512-S7psBzQ7S4/38AaxsCS/NbZDOU8cUtpzUjb7ku6vQYS0wR9ZiEjIfuPet0CfpsGEMnnJUedPYM9Eeiv5G/QIRQ==}
+  /@pioneer-platform/pioneer-client@9.2.5:
+    resolution: {integrity: sha512-eQwCkrw6Aku2pXSgvrSlMOjk6WUnxLWdNWTLKkfRgH9jdE23wRWA9wkdlmR9b1qu4PFHJYnbmsETYIl2vD+t9Q==}
     dependencies:
       swagger-client: 3.25.0
     transitivePeerDependencies:
@@ -16616,7 +16619,7 @@ packages:
     dependencies:
       get-intrinsic: 1.2.4
       has: 1.0.3
-      side-channel: 1.0.4
+      side-channel: 1.0.6
 
   /internal-slot@1.0.6:
     resolution: {integrity: sha512-Xj6dv+PsbtwyPpEflsejS+oIZxmMlV44zAhG479uYu89MsjcYOhCFnNyKrkJrihbsiasQyY0afoCl/9BLR65bg==}
@@ -16624,7 +16627,7 @@ packages:
     dependencies:
       get-intrinsic: 1.2.4
       hasown: 2.0.2
-      side-channel: 1.0.4
+      side-channel: 1.0.6
 
   /internal-slot@1.0.7:
     resolution: {integrity: sha512-NGnrKwXzSms2qUUih/ILZ5JBqNTSa1+ZmP6flaIp6KmSElgE9qdndzS3cqjrDovwFdmwsGsLdeFgB6suw+1e9g==}
@@ -19650,6 +19653,10 @@ packages:
     dependencies:
       bitcoin-ops: 1.4.1
 
+  /qr.js@0.0.0:
+    resolution: {integrity: sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==}
+    dev: false
+
   /qrcode.react@3.1.0(react@18.2.0):
     resolution: {integrity: sha512-oyF+Urr3oAMUG/OiOuONL3HXM+53wvuH3mtIWQrYmsXoAq0DkvZp2RYUWFSMFtbdOpuS++9v+WAkzNVkMlNW6Q==}
     peerDependencies:
@@ -19680,7 +19687,6 @@ packages:
     engines: {node: '>=0.6'}
     dependencies:
       side-channel: 1.0.6
-    dev: true
 
   /qs@6.5.3:
     resolution: {integrity: sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==}
@@ -19826,6 +19832,20 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+
+  /react-qr-code@2.0.12(react@18.2.0):
+    resolution: {integrity: sha512-k+pzP5CKLEGBRwZsDPp98/CAJeXlsYRHM2iZn1Sd5Th/HnKhIZCSg27PXO58zk8z02RaEryg+60xa4vyywMJwg==}
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+      react-native-svg: '*'
+    peerDependenciesMeta:
+      react-native-svg:
+        optional: true
+    dependencies:
+      prop-types: 15.8.1
+      qr.js: 0.0.0
+      react: 18.2.0
+    dev: false
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
@@ -21354,7 +21374,7 @@ packages:
       js-yaml: 4.1.0
       node-abort-controller: 3.1.1
       node-fetch-commonjs: 3.3.2
-      qs: 6.11.2
+      qs: 6.12.0
       traverse: 0.6.8
       undici: 5.28.3
     transitivePeerDependencies:

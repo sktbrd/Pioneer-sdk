@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
   useDisclosure,
   VStack
 } from '@chakra-ui/react';
@@ -60,7 +61,7 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
-  const [memoless, setMemoless] = useState(null);
+  const [memoless, setMemoless] = useState<any>(null);
   const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
   const [inputAmount, setInputAmount] = useState(0);
@@ -78,7 +79,7 @@ export function Swap({usePioneer}:any): JSX.Element {
 
 
   useEffect(() => {
-    if (app && app.swapKit && assetContext && outboundAssetContext && step === 0) {
+    if (app && step === 0) {
       setIsContinueDisabled(false);
     }
   }, [app, assetContext, blockchainContext, outboundAssetContext, step]);
@@ -110,50 +111,42 @@ export function Swap({usePioneer}:any): JSX.Element {
   const fetchQuote = async () => {
     try {
       //console.log('sliderValue: ', sliderValue);
-      let senderAddress = assetContext.address;
-      let recipientAddress =
-        outboundAssetContext.address || app.swapKit.getAddress(outboundAssetContext.chain);
-      //console.log('outboundAssetContext: ', outboundAssetContext);
-
-      if (!recipientAddress) {
-        //console.log('outboundAssetContext: ', outboundAssetContext);
-        throw Error('must have recipient address');
+      let senderAddress
+      if(!memoless){
+        senderAddress = assetContext.address;
+        if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
       }
-      //console.log("SELECT INPUT AMOUNT: ", inputAmount);
-      console.log("app.pubkeys: ",app.pubkeys)
-      let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
-      console.log("ethPubkey: ",ethPubkey)
-      let trader = ethPubkey.address
-      console.log("app.pubkeys: ",app.pubkeys)
 
-      if(!trader){
-        alert('unable to get traderId')
+      let recipientAddress = app.outboundAssetContext.address;
+      let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
+      let trader
+      if(ethPubkey){
+        trader = ethPubkey.address
+        console.log("trader: ",trader)
       }
 
       if(!inputAmount || inputAmount <= 0) {
         throw Error('Invalid amount!');
       }
-      //if pro enabled
-      //TODO get pro enabled from context
 
 
-      //validate input amount
-      if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
       //get receiver context
       if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
 
-      const entry = {
-        trader,
+      const entry:any = {
         affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,
         // @ts-ignore
         sellAmount: parseFloat(inputAmount).toPrecision(8),
         buyAsset: app.outboundAssetContext,
-        senderAddress,
         recipientAddress,
         slippage: '3',
       };
-      //console.log('entry: ', entry);
+      if(senderAddress) entry.senderAddress = senderAddress
+      if(trader) entry.trader = trader;
+      if(memoless) entry.memoless = true;
+      console.log('entry: ', entry);
+      console.log('entry: ', JSON.stringify(entry));
       try {
         let result = await app.pioneer.Quote(entry);
         result = result.data;
@@ -211,13 +204,13 @@ export function Swap({usePioneer}:any): JSX.Element {
   useEffect(() => {
     if (amountSelected) {
       console.log('amountSelected: ', amountSelected);
-      setIsContinueVisable(true);
-      if(memoless && app?.outboundAssetContext?.address){
+      if(memoless && app?.outboundAssetContext?.address && step == 0){
+        console.log("Showing continue button")
+        setIsContinueVisable(true);
         setIsContinueDisabled(false)
       }
-      // showContinueButton();
     }
-  }, [amountSelected]);
+  }, [amountSelected, isContinueVisable]);
 
   const handleClickContinue = () => {
     try {
@@ -225,6 +218,7 @@ export function Swap({usePioneer}:any): JSX.Element {
         fetchQuote();
         setStep((prevStep) => prevStep + 1);
         setShowGoBack(true);
+        setIsContinueVisable(false)
         return;
       }
       if (step === 1) {
@@ -233,7 +227,7 @@ export function Swap({usePioneer}:any): JSX.Element {
           feeOptionKey: FeeOption.Fast,
         };
         //console.log('swapParams: ', swapParams);
-        fetchQuote();
+        // fetchQuote();
         openModal(MODAL_STRINGS.confirmTrade);
       }
       if (step === 1) {
@@ -275,7 +269,7 @@ export function Swap({usePioneer}:any): JSX.Element {
           />
         );
       case 1:
-        return <BeginSwap usePioneer={usePioneer} onAcceptSign={onAcceptSign} quote={quote} />;
+        return <BeginSwap usePioneer={usePioneer} onAcceptSign={onAcceptSign} quote={quote} memoless={memoless}/>;
       case 2:
         return <CompleteSwap usePioneer={usePioneer} quoteId={quoteId} route={route} txHash={txHash} />;
       default:
@@ -327,7 +321,7 @@ export function Swap({usePioneer}:any): JSX.Element {
             )}
             {modalType === MODAL_STRINGS.addDestination && (
               <div>
-                <PubkeyAdd usePioneer={usePioneer} onClose={onClose}> </PubkeyAdd>
+                <PubkeyAdd usePioneer={usePioneer} onClose={onClose} setIsContinueVisable={setIsContinueVisable}> </PubkeyAdd>
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
@@ -383,50 +377,45 @@ export function Swap({usePioneer}:any): JSX.Element {
         {renderStepContent()}
       </Box>
       <Flex alignItems="center" bg="black" flexDirection="column" mx="auto">
-        {/*{memoless ? (*/}
-        {/*  <>This trade is memoless</>*/}
-        {/*) : null}*/}
-        {/*{(app?.outboundAssetContext && !app?.outboundAssetContext?.address) &&(*/}
-        {/*  <>*/}
-        {/*    <Button onClick={() => openModal(MODAL_STRINGS.addDestination)}>Add An Destination Address</Button>*/}
-        {/*  </>*/}
-        {/*)}*/}
-
-
-
-              {app?.outboundAssetContext && !app?.outboundAssetContext?.address && (
-                <Box
-                  p={4}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  boxShadow="sm"
-                >
-                <VStack spacing={4} align="stretch">
-                  <Flex justifyContent="flex-end" alignItems="center">
-                    <Box flex="1" textAlign="left" mr={2}>To continue...</Box>
-                  </Flex>
-                  <Flex justifyContent="flex-end">
-                    <Button
-                      size="sm"
-                      colorScheme="red"
-                      onClick={() => openModal(MODAL_STRINGS.addDestination)}
-                    >
-                      Add A Destination Address
-                    </Button>
-                  {memoless && (
-                      <Button
-                        size="sm"
-                        colorScheme="blue"
-                        onClick={() => console.log('Pair Wallet Clicked')}
-                      >
-                        Pair Wallet
-                      </Button>
-                  )}
-                  </Flex>
-                </VStack>
-                </Box>
-              )}
-
+        {(app?.outboundAssetContext && !app?.outboundAssetContext?.address && amountSelected) && (
+          <Box
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            boxShadow="sm"
+          >
+          <VStack spacing={4} align="stretch">
+            <Flex justifyContent="flex-end" alignItems="center">
+              <Box flex="1" textAlign="left" mr={2}>To continue...</Box>
+            </Flex>
+            <Flex justifyContent="flex-end">
+              <Button
+                size="sm"
+                colorScheme="red"
+                onClick={() => openModal(MODAL_STRINGS.addDestination)}
+              >
+                Add A Destination Address
+              </Button>
+            {/*{memoless && (*/}
+            {/*    <Button*/}
+            {/*      size="sm"*/}
+            {/*      colorScheme="blue"*/}
+            {/*      onClick={() => console.log('Pair Wallet Clicked')}*/}
+            {/*    >*/}
+            {/*      Pair Wallet*/}
+            {/*    </Button>*/}
+            {/*)}*/}
+            </Flex>
+          </VStack>
+          </Box>
+        )}
+        {!amountSelected && (<>
+          <Box>
+            <Text fontSize="sm" color="gray.500" textAlign="center">
+              {`How much would you like to trade?`}
+            </Text>
+          </Box>
+        </>)}
 
         {showGoBack && (
           <div>
