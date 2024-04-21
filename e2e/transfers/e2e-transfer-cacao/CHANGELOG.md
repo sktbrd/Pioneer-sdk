@@ -1,5 +1,18 @@
 # @coinmasters/e2e-transfer-mayachain
 
+## 1.7.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.1
+  - @coinmasters/wallet-keystore@11.0.1
+  - @coinmasters/wallet-keepkey@13.0.1
+  - @coinmasters/types@4.7.1
+  - @coinmasters/core@11.0.1
+
 ## 1.7.0
 
 ### Minor Changes

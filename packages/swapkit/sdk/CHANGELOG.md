@@ -1,5 +1,28 @@
 # @coinmasters/sdk
 
+## 3.7.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@11.0.1
+  - @coinmasters/toolbox-cosmos@11.0.1
+  - @coinmasters/wallet-keystore@11.0.1
+  - @coinmasters/wallet-keepkey@13.0.1
+  - @coinmasters/toolbox-utxo@11.0.1
+  - @coinmasters/wallet-ledger@11.0.1
+  - @coinmasters/wallet-trezor@11.0.1
+  - @coinmasters/types@4.7.1
+  - @coinmasters/toolbox-evm@11.0.1
+  - @coinmasters/wallet-keplr@11.0.1
+  - @coinmasters/wallet-xdefi@11.0.1
+  - @coinmasters/core@11.0.1
+  - @coinmasters/api@3.7.1
+  - @coinmasters/wallet-okx@11.0.1
+  - @coinmasters/wallet-wc@11.0.1
+
 ## 3.7.0
 
 ### Minor Changes

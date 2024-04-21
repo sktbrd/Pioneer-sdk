@@ -61,9 +61,7 @@ import Pioneer from '@pioneer-platform/pioneer-client';
 import { assetData } from '@pioneer-platform/pioneer-discovery';
 import EventEmitter from 'events';
 
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
+let MEMOLESS_INTERGRATIONS = ['changelly', 'chainflip'];
 
 const TAG = ' | Pioneer-sdk | ';
 
@@ -549,100 +547,95 @@ export class SDK {
       }
     };
     //@ts-ignore
-    this.getAssets = function (filter?: string) {
+    this.getAssets = async function (filter?: string) {
       try {
         const tag = `${TAG} | getAssets | `;
         console.log(tag, 'filter: ', filter);
 
-        console.log('ASSET DATA: ', Object.keys(assetData).length);
-
-        let tokenMap: any = {};
+        let tokenMap = new Map();
         let chains = new Set();
-        let chainTokenCounts: any = {};
+        let chainTokenCounts = {};
         this.assetsMap = new Map();
 
         // Function to add tokens with their source list
-        const addTokens = (tokens: any, sourceList: any) => {
-          tokens.forEach((token: any) => {
+        const addTokens = (tokens, sourceList) => {
+          tokens.forEach((token) => {
             chains.add(token.chain);
             chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            //console.log('token PRE: ', token);
             let expandedInfo = tokenToCaip(token);
             if (expandedInfo.caip) {
               expandedInfo.sourceList = sourceList;
-              //console.log('expandedInfo: ', expandedInfo);
-              //get extended info
-              //console.log('expandedInfo.caip.toLowerCase(): ', expandedInfo.caip.toLowerCase());
-              let assetInfo = assetData[expandedInfo.caip.toLowerCase()];
+              let assetInfoKey = expandedInfo.caip.toLowerCase();
+              let assetInfo = assetData[assetInfoKey];
               if (assetInfo) {
-                let combinedInfo = { ...expandedInfo, ...assetInfo };
-                //console.log('combinedInfo: ', combinedInfo);
-                tokenMap[token.identifier] = combinedInfo;
-                this.assetsMap.set(expandedInfo.caip.toLowerCase(), combinedInfo); // Populate the Map
-              } else {
-                //console.error('UNABLE TO name: ', expandedInfo.caip);
+                let combinedInfo = { ...expandedInfo, ...assetInfo, integrations: [] }; // Prepare integration array
+                tokenMap.set(assetInfoKey, combinedInfo);
               }
-            } else {
-              // console.error('UNABLE TO MAKE CAIP: ', token);
             }
           });
         };
-        // Add tokens from each list with their source
-        addTokens(NativeList.tokens, 'NativeList');
-        addTokens(MayaList.tokens, 'MayaList');
-        addTokens(CoinGeckoList.tokens, 'CoinGeckoList');
-        addTokens(OneInchList.tokens, 'OneInchList');
-        addTokens(PancakeswapETHList.tokens, 'PancakeswapETHList');
-        addTokens(PancakeswapList.tokens, 'PancakeswapList');
-        addTokens(PangolinList.tokens, 'PangolinList');
-        addTokens(PioneerList.tokens, 'PioneerList');
-        addTokens(StargateARBList.tokens, 'StargateARBList');
-        addTokens(SushiswapList.tokens, 'SushiswapList');
-        addTokens(ThorchainList.tokens, 'ThorchainList');
-        addTokens(TraderjoeList.tokens, 'TraderjoeList');
-        addTokens(UniswapList.tokens, 'UniswapList');
-        addTokens(WoofiList.tokens, 'WoofiList');
 
-        // Convert the tokenMap back to an array
-        let allAssets = Object.values(tokenMap);
+        // Add tokens from various lists with their source
+        [
+          NativeList,
+          MayaList,
+          CoinGeckoList,
+          OneInchList,
+          PancakeswapETHList,
+          PancakeswapList,
+          PangolinList,
+          PioneerList,
+          StargateARBList,
+          SushiswapList,
+          ThorchainList,
+          TraderjoeList,
+          UniswapList,
+          WoofiList,
+        ].forEach((list: any) => addTokens(list.tokens, list.name));
 
-        allAssets = allAssets.map((asset: any) => {
-          // Find the corresponding balance object for the asset
+        // Get integration support by asset and enrich the token map with this data
+        let integrationSupport = await this.pioneer.SupportByAsset();
+        integrationSupport = integrationSupport.data || {};
+        console.log('integrationSupport: ', integrationSupport);
+
+        // Enrich tokenMap directly with integration support
+        Object.keys(integrationSupport).forEach((key) => {
+          integrationSupport[key].forEach((id) => {
+            if (id) {
+              let asset = tokenMap.get(id.toLowerCase());
+              if (asset) {
+                if (MEMOLESS_INTERGRATIONS.indexOf(key) > -1) asset.memoless = true;
+                asset.integrations.push(key);
+              }
+            }
+          });
+        });
+
+        // Process all assets to enrich with additional data such as balances
+        let allAssets = Array.from(tokenMap.values()).map((asset) => {
           const balanceObj = this.balances.find(
-            (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+            (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
           );
           const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
           const balance = balanceObj ? balanceObj.balance : '';
 
-          //
-          let searchNetworkId;
-          if (balanceObj && balanceObj.networkId.indexOf('155') >= 0) {
-            searchNetworkId = 'eip155:1';
-          } else {
-            searchNetworkId = asset.networkId;
-          }
-          // Attempt to find a corresponding pubkey object that includes the asset's networkId
-          const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+          const searchNetworkId =
+            balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
+          const pubkeyObj = this.pubkeys.find((pubkey) =>
             pubkey.networks.includes(searchNetworkId),
           );
-          // if(pubkeyObj ){
-          //   console.log(searchNetworkId+ " pubkeyObj: ", pubkeyObj);
-          // }
-          // Extract the pubkey value if the pubkeyObj is found
           const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-
-          // Set the asset's address to pubkey.master or pubkey.address if available
           const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
-          // Return the enriched asset object, including balance, valueUsd, pubkey, and the new address
-          return { ...asset, ...balanceObj, valueUsd, balance, pubkey, address };
+          return { ...asset, balance, valueUsd, pubkey, address };
         });
 
-        this.assets = allAssets;
-
+        this.assetsMap = tokenMap; // Update the main map to include all enriched assets
+        this.assets = allAssets; // Also keep a separate array if needed
+        console.log('Processed Assets: ', allAssets);
         return allAssets;
       } catch (e) {
-        //log.error(e);
+        console.error(e);
         throw e;
       }
     };

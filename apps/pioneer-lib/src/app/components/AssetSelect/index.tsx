@@ -55,12 +55,12 @@ export function AssetSelect({ usePioneer, onSelect }: any) {
   //       asset?.name?.toLowerCase().includes(search.toLowerCase())
   //     );
   //   })
-    // .sort((a: any, b: any) => {
-    //   if (sortOrder === 'asc') {
-    //     return (a.valueUsd || 0) - (b.valueUsd || 0);
-    //   }
-    //   return (b.valueUsd || 0) - (a.valueUsd || 0);
-    // });
+  // .sort((a: any, b: any) => {
+  //   if (sortOrder === 'asc') {
+  //     return (a.valueUsd || 0) - (b.valueUsd || 0);
+  //   }
+  //   return (b.valueUsd || 0) - (a.valueUsd || 0);
+  // });
 
   const fetchPage = async () => {
     try {

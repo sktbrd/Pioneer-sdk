@@ -24,9 +24,13 @@ type SignTransactionDepositParams = {
 export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) => {
   try {
     const toolbox = MayachainToolbox();
+    console.log('getAddress: ', {
+      address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
+    });
     const { address: fromAddress } = (await sdk.address.mayachainGetAddress({
       address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
     })) as { address: string };
+    console.log('address: ', fromAddress);
 
     const signTransactionTransfer = async ({
       amount,

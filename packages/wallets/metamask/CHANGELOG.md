@@ -1,5 +1,16 @@
 # @coinmasters/wallet-metamask
 
+## 10.0.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.1
+  - @coinmasters/toolbox-utxo@11.0.1
+  - @coinmasters/toolbox-evm@11.0.1
+
 ## 10.0.0
 
 ### Minor Changes

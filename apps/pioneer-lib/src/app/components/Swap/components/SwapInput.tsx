@@ -23,24 +23,18 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
   const [receiveAmount, setReceiveAmount] = useState('');
   const [exchangeRate, setExchangeRate] = useState<any>(null);
 
-  // Calculate exchange rate from the app context
   useEffect(() => {
     if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
       let rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
-      console.log("rate: ",rate)
-      rate = 1/rate
+      rate = 1 / rate;
       setExchangeRate(rate || 0);
-    } else {
-      console.log("input: ",app?.assetContext?.priceUsd)
-      console.log("output: ",app?.outboundAssetContext?.priceUsd)
     }
   }, [app, app?.assetContext, app?.outboundAssetContext]);
 
   const handleDepositChange = (valueAsString:any) => {
-    console.log("valueAsString: ", valueAsString);
     setDepositAmount(valueAsString);
     if (exchangeRate !== null) {
-      setAmountSelected(true)
+      setAmountSelected(true);
       const depositValue = parseFloat(valueAsString) || 0;
       setInputAmount(depositValue);
       const receiveValue = depositValue / exchangeRate;
@@ -51,13 +45,49 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
   const handleReceiveChange = (valueAsString:any) => {
     setReceiveAmount(valueAsString);
     if (exchangeRate !== null) {
-      setAmountSelected(true)
+      setAmountSelected(true);
       const receiveValue = parseFloat(valueAsString) || 0;
       const depositValue = receiveValue * exchangeRate;
       setInputAmount(depositValue);
       setDepositAmount(depositValue.toFixed(4));
     }
   };
+
+  // Calculate exchange rate from the app context
+  // useEffect(() => {
+  //   if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
+  //     let rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
+  //     console.log("rate: ",rate)
+  //     rate = 1/rate
+  //     setExchangeRate(rate || 0);
+  //   } else {
+  //     console.log("input: ",app?.assetContext?.priceUsd)
+  //     console.log("output: ",app?.outboundAssetContext?.priceUsd)
+  //   }
+  // }, [app, app?.assetContext, app?.outboundAssetContext]);
+
+  // const handleDepositChange = (valueAsString:any) => {
+  //   console.log("valueAsString: ", valueAsString);
+  //   setDepositAmount(valueAsString);
+  //   if (exchangeRate !== null) {
+  //     setAmountSelected(true)
+  //     const depositValue = parseFloat(valueAsString) || 0;
+  //     setInputAmount(depositValue);
+  //     const receiveValue = depositValue / exchangeRate;
+  //     setReceiveAmount(receiveValue.toFixed(4));
+  //   }
+  // };
+  //
+  // const handleReceiveChange = (valueAsString:any) => {
+  //   setReceiveAmount(valueAsString);
+  //   if (exchangeRate !== null) {
+  //     setAmountSelected(true)
+  //     const receiveValue = parseFloat(valueAsString) || 0;
+  //     const depositValue = receiveValue * exchangeRate;
+  //     setInputAmount(depositValue);
+  //     setDepositAmount(depositValue.toFixed(4));
+  //   }
+  // };
 
   return (
     <Flex direction="column" align="center">
@@ -72,7 +102,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
               variant="filled"
               mb={2}
               value={depositAmount}
-              onChange={(_, valueAsNumber) => handleDepositChange(valueAsNumber.toString())}
+              onChange={(valueAsString) => handleDepositChange(valueAsString)}
               _placeholder={{ color: 'gray.500' }}
             >
               <NumberInputField />
@@ -93,7 +123,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
               variant="filled"
               mb={2}
               value={receiveAmount}
-              onChange={(_, valueAsNumber) => handleReceiveChange(valueAsNumber.toString())}
+              onChange={(valueAsString) => handleReceiveChange(valueAsString)}
               _placeholder={{ color: 'gray.500' }}
             >
               <NumberInputField />

@@ -27,6 +27,8 @@ let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/sw
 
 console.log("spec: ",spec)
 
+
+
 let txid:string
 let IS_SIGNED: boolean
 

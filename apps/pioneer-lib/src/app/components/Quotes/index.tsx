@@ -10,6 +10,7 @@ let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
 let ThorswapImage = '/png/thorswap.png'
+let ChainFlipImage = '/png/chainflip.png'
 let UniswapImage = '/png/uniswap.png'
 let RangoImage = '/png/rango.png'
 let AcrossImage = '/png/across.png'
@@ -26,6 +27,7 @@ export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
     changelly: ChangellyImage,
     mayachain: MayachainImage,
     osmosis: OsmosisImage,
+    chainflip: ChainFlipImage,
     uniswap: UniswapImage,
     rango: RangoImage,
     across: AcrossImage,
@@ -36,6 +38,7 @@ export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
     changelly: '#19212d', // Changelly theme color
     mayachain: '#f4b728', // MayaChain theme color
     osmosis: '#00a3ff', // Osmosis theme color
+    chainflip: '#020202', // Osmosis theme color
     uniswap: '#e600ff', // Osmosis theme color
     rango: 'rgba(27,255,0,0.3)', // Osmosis theme color
     across: '#00ff0d', // Osmosis theme color

@@ -266,11 +266,12 @@ const connectKeepkey =
 
       const chainLogLabel = `Chain ${chain} processing time`;
       console.time(chainLogLabel);
-      //console.log('Processing chain: ', chain);
+      console.log('Processing chain: ', chain);
 
       // Get paths for chain
       // eslint-disable-next-line eqeqeq
       const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
+      console.log('filteredPaths: ', filteredPaths);
 
       const { address, walletMethods } = await getToolbox({
         sdk: keepKeySdk,

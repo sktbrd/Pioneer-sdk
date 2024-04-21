@@ -22,6 +22,8 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   const [hasPubkey, setHasPubkey] = useState<boolean>(filters?.hasPubkey || false);
   const [onlyOwned, setOnlyOwned] = useState<boolean>(filters?.onlyOwned || false);
   const [noTokens, setNoTokens] = useState<boolean>(filters?.noTokens || false);
+  const [memoless, setMemoless] = useState<boolean>(filters?.memoless || false);
+  const [integrations, setIntegrations] = useState<boolean>(filters?.integrations || false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -47,11 +49,21 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
     const assetName = asset.name ? asset.name.toLowerCase() : '';
     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
 
-    return assetName.includes(normalizedSearchQuery);
-    // return assetName.includes(normalizedSearchQuery) &&
-    //   (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
-    //   (!noTokens || (noTokens && asset.type !== 'token')) &&
-    //   (!hasPubkey || (hasPubkey && asset.pubkey));
+    //
+    const isAssetContext = app.assetContext && asset.caip === app.assetContext.caip;
+
+
+    // Check for intersection between asset integrations and selected integrations or allow all if none are selected
+    const hasRequiredIntegration = integrations.length === 0 ||
+      (asset.integrations && integrations.some(integration => asset.integrations.includes(integration)));
+
+    return assetName.includes(normalizedSearchQuery) &&
+      (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
+      (!noTokens || (noTokens && asset.type !== 'token')) &&
+      (memoless && asset.memoless) &&
+      (!hasPubkey || (hasPubkey && asset.pubkey)) &&
+      hasRequiredIntegration &&
+      !isAssetContext
   });
 
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
@@ -86,6 +98,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
       </InputGroup>
 
       <Flex justify="space-between">
+        <Checkbox isChecked={memoless} onChange={(e) => setMemoless(e.target.checked)}>Memoless</Checkbox>
         <Checkbox isChecked={hasPubkey} onChange={(e) => setHasPubkey(e.target.checked)}>has Pubkey</Checkbox>
         <Checkbox isChecked={onlyOwned} onChange={(e) => setOnlyOwned(e.target.checked)}>Only Owned</Checkbox>
         <Checkbox isChecked={noTokens} onChange={(e) => setNoTokens(e.target.checked)}>Exclude Tokens</Checkbox>
@@ -106,6 +119,8 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
                   <Text fontSize="sm">Symbol: {asset.symbol}</Text>
                   <Text fontSize="sm">CAIP: {asset.caip}</Text>
                   <Text fontSize="sm">Type: {asset.type}</Text>
+                  <Text fontSize="sm">memoless: {asset.memoless.toString()}</Text>
+                  <Text fontSize="sm">intergrations: {asset.integrations.toString()}</Text>
                   {asset.address && (
                     <Text fontSize="sm">Address: {asset.address}</Text>
                   )}

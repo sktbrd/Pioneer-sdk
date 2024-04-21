@@ -1,5 +1,15 @@
 # @coinmasters/wallet-evm-extensions
 
+## 11.0.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.1
+  - @coinmasters/toolbox-evm@11.0.1
+
 ## 11.0.0
 
 ### Minor Changes

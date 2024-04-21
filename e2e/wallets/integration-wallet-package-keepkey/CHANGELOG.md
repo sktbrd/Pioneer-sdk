@@ -1,5 +1,16 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 0.5.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.1
+  - @coinmasters/types@4.7.1
+  - @coinmasters/core@11.0.1
+
 ## 0.5.0
 
 ### Minor Changes

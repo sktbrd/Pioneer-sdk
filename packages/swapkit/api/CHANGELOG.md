@@ -1,5 +1,14 @@
 # @swapkit/api
 
+## 3.7.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.1
+
 ## 3.7.0
 
 ### Minor Changes

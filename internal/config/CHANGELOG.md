@@ -1,5 +1,11 @@
 # @internal/config
 
+## 2.7.1
+
+### Patch Changes
+
+- memoless
+
 ## 2.7.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @coinmasters/integration-coins
 
+## 1.7.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-db@4.7.1
+  - @coinmasters/types@4.7.1
+  - @coinmasters/core@11.0.1
+
 ## 1.7.0
 
 ### Minor Changes

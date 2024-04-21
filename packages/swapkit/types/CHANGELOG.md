@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 4.7.1
+
+### Patch Changes
+
+- memoless
+
 ## 4.7.0
 
 ### Minor Changes

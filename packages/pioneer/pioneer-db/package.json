@@ -1,7 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-db",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "dependencies": {
     "idb": "^8.0.0",
     "sqlite": "^5.1.1",

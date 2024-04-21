@@ -592,6 +592,61 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/swaps/e2e-swap-bitcoincash-doge-memoless:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.23
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      axios:
+        specifier: ^1.6.7
+        version: 1.6.8
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/swaps/e2e-swap-dash-rune:
     dependencies:
       '@coinmasters/core':
@@ -725,6 +780,58 @@ importers:
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.6
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/swaps/e2e-swap-eth-btc-memoless:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -1549,6 +1656,9 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.6)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.13
         version: 9.2.13(@types/node@20.11.6)

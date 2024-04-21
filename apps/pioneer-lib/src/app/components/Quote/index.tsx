@@ -18,15 +18,21 @@ import { NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import QRCode from 'react-qr-code'; // Ensure you have a QR code library
 
 let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
 let OsmosisImage = '/png/osmosis.png'
+let RangoImage = '/png/rango.jpeg'
+let ChainFlipImage = '/png/chainflip.png'
+let AccrossImage = '/png/accross.png'
 let ThorswapImage = '/png/thorswap.png'
+let UniswapImage = '/png/uniswap.png'
 
-export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
+export function Quote({ usePioneer, quote, onAcceptSign, memoless }: any): JSX.Element {
+  const { state } = usePioneer();
+  const { app } = state;
   // Use actual values and image paths as needed
   const topBarBg = useColorModeValue('gray.100', 'gray.700'); // Change this color to match your design
   const { hasCopied, onCopy } = useClipboard(quote.quote.id);
@@ -36,6 +42,10 @@ export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
     thorswap: ThorswapImage,
     changelly: ChangellyImage,
     mayachain: MayachainImage,
+    chainflip: ChainFlipImage,
+    uniswap: UniswapImage,
+    rango: RangoImage,
+    accross: AccrossImage,
     osmosis: OsmosisImage,
   };
 
@@ -93,6 +103,30 @@ export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
     return formattedNumber;
   }
 
+  // Function to fetch the status from the API
+  const checkStatus = async () => {
+    try {
+      let txStat = await app.pioneer.Invocation({invocationId: quote.quote.id});
+      console.log('Transaction Status:', txStat);
+      if(txStat.status) {
+        onAcceptSign();
+      }
+    } catch (error) {
+      console.error('Failed to fetch status:', error);
+    }
+  };
+
+  // Start the interval when the component mounts and there is a valid quote.quote.id
+  useEffect(() => {
+    console.log("quote: ",quote)
+    if (quote && quote.quote && quote.quote.id) {
+      const intervalId = setInterval(() => {
+        checkStatus();
+      }, 30000); // Check every 30 seconds
+
+      return () => clearInterval(intervalId); // Cleanup the interval when the component unmounts
+    }
+  }, [quote?.quote?.id]);
 
   const handleSignTransaction = useCallback(() => {
     // Placeholder function for signing transaction
@@ -160,33 +194,19 @@ export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
         </Grid>
         <VStack align="stretch" spacing={4}>
           <HStack alignItems="center" justifyContent="space-between" />
-
-          <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
-            <Badge borderRadius="full" colorScheme="blue" p={2}>
-              <Text fontSize="md">
-                PRO earned: {formatNumber(quote.quote.proTokenEarned)} (
-                {formatUSD(quote.quote.proTokenEarned)} USD)
-              </Text>
-            </Badge>
-          </Stack>
-
-          {/*<Flex align="center" justify="center">*/}
-          {/*  <Badge borderRadius="full" colorScheme="green" p={2}>*/}
-          {/*    <HStack spacing={2}>*/}
-          {/*      <Text fontSize="md">I agree to the Terms</Text>*/}
-          {/*    </HStack>*/}
-          {/*  </Badge>*/}
-          {/*</Flex>*/}
           {memoless ? (
-            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <Box borderWidth="1px" borderColor="white" p={3} textAlign="center">
-                <QRCode value={`address: ${quote.quote.inboundAddress}, amount: ${quote.quote.sellAmount}`} />
+            <Grid templateColumns="repeat(2, 1fr)" gap={4} p={4}>
+              <Box>
+                <QRCode value={`address: ${quote.quote.txs[0].txParams.address}, amount: ${quote.quote.sellAmount}`} />
+                {/*<Button onClick={onCopy} mt={2}>*/}
+                {/*  {hasCopied ? 'Copied' : 'Copy Address'}*/}
+                {/*</Button>*/}
               </Box>
-              <Box p={3}>
-                <Text fontWeight="bold">Pay to Address: Bla</Text>
-                <Text>Address: {quote.quote.inboundAddress}</Text>
+              <Box>
+                <Text fontWeight="bold">Pay to Address:</Text>
+                <Text>Address: {quote.quote.txs[0].txParams.address}</Text>
                 <Text>Amount: {formatNumber(quote.quote.sellAmount)}</Text>
-                <Text>Please send exactly this amount</Text>
+                <Text>Please send exactly this amount.</Text>
               </Box>
             </Grid>
           ) : (
@@ -194,6 +214,14 @@ export function Quote({ quote, onAcceptSign, memoless }: any): JSX.Element {
           )}
 
         </VStack>
+        <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
+          <Badge borderRadius="full" colorScheme="blue" p={2}>
+            <Text fontSize="md">
+              PRO reward: {formatNumber(quote.quote.proTokenEarned)} (
+              {formatUSD(quote.quote.proTokenEarned)} USD)
+            </Text>
+          </Badge>
+        </Stack>
       </VStack>
     </Box>
   );

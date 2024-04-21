@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 3.7.1
+
+### Patch Changes
+
+- memoless
+
 ## 3.7.0
 
 ### Minor Changes

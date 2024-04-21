@@ -21,11 +21,11 @@ const getBalance = async (address: any) => {
     //console.log('Fetching balances for address:', address);
     //console.log('Fetching balances for address:', address[0].address);
     const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address[0].address}`;
-    //console.log('URL:', balancesEndpoint);
+    console.log('URL:', balancesEndpoint);
 
     // Fetch the balances for maya and cacao
     const balances: any = await RequestClient.get(balancesEndpoint);
-    //console.log('Balances:', balances);
+    console.log('Balances:', balances);
 
     await AssetValue.loadStaticAssets();
 

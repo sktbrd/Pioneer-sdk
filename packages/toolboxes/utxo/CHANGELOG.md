@@ -1,5 +1,15 @@
 # @swapkit/toolbox-utxo
 
+## 11.0.1
+
+### Patch Changes
+
+- memoless
+
+- Updated dependencies []:
+  - @coinmasters/helpers@11.0.1
+  - @coinmasters/types@4.7.1
+
 ## 11.0.0
 
 ### Minor Changes

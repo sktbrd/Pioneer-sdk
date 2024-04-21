@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-lib",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -62,7 +62,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "publish": "jq 'del(.compilerOptions.incremental)' tsconfig.json > tmp.json && mv tmp.json tsconfig.json && tsup && npm publish --access public",
+    "prepublish": "jq 'del(.compilerOptions.incremental)' tsconfig.json > tmp.json && mv tmp.json tsconfig.json && tsup",
+    "release": "npm run prepublish && npm publish",
     "tsup": "tsup",
     "build": "next build",
     "start": "next start",

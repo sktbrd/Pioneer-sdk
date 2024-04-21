@@ -64,6 +64,7 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [memoless, setMemoless] = useState<any>(null);
   const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
+  const [integrations, setIntegrations] = useState<any>(null);
   const [inputAmount, setInputAmount] = useState(0);
   const [txHash, setTxHash] = useState(null);
   const [amountSelected, setAmountSelected] = useState(false);
@@ -87,6 +88,7 @@ export function Swap({usePioneer}:any): JSX.Element {
   useEffect(() => {
     if (step === 0) {
       setShowGoBack(false);
+      setIsContinueVisable(true);
     }
     if (step === 1) {
       setIsContinueDisabled(true);
@@ -106,6 +108,7 @@ export function Swap({usePioneer}:any): JSX.Element {
 
   useEffect(() => {
     if(!app?.assetContext?.balance) setMemoless(true);
+    if(app?.assetContext?.integrations) setIntegrations(app.assetContext.integrations);
   }, [app, app?.assetContext, app?.assetContext?.balance]);
 
   const fetchQuote = async () => {
@@ -279,8 +282,12 @@ export function Swap({usePioneer}:any): JSX.Element {
 
   let onSelectOutput = async function (asset: any) {
     //console.log('onSelectOutput');
-    await app.setOutboundAssetContext(asset);
-    onClose();
+    if(app.assetContext && app.assetContext.caip === asset.caip) {
+      alert('Must select a different asset! input === output');
+    } else {
+      await app.setOutboundAssetContext(asset);
+      onClose();
+    }
   };
 
   let onSelect = async function (asset:any) {
@@ -311,22 +318,17 @@ export function Swap({usePioneer}:any): JSX.Element {
             )}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
-                <Assets usePioneer={usePioneer} filters={{onlyOwned: true, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelect} />
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: !memoless, hasPubkey: !memoless, noTokens: false, memoless, integrations}} onClose={onClose} onSelect={onSelect} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
-                <Assets usePioneer={usePioneer} filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: !memoless, hasPubkey: !memoless, noTokens: false, memoless, integrations}} onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.addDestination && (
               <div>
                 <PubkeyAdd usePioneer={usePioneer} onClose={onClose} setIsContinueVisable={setIsContinueVisable}> </PubkeyAdd>
-              </div>
-            )}
-            {modalType === MODAL_STRINGS.selectOutbound && (
-              <div>
-                <Assets usePioneer={usePioneer} filters={{onlyOwned: false, hasPubkey: true, noTokens: false}} onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectQuote && (
