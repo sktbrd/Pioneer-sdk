@@ -23,7 +23,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   const [onlyOwned, setOnlyOwned] = useState<boolean>(filters?.onlyOwned || false);
   const [noTokens, setNoTokens] = useState<boolean>(filters?.noTokens || false);
   const [memoless, setMemoless] = useState<boolean>(filters?.memoless || false);
-  const [integrations, setIntegrations] = useState<boolean>(filters?.integrations || false);
+  const [integrations, setIntegrations] = useState<any>(filters?.integrations || false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -45,25 +45,19 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   }, [app, app?.assets, onlyOwned, hasPubkey, noTokens]);
 
   const filteredAssets = allAssets.filter((asset: any) => {
-    // Ensure asset.name and searchQuery are both strings before calling toLowerCase()
     const assetName = asset.name ? asset.name.toLowerCase() : '';
     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
-
-    //
     const isAssetContext = app.assetContext && asset.caip === app.assetContext.caip;
-
-
-    // Check for intersection between asset integrations and selected integrations or allow all if none are selected
-    const hasRequiredIntegration = integrations.length === 0 ||
-      (asset.integrations && integrations.some(integration => asset.integrations.includes(integration)));
+    const hasRequiredIntegration = !integrations || integrations.length === 0 ||
+      (asset?.integrations && integrations?.some((integration: any) => asset?.integrations.includes(integration)));
 
     return assetName.includes(normalizedSearchQuery) &&
       (!onlyOwned || (onlyOwned && asset.balance && parseFloat(asset.balance) > 0)) &&
       (!noTokens || (noTokens && asset.type !== 'token')) &&
-      (memoless && asset.memoless) &&
+      (memoless === null || (memoless === true && asset.memoless)) &&
       (!hasPubkey || (hasPubkey && asset.pubkey)) &&
       hasRequiredIntegration &&
-      !isAssetContext
+      !isAssetContext;
   });
 
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
@@ -116,11 +110,12 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
                 <Avatar size='xl' src={asset.icon} />
                 <Box ml={3}>
                   <Text fontWeight="bold">{asset.name}</Text>
+                  <Text fontWeight="bold">{asset.networkId}</Text>
                   <Text fontSize="sm">Symbol: {asset.symbol}</Text>
                   <Text fontSize="sm">CAIP: {asset.caip}</Text>
                   <Text fontSize="sm">Type: {asset.type}</Text>
-                  <Text fontSize="sm">memoless: {asset.memoless.toString()}</Text>
-                  <Text fontSize="sm">intergrations: {asset.integrations.toString()}</Text>
+                  <Text fontSize="sm">memoless: {asset?.memoless?.toString()}</Text>
+                  <Text fontSize="sm">intergrations: {asset?.integrations?.toString()}</Text>
                   {asset.address && (
                     <Text fontSize="sm">Address: {asset.address}</Text>
                   )}

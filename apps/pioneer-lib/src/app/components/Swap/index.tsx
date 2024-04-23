@@ -272,7 +272,7 @@ export function Swap({usePioneer}:any): JSX.Element {
           />
         );
       case 1:
-        return <BeginSwap usePioneer={usePioneer} onAcceptSign={onAcceptSign} quote={quote} memoless={memoless}/>;
+        return <BeginSwap usePioneer={usePioneer} setTxHash={setTxHash} onAcceptSign={onAcceptSign} quote={quote} memoless={memoless}/>;
       case 2:
         return <CompleteSwap usePioneer={usePioneer} quoteId={quoteId} route={route} txHash={txHash} />;
       default:

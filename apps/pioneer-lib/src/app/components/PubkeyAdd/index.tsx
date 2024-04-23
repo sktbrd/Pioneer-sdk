@@ -29,7 +29,7 @@ export default function PubkeyAdd({ usePioneer, onClose, setIsContinueVisable }:
     let cacheKeyPubkeys = 'cache:pubkeys';
     let pubkeyCache = localStorage.getItem(cacheKeyPubkeys);
     let data = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-    data.push({ address, label, caip: app.outboundAssetContext.caip, networks: [app.outboundAssetContext.networkId] });
+    data.push({ address, label, caip: app?.outboundAssetContext.caip, networks: [app.outboundAssetContext.networkId] });
     localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
     let outboundAssetContext = app.outboundAssetContext;
     outboundAssetContext.context = 'external'

@@ -748,6 +748,61 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/swaps/e2e-swap-doge-bitcoincash-memoless:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@keepkey/device-protocol':
+        specifier: ^7.12.2
+        version: 7.13.1
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.23
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.15
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      axios:
+        specifier: ^1.6.7
+        version: 1.6.8
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/swaps/e2e-swap-eth-base:
     dependencies:
       '@coinmasters/core':
@@ -1950,6 +2005,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.24)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.11.24)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.24
@@ -8596,6 +8657,18 @@ packages:
     resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
     dependencies:
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.24):
+    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.24)
       bignumber.js: 9.1.2
       bs58check: 3.0.1
     transitivePeerDependencies:

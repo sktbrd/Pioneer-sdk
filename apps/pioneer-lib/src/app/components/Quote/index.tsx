@@ -13,13 +13,14 @@ import {
   useColorModeValue,
   useToast,
   VStack,
+  Spinner,
 } from '@chakra-ui/react';
 import { NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import React, { useCallback, useEffect } from 'react';
-import QRCode from 'react-qr-code'; // Ensure you have a QR code library
+import React, { useCallback, useEffect, useState } from 'react';
+import QRCode from 'react-qr-code';
 
 let ChangellyImage = '/png/changelly.png'
 let MayachainImage = '/png/mayachain.png'
@@ -30,9 +31,23 @@ let AccrossImage = '/png/accross.png'
 let ThorswapImage = '/png/thorswap.png'
 let UniswapImage = '/png/uniswap.png'
 
-export function Quote({ usePioneer, quote, onAcceptSign, memoless }: any): JSX.Element {
+/*
+            let status = {
+                "-1":"errored",
+                "0":"unknown",
+                "1":"awaiting deposit",
+                "2":"broadcasted",
+                "3":"detected",
+                "4":"confirmed",
+                "5":"fullfilled"
+            }
+ */
+
+export function Quote({ usePioneer, quote, onAcceptSign, memoless, setTxHash }: any): JSX.Element {
   const { state } = usePioneer();
   const { app } = state;
+  const [status, setStatus] = useState('awaiting deposit');
+  const [statusCode, setStatusCode] = useState(0);
   // Use actual values and image paths as needed
   const topBarBg = useColorModeValue('gray.100', 'gray.700'); // Change this color to match your design
   const { hasCopied, onCopy } = useClipboard(quote.quote.id);
@@ -107,9 +122,19 @@ export function Quote({ usePioneer, quote, onAcceptSign, memoless }: any): JSX.E
   const checkStatus = async () => {
     try {
       let txStat = await app.pioneer.Invocation({invocationId: quote.quote.id});
+      txStat = txStat.data
       console.log('Transaction Status:', txStat);
-      if(txStat.status) {
-        onAcceptSign();
+      if(txStat.trackUrl) {
+        window.open(txStat.trackUrl, '_blank');
+      }
+      if(txStat.txidIn){
+        setTxHash(txStat.txidIn)
+      }
+      if(txStat.status){
+        setStatus(txStat.status)
+      }
+      if(txStat.statusCode){
+        setStatusCode(txStat.statusCode)
       }
     } catch (error) {
       console.error('Failed to fetch status:', error);
@@ -207,12 +232,13 @@ export function Quote({ usePioneer, quote, onAcceptSign, memoless }: any): JSX.E
                 <Text>Address: {quote.quote.txs[0].txParams.address}</Text>
                 <Text>Amount: {formatNumber(quote.quote.sellAmount)}</Text>
                 <Text>Please send exactly this amount.</Text>
+                <Spinner size='xl' />
+                <Text>Status: {status} ({statusCode})</Text>
               </Box>
             </Grid>
           ) : (
             <Button colorScheme="blue" onClick={handleSignTransaction}>Sign Transaction</Button>
           )}
-
         </VStack>
         <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
           <Badge borderRadius="full" colorScheme="blue" p={2}>

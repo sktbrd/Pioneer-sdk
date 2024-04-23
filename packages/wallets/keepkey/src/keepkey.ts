@@ -257,18 +257,19 @@ const connectKeepkey =
     if (!paths) paths = [];
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-    console.log('keepKeySdk: ', keepKeySdk);
+    // console.log('keepKeySdk: ', keepKeySdk);
     let features = await keepKeySdk.system.info.getFeatures();
-    console.log('features: ', features);
+    // console.log('features: ', features);
 
     const chainPromises = chains.map(async (chain) => {
       if (!chain) return;
 
       const chainLogLabel = `Chain ${chain} processing time`;
-      console.time(chainLogLabel);
-      console.log('Processing chain: ', chain);
+      // console.time(chainLogLabel);
+      // console.log('Processing chain: ', chain);
 
       // Get paths for chain
+      console.log('paths: ', paths);
       // eslint-disable-next-line eqeqeq
       const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
       console.log('filteredPaths: ', filteredPaths);

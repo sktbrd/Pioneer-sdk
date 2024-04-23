@@ -327,6 +327,29 @@ export class SDK {
           return acc;
         }, []);
 
+        //update assets
+        this.assets = this.assets.map((asset: any) => {
+          const caipKey = asset.caip.toLowerCase(); // assuming 'caip' is the key in assets similar to balances
+          const balance = this.balances.find((b: any) => b.caip.toLowerCase() === caipKey);
+
+          if (balance) {
+            // If a matching balance is found, create a new asset object with updated data
+            const updatedAsset = {
+              ...asset,
+              balance: balance.balance,
+              valueUsd: balance.valueUsd,
+            };
+
+            // Update the assetsMap with the new asset data
+            this.assetsMap.set(caipKey, updatedAsset);
+            return updatedAsset;
+          } else {
+            // If no matching balance, return the asset unchanged
+            return asset;
+          }
+        });
+
+        this.assets.sort((a, b) => b.valueUsd - a.valueUsd);
         this.balances.sort((a, b) => b.valueUsd - a.valueUsd);
         this.events.emit('SET_BALANCES', this.balances);
         if (this.balances.length > 0) {
@@ -350,6 +373,51 @@ export class SDK {
           }
           return acc;
         }, []);
+
+        //combine pubkeys with balances
+        //update assets
+        const pubkeysMap = new Map();
+        this.pubkeys.forEach((pubkey: any) => {
+          pubkey.networks.forEach((network: any) => {
+            if (!pubkeysMap.has(network)) {
+              pubkeysMap.set(network, []);
+            }
+            pubkeysMap.get(network).push(pubkey);
+          });
+        });
+
+        // Iterate over assets and update them based on matching conditions
+        this.assets.forEach((existingAsset: any, index: any) => {
+          const networkId = existingAsset.networkId;
+          let matchedPubkey = null;
+
+          if (networkId.includes('eip155')) {
+            // Handle 'eip155' specifically
+            const matchPubkeys = pubkeysMap.get('eip155:1');
+            if (matchPubkeys && matchPubkeys.length > 0) {
+              matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+            }
+          } else {
+            // Check for a direct match in other networks
+            if (pubkeysMap.has(networkId)) {
+              const matchPubkeys = pubkeysMap.get(networkId);
+              if (matchPubkeys && matchPubkeys.length > 0) {
+                matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+              }
+            }
+          }
+
+          if (matchedPubkey) {
+            // Update the asset and the map entry
+            const updatedAsset: any = {
+              ...existingAsset,
+              balance: matchedPubkey.balance,
+              valueUsd: matchedPubkey.valueUsd,
+            };
+            this.assets[index] = updatedAsset;
+            this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
+          }
+        });
 
         this.events.emit('SET_PUBKEYS', this.pubkeys);
       } catch (e) {
@@ -496,7 +564,7 @@ export class SDK {
           if (wallet === 'LEDGER' && ledgerApp !== 'ETH') {
             context = 'ledger:ledger.wallet'; //placeholder until we know eth address
           } else {
-            console.log('this.swapKit: ', this.swapKit);
+            // console.log('this.swapKit: ', this.swapKit);
             //console.log('wallet: ', wallet);
             context = `${wallet.toLowerCase()}:device.wallet`;
 
@@ -691,9 +759,54 @@ export class SDK {
           pubkey.networks = Array.from(new Set(pubkey.networks));
           pubkeysNew.push(pubkey);
         }
-
         // Cache and return the processed pubkeys
         this.pubkeys = pubkeysNew;
+        const pubkeysMap = new Map();
+        this.pubkeys.forEach((pubkey: any) => {
+          pubkey.networks.forEach((network: any) => {
+            if (!pubkeysMap.has(network)) {
+              pubkeysMap.set(network, []);
+            }
+            pubkeysMap.get(network).push(pubkey);
+          });
+        });
+
+        // Iterate over assets and update them based on matching conditions
+        this.assets.forEach((existingAsset: any, index: any) => {
+          const networkId = existingAsset.networkId;
+          let matchedPubkey = null;
+
+          if (networkId.includes('eip155')) {
+            // Handle 'eip155' specifically
+            const matchPubkeys = pubkeysMap.get('eip155:1');
+            if (matchPubkeys && matchPubkeys.length > 0) {
+              matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+            }
+          } else {
+            // Check for a direct match in other networks
+            if (pubkeysMap.has(networkId)) {
+              const matchPubkeys = pubkeysMap.get(networkId);
+              if (matchPubkeys && matchPubkeys.length > 0) {
+                matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+              }
+            }
+          }
+
+          if (matchedPubkey) {
+            console.log('matchedPubkey: ', matchedPubkey);
+            // Update the asset and the map entry
+            const updatedAsset: any = {
+              ...existingAsset,
+              pubkey: matchedPubkey.pubkey,
+              address: matchedPubkey.address || matchedPubkey.master,
+              master: matchedPubkey.master,
+            };
+            console.log('updatedAsset: ', updatedAsset);
+            this.assets[index] = updatedAsset;
+            this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
+          }
+        });
+
         this.events.emit('SET_PUBKEYS', pubkeysNew);
         return pubkeysNew;
       } catch (e) {
@@ -830,15 +943,40 @@ export class SDK {
         if (result.data.balances) {
           //log.debug('Setting balances!');
           this.balances = result.data.balances;
-
           this.events.emit('SET_BALANCES', result.data.balances);
 
-          // TODO pick better default assets (last used)
-          this.assetContext = this.balances[0];
-          this.events.emit('SET_ASSET_CONTEXT', this.assetContext);
+          //update assets
+          this.assets = this.assets.map((asset: any) => {
+            const caipKey = asset.caip;
+            const balance = this.balances.find(
+              (b: any) => b.caip.toLowerCase() === caipKey.toLowerCase(),
+            );
 
-          this.outboundAssetContext = this.balances[1];
-          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', this.outboundAssetContext);
+            if (balance) {
+              console.log('MATCH balance: ', balance);
+              // If a matching balance is found, create a new asset object with updated data
+              const updatedAsset = {
+                ...asset,
+                balance: balance.balance,
+                valueUsd: balance.valueUsd,
+              };
+              console.log('updatedAsset: ', updatedAsset);
+              // Update the assetsMap with the new asset data
+              this.assetsMap.set(caipKey, updatedAsset);
+              return updatedAsset;
+            } else {
+              // If no matching balance, return the asset unchanged
+              return asset;
+            }
+          });
+          this.assets.sort((a, b) => b.valueUsd - a.valueUsd);
+          this.balances.sort((a, b) => b.valueUsd - a.valueUsd);
+          this.events.emit('SET_BALANCES', this.balances);
+          if (this.balances.length > 0) {
+            this.setContext(this.balances[0].context);
+            this.setAssetContext(this.balances[0]);
+            this.setOutboundAssetContext(this.balances[1]);
+          }
         }
 
         return true;

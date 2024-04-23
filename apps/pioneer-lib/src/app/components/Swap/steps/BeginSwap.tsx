@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import CalculatingComponent from '../../../components/CalculatingComponent';
 import Quote from "../../../components/Quote";
 
-const BeginSwap = ({ usePioneer, quote, onAcceptSign, memoless}: any) => {
+const BeginSwap = ({ usePioneer, quote, onAcceptSign, memoless, setTxHash}: any) => {
 
   const [showGif, setShowGif] = useState(true);
 
@@ -25,7 +25,7 @@ const BeginSwap = ({ usePioneer, quote, onAcceptSign, memoless}: any) => {
         </Box>
       ) : (
         <div>
-          <Quote usePioneer={usePioneer} quote={quote} onAcceptSign={onAcceptSign} memoless={memoless}/>
+          <Quote usePioneer={usePioneer} setTxHash={setTxHash} quote={quote} onAcceptSign={onAcceptSign} memoless={memoless}/>
         </div>
       )}
     </Box>

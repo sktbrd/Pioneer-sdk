@@ -137,7 +137,7 @@ const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: B
 };
 
 const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
-  //console.log('getBalance pubkeys: ', pubkeys);
+  console.log('getBalance pubkeys: ', pubkeys);
   //legacy support
   if (typeof pubkeys === 'string') {
     pubkeys = [{ address: pubkeys }];
@@ -155,14 +155,15 @@ const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & an
     }
     //console.log('type: ', type);
     let balance = await getPubkeyBalance(pubkey, type, apiClient);
+    console.log('PRE BaseUTXO getPubkeyBalance balance: ', balance);
     if (typeof balance === 'object') balance = 0;
-    //console.log('BaseUTXO getPubkeyBalance balance: ', balance);
+    console.log('POST BaseUTXO getPubkeyBalance balance: ', balance);
     totalBalance = totalBalance + balance;
   }
   totalBalance = totalBalance / 100000000;
-  //console.log(`BaseUTXO totalBalance:`, totalBalance);
+  console.log(`BaseUTXO totalBalance:`, totalBalance);
   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
-  //console.log('BaseUTXO asset: ', asset);
+  console.log('BaseUTXO asset: ', asset);
   return [asset];
 };
 

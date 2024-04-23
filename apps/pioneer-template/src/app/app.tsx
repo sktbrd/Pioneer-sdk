@@ -18,6 +18,7 @@ import {
   Swap,
   Track,
   SignTransaction,
+  Pubkeys,
   Wallets
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
@@ -504,6 +505,9 @@ export default function App() {
       case 'portfolio':
         return <Portfolio usePioneer={usePioneer} />;
         break;
+      case 'pubkeys':
+        return <Pubkeys usePioneer={usePioneer}/>;
+        break;
       case 'quote':
         return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
         break;
@@ -544,6 +548,7 @@ export default function App() {
             <option value="amount">amount</option>
             <option value="sign">sign</option>
             <option value="wallets">Wallets</option>
+            <option value="pubkeys">Pubkeys</option>
             <option value="assets">Assets</option>
             <option value="track">Track</option>
             <option value="swap">Swap</option>

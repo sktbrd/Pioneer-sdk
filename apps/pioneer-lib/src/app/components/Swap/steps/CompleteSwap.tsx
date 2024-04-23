@@ -68,7 +68,7 @@ const CompleteSwap = ({ usePioneer, txHash }: any) => {
         </CardBody>
       </Card>
       <br />
-      <Track txHash={txHash} />
+      <Track usePioneer={usePioneer} txHash={txHash} />
     </div>
   );
 };

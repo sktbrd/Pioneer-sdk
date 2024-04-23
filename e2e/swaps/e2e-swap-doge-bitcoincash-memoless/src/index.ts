@@ -24,34 +24,28 @@ import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
-let BLOCKCHAIN_IN = ChainToNetworkId['BCH']
-let BLOCKCHAIN_OUT = ChainToNetworkId['DOGE']
-let ASSET_IN = shortListSymbolToCaip['BCH']
-let ASSET_OUT = shortListSymbolToCaip['DOGE']
-let ASSET = 'BCH'
-let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "300"
+let BLOCKCHAIN_IN = ChainToNetworkId['DOGE']
+let BLOCKCHAIN_OUT = ChainToNetworkId['BCH']
+let ASSET_IN = shortListSymbolToCaip['DOGE']
+let ASSET_OUT = shortListSymbolToCaip['BCH']
+let ASSET = 'DOGE'
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "250"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
-let FAUCET_DOGE_ADDRESS = process.env['FAUCET_DOGE_ADDRESS']
-if(!FAUCET_DOGE_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_DOGE_ADDRESS
+
 
 let TRADER_ADDRESS = process.env['TRADER_ADDRESS']
 if(!TRADER_ADDRESS) throw Error("Need TRADER_ADDRESS!")
 
-let TRADE_PAIR  = "BCH_DOGE"
-let INPUT_ASSET = ASSET
-let OUTPUT_ASSET = "DOGE"
-
+let OUTPUT_ASSET = "BCH"
 console.log("spec: ",spec)
 console.log("wss: ",wss)
 
 let txid:string
 let IS_SIGNED: boolean
-
 let INVOCATION_ID: any
-// let INVOCATION_ID = ''
+// let INVOCATION_ID = 'unk4imcb04oannfr'
+
 
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
@@ -117,7 +111,7 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT]
         log.info(tag,"blockchains: ",blockchains)
 
         //get paths for wallet
@@ -137,24 +131,10 @@ const test_service = async function (this: any) {
         app.setPaths(optimized)
 
         //get assets
-        let assets = await app.assets
-        log.info(tag,"assets: ",assets)
+        let assets = app.assets
+        log.info(tag,"assets: ",assets[0])
+        log.info(tag,"assets: ",assets.length)
         assert(assets)
-
-        //get asset in
-        let assetinfoIn = assets.find((asset: { caip: any; symbol: any; }) => asset.caip === ASSET_IN)
-        log.info(tag,"assetinfoIn: ",assetinfoIn)
-        assert(assetinfoIn)
-        if(assetinfoIn.integrations.indexOf('changelly') == -1) throw Error("Failed! missing changelly integration IN")
-
-        let assetinfoOut = assets.find((asset: { caip: any; symbol: any; }) => asset.caip === ASSET_OUT)
-        log.info(tag,"assetinfoOut: ",assetinfoOut)
-        assert(assetinfoOut)
-        if(assetinfoIn.integrations.indexOf('changelly') == -1) throw Error("Failed! missing changelly integration OUT")
-
-        //get asset out
-
-
 
         let pairObject = {
             type:WalletOption.KEEPKEY,
@@ -173,8 +153,42 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
+        let assetinfoIn = app.assets.find((asset: { caip: any }) => asset.caip === ASSET_IN)
+        log.info(tag,"assetinfoIn: ",assetinfoIn)
+        assert(assetinfoIn)
+        if(assetinfoIn.integrations.indexOf('changelly') == -1) throw Error("Failed! missing changelly integration IN")
+
+        let assetinfoOut = app.assets.find((asset: { caip: any; symbol: any; }) => asset.caip === ASSET_OUT)
+        log.info(tag,"assetinfoOut: ",assetinfoOut)
+        assert(assetinfoOut)
+        if(assetinfoIn.integrations.indexOf('changelly') == -1) throw Error("Failed! missing changelly integration OUT")
+
+
         await app.getPubkeys()
+
+
+        let assetinfoIn1 = app.assets.find((asset: { caip: any }) => asset.caip === ASSET_IN)
+        log.info(tag,"assetinfoIn: ",assetinfoIn1)
+        assert(assetinfoIn1)
+        assert(assetinfoIn1.address)
+
+        let assetinfoOut1 = app.assets.find((asset: { caip: any; symbol: any; }) => asset.caip === ASSET_OUT)
+        log.info(tag,"assetinfoOut: ",assetinfoOut1)
+        assert(assetinfoOut1)
+        assert(assetinfoOut1.address)
+
         await app.getBalances()
+
+        let assetinfoIn2 = app.assets.find((asset: { caip: any }) => asset.caip === ASSET_IN)
+        log.info(tag,"assetinfoIn2: ",assetinfoIn2)
+        assert(assetinfoIn2)
+        assert(assetinfoIn2.balance)
+
+        let assetinfoOut2 = app.assets.find((asset: { caip: any; symbol: any; }) => asset.caip === ASSET_OUT)
+        log.info(tag,"assetinfoOut2: ",assetinfoOut2)
+        assert(assetinfoOut2)
+        assert(assetinfoOut2.balance)
+
         log.info(tag,"balances: ",app.balances)
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
@@ -182,8 +196,6 @@ const test_service = async function (this: any) {
         //verify balances
         //get asset context
         await app.setAssetContext(balance[0])
-
-
         let balanceOut = app.balances.filter((e:any) => e.symbol === OUTPUT_ASSET)
         await app.setOutboundAssetContext(balanceOut[0]);
 
@@ -207,20 +219,38 @@ const test_service = async function (this: any) {
         }
         assert(buyAsset)
 
+        //balance
+        let balanceIn = app.assetContext.balance
+        log.info(tag,"balanceIn: ",balanceIn)
+        assert(balanceIn)
+        if(balanceIn < parseFloat(TEST_AMOUNT)) {
+            throw Error("YOUR BROKE! Failed! balanceIn < TEST_AMOUNT: "+TEST_AMOUNT)
+        }
+        //TODO fee estimate check
 
-        //get receiver context
-        const entry = {
-            trader: TRADER_ADDRESS,
-            affiliate: TRADER_ADDRESS,
-            sellAsset: app.assetContext,
-            sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
-            buyAsset:app.outboundAssetContext,
-            memoless: true,
-            recipientAddress,
-            slippage: '3',
-        };
+        // create assetValue
+        const assetString = `${ASSET}.${ASSET}`;
+        // @ts-ignore
+        console.log('assetString: ', assetString);
+        await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        log.info("assetValue: ",assetValue)
 
         if(!INVOCATION_ID) {
+            //get receiver context
+            const entry = {
+                trader: TRADER_ADDRESS,
+                affiliate: TRADER_ADDRESS,
+                sellAsset: app.assetContext,
+                sellAmount: parseFloat(TEST_AMOUNT).toPrecision(3),
+                buyAsset: app.outboundAssetContext,
+                memoless: true,
+                recipientAddress,
+                slippage: '3',
+            };
+
             //quote
             log.info(tag, "entry: ", entry)
             let result = await app.pioneer.Quote(entry);
@@ -234,6 +264,7 @@ const test_service = async function (this: any) {
 
             //quoteId
             //verify quote exists
+            //TODO
             const quoteResponse = await axios.get(`https://swaps.pro/api/v1/quotes/${quoteId}`);
             log.info('Quote details:', quoteResponse.data);
             assert(quoteResponse.data);
@@ -246,62 +277,65 @@ const test_service = async function (this: any) {
 
 
             // let selected
+            // let selectedId
             // //user selects route
             // for (let i = 0; i < result?.length; i++) {
             //     let route = result[i]
-            //     console.log("route: ", route)
             //     //detect if erroed
-            //     if (route.integration === 'thorswap') {
+            //     if (route.integration === 'changelly') {
             //         selected = route.quote.route
             //         selectedId = route.quote.id
+            //
             //         break;
             //     }
-            //     assert(selectedId)
-            //     console.log("selectedId: ", selectedId)
-            //     console.log("selected: ", selected)
-            //     console.log("selected: ", JSON.stringify(selected))
-            //     let tx = selected.txs[0]
-            //     console.log("tx: ", tx)
-            //     let addressTo = tx.txParams.address
-            //     console.log("addressTo: ", addressTo)
-            //     assert(addressTo)
+            //     //log amountOut
             //
+            //     //log fee
             // }
+            let selected = result[0]
+            log.info(tag, "selected: ", selected)
+            let selectedId = quoteId
+            assert(selected)
+            INVOCATION_ID = selectedId
 
+            let tx = selected.quote.txs[0]
+            console.log("tx: ", tx)
+            let addressTo = tx.txParams.address
+            console.log("addressTo: ", addressTo)
+            assert(addressTo)
+
+            //sendTx
+            let sendPayload = {
+                assetValue,
+                memo: '',
+                recipient: addressTo,
+            }
+            log.info("sendPayload: ",sendPayload)
+            const txHash = await app.swapKit.transfer(sendPayload);
+            log.info("txHash: ",txHash)
         }
 
-        //get invocationId
-        // INVOCATION_ID = selectedId
-        // let status = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
-        // status = status.data
-        // log.info("status: ", status)
-        // assert(status)
-
         //get quote status
-        // let isComplete = false
-        //
-        // while(!isComplete){
-        //
-        //     //txStatus
-        //     let status = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
-        //     log.info("status: ", status)
-        //
-        //     if(status === 'complete'){
-        //         isComplete = true
-        //     }
-        //
-        //     //check tx
-        //     await sleep(30000)
-        // }
+        //get invocationId
+
+        let status = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
+        status = status.data
+        log.info("status: ", status)
+        assert(status)
 
         // monitor TX untill complete
-        // while(!isComplete){
-        //     await sleep(1000)
-        //
-        //     //check tx by hash
-        //     const tx = await app?.pioneer.GetTransaction('',txHash);
-        //
-        // }
+        let isComplete = false
+        while(!isComplete){
+            await sleep(30000)
+
+            //check tx by hash
+            const tx = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
+            log.info("tx: ",tx)
+            if(tx .statusCode > 4){
+                isComplete = true
+            }
+
+        }
 
         //TODO check balance
 

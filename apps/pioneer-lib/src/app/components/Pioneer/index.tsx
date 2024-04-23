@@ -24,6 +24,7 @@ import {
   SimpleGrid,
   Text,
   Spacer,
+  Spinner,
   Stack,
   AvatarGroup,
   useDisclosure,
@@ -44,6 +45,7 @@ import Receive from '../../components/Receive';
 import Settings from '../../components/Settings';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
+import Wallets from '../../components/Wallets';
 import {
   getWalletBadgeContent,
   getWalletContent,
@@ -64,6 +66,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
   const [isWalletPaired, setIsWalletPaired] = useState(false);
   const [showAllWallets, setShowAllWallets] = useState(false);
   const [modalShowClose, setModalShowClose] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [modalType, setModalType] = useState('');
   //const [pairedWallets, setPairedWallets] = useState([]);
   const [walletsAvailable, setWalletsAvailable] = useState([]);
@@ -91,18 +94,6 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     setShowAllWallets(!showAllWallets);
   };
 
-  // start the context provider
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-
-      let pioneerUrl = window.localStorage.getItem('pioneerUrl');
-      if (balances.length === 0 && !pioneerUrl) {
-        onOpen();
-        setModalType('ONBOARDING');
-      }
-    }
-  }, [balances]);
-
   useEffect(() => {
     if (context) {
       console.log('context: ', context);
@@ -122,56 +113,24 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     setIsSwitchingWallet(true);
     resetState();
 
-    //get cached wallets.
-    // Retrieve and parse paired wallets
-    // let pairedWallets = localStorage.getItem('pairedWallets');
-    // if (pairedWallets) {
-    //   pairedWallets = JSON.parse(pairedWallets);
-    // } else {
-    //   pairedWallets = [];
-    // }
-    // console.log('pairedWallets: ', pairedWallets);
-    // //if type found in cache, use it.
-    // const foundWallet = pairedWallets.find(pw => pw.toLowerCase().includes(wallet.toLowerCase()));
-    // if (foundWallet && false) {
-    //   console.log('Wallet found! foundWallet: ', foundWallet);
-    //   //then load it.
-    //   console.log('Loading from cache!');
-    //   await app.setContext(foundWallet);
-    //   //get wallet type
-    //   const walletType = foundWallet.split(':')[0];
-    //   console.log('walletType: ', walletType);
-    //   //set blockchains
-    //   let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-    //   let allByCaip = blockchainsForContext.map((chainStr) => {
-    //     const chainEnum = getChainEnumValue(chainStr);
-    //     return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-    //   });
-    //   console.log('allByCaip: ', allByCaip);
-    //   await app.setBlockchains(allByCaip);
-    //
-    //   // balance cache
-    //   let balanceCache: any = localStorage.getItem(foundWallet + ':balanceCache');
-    //   balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-    //   console.log('balanceCache: ', balanceCache);
-    //   await app.loadBalanceCache(balanceCache);
-    //
-    //   // pubkey cache
-    //   let pubkeyCache: any = localStorage.getItem(foundWallet + ':pubkeyCache');
-    //   pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-    //   console.log('pubkeyCache: ', pubkeyCache);
-    //   await app.loadPubkeyCache(pubkeyCache);
-    // }
     console.log('Wallet not found! needs to pair now!');
     //clear balances
     //clear pubkeys
     //clear context
     //clear blockchains
+    setIsSyncing(true);
     onOpen();
     setWalletType(wallet);
     setModalType(wallet);
     setModalShowClose(false);
   };
+
+  useEffect(() => {
+    if (balances.length > 0) {
+      setIsWalletPaired(true);
+      setIsSyncing(false);
+    }
+  }, [balances]);
 
   const renderWallets = () => {
     if (typeof window !== 'undefined') {
@@ -229,6 +188,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
 
       if (balances && balances.length > 0) {
         console.log('balances: ', balances);
+        setIsWalletPaired(true);
       }
     } catch (e) {
       console.error(e);
@@ -260,6 +220,23 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     hideModal();
   };
 
+  const onConnectPress = async () => {
+    try {
+      setIsSyncing(true);
+      setModalShowClose(true);
+      let pioneerUrl = window.localStorage.getItem('pioneerUrl');
+      if (balances.length === 0 && !pioneerUrl) {
+        setModalType('ONBOARDING');
+        onOpen();
+      } else {
+        setModalType('WALLETS');
+        onOpen();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <div>
       <Modal isOpen={isOpen} onClose={() => closeModal()} size="xl">
@@ -271,7 +248,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
             {/* Render content based on modalType */}
             {modalType === 'KEEPKEY' && (
               <div>
-                <KeepKey usePioneer={usePioneer} onClose={onClose} />
+                <KeepKey usePioneer={usePioneer} onClose={closeModal} />
               </div>
             )}
             {modalType === 'METAMASK' && (
@@ -297,6 +274,11 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
             {modalType === 'RECEIVE' && (
               <div>
                 <Receive usePioneer={usePioneer}/>
+              </div>
+            )}
+            {modalType === 'WALLETS' && (
+              <div>
+                <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick} />
               </div>
             )}
             {modalType === 'PORTFOLIO' && (
@@ -339,8 +321,13 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
         </ModalContent>
       </Modal>
       {!isWalletPaired ? (<>
-        <Button onClick={onOpen} colorScheme="blue" borderRadius="full">
-          Connect Wallet
+
+        <Button onClick={() => onConnectPress()} colorScheme="blue" borderRadius="full">
+          {isSyncing ? (<>
+            <Spinner></Spinner>Syncing Wallet...
+          </>) : (<>
+            Connect Wallet
+          </>)}
         </Button>
       </>) : (<>
         <Menu>

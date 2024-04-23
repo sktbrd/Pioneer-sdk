@@ -7,7 +7,7 @@ import MetaMask from '../../components/MetaMask';
 import { getWalletContent } from '../WalletIcon';
 
 
-export function Wallets({usePioneer}:any) {
+export function Wallets({usePioneer, handleWalletClick}:any) {
   const { state, setIntent, connectWallet } = usePioneer();
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
@@ -28,11 +28,9 @@ export function Wallets({usePioneer}:any) {
 
   const handleWalletSelect = (wallet: any) => {
     try {
-      //console.log('wallet: ', wallet);
-      //console.log('wallet: ', wallet.split(':')[0]);
-      // setSelectedWallet(wallet.split(':')[0]);
-      // app.setContext(wallet);
-      // Load public keys and balances as needed
+      console.log('wallet: ', wallet);
+      console.log('wallet: ', wallet.split(':')[0]);
+      handleWalletClick( wallet.split(':')[0].toUpperCase())
     } catch (e) {
       console.error(e);
     }

@@ -12,10 +12,10 @@ export default function KeepKey({ usePioneer, onClose }: any) {
   let syncWallet = async function () {
     try {
       setIsSyncing(true);
-      await connectWallet('KEEPKEY');
-      await app.getPubkeys();
-      await app.getBalances();
-
+      connectWallet('KEEPKEY');
+      app.getPubkeys();
+      app.getBalances();
+      onClose();
     } catch (e) {
       console.error(e);
     }
