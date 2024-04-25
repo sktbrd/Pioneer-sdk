@@ -6,58 +6,56 @@ import {
   Switch,
   Text,
   Avatar,
-  useToast, // Import useToast
+  Select,
+  useToast,
 } from '@chakra-ui/react';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-// import { usePioneer } from '@coinmasters/pioneer-react';
-
-export default function Blockchains({usePioneer, onSelect}: any) {
+export function Blockchains({usePioneer, onSelect}: any) {
   const { state } = usePioneer();
   const { app } = state;
 
   const [allChains, setAllChains] = useState<string[]>([]);
   const [wallet, setWallet] = useState<string>('');
+  const [walletOptions, setWalletOptions] = useState<string[]>(Object.keys(availableChainsByWallet));
   const [enabledChains, setEnabledChains] = useState<string[]>([]);
-  const toast = useToast(); // Initialize useToast
+  const [context, setContext] = useState(app?.context);
+  const [contextType, setContextType] = useState(app?.contextType);
+  const toast = useToast();
 
-  let onStart = async function(){
-    try{
-      if (typeof window !== 'undefined') {
-        const lastConnectedWallet = window.localStorage.getItem('lastConnectedWallet');
-        setWallet(lastConnectedWallet || '');
-        if(lastConnectedWallet){
-          console.log('lastConnectedWallet: ', lastConnectedWallet);
-          await app.setContext(lastConnectedWallet);
-          //get wallet type
-          const walletType = lastConnectedWallet.split(':')[0];
-          console.log('walletType: ', walletType);
-          //set blockchains
-          let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-          let allByCaip = blockchainsForContext.map((chainStr: any) => {
-            const chainEnum = getChainEnumValue(chainStr);
-            return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-          });
-          setAllChains(allByCaip)
-        }
-      }
-    }catch(e){
-      console.error(e)
+  useEffect(() => {
+    if (app) {
+      onStart();
+      setContext(app.context);
+      setContextType(app.contextType);
     }
-  }
-  useEffect(() => {
-    onStart();
-  }, []);
+  }, [wallet, app]);
 
   useEffect(() => {
-    // Initialize the enabledChains based on app?.blockchains if needed
     setEnabledChains(app?.blockchains || []);
   }, [app?.blockchains]);
 
-  const toggleChain = (chain: string) => {
-    setEnabledChains(prev => prev.includes(chain) ? prev.filter(c => c !== chain) : [...prev, chain]);
+  const onStart = async function() {
+    if (wallet && app && typeof window !== 'undefined') {
+      const walletType = wallet.split(':')[0];
+      await app.setContextType(walletType);
+      let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()] || [];
+      let allByCaip = blockchainsForContext.map((chainStr:any) => {
+        const chainEnum = getChainEnumValue(chainStr);
+        return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+      });
+      setAllChains(allByCaip);
+    }
+  };
+
+  const handleWalletChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setWallet(event.target.value);
+    const walletType = event.target.value.split(':')[0];
+    if (app) {
+      await app.setContextType(walletType);
+    }
   };
 
   const selectAllChains = () => {
@@ -68,8 +66,12 @@ export default function Blockchains({usePioneer, onSelect}: any) {
     setEnabledChains([]);
   };
 
+  const toggleChain = (chain: string) => {
+    setEnabledChains(prev => prev.includes(chain) ? prev.filter(c => c !== chain) : [...prev, chain]);
+  };
+
   const saveEnabledChains = () => {
-    try{
+    try {
       if (enabledChains.length === 0) {
         toast({
           title: 'Error',
@@ -84,13 +86,11 @@ export default function Blockchains({usePioneer, onSelect}: any) {
       app.setBlockchains(enabledChains);
       let walletType = wallet.split(':')[0];
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem("cache:blockchains:"+walletType, JSON.stringify(enabledChains));
-        // Logic to update the global state or perform another action with enabledChains
-        // Reload the page to force restart the application
+        window.localStorage.setItem("cache:blockchains:" + walletType, JSON.stringify(enabledChains));
         window.location.reload();
       }
-    }catch(e){
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -105,26 +105,46 @@ export default function Blockchains({usePioneer, onSelect}: any) {
   );
 
   // Group and sort chains by type
-  const { UTXO, EVM, others } = allChains?.reduce((acc:any, chain:any) => {
+  const { UTXO, EVM, others } = allChains.reduce((acc: any, chain: any) => {
     if (chain.startsWith('bip122:')) acc.UTXO.push(chain);
     else if (chain.startsWith('eip155:')) acc.EVM.push(chain);
     else acc.others.push(chain);
     return acc;
-  }, { UTXO: [], EVM: [], others: [] }) || {};
+  }, { UTXO: [], EVM: [], others: [] });
 
   return (
     <Box>
       <Flex justifyContent="space-between" mb={4}>
+        <Select placeholder="Select wallet" onChange={handleWalletChange}>
+          {walletOptions.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </Select>
         <Button colorScheme="green" onClick={selectAllChains}>Select All</Button>
         <Button colorScheme="red" onClick={unselectAllChains}>Unselect All</Button>
       </Flex>
-      <Text fontSize="xl" mb={4}>UTXO Chains</Text>
-      {UTXO.map(renderChain)}
-      <Text fontSize="xl" my={4}>EVM Chains</Text>
-      {EVM.map(renderChain)}
-      <Text fontSize="xl" my={4}>Other Chains</Text>
-      {others.map(renderChain)}
+      {context && <Text fontSize="xl" my={4}>Current Context: {context}</Text>}
+      {contextType && <Text fontSize="xl" my={4}>Context Type: {contextType}</Text>}
+      {UTXO.length > 0 && (
+        <>
+          <Text fontSize="xl" mb={4}>UTXO Chains</Text>
+          {UTXO.map(renderChain)}
+        </>
+      )}
+      {EVM.length > 0 && (
+        <>
+          <Text fontSize="xl" my={4}>EVM Chains</Text>
+          {EVM.map(renderChain)}
+        </>
+      )}
+      {others.length > 0 && (
+        <>
+          <Text fontSize="xl" my={4}>Other Chains</Text>
+          {others.map(renderChain)}
+        </>
+      )}
       <Button colorScheme="blue" onClick={saveEnabledChains} mt={4}>Continue/Update</Button>
     </Box>
   );
 }
+export default Blockchains;

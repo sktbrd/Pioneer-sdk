@@ -276,9 +276,18 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../packages/swapkit/types
+      '@coinmasters/wallet-evm-extensions':
+        specifier: workspace:*
+        version: link:../../packages/wallets/evm-extensions
       '@coinmasters/wallet-keepkey':
         specifier: workspace:*
         version: link:../../packages/wallets/keepkey
+      '@coinmasters/wallet-metamask':
+        specifier: workspace:*
+        version: link:../../packages/wallets/metamask
+      '@coinmasters/wallet-wc':
+        specifier: workspace:*
+        version: link:../../packages/wallets/wc
       '@emotion/react':
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.2.73)(react@18.2.0)
@@ -2567,6 +2576,9 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../swapkit/types
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
       '@pioneer-platform/pioneer-coins':
         specifier: ^9.2.15
         version: 9.2.15(@types/node@18.15.13)

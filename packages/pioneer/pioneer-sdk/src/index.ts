@@ -13,7 +13,12 @@
 // const log = LoggerModule.default();
 
 import type { AssetValue } from '@coinmasters/core';
-import { EVMChainList, SwapKitCore } from '@coinmasters/core';
+import {
+  availableChainsByWallet,
+  EVMChainList,
+  SwapKitCore,
+  WalletOption,
+} from '@coinmasters/core';
 import {
   CoinGeckoList,
   MayaList,
@@ -102,6 +107,8 @@ export class SDK {
 
   public walletConnectProjectId: string;
 
+  public contextType: string;
+
   // @ts-ignore
   public context: string;
 
@@ -155,6 +162,7 @@ export class SDK {
   // public sign: (tx:any, wallet:any) => Promise<any>;
   // public broadcast: (tx:any) => Promise<any>;
   public setContext: (context: string) => Promise<{ success: boolean }>;
+  public setContextType: (contextType: string) => Promise<{ success: boolean }>;
 
   // @ts-ignore
   public refresh: () => Promise<any>;
@@ -200,7 +208,9 @@ export class SDK {
     this.utxoApiKey = config.utxoApiKey;
     this.walletConnectProjectId = config.walletConnectProjectId;
     this.paths = [];
-    this.blockchains = [];
+    this.blockchains = availableChainsByWallet[WalletOption.KEEPKEY].map(
+      (chain: any) => ChainToNetworkId[chain],
+    );
     this.pubkeys = [];
     this.balances = [];
     this.nfts = [];
@@ -208,6 +218,7 @@ export class SDK {
     this.pioneer = null;
     this.swapKit = null;
     this.context = '';
+    this.contextType = WalletOption.KEEPKEY;
     this.pubkeyContext = null;
     this.assetContext = null;
     this.blockchainContext = null;
@@ -273,7 +284,7 @@ export class SDK {
           },
           wallets: walletArray,
         };
-        // log.info(tag, "configKit: ", configKit);
+        console.log(tag, 'configKit: ', configKit);
         await this.swapKit.extend(configKit);
         this.events.emit('SET_STATUS', 'init');
         // done registering, now get the user
@@ -485,6 +496,7 @@ export class SDK {
         await this.verifyWallet();
 
         let resultPair: string;
+        console.log('type: ', walletSelected.type);
         switch (walletSelected.type) {
           case 'KEEPKEY':
             this.keepkeyApiKey =
@@ -493,6 +505,18 @@ export class SDK {
                 this.paths,
               )) || '';
             resultPair = 'success';
+            break;
+          case 'WALLETCONNECT':
+            resultPair =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                EVMChainList[0],
+              )) || '';
+            break;
+          case 'EVM':
+            resultPair =
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
+                EVMChainList[0],
+              )) || '';
             break;
           case 'METAMASK':
             resultPair =
@@ -557,7 +581,7 @@ export class SDK {
         if (resultPair) {
           // update
           const matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
-          //log.debug(tag, 'matchingWalletIndex: ', matchingWalletIndex);
+          log.debug(tag, 'matchingWalletIndex: ', matchingWalletIndex);
           // get balances
           // @ts-ignore
           let context;
@@ -605,6 +629,7 @@ export class SDK {
       try {
         // @ts-ignore
         this.context = null;
+        this.contextType = WalletOption.KEEPKEY;
         this.paths = [];
         this.blockchains = [];
         this.pubkeys = [];
@@ -745,6 +770,7 @@ export class SDK {
           }
 
           pubkey.context = this.context;
+          pubkey.contextType = this.contextType.split(':')[0];
           pubkey.networks = [path.network];
           if (path.network === 'eip155:1') {
             pubkey.networks = [
@@ -883,6 +909,7 @@ export class SDK {
                     //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
                     balanceString.context = this.context;
+                    balanceString.contextType.split(':')[0];
                     balanceString.caip = caip;
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.networkId = caipToNetworkId(caip);
@@ -1000,7 +1027,19 @@ export class SDK {
       const tag = `${TAG} | setContext | `;
       try {
         this.context = context;
+        this.contextType = context.split(':')[0];
         this.events.emit('SET_CONTEXT', context);
+        return { success: true };
+      } catch (e) {
+        console.error(tag, e);
+        throw e;
+      }
+    };
+    this.setContextType = async function (contextType: WalletOption) {
+      const tag = `${TAG} | setContextType | `;
+      try {
+        this.contextType = contextType;
+        this.events.emit('SET_CONTEXT_TYPE', contextType);
         return { success: true };
       } catch (e) {
         console.error(tag, e);

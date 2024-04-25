@@ -4,68 +4,54 @@ import React, { useEffect, useState } from 'react';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
+import WalletConnect from '../../components/WalletConnect';
 import { getWalletContent } from '../WalletIcon';
 
-
-export function Wallets({usePioneer, handleWalletClick}:any) {
-  const { state, setIntent, connectWallet } = usePioneer();
+export function Wallets({ usePioneer, handleWalletClick }:any) {
+  const { state } = usePioneer();
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
-  const { app } = state;
 
+  // Load wallets from app state
   useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const storedWallets = window.localStorage.getItem('pairedWallets');
-        if (storedWallets) {
-          setWallets(JSON.parse(storedWallets));
-        }
-      }
-    } catch (e) {
-      console.error('Failed to load wallets from local storage:', e);
-    }
-  }, []);
+    const walletTypes = state?.app?.wallets?.map((wallet:any) => wallet.type.toLowerCase());
+    setWallets(walletTypes || []);
+  }, [state?.app?.wallets]);
 
-  const handleWalletSelect = (wallet: any) => {
-    try {
-      console.log('wallet: ', wallet);
-      console.log('wallet: ', wallet.split(':')[0]);
-      handleWalletClick( wallet.split(':')[0].toUpperCase())
-    } catch (e) {
-      console.error(e);
-    }
+  const handleWalletSelect = (wallet:any) => {
+    const walletType = wallet.split(':')[0].toUpperCase();
+    handleWalletClick(walletType);
   };
 
-  const renderWalletDetails = (wallet: any) => {
-    //console.log('renderWalletDetails: ', wallet);
-
-    switch (wallet) {
+  const renderWalletDetails = (walletType:any) => {
+    switch (walletType) {
       case 'keepkey':
         return <KeepKey />;
       case 'ledger':
         return <Ledger />;
       case 'metamask':
         return <MetaMask />;
-      // Add more cases as needed for different wallet types
+      case 'walletconnect':
+        return <WalletConnect />;
       default:
         return <Text>No specific details available for this wallet type.</Text>;
     }
   };
 
+  // When a wallet is selected, render its details
   if (selectedWallet) {
-    // If a wallet is selected, render its details
     return <div>{renderWalletDetails(selectedWallet)}</div>;
   }
 
-  // Render the list of wallets if none is selected
+  // Render the list of all available wallets
   return (
     <div>
-      {wallets.map((wallet: any, index: any) => (
+      {wallets.map((wallet:any, index:any) => (
         <Box key={index}>
           <Flex alignItems="center" bg="black" borderRadius="md" boxShadow="sm" padding={2}>
             {getWalletContent(wallet.split(':')[0])}
             <Box ml={3}>
-              <Text fontSize="sm">wallet: {wallet}</Text>
+              <Text fontSize="sm">Wallet: {wallet}</Text>
             </Box>
             <Button
               ml="auto"
@@ -81,4 +67,5 @@ export function Wallets({usePioneer, handleWalletClick}:any) {
     </div>
   );
 }
+
 export default Wallets;

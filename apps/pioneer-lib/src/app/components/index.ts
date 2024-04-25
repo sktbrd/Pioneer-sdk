@@ -1,5 +1,6 @@
 export {Basic} from './Basic'
 export {Balances} from './Balances'
+export {Blockchains} from './Blockchains'
 export {Asset} from './Asset'
 export {Amount} from './Amount'
 export {Assets} from './Assets'

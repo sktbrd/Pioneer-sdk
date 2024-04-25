@@ -37,6 +37,8 @@ import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import AssetSelect from '../../components/AssetSelect';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
+import Evm from '../../components/Evm';
+import WalletConnect from '../../components/WalletConnect';
 import MetaMask from '../../components/MetaMask';
 // import MiddleEllipsis from '../../components/MiddleEllipsis';
 import Onboarding from '../../components/Onboarding';
@@ -255,6 +257,16 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
             {modalType === 'LEDGER' && (
               <div>
                 <Ledger usePioneer={usePioneer} />
+              </div>
+            )}
+            {modalType === 'EVM' && (
+              <div>
+                <Evm usePioneer={usePioneer} />
+              </div>
+            )}
+            {modalType === 'WALLETCONNECT' && (
+              <div>
+                <WalletConnect usePioneer={usePioneer} />
               </div>
             )}
             {modalType === 'TRANSFER' && (

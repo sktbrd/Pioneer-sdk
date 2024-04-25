@@ -12,12 +12,13 @@ let wcImagePng = '/svg/wc.svg';
 
 const icons: any = {
   metamask: MetaMaskImagePng,
+  evm: MetaMaskImagePng,
   keepkey: KeepKeyImagePng,
   native: pioneerImagePng,
   keplr: KeplerImagePng,
   xdefi: XDEFIImagePng,
   ledger: LedgerImagePng,
-  wc: wcImagePng,
+  walletconnect: wcImagePng,
 };
 
 export const getWalletContent = (walletType: string) => {
@@ -27,7 +28,6 @@ export const getWalletContent = (walletType: string) => {
 
 export const getWalletBadgeContent = (walletType: string, size?: string) => {
   const icon = walletType ? icons[walletType.toLowerCase()] : undefined;
-
 
   if (!size) size = '1.25em';
   if (icon) {

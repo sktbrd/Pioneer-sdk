@@ -19,7 +19,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export function Portfolio({usePioneer}:any) {
   const { state, showModal } = usePioneer();
-  const { balances } = state;
+  const { balances, app } = state;
   const [showAll, setShowAll] = useState(false);
   const [lastClickedBalance, setLastClickedBalance] = useState(null);
   const [activeSegment, setActiveSegment] = useState(null);
@@ -144,8 +144,20 @@ export function Portfolio({usePioneer}:any) {
       {/* Balances Component or Loading Spinner */}
       {balances.length === 0 ? (
         <Center mt="20px">
-          <Spinner mr="3" />
-          <Text>Loading Wallet Balances...</Text>
+          assets: {app?.assets?.length}
+          pubkeys: {app?.pubkeys?.length}
+          balances: {app?.balances?.length}
+
+          {app?.pubkeys?.length === 0 ? (
+            <Button colorScheme="blue">
+              Pair Wallets
+            </Button>
+          ) : (
+            <>
+              <Spinner mr="3" />
+              <Text>Loading Wallet Balances...</Text>
+            </>
+          )}
         </Center>
       ) : (
         <div>

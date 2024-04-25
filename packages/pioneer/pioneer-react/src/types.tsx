@@ -6,6 +6,7 @@ export enum WalletActions {
   SET_APP = 'SET_APP',
   SET_WALLETS = 'SET_WALLETS',
   SET_CONTEXT = 'SET_CONTEXT',
+  SET_CONTEXT_TYPE = 'SET_CONTEXT_TYPE',
   SET_INTENT = 'SET_INTENT',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_BLOCKCHAIN_CONTEXT = 'SET_BLOCKCHAIN_CONTEXT',
@@ -30,6 +31,7 @@ export interface InitialState {
   serviceKey: string;
   queryKey: string;
   context: string | null;
+  contextType: string | null;
   intent: string | null;
   assetContext: string | null;
   blockchainContext: string;
@@ -58,6 +60,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_INTENT; payload: string }
   | { type: WalletActions.SET_WALLETS; payload: any[] }
   | { type: WalletActions.SET_CONTEXT; payload: string }
+  | { type: WalletActions.SET_CONTEXT_TYPE; payload: string }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: string }
   | { type: WalletActions.SET_BLOCKCHAIN_CONTEXT; payload: string }
   | { type: WalletActions.SET_PUBKEY_CONTEXT; payload: string | null }

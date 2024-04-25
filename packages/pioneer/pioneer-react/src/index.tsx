@@ -17,7 +17,12 @@
 
 */
 import { SDK } from '@coinmasters/pioneer-sdk';
-import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
+import { availableChainsByWallet, getChainEnumValue } from '@coinmasters/types';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  ChainToNetworkId,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-caip';
 import {
   getPaths,
   // @ts-ignore
@@ -47,6 +52,7 @@ const initialState: InitialState = {
   serviceKey: '',
   queryKey: '',
   context: '',
+  contextType: '',
   intent: '',
   assetContext: '',
   blockchainContext: '',
@@ -69,6 +75,7 @@ export interface IPioneerContext {
   state: InitialState;
   username: string | null;
   context: string | null;
+  contextType: string | null;
   status: string | null;
   hardwareError: string | null;
   totalValueUsd: number | null;
@@ -82,19 +89,6 @@ export interface IPioneerContext {
   app: any;
   api: any;
 }
-
-// export interface IPioneerContext {
-//   state: InitialState;
-//   username: string | null;
-//   context: string | null;
-//   status: string | null;
-//   totalValueUsd: number | null;
-//   assetContext: string | null;
-//   blockchainContext: string | null;
-//   pubkeyContext: string | null;
-//   app: any;
-//   api: any;
-// }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -126,6 +120,10 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, intent: action.payload };
 
     case WalletActions.SET_CONTEXT:
+      // eventEmitter.emit("SET_CONTEXT", action.payload);
+      return { ...state, context: action.payload };
+
+    case WalletActions.SET_CONTEXT_TYPE:
       // eventEmitter.emit("SET_CONTEXT", action.payload);
       return { ...state, context: action.payload };
 
@@ -172,6 +170,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         user: null,
         username: null,
         context: null,
+        contextType: null,
         intent: null,
         status: null,
         hardwareError: null,
@@ -281,13 +280,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
           // let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
 
-          type ChainString = keyof typeof ChainToNetworkId; // Assuming ChainToNetworkId's keys are of a specific type.
-
           const cacheKey = `cache:blockchains:${wallet}`;
           const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
 
           const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
-            const chainEnum: ChainString | undefined = getChainEnumValue(chainStr) as ChainString;
+            const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
             return ChainToNetworkId[chainEnum];
           };
 
@@ -381,6 +378,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               dispatch({
                 type: WalletActions.SET_CONTEXT,
                 payload: state.app.context,
+              });
+              // @ts-ignore
+              dispatch({
+                type: WalletActions.SET_CONTEXT_TYPE,
+                payload: state.app.contextType,
               });
               // @ts-ignore
               dispatch({
@@ -490,8 +492,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
-
-
       // // @ts-ignore
       const { events } = appInit;
 
@@ -537,8 +537,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('lastConnectedWallet');
         console.log('Loading from cache!');
         await appInit.setContext(lastConnectedWallet);
+
         // //get wallet type
         const walletType = lastConnectedWallet.split(':')[0];
+        await appInit.setContextType(walletType);
         let blockchainsCached = JSON.parse(
           localStorage.getItem('cache:blockchains:' + walletType) || '[]',
         );

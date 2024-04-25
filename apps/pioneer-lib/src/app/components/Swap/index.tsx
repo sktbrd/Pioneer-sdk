@@ -301,6 +301,12 @@ export function Swap({usePioneer}:any): JSX.Element {
     openModal(MODAL_STRINGS.confirmTrade);
   };
 
+  let handleWalletClick = async function (wallet: any) {
+    console.log('handleWalletClick: ', wallet);
+    // await app.setWalletContext(wallet);
+    // onClose();
+  }
+
   return (
     <Box>
       {/* <ForkMeBanner /> */}
@@ -313,7 +319,7 @@ export function Swap({usePioneer}:any): JSX.Element {
             {/* Render content based on modalType */}
             {modalType === MODAL_STRINGS.pairWallet && (
               <div>
-                <Wallets usePioneer={usePioneer}/>
+                <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>
               </div>
             )}
             {modalType === MODAL_STRINGS.selectAsset && (

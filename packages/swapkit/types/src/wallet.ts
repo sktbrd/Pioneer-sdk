@@ -5,6 +5,7 @@ export enum WalletOption {
   'KEEPKEY' = 'KEEPKEY',
   'XDEFI' = 'XDEFI',
   'METAMASK' = 'METAMASK',
+  'METAMASK_SHAPESHIFT' = 'METAMASK_SHAPESHIFT',
   'COINBASE_WEB' = 'COINBASE_WEB',
   'TREZOR' = 'TREZOR',
   'TRUSTWALLET_WEB' = 'TRUSTWALLET_WEB',
@@ -89,7 +90,7 @@ export const availableChainsByWallet: any = {
     Chain.Polygon,
     Chain.THORChain,
   ],
-  [WalletOption.METAMASK]: [
+  [WalletOption.METAMASK_SHAPESHIFT]: [
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.BinanceSmartChain,
@@ -103,6 +104,7 @@ export const availableChainsByWallet: any = {
     Chain.Polygon,
     Chain.THORChain,
   ],
+  [WalletOption.METAMASK]: EVMChainList,
   [WalletOption.TRUSTWALLET_WEB]: EVMChainList,
   [WalletOption.XDEFI]: [
     Chain.Arbitrum,
