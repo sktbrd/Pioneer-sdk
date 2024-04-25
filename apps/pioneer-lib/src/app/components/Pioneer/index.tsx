@@ -114,10 +114,6 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     resetState();
 
     console.log('Wallet not found! needs to pair now!');
-    //clear balances
-    //clear pubkeys
-    //clear context
-    //clear blockchains
     setIsSyncing(true);
     onOpen();
     setWalletType(wallet);
