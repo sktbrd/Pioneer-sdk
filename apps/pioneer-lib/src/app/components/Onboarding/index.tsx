@@ -15,23 +15,11 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import Blockchains from '../../components/Blockchains';
+import Wallets from '../../components/Wallets';
 import { getWalletContent } from '../../components/WalletIcon';
 
-const checkKeepkeyAvailability = async () => {
-  try {
-    const response = await fetch('http://localhost:1646/spec/swagger.json');
-    if (response.status === 200) {
-      return true;
-    }
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-  return false;
-};
-
 export default function Onboarding({ onClose, setModalType, setWalletType, usePioneer }: any) {
-  const { state, connectWallet } = usePioneer();
+  const { state, showModal } = usePioneer();
   const { app } = state;
   const [server, setServer] = useState('https://pioneers.dev/spec/swagger.json');
   const [showWalletSelection, setShowWalletSelection] = useState(false);
@@ -57,14 +45,9 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
   let checkStartup = async function () {
       if (typeof window !== 'undefined') {
         let pioneerUrl = window.localStorage.getItem('pioneerUrl');
+        console.log("pioneerUrl: ", pioneerUrl)
         if (pioneerUrl) {
-          //check for kkAPI
-          let isKeepkeyAvailable = await checkKeepkeyAvailability();
-          if (isKeepkeyAvailable) {
-            handleWalletClick('KEEPKEY');
-          } else {
-            setShowBlockchainSelection(true);
-          }
+          showModal('WALLETS')
         }
     }
   };
@@ -72,16 +55,6 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
   useEffect(() => {
     checkStartup();
   }, []);
-
-  const handleWalletClick = async (wallet: string) => {
-    wallet = wallet.toUpperCase();
-    // setPioneerImage('');
-    setWalletType(wallet);
-    setModalType(wallet);
-    //console.log('Clicked wallet:', wallet);
-    const resultPair = await connectWallet(wallet);
-    console.log('resultPair: ', resultPair);
-  };
 
   const handleServerChange = (event: any) => {
     setServer(event.target.value);
@@ -101,26 +74,6 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
     setShowAllWallets(!showAllWallets);
   };
 
-  const renderWallets = () => {
-    const walletsToDisplay = showAllWallets
-      ? walletsAvailable
-      : walletsAvailable.filter((wallet: any) =>
-        ['METAMASK', 'KEEPKEY', 'LEDGER'].includes(wallet.type),
-      );
-    return walletsToDisplay.map((wallet: any) => (
-      <Box
-        border="1px"
-        borderColor="gray.200"
-        borderRadius="md"
-        key={wallet.type}
-        onClick={() => handleWalletClick(wallet.type)}
-        p={2}
-      >
-        {getWalletContent(wallet.type)}
-        <Text fontSize="sm">{wallet.type}</Text>
-      </Box>
-    ));
-  };
 
   // Server Selection UI
   const ServerSelectionUI = () => (
@@ -146,9 +99,6 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
       </Button>
 
       <Box>
-        {/*<Link isExternal href="https://pioneers.dev">*/}
-        {/*  Click here to learn how to deploy a pioneer server*/}
-        {/*</Link>*/}
       </Box>
     </Stack>
   );
@@ -158,7 +108,7 @@ export default function Onboarding({ onClose, setModalType, setWalletType, usePi
     <Stack spacing={4}>
       <Text>Connect your Wallet...</Text>
       <SimpleGrid columns={3} spacing={2}>
-        {renderWallets()}
+        <Wallets></Wallets>
       </SimpleGrid>
       <Button colorScheme="blue" mt={2} onClick={toggleShowAllWallets} size="sm">
         {showAllWallets ? 'Hide Wallets' : 'Show All Wallets'}

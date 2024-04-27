@@ -12,7 +12,6 @@ import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 
 import {
-  BINANCE_MAINNET_ID,
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,
   DEFAULT_LOGGER,
@@ -31,17 +30,17 @@ const DEFAULT_THORCHAIN_FEE = {
 };
 
 const SUPPORTED_CHAINS = [
-  Chain.Binance, // Not supported by WC
+  // Chain.Binance, // Not supported by WC
   Chain.BinanceSmartChain,
   Chain.Ethereum,
-  Chain.THORChain,
+  // Chain.THORChain,
   Chain.Avalanche,
   Chain.Arbitrum,
   Chain.Optimism,
   Chain.Polygon,
-  Chain.Maya,
-  Chain.Cosmos,
-  Chain.Kujira,
+  // Chain.Mayachain,
+  // Chain.Cosmos,
+  // Chain.Kujira,
 ] as const;
 
 const getToolbox = async ({
@@ -74,7 +73,7 @@ const getToolbox = async ({
       if (chain !== Chain.Ethereum && !covalentApiKey)
         throw new Error('Covalent API key not found');
 
-      const { getProvider, ETHToolbox, AVAXToolbox, BSCToolbox } = await import(
+      const { getProvider, getToolboxByChain } = await import(
         '@coinmasters/toolbox-evm'
       );
 
@@ -88,47 +87,6 @@ const getToolbox = async ({
         ethplorerApiKey: ethplorerApiKey as string,
         covalentApiKey,
       });
-    }
-    case Chain.Binance: {
-      const { sortObject, BinanceToolbox } = await import('@coinmasters/toolbox-cosmos');
-      const toolbox = BinanceToolbox();
-      const transfer = async ({ recipient, assetValue, memo }: TransferParams) => {
-        const account = await toolbox.getAccount(from);
-        const { transaction, signMsg } = await toolbox.createTransactionAndSignMsg({
-          recipient,
-          from,
-          assetValue,
-          memo,
-        });
-
-        const signDoc = sortObject({
-          account_number: account.account_number.toString(),
-          chain_id: ChainId.Binance,
-          data: null,
-          memo,
-          msgs: [signMsg],
-          sequence: account.sequence.toString(),
-          source: '0',
-        });
-
-        const response: any = await walletconnect?.client.request({
-          chainId: BINANCE_MAINNET_ID,
-          topic: session.topic,
-          request: {
-            method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO,
-            params: { signerAddress: address, signDoc },
-          },
-        });
-
-        const signature = Buffer.from(response.signature, 'hex');
-        const publicKey = toolbox.getPublicKey(response.publicKey);
-        const signedTx = transaction.addSignature(publicKey, signature);
-
-        const res = await toolbox.sendRawTransaction(signedTx.serialize(), true);
-
-        return res[0]?.hash;
-      };
-      return { ...toolbox, transfer };
     }
     case Chain.THORChain: {
       const { getDenomWithChain, ThorchainToolbox } = await import('@coinmasters/toolbox-cosmos');
@@ -344,7 +302,9 @@ const getWalletconnect = async (
     if (!walletConnectProjectId) {
       throw new Error('Error while setting up walletconnect connection: Project ID not specified');
     }
+    console.log("chains", chains)
     const requiredNamespaces = getRequiredNamespaces(chains.map(chainToChainId));
+    console.log("requiredNamespaces", requiredNamespaces)
 
     const { WalletConnectModalSign } = await import('@walletconnect/modal-sign-html');
 
@@ -355,6 +315,19 @@ const getWalletconnect = async (
       metadata: walletconnectOptions?.metadata || DEFAULT_APP_METADATA,
       ...walletconnectOptions?.core,
     });
+
+    const oldSession = await client.getSession();
+
+    // disconnect old Session cause we can't handle using it with current ui
+    if (oldSession) {
+      await client.disconnect({
+        topic: oldSession.topic,
+        reason: {
+          code: 0,
+          message: "Resetting session",
+        },
+      });
+    }
 
     const session = await client.connect({
       requiredNamespaces,

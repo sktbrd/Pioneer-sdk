@@ -418,7 +418,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('blockchains');
+  const [intent, setIntent] = useState('pubkeys');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -458,15 +458,15 @@ export default function App() {
       // walletsVerbose.push(walletMetaMask);
 
       const { evmWallet } = await import("@coinmasters/wallet-evm-extensions");
-      const walletEVM = {
-        type: "EVM", // TODO
+      const walletMetamask = {
+        type: "METAMASK", // TODO
         icon: "https://pioneers.dev/coins/evm.png",
-        chains: availableChainsByWallet.EVM, // TODO
+        chains: availableChainsByWallet[WalletOption.METAMASK], // TODO
         wallet: evmWallet,
         status: "offline",
         isConnected: false,
       };
-      walletsVerbose.push(walletEVM);
+      walletsVerbose.push(walletMetamask);
 
       // const walletKeplr = {
       //   type: WalletOption.KEPLR,
@@ -569,6 +569,10 @@ export default function App() {
     console.log("setInputAmount: ", amount)
   }
 
+  const handleWalletClick = (wallet: any) => {
+    console.log("handleWalletClick: ", wallet)
+  }
+
   // Function to determine which component to render based on intent
   const renderComponent = () => {
     // Your switch case logic here, similar to the original
@@ -589,7 +593,7 @@ export default function App() {
         return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:true }}/>;
         break;
       case 'wallets':
-        return <Wallets usePioneer={usePioneer} />;
+        return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
         break;
       case 'transfer':
         return <Transfer usePioneer={usePioneer} />;
@@ -638,6 +642,7 @@ export default function App() {
           <Select onChange={handleIntentChange} placeholder="Select Component" width="auto">
             <option value="basic">Basic</option>
             <option value="transfer">Transfer</option>
+            <option value="blockchains">Blockchains</option>
             <option value="quote">Quote</option>
             <option value="asset">Asset</option>
             <option value="amount">amount</option>

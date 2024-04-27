@@ -130,40 +130,40 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     }
   }, [balances]);
 
-  const renderWallets = () => {
-    if (typeof window !== 'undefined') {
-
-      const walletsToDisplay = showAllWallets
-        ? walletsAvailable
-        : walletsAvailable.filter((wallet: any) =>
-          ['metamask', 'keepkey', 'ledger'].includes(wallet.type.toLowerCase()),
-        );
-
-      // Retrieve and parse paired wallets
-      let pairedWallets: any = window.localStorage.getItem('pairedWallets');
-      if (pairedWallets) {
-        pairedWallets = JSON.parse(pairedWallets).map((pw: any) => pw.split(':')[0].toUpperCase());
-      } else {
-        pairedWallets = [];
-      }
-
-      return walletsToDisplay.map((wallet: any) => (
-        <Card key={wallet.type} onClick={() => handleWalletClick(wallet.type)}>
-          <CardBody>
-            <Flex align="center" direction="column" justify="center">
-              <Avatar m={2} size="md" src={wallet.icon}>
-                {pairedWallets?.includes(wallet?.type?.toUpperCase()) ? (
-                  <AvatarBadge bg="green.500" boxSize="1em" />
-                ) : (
-                  <AvatarBadge bg="red.500" boxSize="1em" />
-                )}
-              </Avatar>
-            </Flex>
-          </CardBody>
-        </Card>
-      ));
-    }
-  };
+  // const renderWallets = () => {
+  //   if (typeof window !== 'undefined') {
+  //
+  //     const walletsToDisplay = showAllWallets
+  //       ? walletsAvailable
+  //       : walletsAvailable.filter((wallet: any) =>
+  //         ['metamask', 'keepkey', 'ledger'].includes(wallet.type.toLowerCase()),
+  //       );
+  //
+  //     // Retrieve and parse paired wallets
+  //     let pairedWallets: any = window.localStorage.getItem('pairedWallets');
+  //     if (pairedWallets) {
+  //       pairedWallets = JSON.parse(pairedWallets).map((pw: any) => pw.split(':')[0].toUpperCase());
+  //     } else {
+  //       pairedWallets = [];
+  //     }
+  //
+  //     return walletsToDisplay.map((wallet: any) => (
+  //       <Card key={wallet.type} onClick={() => handleWalletClick(wallet.type)}>
+  //         <CardBody>
+  //           <Flex align="center" direction="column" justify="center">
+  //             <Avatar m={2} size="md" src={wallet.icon}>
+  //               {pairedWallets?.includes(wallet?.type?.toUpperCase()) ? (
+  //                 <AvatarBadge bg="green.500" boxSize="1em" />
+  //               ) : (
+  //                 <AvatarBadge bg="red.500" boxSize="1em" />
+  //               )}
+  //             </Avatar>
+  //           </Flex>
+  //         </CardBody>
+  //       </Card>
+  //     ));
+  //   }
+  // };
 
   const onStart = async function () {
     try {
@@ -476,12 +476,13 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
               </Flex>
             </Box>
             <MenuItem>
-              <SimpleGrid columns={3} maxWidth="280px" row={1}>
-                {renderWallets()}
-                {/*<Text color="blue.500" cursor="pointer" fontSize="sm" onClick={toggleShowAllWallets}>*/}
-                {/*  {showAllWallets ? 'Hide Wallets' : 'more'}*/}
-                {/*</Text>*/}
-              </SimpleGrid>
+              <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>
+              {/*<SimpleGrid columns={3} maxWidth="280px" row={1}>*/}
+              {/*  {renderWallets()}*/}
+              {/*  /!*<Text color="blue.500" cursor="pointer" fontSize="sm" onClick={toggleShowAllWallets}>*!/*/}
+              {/*  /!*  {showAllWallets ? 'Hide Wallets' : 'more'}*!/*/}
+              {/*  /!*</Text>*!/*/}
+              {/*</SimpleGrid>*/}
             </MenuItem>
           </MenuList>
         </Menu>

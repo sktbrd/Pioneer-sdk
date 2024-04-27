@@ -24,7 +24,7 @@ export const getAddressFromAccount = (account: string) => {
 };
 
 export const getAddressByChain = (
-  chain: EVMChain | Chain.Binance | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Cosmos,
+  chain: EVMChain,
   accounts: string[],
 ): string =>
   getAddressFromAccount(
@@ -39,8 +39,6 @@ export const chainToChainId = (chain: Chain) => {
       return BSC_MAINNET_ID;
     case Chain.Ethereum:
       return ETHEREUM_MAINNET_ID;
-    case Chain.Binance:
-      return BINANCE_MAINNET_ID;
     case Chain.THORChain:
       return THORCHAIN_MAINNET_ID;
     case Chain.Arbitrum:
@@ -49,12 +47,6 @@ export const chainToChainId = (chain: Chain) => {
       return OPTIMISM_MAINNET_ID;
     case Chain.Polygon:
       return POLYGON_MAINNET_ID;
-    case Chain.Maya:
-      return MAYACHAIN_MAINNET_ID;
-    case Chain.Cosmos:
-      return COSMOS_HUB_MAINNET_ID;
-    case Chain.Kujira:
-      return KUJIRA_MAINNET_ID;
     default:
       return '';
   }

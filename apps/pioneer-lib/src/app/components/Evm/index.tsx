@@ -12,9 +12,10 @@ import {
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import Portfolio from '../Portfolio';
+import Blockchains from '../Blockchains';
 
 // @ts-ignore
-export default function Evm({ usePioneer, onClose, setIsOpenSide }: any) {
+export default function Evm({ usePioneer, onClose, setIsOpenSide, walletType }: any) {
   const { state, connectWallet } = usePioneer();
   const { app, balances } = state;
   const [isSnapEnabled, setIsSnapEnabled] = useState(true); // Assuming the snap plugin is enabled by default
@@ -23,10 +24,11 @@ export default function Evm({ usePioneer, onClose, setIsOpenSide }: any) {
 
   let syncWallet = async function () {
     try {
+      console.log("walletType: ", walletType)
       setIsSyncing(true);
-      connectWallet('EVM');
-      app.getPubkeys();
-      app.getBalances();
+      await connectWallet('EVM');
+      await app.getPubkeys();
+      await app.getBalances();
       onClose()
     } catch (e) {
       console.error(e);
@@ -96,6 +98,8 @@ export default function Evm({ usePioneer, onClose, setIsOpenSide }: any) {
           </Button>
         </Box>
       )}
+
+      <Blockchains usePioneer={usePioneer} />
     </div>
   );
 }

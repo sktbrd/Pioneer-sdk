@@ -15,7 +15,7 @@ import Portfolio from '../Portfolio';
 
 // @ts-ignore
 export default function WalletConnect({ usePioneer, onClose, setIsOpenSide }: any) {
-  const { state, connectWallet } = usePioneer();
+  const { state, connectWallet, hideModal } = usePioneer();
   const { app, balances } = state;
   const [isSnapEnabled, setIsSnapEnabled] = useState(true); // Assuming the snap plugin is enabled by default
   const [hasConfirmed, setHasConfirmed] = useState(true);
@@ -24,10 +24,11 @@ export default function WalletConnect({ usePioneer, onClose, setIsOpenSide }: an
   let syncWallet = async function () {
     try {
       setIsSyncing(true);
-      connectWallet('WALLETCONNECT');
+      hideModal()
+      await connectWallet('WALLETCONNECT');
       app.getPubkeys();
       app.getBalances();
-      onClose()
+
     } catch (e) {
       console.error(e);
     }

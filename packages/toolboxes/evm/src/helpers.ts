@@ -43,7 +43,6 @@ const methodsToWrap = [
   'call',
   'sendTransaction',
   'transfer',
-  'getBalance',
   'isApproved',
   'approvedAmount',
   'EIP1193SendTransaction',
@@ -337,8 +336,19 @@ const listWeb3EVMWallets = () => {
   if (braveEnabled) wallets.push(WalletOption.BRAVE);
   if (trustEnabled) wallets.push(WalletOption.TRUSTWALLET_WEB);
   if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);
+  if (okxMobileEnabled()) wallets.push(WalletOption.OKX_MOBILE);
 
   return wallets;
+};
+
+export const okxMobileEnabled = () => {
+  const ua = navigator.userAgent;
+  const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
+  const isAndroid = /android|XiaoMi|MiuiBrowser/i.test(ua);
+  const isMobile = isIOS || isAndroid;
+  const isOKApp = /OKApp/i.test(ua);
+
+  return isMobile && isOKApp;
 };
 
 export const isWeb3Detected = () => typeof window.ethereum !== 'undefined';

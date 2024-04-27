@@ -124,10 +124,8 @@ export const availableChainsByWallet: any = {
   ],
   [WalletOption.WALLETCONNECT]: [
     Chain.Ethereum,
-    Chain.Binance,
-    Chain.BinanceSmartChain,
-    Chain.Avalanche,
-    Chain.THORChain,
+    // Chain.BinanceSmartChain,
+    // Chain.Avalanche,
   ],
   [WalletOption.OKX]: [
     Chain.Ethereum,

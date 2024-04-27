@@ -509,7 +509,7 @@ export class SDK {
           case 'WALLETCONNECT':
             resultPair =
               (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-                EVMChainList[0],
+                [EVMChainList[0]],
               )) || '';
             break;
           case 'EVM':
@@ -581,7 +581,7 @@ export class SDK {
         if (resultPair) {
           // update
           const matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
-          log.debug(tag, 'matchingWalletIndex: ', matchingWalletIndex);
+          console.log(tag, 'matchingWalletIndex: ', matchingWalletIndex);
           // get balances
           // @ts-ignore
           let context;
@@ -909,7 +909,7 @@ export class SDK {
                     //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
                     balanceString.context = this.context;
-                    balanceString.contextType.split(':')[0];
+                    balanceString.contextType = this.context.split(':')[0];
                     balanceString.caip = caip;
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.networkId = caipToNetworkId(caip);

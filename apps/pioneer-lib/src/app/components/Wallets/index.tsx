@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import MetaMask from '../../components/MetaMask';
+import Evm from '../../components/Evm';
 import WalletConnect from '../../components/WalletConnect';
 import { getWalletContent } from '../WalletIcon';
+import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 
 export function Wallets({ usePioneer, handleWalletClick }:any) {
-  const { state } = usePioneer();
+  const { state, showModal, hideModal } = usePioneer();
+  const { app } = state;
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
 
@@ -20,19 +23,35 @@ export function Wallets({ usePioneer, handleWalletClick }:any) {
 
   const handleWalletSelect = (wallet:any) => {
     const walletType = wallet.split(':')[0].toUpperCase();
+    console.log("walletType: ", walletType)
+    let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()] || [];
+    let allByCaip = blockchainsForContext.map((chainStr:any) => {
+      const chainEnum = getChainEnumValue(chainStr);
+      return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+    });
+    console.log("allByCaip: ", allByCaip)
+    app.setBlockchains(allByCaip);
+    app.setContextType(walletType);
+    showModal(walletType)
     handleWalletClick(walletType);
   };
 
   const renderWalletDetails = (walletType:any) => {
     switch (walletType) {
       case 'keepkey':
-        return <KeepKey />;
+        return <KeepKey usePioneer={usePioneer} onClose={hideModal}/>;
       case 'ledger':
-        return <Ledger />;
+        return <Ledger usePioneer={usePioneer} onClose={hideModal}/>;
+      case 'coinbase_web':
+        return <Evm usePioneer={usePioneer} walletType={walletType} onClose={hideModal}/>;
+      case 'trustwallet_web':
+        return <Evm usePioneer={usePioneer} walletType={walletType} onClose={hideModal}/>;
+      case 'brave':
+        return <Evm usePioneer={usePioneer} walletType={walletType} onClose={hideModal} />;
       case 'metamask':
-        return <MetaMask />;
+        return <Evm usePioneer={usePioneer} walletType={walletType} onClose={hideModal}/>;
       case 'walletconnect':
-        return <WalletConnect />;
+        return <WalletConnect usePioneer={usePioneer} onClose={hideModal}/>;
       default:
         return <Text>No specific details available for this wallet type.</Text>;
     }

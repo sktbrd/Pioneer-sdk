@@ -57,6 +57,7 @@ export function Pubkeys({usePioneer}:any) {
         {app?.pubkeys?.map((key: any, index: any) => (
           <Flex key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
             <Box>
+              <Text fontWeight="bold">wallet: {key.contextType}</Text>
               <Text fontWeight="bold">type: {key.type}</Text>
               <Text fontWeight="bold">networks: {key.networks}</Text>
               <Text fontWeight="bold">address: {key.master || key.address}</Text>
