@@ -213,6 +213,7 @@ export class SDK {
     );
     this.pubkeys = [];
     this.balances = [];
+    this.assets = [];
     this.nfts = [];
     this.isPioneer = null;
     this.pioneer = null;
@@ -284,7 +285,7 @@ export class SDK {
           },
           wallets: walletArray,
         };
-        console.log(tag, 'configKit: ', configKit);
+        //console.log(tag, 'configKit: ', configKit);
         await this.swapKit.extend(configKit);
         this.events.emit('SET_STATUS', 'init');
         // done registering, now get the user
@@ -376,7 +377,7 @@ export class SDK {
       try {
         if (pubkeys.length === 0) throw Error('No pubkeys to load!');
         const combinedPubkeys = [...this.pubkeys, ...pubkeys];
-
+        console.log('combinedPubkeys: ', combinedPubkeys);
         // Remove duplicates based on .pubkey property
         this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
           if (!acc.some((item: { pubkey: any }) => item.pubkey === currentItem.pubkey)) {
@@ -384,6 +385,7 @@ export class SDK {
           }
           return acc;
         }, []);
+        console.log('checkpoint 1 this.pubkeys: ', this.pubkeys);
 
         //combine pubkeys with balances
         //update assets
@@ -429,7 +431,7 @@ export class SDK {
             this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
           }
         });
-
+        console.log('new pubkeys: ', this.pubkeys);
         this.events.emit('SET_PUBKEYS', this.pubkeys);
       } catch (e) {
         console.error('Failed to load pubkeys! e: ', e);
@@ -468,6 +470,7 @@ export class SDK {
     this.pairWallet = async function (options: any) {
       const tag = `${TAG} | pairWallet | `;
       try {
+        console.log(tag, 'pairWallet options: ', options);
         let wallet = options.type;
         let blockchains = options.blockchains;
         if (!wallet) throw Error('Must have wallet to pair! (Invalid params into pairWallet)');
@@ -496,7 +499,7 @@ export class SDK {
         await this.verifyWallet();
 
         let resultPair: string;
-        console.log('type: ', walletSelected.type);
+        //console.log('type: ', walletSelected.type);
         switch (walletSelected.type) {
           case 'KEEPKEY':
             this.keepkeyApiKey =
@@ -508,9 +511,9 @@ export class SDK {
             break;
           case 'WALLETCONNECT':
             resultPair =
-              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
-                [EVMChainList[0]],
-              )) || '';
+              (await (this.swapKit as any)[walletSelected.wallet.connectMethodName]([
+                EVMChainList[0],
+              ])) || '';
             break;
           case 'EVM':
             resultPair =
@@ -589,7 +592,7 @@ export class SDK {
             context = 'ledger:ledger.wallet'; //placeholder until we know eth address
           } else {
             // console.log('this.swapKit: ', this.swapKit);
-            //console.log('wallet: ', wallet);
+            console.log('wallet: ', wallet);
             context = `${wallet.toLowerCase()}:device.wallet`;
 
             // isPioneer?
@@ -604,7 +607,6 @@ export class SDK {
             }
           }
 
-          // log.info(tag, "context: ", context);
           this.events.emit('CONTEXT', context);
           // add context to wallet
           //@ts-ignore
@@ -640,93 +642,193 @@ export class SDK {
       }
     };
     //@ts-ignore
-    this.getAssets = async function (filter?: string) {
+    this.getAssets = async function (filterParams?: any) {
       try {
         const tag = `${TAG} | getAssets | `;
-        console.log(tag, 'filter: ', filter);
+        //console.log(tag, 'filter: ', filter);
+        if (!this.assets || !this.assets.length) {
+          console.log('No cached assets, loading...');
+          let tokenMap = new Map();
+          let chains = new Set();
+          let chainTokenCounts = {};
+          this.assetsMap = new Map();
 
-        let tokenMap = new Map();
-        let chains = new Set();
-        let chainTokenCounts = {};
-        this.assetsMap = new Map();
-
-        // Function to add tokens with their source list
-        const addTokens = (tokens, sourceList) => {
-          tokens.forEach((token) => {
-            chains.add(token.chain);
-            chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-            let expandedInfo = tokenToCaip(token);
-            if (expandedInfo.caip) {
-              expandedInfo.sourceList = sourceList;
-              let assetInfoKey = expandedInfo.caip.toLowerCase();
-              let assetInfo = assetData[assetInfoKey];
-              if (assetInfo) {
-                let combinedInfo = { ...expandedInfo, ...assetInfo, integrations: [] }; // Prepare integration array
-                tokenMap.set(assetInfoKey, combinedInfo);
+          // Function to add tokens with their source list
+          const addTokens = (tokens, sourceList) => {
+            tokens.forEach((token) => {
+              chains.add(token.chain);
+              chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
+              let expandedInfo = tokenToCaip(token);
+              if (expandedInfo.caip) {
+                expandedInfo.sourceList = sourceList;
+                let assetInfoKey = expandedInfo.caip.toLowerCase();
+                let assetInfo = assetData[assetInfoKey];
+                if (assetInfo) {
+                  let combinedInfo = { ...expandedInfo, ...assetInfo, integrations: [] }; // Prepare integration array
+                  tokenMap.set(assetInfoKey, combinedInfo);
+                }
               }
-            }
-          });
-        };
+            });
+          };
 
-        // Add tokens from various lists with their source
-        [
-          NativeList,
-          MayaList,
-          CoinGeckoList,
-          OneInchList,
-          PancakeswapETHList,
-          PancakeswapList,
-          PangolinList,
-          PioneerList,
-          StargateARBList,
-          SushiswapList,
-          ThorchainList,
-          TraderjoeList,
-          UniswapList,
-          WoofiList,
-        ].forEach((list: any) => addTokens(list.tokens, list.name));
+          // Add tokens from various lists with their source
+          [
+            NativeList,
+            MayaList,
+            CoinGeckoList,
+            OneInchList,
+            PancakeswapETHList,
+            PancakeswapList,
+            PangolinList,
+            PioneerList,
+            StargateARBList,
+            SushiswapList,
+            ThorchainList,
+            TraderjoeList,
+            UniswapList,
+            WoofiList,
+          ].forEach((list: any) => addTokens(list.tokens, list.name));
 
-        // Get integration support by asset and enrich the token map with this data
-        let integrationSupport = await this.pioneer.SupportByAsset();
-        integrationSupport = integrationSupport.data || {};
-        console.log('integrationSupport: ', integrationSupport);
+          // Get integration support by asset and enrich the token map with this data
+          let integrationSupport = await this.pioneer.SupportByAsset();
+          integrationSupport = integrationSupport.data || {};
+          console.log('integrationSupport: ', integrationSupport);
 
-        // Enrich tokenMap directly with integration support
-        Object.keys(integrationSupport).forEach((key) => {
-          integrationSupport[key].forEach((id) => {
-            if (id) {
-              let asset = tokenMap.get(id.toLowerCase());
-              if (asset) {
-                if (MEMOLESS_INTERGRATIONS.indexOf(key) > -1) asset.memoless = true;
-                asset.integrations.push(key);
+          // Enrich tokenMap directly with integration support
+          Object.keys(integrationSupport).forEach((key) => {
+            integrationSupport[key].forEach((id) => {
+              if (id) {
+                let asset = tokenMap.get(id.toLowerCase());
+                if (asset) {
+                  if (MEMOLESS_INTERGRATIONS.indexOf(key) > -1) asset.memoless = true;
+                  asset.integrations.push(key);
+                }
               }
-            }
+            });
           });
-        });
 
-        // Process all assets to enrich with additional data such as balances
-        let allAssets = Array.from(tokenMap.values()).map((asset) => {
-          const balanceObj = this.balances.find(
-            (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
-          );
-          const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          const balance = balanceObj ? balanceObj.balance : '';
+          // Process all assets to enrich with additional data such as balances
+          let allAssets = Array.from(tokenMap.values()).map((asset) => {
+            const balanceObj = this.balances.find(
+              (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
+            );
+            const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+            const balance = balanceObj ? balanceObj.balance : '';
 
-          const searchNetworkId =
-            balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
-          const pubkeyObj = this.pubkeys.find((pubkey) =>
-            pubkey.networks.includes(searchNetworkId),
-          );
-          const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-          const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+            const searchNetworkId =
+              balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
+            const pubkeyObj = this.pubkeys.find((pubkey) =>
+              pubkey.networks.includes(searchNetworkId),
+            );
+            const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+            const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
 
-          return { ...asset, balance, valueUsd, pubkey, address };
-        });
+            return { ...asset, balance, valueUsd, pubkey, address };
+          });
 
-        this.assetsMap = tokenMap; // Update the main map to include all enriched assets
-        this.assets = allAssets; // Also keep a separate array if needed
-        console.log('Processed Assets: ', allAssets);
-        return allAssets;
+          this.assetsMap = tokenMap; // Update the main map to include all enriched assets
+          this.assets = allAssets; // Also keep a separate array if needed
+          console.log('Processed Assets: ', allAssets.length);
+        }
+
+        if (filterParams) {
+          console.log(tag, 'Applying filters...', filterParams);
+
+          // Initial assets count
+          console.log(tag, `Total assets before filtering: ${this.assets.length}`);
+
+          // Filter by Search Query
+          let currentAssets = this.assets;
+          if (filterParams.searchQuery) {
+            const normalizedSearchQuery = filterParams.searchQuery.toLowerCase();
+            currentAssets = currentAssets.filter((asset) => {
+              const assetName = asset.name ? asset.name.toLowerCase() : '';
+              return assetName.includes(normalizedSearchQuery);
+            });
+            console.log(tag, `Assets after search query filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Ownership
+          if (filterParams.onlyOwned) {
+            currentAssets = currentAssets.filter(
+              (asset) => asset.balance && parseFloat(asset.balance) > 0,
+            );
+            console.log(tag, `Assets after ownership filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Token Type
+          if (filterParams.noTokens) {
+            currentAssets = currentAssets.filter((asset) => asset.type !== 'token');
+            console.log(tag, `Assets after token type filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Memoless
+          if (filterParams && filterParams.memoless && filterParams.memoless !== null) {
+            currentAssets = currentAssets.filter((asset: any) => asset.memoless === true);
+            console.log(tag, `Assets after memo-less filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Public Key Presence
+          if (filterParams.hasPubkey) {
+            currentAssets = currentAssets.filter((asset) => asset.pubkey);
+            console.log(tag, `Assets after public key presence filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Required Integration
+          if (filterParams && filterParams.integrations && filterParams.integrations.length > 0) {
+            console.log(
+              tag,
+              `Looking for integrations in assets: ${filterParams.integrations.join(', ')}`,
+            );
+
+            currentAssets = currentAssets.filter((asset) => {
+              if (!asset.integrations) {
+                console.log(tag, `Asset ${asset.name} has no integrations.`);
+                return false;
+              }
+
+              const hasRequiredIntegration = filterParams.integrations.some((integration: any) =>
+                asset.integrations.includes(integration),
+              );
+
+              if (!hasRequiredIntegration) {
+                console.log(
+                  tag,
+                  `Asset ${
+                    asset.name
+                  } does not include required integrations. Asset integrations: ${asset.integrations.join(
+                    ', ',
+                  )}`,
+                );
+              }
+
+              return hasRequiredIntegration;
+            });
+
+            console.log(tag, `Assets after required integration filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Required networkId
+          if (filterParams && filterParams.networks && filterParams.networks.length > 0) {
+            currentAssets = currentAssets.filter(
+              (asset) =>
+                asset.networkId && // Ensure the asset has a networkId defined
+                filterParams.networks.includes(asset.networkId) // Check if the asset's networkId is in the list of required networks
+            );
+            console.log(tag, `Assets after required networks filter: ${currentAssets.length}`);
+          }
+
+          // Filter by Asset Context (if applicable)
+          if (this.assetContext) {
+            currentAssets = currentAssets.filter((asset) => asset.caip !== this.assetContext.caip);
+            console.log(tag, `Assets after asset context filter: ${currentAssets.length}`);
+          }
+
+          console.log(tag, `Total assets after all filters: ${currentAssets.length}`);
+          return currentAssets;
+        } else {
+          return this.assets || [];
+        }
       } catch (e) {
         console.error(e);
         throw e;
@@ -737,13 +839,15 @@ export class SDK {
       try {
         if (this.paths.length === 0) throw Error('No paths found!');
         if (!this.swapKit) throw Error('SwapKit not initialized!');
+        console.log('PRE this.pubkeys: ', this.pubkeys);
+        console.log('PRE this.paths: ', this.paths);
 
         // If no specific networkIds are requested, use all available in paths
         if (!networkIds || networkIds.length === 0) {
           networkIds = this.paths.map((path) => path.network);
         }
 
-        let pubkeysNew: any[] = [];
+        let pubkeysNew: any = [...this.pubkeys];
 
         // Filter paths first by requested networkIds to minimize wallet accesses
         let filteredPaths = this.paths.filter((path) => networkIds.includes(path.network));
@@ -819,7 +923,7 @@ export class SDK {
           }
 
           if (matchedPubkey) {
-            console.log('matchedPubkey: ', matchedPubkey);
+            //console.log('matchedPubkey: ', matchedPubkey);
             // Update the asset and the map entry
             const updatedAsset: any = {
               ...existingAsset,
@@ -827,7 +931,7 @@ export class SDK {
               address: matchedPubkey.address || matchedPubkey.master,
               master: matchedPubkey.master,
             };
-            console.log('updatedAsset: ', updatedAsset);
+            //console.log('updatedAsset: ', updatedAsset);
             this.assets[index] = updatedAsset;
             this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
           }
@@ -847,19 +951,19 @@ export class SDK {
         const assetDetailsMap = this.assets;
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
-        console.log('this.blockchains: ', this.blockchains);
+        //console.log('this.blockchains: ', this.blockchains);
         let balances = [];
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
-          console.log('getWalletByChain: ', chain);
+          //console.log('getWalletByChain: ', chain);
           let walletForChain = await this.swapKit?.getWalletByChain(chain);
-          console.log(chain + ' walletForChain: ', walletForChain);
+          //console.log(chain + ' walletForChain: ', walletForChain);
           if (walletForChain && walletForChain.balance) {
             // @ts-ignore
-            console.log('walletForChain.balance: ', walletForChain.balance);
+            //console.log('walletForChain.balance: ', walletForChain.balance);
             for (let j = 0; j < walletForChain.balance.length; j++) {
               // @ts-ignore
               let balance: AssetValue = walletForChain?.balance[j];
@@ -904,7 +1008,7 @@ export class SDK {
                     }
                   };
                   let caip = balanceToCaip(balance);
-                  console.log('balanceToCaip: result: ', caip);
+                  //console.log('balanceToCaip: result: ', caip);
                   if (caip) {
                     //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
@@ -929,7 +1033,7 @@ export class SDK {
                       (e: any) => e.caip.toLowerCase() === caip.toLowerCase(),
                     );
                     assetInfo = assetInfo[0];
-                    console.log('assetInfo: ', assetInfo);
+                    //console.log('assetInfo: ', assetInfo);
                     balances.push({ ...assetInfo, ...balanceString });
                   } else {
                     console.error('Failed to get caip for balance: ', balance);
@@ -961,7 +1065,7 @@ export class SDK {
           provider: 'lol',
         };
         //log.debug('register: ', register);
-        console.log('register: ', JSON.stringify(register));
+        //console.log('register: ', JSON.stringify(register));
         const result = await this.pioneer.Register(register);
         //log.debug('result: ', result);
         //log.debug('result: ', result.data);
@@ -980,14 +1084,14 @@ export class SDK {
             );
 
             if (balance) {
-              console.log('MATCH balance: ', balance);
+              //console.log('MATCH balance: ', balance);
               // If a matching balance is found, create a new asset object with updated data
               const updatedAsset = {
                 ...asset,
                 balance: balance.balance,
                 valueUsd: balance.valueUsd,
               };
-              console.log('updatedAsset: ', updatedAsset);
+              //console.log('updatedAsset: ', updatedAsset);
               // Update the assetsMap with the new asset data
               this.assetsMap.set(caipKey, updatedAsset);
               return updatedAsset;
@@ -1016,7 +1120,7 @@ export class SDK {
     this.refresh = async function () {
       const tag = `${TAG} | refresh | `;
       try {
-        // log.info(tag, "walletWithContext: ", walletWithContext);
+        //log.info(tag, "walletWithContext: ", walletWithContext);
         return true;
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -1058,7 +1162,7 @@ export class SDK {
         //
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        console.log('priceData: ', priceData);
+        //console.log('priceData: ', priceData);
 
         let allAssets = this.assets;
         let assetInfo = allAssets.find(
@@ -1067,7 +1171,7 @@ export class SDK {
         const balanceObj = this.balances.find(
           (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
         );
-        console.log('balanceObj: ', balanceObj);
+        //console.log('balanceObj: ', balanceObj);
         const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
         const priceUsd = priceData.priceUsd || 0;
         const context = balanceObj ? balanceObj.context : 'external';
@@ -1080,19 +1184,19 @@ export class SDK {
         const pubkeyObj = this.pubkeys.find((pubkey: any) =>
           pubkey.networks.includes(assetIdSearch),
         );
-        console.log('pubkeyObj: ', pubkeyObj);
+        //console.log('pubkeyObj: ', pubkeyObj);
 
         // Extract the pubkey value if the pubkeyObj is found
         const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
         // Set the asset's address to pubkey.master or pubkey.address if available
         const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
-        console.log('assetInfo: ', assetInfo);
-        console.log('valueUsd: ', valueUsd);
-        console.log('priceUsd: ', priceUsd);
-        console.log('context: ', context);
-        console.log('balance: ', balance);
-        console.log('pubkey: ', pubkey);
-        console.log('address: ', address);
+        //console.log('assetInfo: ', assetInfo);
+        //console.log('valueUsd: ', valueUsd);
+        //console.log('priceUsd: ', priceUsd);
+        //console.log('context: ', context);
+        //console.log('balance: ', balance);
+        //console.log('pubkey: ', pubkey);
+        //console.log('address: ', address);
 
         this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
         this.events.emit('SET_ASSET_CONTEXT', {
@@ -1119,7 +1223,7 @@ export class SDK {
         }
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        console.log('priceData: ', priceData);
+        //console.log('priceData: ', priceData);
         if (asset && this.outboundAssetContext !== asset) {
           if (!this.assets || this.assets.length === 0) await this.getAssets();
           let allAssets = this.assets;

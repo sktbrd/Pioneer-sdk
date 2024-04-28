@@ -24,7 +24,7 @@ importers:
     dependencies:
       pioneer:
         specifier: link:/Users/highlander/WebstormProjects/SwapKit/packages/pioneer
-        version: link:packages/pioneer
+        version: link:../SwapKit/packages/pioneer
     devDependencies:
       '@babel/core':
         specifier: 7.23.3
@@ -2192,6 +2192,9 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../../packages/swapkit/types
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@20.11.24)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.24
@@ -2220,6 +2223,9 @@ importers:
       '@coinmasters/core':
         specifier: workspace:*
         version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-db':
+        specifier: workspace:^
+        version: link:../../../packages/pioneer/pioneer-db
       '@coinmasters/pioneer-sdk':
         specifier: workspace:*
         version: link:../../../packages/pioneer/pioneer-sdk
@@ -2570,6 +2576,9 @@ importers:
 
   packages/pioneer/pioneer-react:
     dependencies:
+      '@coinmasters/pioneer-db':
+        specifier: workspace:*
+        version: link:../pioneer-db
       '@coinmasters/pioneer-sdk':
         specifier: workspace:*
         version: link:../pioneer-sdk

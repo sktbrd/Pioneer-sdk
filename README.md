@@ -1,6 +1,23 @@
 # Pioneer SDK
 (pioneer sdk is a fork of swapkit) more info on [swapkit](https://docs.thorswap.finance/swapkit-docs).
 
+
+    Pioneer SDK
+
+        A ultra-powerfull SDK to the pioneer platform
+
+              ,    .  ,   .           .
+          *  / \_ *  / \_      .-.  *       *   /\'__        *
+            /    \  /    \,   ( ₿ )     .    _/  /  \  *'.
+       .   /\/\  /\/ :' __ \_   -           _^/  ^/    `--.
+          /    \/  \  _/  \-'\      *    /.' ^_   \_   .'\  *
+        /\  .-   `. \/     \ /==~=-=~=-=-;.  _/ \ -. `_/   \
+       /  `-.__ ^   / .-'.--\ =-=~_=-=~=^/  _ `--./ .-'  `-
+      /        `.  / /       `.~-^=-=~=^=.-'      '-._ `._
+
+                             A Product of the CoinMasters Guild
+                                              - Highlander
+
 ## Upstream Additions
 * KeepKey Wallet
 * osmo
@@ -8,6 +25,10 @@
 * DASH
 * ZEC
 * UTXO support
+
+## Powered by Pioneer API
+
+api docs: [https://pioneers.dev/docs](https://pioneers.dev/docs)
 
 ## Pioneer SDK
 

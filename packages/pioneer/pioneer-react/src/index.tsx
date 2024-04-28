@@ -14,11 +14,12 @@
 
                              A Product of the CoinMasters Guild
                                               - Highlander
-
 */
+// @ts-ignore
+import DB from '@coinmasters/pioneer-db';
+// @ts-ignore
 import { SDK } from '@coinmasters/pioneer-sdk';
 import { availableChainsByWallet, getChainEnumValue } from '@coinmasters/types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   ChainToNetworkId,
   // @ts-ignore
@@ -41,9 +42,8 @@ import { v4 as uuidv4 } from 'uuid';
 // import transactionDB from './transactionDB';
 import type { ActionTypes, InitialState } from './types';
 import { WalletActions } from './types';
-
 const eventEmitter = new EventEmitter();
-
+const db = new DB({});
 const initialState: InitialState = {
   status: 'disconnected',
   hardwareError: null,
@@ -359,15 +359,22 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               //get pubkeys
               if (state.app.pubkeys) {
                 console.log('pubkeys: ', state.app.pubkeys);
-                localStorage.setItem('cache:pubkeys:' + wallet, JSON.stringify(state.app.pubkeys));
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                for (let i = 0; i < state.app.pubkeys.length; i++) {
+                  const pubkey = state.app.pubkeys[i];
+                  let saved = await db.createPubkey(pubkey);
+                  console.log('saved pubkey: ', saved);
+                }
               }
               //get balances
               if (state.app.balances) {
                 console.log('balances: ', state.app.balances);
-                localStorage.setItem(
-                  'cache:balances:' + wallet,
-                  JSON.stringify(state.app.balances),
-                );
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                for (let i = 0; i < state.app.balances.length; i++) {
+                  const balance = state.app.balances[i];
+                  let saved = await db.createBalance(balance);
+                  console.log('saved balance: ', saved);
+                }
               }
 
               // if pioneer set in localStoage
@@ -414,6 +421,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log('onStart: ', wallets);
       console.log('setup:', setup);
       if (!wallets) throw Error('wallets is required! onStart');
+      if (!setup) throw Error('setup is required! onStart');
+
+      await db.init({});
+      console.log('Database initialized');
+      let txs = await db.getAllTransactions();
+      console.log('txs: ', txs);
+      let pubkeys = await db.getPubkeys({});
+      console.log('pubkeys: ', pubkeys);
+
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
       let username: string | null = localStorage.getItem('username');
@@ -496,42 +512,46 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const { events } = appInit;
 
       const walletActionsArray = Object.values(WalletActions);
-
-      walletActionsArray.forEach((action) => {
-        events.on(action, (data: any) => {
+      for (const action of walletActionsArray) {
+        events.on(action, async (data: any) => {
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
             console.log('setting balances for context: ', appInit.context);
             console.log('setting balances: ', data);
-
-            // Remove duplicates based on .caip property
-            const uniqueBalances = data.reduce((acc: any, currentItem: any) => {
-              if (!acc.some((item: any) => item.caip === currentItem.caip)) {
-                acc.push(currentItem);
-              }
-              return acc;
-            }, []);
-
-            let cacheKeyBalances = 'cache:balance:' + appInit.context.split(':')[0];
-            console.log('balance cacheKey: ', cacheKeyBalances);
-            localStorage.setItem(cacheKeyBalances, JSON.stringify(uniqueBalances));
+            //TODO
           }
 
           // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            console.log('setting pubkeys: ', data);
-
-            let cacheKeyPubkeys = 'cache:pubkeys:' + appInit.context.split(':')[0];
-            console.log('pubkey cacheKey: ', cacheKeyPubkeys);
-            localStorage.setItem(cacheKeyPubkeys, JSON.stringify(data));
+            console.log('SET_PUBKEYS setting pubkeys: ', data);
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            for (let i = 0; i < data.length; i++) {
+              let pubkey = data[i];
+              console.log('pubkey: ', pubkey);
+              let saved = await db.createPubkey(pubkey);
+              console.log('SET_PUBKEYS saved pubkey: ', saved);
+            }
           }
-          // @ts-ignore
+
+          if (action === WalletActions.SET_BALANCES) {
+            console.log('SET_BALANCES setting balances: ', data);
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            for (let i = 0; i < data.length; i++) {
+              let balance = data[i];
+              console.log('balance: ', balance);
+              let saved = await db.createBalance(balance);
+              console.log('SET_BALANCES saved balance: ', saved);
+            }
+          }
+
+          // Dispatch an action to update the state
+          //@ts-ignore
           dispatch({
             type: action,
             payload: data,
           });
         });
-      });
+      }
 
       if (lastConnectedWallet) {
         console.log('lastConnectedWallet');
@@ -567,34 +587,16 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         appInit.setPaths(paths);
 
         //get pubkeys from cache
-        let pubkeyCache = localStorage.getItem('cache:pubkeys:' + walletType.toLowerCase());
-        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-
-        //@TODO filter by blockchain
-
-        //set pubkeys
+        let pubkeyCache = await db.getPubkeys({});
         console.log('pubkeyCache: ', pubkeyCache);
-        if (pubkeyCache && pubkeyCache.length > paths.length) {
-          console.log('I know im out of sync!');
-          //force a resync
-          //await connectWallet(lastConnectedWallet);
-        }
-
         if (pubkeyCache && pubkeyCache.length > 0) {
+          console.log('Loading cache: pubkeys!');
           await appInit.loadPubkeyCache(pubkeyCache);
         } else {
           console.error('Empty pubkey cache!');
         }
 
-        //get balances from cache
-        let balanceCacheKey = 'cache:balance:' + walletType.toLowerCase();
-        console.log('balanceCacheKey: ', balanceCacheKey);
-        let balanceCache = localStorage.getItem(balanceCacheKey);
-        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-
-        //@TODO filter by blockchain
-
-        //set balances
+        let balanceCache = await db.getBalances({});
         console.log('balanceCache: ', balanceCache);
         if (balanceCache && balanceCache.length > 0) {
           await appInit.loadBalanceCache(balanceCache);

@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-db",
-  "version": "1.7.4",
+  "version": "1.7.6",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -18,8 +18,9 @@
   },
   "dependencies": {
     "@coinmasters/core": "workspace:*",
-    "@coinmasters/types": "workspace:*",
     "@coinmasters/pioneer-db": "workspace:*",
+    "@coinmasters/types": "workspace:*",
+    "@pioneer-platform/loggerdog": "^8.3.1",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

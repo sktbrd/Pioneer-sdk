@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-react",
-  "version": "0.7.4",
+  "version": "0.7.6",
   "author": "swapkit-oss-team",
   "description": "Pioneer-sdk react provider",
   "devDependencies": {
@@ -46,6 +46,7 @@
   "dependencies": {
     "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/types": "workspace:*",
+    "@coinmasters/pioneer-db": "workspace:*",
     "@pioneer-platform/pioneer-caip": "^9.2.26",
     "@pioneer-platform/pioneer-coins": "^9.2.15",
     "@types/node": "18.15.13",

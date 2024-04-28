@@ -26,6 +26,9 @@ let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/sw
 
 console.log("spec: ",spec)
 
+const DB = require('@coinmasters/pioneer-db');
+console.log("DB: ",DB)
+
 let txid:string
 let IS_SIGNED: boolean
 
@@ -43,6 +46,10 @@ const test_service = async function (this: any) {
 
         const username = "user:"+Math.random()
         assert(username)
+
+        const txDB = new DB.DB({ });
+        await txDB.init();
+
 
         //add custom path
         let pathsAdd:any = [
@@ -91,6 +98,34 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
+        let txsCache = await txDB.getAllTransactions()
+        let pubkeysCache = await txDB.getPubkeys({})
+
+        if(pubkeysCache.length == 0){
+            log.info(tag,"DB empty: ",pubkeysCache)
+            //add mm to pubkeys
+            let pubkeysMM = [
+              {"type":"address",
+                  "master":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
+                  "address":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
+                  "pubkey":"0xe6F612699AA300d4C61571a101f726B4c59D0577","context":"metamask:device.wallet","contextType":"metamask",
+                  "networks":["eip155:1","eip155:8453"]
+              }
+              ]
+            let saved = await txDB.createPubkey(pubkeysMM[0])
+            pubkeysCache = await txDB.getPubkeys({})
+        }
+        log.info(tag,"pubkeysCache: ",pubkeysCache)
+        assert(pubkeysCache)
+
+        //load pubkeys
+        await app.loadPubkeyCache(pubkeysCache)
+
+        let pubkeys = app.pubkeys
+        log.info(tag,"app.pubkeys: ",pubkeys)
+        assert(pubkeys)
+        if(pubkeys.length == 0) throw Error("Failed to load pubkey cache")
+
         const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
         // let blockchains = AllChainsSupported.map(
         //   // @ts-ignore
@@ -119,23 +154,28 @@ const test_service = async function (this: any) {
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-        
+
         console.time('start2getPubkeys');
         await app.getPubkeys()
         console.timeEnd('start2getPubkeys');
-        log.info(tag,"pubkeys: ",app.pubkeys.length)
+        log.info(tag,"***** pubkeys: ",app.pubkeys)
+        log.info(tag,"***** pubkeys: ",app.pubkeys.length)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
+        if(app.pubkeys.length !== 2) throw Error("Failed to get ALL pubkeys")
+        // let assetinfoIn = app.pubkeys.find((asset: { caip: any }) => asset.caip === ASSET_IN)
+        // assert(assetinfoIn)
+
 
         console.time('start2getBalances');
         await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
+        // log.info(tag,"balances: ",app.balances)
         log.info(tag,"balances: ",app.balances.length)
         console.timeEnd('start2getBalances');
         console.timeEnd('start2end');
 
         //query username by address
-
+        log.info("pubkeys: ",JSON.stringify(app.pubkeys))
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

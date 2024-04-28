@@ -1,7 +1,7 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-db",
-  "version": "4.7.4",
+  "version": "4.7.6",
   "dependencies": {
     "idb": "^8.0.0",
     "sqlite": "^5.1.1",
@@ -49,7 +49,7 @@
     "build:watch": "nodemon --watch src --exec 'pnpm run build'",
     "clean": "rm -rf dist vite.config.ts.* .turbo node_modules",
     "lint": "eslint ./ --ext .ts,.tsx --fix; tsc --noEmit",
-    "test": "echo 'vitest --run'",
+    "test": "node __tests__/test-module.js",
     "test:coverage": "echo 'vitest run --coverage'"
   },
   "type": "module",
