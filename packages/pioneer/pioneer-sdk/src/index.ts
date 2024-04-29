@@ -12,7 +12,6 @@
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 
-import type { AssetValue } from '@coinmasters/core';
 import {
   availableChainsByWallet,
   EVMChainList,
@@ -53,13 +52,7 @@ import {
 // } from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import {
-  caipToNetworkId,
-  caipToThorchain,
-  ChainToNetworkId,
-  shortListSymbolToCaip,
-  tokenToCaip,
-} from '@pioneer-platform/pioneer-caip';
+import { ChainToNetworkId, tokenToCaip, caipToThorchain, caipToNetworkId, shortListSymbolToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 // @ts-ignore
@@ -183,7 +176,7 @@ export class SDK {
   public loadBalanceCache: (balances: any) => Promise<void>;
   public loadPubkeyCache: (pubkeys: any) => Promise<void>;
   public getPubkeys: (networkIds?: string[]) => Promise<any[]>;
-  public getBalances: () => Promise<boolean>;
+  public getBalances: (filter?: any) => Promise<boolean>;
   public blockchains: any[];
   public clearWalletState: () => Promise<boolean>;
   public setBlockchains: (blockchains: any) => Promise<void>;
@@ -191,7 +184,7 @@ export class SDK {
   public appIcon: any;
   public init: (walletsVerbose: any, setup: any) => Promise<any>;
   public verifyWallet: () => Promise<void>;
-  public setPaths: (blockchains: any) => Promise<void>;
+  public setPaths: (paths: any) => Promise<void>;
   public getAssets: (filter?: string) => Promise<any>;
   constructor(spec: string, config: PioneerSDKConfig) {
     this.status = 'preInit';
@@ -207,7 +200,7 @@ export class SDK {
     this.covalentApiKey = config.covalentApiKey;
     this.utxoApiKey = config.utxoApiKey;
     this.walletConnectProjectId = config.walletConnectProjectId;
-    this.paths = [];
+    this.paths = config.paths || [];
     this.blockchains = availableChainsByWallet[WalletOption.KEEPKEY].map(
       (chain: any) => ChainToNetworkId[chain],
     );
@@ -235,8 +228,8 @@ export class SDK {
         if (!this.queryKey) throw Error('queryKey required!');
         if (!this.wss) throw Error('wss required!');
         if (!walletsVerbose) throw Error('walletsVerbose required!');
-        if (!setup) throw Error('setup required!');
         if (!this.wallets) throw Error('wallets required!');
+        if (!this.paths) throw Error('wallets required!');
         if (!this.ethplorerApiKey) throw Error('ethplorerApiKey required!');
         if (!this.covalentApiKey) throw Error('covalentApiKey required!');
         if (!this.utxoApiKey) throw Error('utxoApiKey required!');
@@ -244,7 +237,8 @@ export class SDK {
         const PioneerClient = new Pioneer(config.spec, config);
         this.pioneer = await PioneerClient.init();
         if (!this.pioneer) throw Error('Fialed to init pioneer server!');
-
+        console.log('setup: ', setup);
+        console.log('this.paths: ', this.paths);
         //this.wallets = walletsVerbose
         this.wallets = walletsVerbose;
         let walletArray = [];
@@ -258,6 +252,8 @@ export class SDK {
 
         // init swapkit
         this.swapKit = new SwapKitCore();
+
+        await this.getAssets();
 
         // log.info(tag,"this.swapKit: ",this.swapKit)
         const { ethplorerApiKey } = this;
@@ -288,11 +284,16 @@ export class SDK {
         //console.log(tag, 'configKit: ', configKit);
         await this.swapKit.extend(configKit);
         this.events.emit('SET_STATUS', 'init');
-        // done registering, now get the user
-        // this.refresh()
+
+        let user = await this.pioneer.User();
+        console.log(tag, 'user: ', user);
         if (!this.pioneer) throw Error('Failed to init pioneer server!');
 
-        await this.getAssets();
+        //if user
+        //if pubkeys load
+        //if balances load
+
+        //else defaults
         this.setAssetContext(
           this.assetsMap.get('bip122:000000000019d6689c085ae165831e93/slip44:0'),
         );
@@ -443,6 +444,7 @@ export class SDK {
         if (this.blockchains.length === 0) throw Error('No blockchains to verify!');
 
         //log.debug('Verifying paths for blockchains...');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           let blockchain = this.blockchains[i];
           //log.debug(`Checking paths for blockchain: ${blockchain}`);
@@ -499,7 +501,7 @@ export class SDK {
         await this.verifyWallet();
 
         let resultPair: string;
-        //console.log('type: ', walletSelected.type);
+        console.log(tag, 'type: ', walletSelected.type);
         switch (walletSelected.type) {
           case 'KEEPKEY':
             this.keepkeyApiKey =
@@ -616,6 +618,8 @@ export class SDK {
           this.wallets[matchingWalletIndex].status = 'connected';
           this.setContext(context);
           // this.refresh(context);
+
+          //log.debug('PRE-register balances: ', balances);
         } else {
           throw Error(`Failed to pair wallet! ${walletSelected.type}`);
         }
@@ -692,7 +696,7 @@ export class SDK {
           // Get integration support by asset and enrich the token map with this data
           let integrationSupport = await this.pioneer.SupportByAsset();
           integrationSupport = integrationSupport.data || {};
-          console.log('integrationSupport: ', integrationSupport);
+          //console.log('integrationSupport: ', integrationSupport);
 
           // Enrich tokenMap directly with integration support
           Object.keys(integrationSupport).forEach((key) => {
@@ -813,7 +817,7 @@ export class SDK {
             currentAssets = currentAssets.filter(
               (asset) =>
                 asset.networkId && // Ensure the asset has a networkId defined
-                filterParams.networks.includes(asset.networkId) // Check if the asset's networkId is in the list of required networks
+                filterParams.networks.includes(asset.networkId), // Check if the asset's networkId is in the list of required networks
             );
             console.log(tag, `Assets after required networks filter: ${currentAssets.length}`);
           }
@@ -839,8 +843,8 @@ export class SDK {
       try {
         if (this.paths.length === 0) throw Error('No paths found!');
         if (!this.swapKit) throw Error('SwapKit not initialized!');
-        console.log('PRE this.pubkeys: ', this.pubkeys);
-        console.log('PRE this.paths: ', this.paths);
+        console.log('PRE this.pubkeys: ', this.pubkeys.length);
+        console.log('PRE this.paths: ', this.paths.length);
 
         // If no specific networkIds are requested, use all available in paths
         if (!networkIds || networkIds.length === 0) {
@@ -944,15 +948,17 @@ export class SDK {
         throw e;
       }
     };
-    this.getBalances = async function () {
+    this.getBalances = async function (filter?:any) {
       const tag = `${TAG} | getBalances | `;
       try {
+        console.log('filter: ', filter);
         if (!this.assets || this.assets.length === 0) await this.getAssets();
         const assetDetailsMap = this.assets;
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
-        //console.log('this.blockchains: ', this.blockchains);
+        console.log('this.blockchains: ', this.blockchains);
         let balances = [];
+
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
@@ -1015,6 +1021,7 @@ export class SDK {
                     balanceString.context = this.context;
                     balanceString.contextType = this.context.split(':')[0];
                     balanceString.caip = caip;
+                    balanceString.ref = balanceString.context + caip;
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.networkId = caipToNetworkId(caip);
                     balanceString.address = balance.address;
@@ -1046,7 +1053,8 @@ export class SDK {
             }
           }
         }
-        //log.debug('PRE-register balances: ', balances);
+        console.log('Pubkeys: ', this.pubkeys);
+        console.log('PRE-register balances: ', balances);
         const register: any = {
           username: this.username,
           blockchains: [],
@@ -1068,8 +1076,8 @@ export class SDK {
         //console.log('register: ', JSON.stringify(register));
         const result = await this.pioneer.Register(register);
         //log.debug('result: ', result);
-        //log.debug('result: ', result.data);
-        //log.debug('result: ', result.data.balances);
+        // console.log('result: ', result.data);
+        // console.log('result: ', result.data.balances);
 
         if (result.data.balances) {
           //log.debug('Setting balances!');

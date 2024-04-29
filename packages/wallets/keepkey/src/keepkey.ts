@@ -269,10 +269,13 @@ const connectKeepkey =
       // console.log('Processing chain: ', chain);
 
       // Get paths for chain
-      console.log('paths: ', paths);
+      // console.log('paths: ', paths);
       // eslint-disable-next-line eqeqeq
       const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
-      console.log('filteredPaths: ', filteredPaths);
+      console.log('filteredPaths: ', filteredPaths.length);
+      if (!filteredPaths.length) {
+        console.log('No paths found for chain: ', chain);
+      }
 
       const { address, walletMethods } = await getToolbox({
         sdk: keepKeySdk,

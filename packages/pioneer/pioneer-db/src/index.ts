@@ -70,6 +70,13 @@ export class DB {
                 });
                 pubkeyStore.createIndex('pubkey', 'pubkey', { unique: true });
               }
+              if (!db.objectStoreNames.contains('balances')) {
+                const pubkeyStore = db.createObjectStore('balances', {
+                  keyPath: 'id',
+                  autoIncrement: true,
+                });
+                pubkeyStore.createIndex('ref', 'ref', { unique: true });
+              }
             };
 
             request.onerror = () => {
@@ -427,7 +434,23 @@ export class DB {
     //balances
     this.createBalance = async (balance: any): Promise<any> => {
       if (typeof window !== 'undefined') {
-        // Browser environment: IndexedDB logic remains the same
+        // Browser environment: IndexedDB logic
+        const db: IDBDatabase = await this.openIndexedDB();
+        const txStore = db.transaction('balances', 'readwrite').objectStore('balances');
+        const request = txStore.add(balance);
+        return new Promise<number>((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result as number);
+          request.onerror = () => {
+            // If error is due to a duplicate entry, resolve true, else rethrow or handle the error
+            if (request.error && request.error.name === 'ConstraintError') {
+              console.log('Duplicate pubkey, not added.');
+              resolve(true); // Resolve true indicating pubkey already exists
+            } else {
+              console.error('Error adding pubkey:', request.error);
+              resolve(false); // You could resolve false or handle it differently depending on your needs
+            }
+          };
+        });
       } else {
         // Node.js environment: SQLite logic
         return new Promise((resolve, reject) => {

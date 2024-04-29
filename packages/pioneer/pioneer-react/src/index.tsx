@@ -438,10 +438,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
       // @ts-ignore
       const lastConnectedWallet: string | null = localStorage.getItem('lastConnectedWallet');
-      // @ts-ignore
-      let cacheKeyPubkeys = 'cache:pubkeys';
-      let cachedPubkeys = localStorage.getItem(cacheKeyPubkeys);
-      cachedPubkeys = cachedPubkeys ? JSON.parse(cachedPubkeys) : [];
 
       if (!queryKey) {
         queryKey = `key:${uuidv4()}`;
@@ -497,8 +493,24 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
       const api = await appInit.init(wallets, setup);
       //load pubkey cache
-      if (cachedPubkeys && cachedPubkeys.length > 0) {
-        appInit.loadPubkeyCache(cachedPubkeys);
+      //get pubkeys from cache
+      let pubkeyCache = await db.getPubkeys({});
+      console.log('pubkeyCache: ', pubkeyCache);
+      if (pubkeyCache && pubkeyCache.length > 0) {
+        console.log('Loading cache: pubkeys!');
+        await appInit.loadPubkeyCache(pubkeyCache);
+      } else {
+        console.error('Empty pubkey cache!');
+      }
+
+      let balanceCache = await db.getBalances({});
+      console.log('balanceCache: ', balanceCache);
+      if (balanceCache && balanceCache.length > 0) {
+        await appInit.loadBalanceCache(balanceCache);
+        //@ts-ignore
+        dispatch({ type: WalletActions.SET_BALANCES, payload: appInit.balances });
+      } else {
+        console.error('Empty balance cache!');
       }
 
       // @ts-ignore
@@ -518,7 +530,13 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           if (action === WalletActions.SET_BALANCES) {
             console.log('setting balances for context: ', appInit.context);
             console.log('setting balances: ', data);
-            //TODO
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            for (let i = 0; i < data.length; i++) {
+              let balance = data[i];
+              console.log('balance: ', balance);
+              let saved = await db.createBalance(balance);
+              console.log('SET_BALANCES saved balance: ', saved);
+            }
           }
 
           // SET_PUBKEYS
@@ -585,24 +603,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('onStart paths: ', paths);
 
         appInit.setPaths(paths);
-
-        //get pubkeys from cache
-        let pubkeyCache = await db.getPubkeys({});
-        console.log('pubkeyCache: ', pubkeyCache);
-        if (pubkeyCache && pubkeyCache.length > 0) {
-          console.log('Loading cache: pubkeys!');
-          await appInit.loadPubkeyCache(pubkeyCache);
-        } else {
-          console.error('Empty pubkey cache!');
-        }
-
-        let balanceCache = await db.getBalances({});
-        console.log('balanceCache: ', balanceCache);
-        if (balanceCache && balanceCache.length > 0) {
-          await appInit.loadBalanceCache(balanceCache);
-        } else {
-          console.error('Empty balance cache!');
-        }
       }
     } catch (e) {
       console.error(e);

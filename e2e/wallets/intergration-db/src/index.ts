@@ -66,101 +66,101 @@ const test_service = async function (this: any) {
 
 
 
-        let balances = [{
-            "chain": "ETH",
-            "identifier": "ETH.ETH",
-            "decimals": 18,
-            "type": "Native",
-            "networkId": "eip155:1",
-            "caip": "eip155:1/slip44:60",
-            "symbol": "ETH",
-            "sourceList": "thorchain",
-            "assetId": "eip155:1/slip44:60",
-            "chainId": "eip155:1",
-            "name": "Ethereum",
-            "networkName": "Ethereum",
-            "precision": 18,
-            "color": "#5C6BC0",
-            "icon": "https://assets.coincap.io/assets/icons/256/eth.png",
-            "explorer": "https://etherscan.io",
-            "explorerAddressLink": "https://etherscan.io/address/",
-            "explorerTxLink": "https://etherscan.io/tx/",
-            "relatedAssetKey": "eip155:1/slip44:60",
-            "integrations": [
-                "mayachain",
-                "changelly",
-                "thorswap",
-                "rango",
-                "uniswap",
-                "chainflip"
-            ],
-            "memoless": true,
-            "balance": "0.NaN",
-            "pubkey": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "address": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "master": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "context": "keepkey:device.wallet",
-            "contextType": "keepkey",
-            "ticker": "ETH",
-            "priceUsd": 3267.27,
-            "rank": 2,
-            "alias": 2,
-            "source": "coingecko",
-            "valueUsd": "0"
-        }]
-        let saved2 = await txDB.createBalance(balances[0])
-        console.log("saved2: ",saved2)
-
-
-
-        let balances4 = [{
-            "chain": "ETH",
-            "identifier": "ETH.ETH",
-            "decimals": 18,
-            "type": "Native",
-            "networkId": "eip155:1",
-            "caip": "eip155:1/slip44:60",
-            "symbol": "ETH",
-            "sourceList": "thorchain",
-            "assetId": "eip155:1/slip44:60",
-            "chainId": "eip155:1",
-            "name": "Ethereum",
-            "networkName": "Ethereum",
-            "precision": 18,
-            "color": "#5C6BC0",
-            "icon": "https://assets.coincap.io/assets/icons/256/eth.png",
-            "explorer": "https://etherscan.io",
-            "explorerAddressLink": "https://etherscan.io/address/",
-            "explorerTxLink": "https://etherscan.io/tx/",
-            "relatedAssetKey": "eip155:1/slip44:60",
-            "integrations": [
-                "mayachain",
-                "changelly",
-                "thorswap",
-                "rango",
-                "uniswap",
-                "chainflip"
-            ],
-            "memoless": true,
-            "balance": "1002.9999999999",
-            "pubkey": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "address": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "master": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
-            "context": "keepkey:device.wallet",
-            "contextType": "keepkey",
-            "ticker": "ETH",
-            "priceUsd": 3267.27,
-            "rank": 2,
-            "alias": 2,
-            "source": "coingecko",
-            "valueUsd": "0"
-        }]
-        let saved3 = await txDB.createBalance(balances4[0])
-        console.log("saved3: ",saved3)
-
-        //get all balances
-        let balances2 = await txDB.getBalances()
-        console.log("balances2: ",balances2)
+        // let balances = [{
+        //     "chain": "ETH",
+        //     "identifier": "ETH.ETH",
+        //     "decimals": 18,
+        //     "type": "Native",
+        //     "networkId": "eip155:1",
+        //     "caip": "eip155:1/slip44:60",
+        //     "symbol": "ETH",
+        //     "sourceList": "thorchain",
+        //     "assetId": "eip155:1/slip44:60",
+        //     "chainId": "eip155:1",
+        //     "name": "Ethereum",
+        //     "networkName": "Ethereum",
+        //     "precision": 18,
+        //     "color": "#5C6BC0",
+        //     "icon": "https://assets.coincap.io/assets/icons/256/eth.png",
+        //     "explorer": "https://etherscan.io",
+        //     "explorerAddressLink": "https://etherscan.io/address/",
+        //     "explorerTxLink": "https://etherscan.io/tx/",
+        //     "relatedAssetKey": "eip155:1/slip44:60",
+        //     "integrations": [
+        //         "mayachain",
+        //         "changelly",
+        //         "thorswap",
+        //         "rango",
+        //         "uniswap",
+        //         "chainflip"
+        //     ],
+        //     "memoless": true,
+        //     "balance": "0.NaN",
+        //     "pubkey": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "address": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "master": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "context": "keepkey:device.wallet",
+        //     "contextType": "keepkey",
+        //     "ticker": "ETH",
+        //     "priceUsd": 3267.27,
+        //     "rank": 2,
+        //     "alias": 2,
+        //     "source": "coingecko",
+        //     "valueUsd": "0"
+        // }]
+        // let saved2 = await txDB.createBalance(balances[0])
+        // console.log("saved2: ",saved2)
+        //
+        //
+        //
+        // let balances4 = [{
+        //     "chain": "ETH",
+        //     "identifier": "ETH.ETH",
+        //     "decimals": 18,
+        //     "type": "Native",
+        //     "networkId": "eip155:1",
+        //     "caip": "eip155:1/slip44:60",
+        //     "symbol": "ETH",
+        //     "sourceList": "thorchain",
+        //     "assetId": "eip155:1/slip44:60",
+        //     "chainId": "eip155:1",
+        //     "name": "Ethereum",
+        //     "networkName": "Ethereum",
+        //     "precision": 18,
+        //     "color": "#5C6BC0",
+        //     "icon": "https://assets.coincap.io/assets/icons/256/eth.png",
+        //     "explorer": "https://etherscan.io",
+        //     "explorerAddressLink": "https://etherscan.io/address/",
+        //     "explorerTxLink": "https://etherscan.io/tx/",
+        //     "relatedAssetKey": "eip155:1/slip44:60",
+        //     "integrations": [
+        //         "mayachain",
+        //         "changelly",
+        //         "thorswap",
+        //         "rango",
+        //         "uniswap",
+        //         "chainflip"
+        //     ],
+        //     "memoless": true,
+        //     "balance": "1002.9999999999",
+        //     "pubkey": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "address": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "master": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //     "context": "keepkey:device.wallet",
+        //     "contextType": "keepkey",
+        //     "ticker": "ETH",
+        //     "priceUsd": 3267.27,
+        //     "rank": 2,
+        //     "alias": 2,
+        //     "source": "coingecko",
+        //     "valueUsd": "0"
+        // }]
+        // let saved3 = await txDB.createBalance(balances4[0])
+        // console.log("saved3: ",saved3)
+        //
+        // //get all balances
+        // let balances2 = await txDB.getBalances()
+        // console.log("balances2: ",balances2)
 
         //write pubkeys
 

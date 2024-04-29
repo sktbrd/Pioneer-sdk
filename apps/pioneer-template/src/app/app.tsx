@@ -418,7 +418,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('assets');
+  const [intent, setIntent] = useState('portfolio');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });

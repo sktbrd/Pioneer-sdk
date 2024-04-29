@@ -16,8 +16,6 @@ let assert = require('assert')
 import { WalletOption, availableChainsByWallet, NetworkIdToChain, Chain } from '@coinmasters/types';
 let {ChainToNetworkId, shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 
-
-
 import {
     getPaths,
     // @ts-ignore
