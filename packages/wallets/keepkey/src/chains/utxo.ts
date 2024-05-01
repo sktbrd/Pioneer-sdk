@@ -193,9 +193,9 @@ export const utxoWalletMethods = async ({
         locktime: 0,
         opReturnData: memo,
       };
-      //console.log('signPayload: ', JSON.stringify(signPayload));
+      console.log('signPayload: ', JSON.stringify(signPayload));
       const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
-      //console.log('responseSign: ', responseSign);
+      console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (e) {
       console.error(e);

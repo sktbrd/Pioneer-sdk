@@ -29,7 +29,7 @@ export interface BalancesProps
   children?: React.ReactNode;
 }
 
-export function Balances({usePioneer}:any) {
+export function Balances({usePioneer, onSelect}:any) {
   const { state } = usePioneer();
   const { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
@@ -93,7 +93,7 @@ export function Balances({usePioneer}:any) {
           <ModalHeader>Balance Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedBalance && <Balance onClose={onModalClose} balance={selectedBalance} />}
+            {selectedBalance && <Balance usePioneer={usePioneer} onClose={onModalClose} balance={selectedBalance} />}
           </ModalBody>
         </ModalContent>
       </Modal>

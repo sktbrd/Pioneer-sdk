@@ -55,9 +55,9 @@ export default function Balance({ usePioneer, onClose, balance }: any) {
           <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
         </Box>
         <Box ml={4}>
-          <Button colorScheme="blue" size="lg" onClick={() => handleModal('transfer')}>Send</Button>
-          <Button colorScheme="green" size="lg" onClick={() => handleModal('receive')}>Receive</Button>
-          <Button colorScheme="purple" size="lg" onClick={() => handleModal('swap')}>Swap</Button>
+          {/*<Button colorScheme="blue" size="lg" onClick={() => handleModal('transfer')}>Send</Button>*/}
+          {/*<Button colorScheme="green" size="lg" onClick={() => handleModal('receive')}>Receive</Button>*/}
+          {/*<Button colorScheme="purple" size="lg" onClick={() => handleModal('swap')}>Swap</Button>*/}
         </Box>
       </Flex>
       <Collapse in={showAdvanced} animateOpacity>

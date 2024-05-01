@@ -206,12 +206,12 @@ export type EVMChain =
 
 export const EVMChainList: EVMChain[] = [
   Chain.Ethereum,
-  Chain.Avalanche,
-  Chain.BinanceSmartChain,
-  Chain.Arbitrum,
-  Chain.Base,
-  Chain.Optimism,
-  Chain.Polygon,
+  // Chain.Avalanche,
+  // Chain.BinanceSmartChain,
+  // Chain.Arbitrum,
+  // Chain.Base,
+  // Chain.Optimism,
+  // Chain.Polygon,
 ];
 
 export type UTXOChain =

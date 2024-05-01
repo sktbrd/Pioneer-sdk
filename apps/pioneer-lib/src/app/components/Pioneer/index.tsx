@@ -121,12 +121,14 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     setWalletType(wallet);
     setModalType(wallet);
     setModalShowClose(false);
+    setIsSwitchingWallet(false);
   };
 
   useEffect(() => {
     if (balances.length > 0) {
       setIsWalletPaired(true);
       setIsSyncing(false);
+      setIsSwitchingWallet(false);
     }
   }, [balances]);
 
@@ -187,6 +189,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
       if (balances && balances.length > 0) {
         console.log('balances: ', balances);
         setIsWalletPaired(true);
+        setIsSwitchingWallet(false);
       }
     } catch (e) {
       console.error(e);

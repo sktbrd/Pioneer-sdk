@@ -129,7 +129,7 @@ export function Portfolio({usePioneer}:any) {
   };
 
   let onSelect = (balance: any) => {
-    //console.log('balance: ', balance);
+    console.log('balance: ', balance);
     // setLastClickedBalance(balance);
   };
 
@@ -175,7 +175,7 @@ export function Portfolio({usePioneer}:any) {
           </Center>
           <br/>
           <Box width="100%" maxHeight="600px" overflowY="auto" mt="20px">
-            <Assets usePioneer={usePioneer} onSelect={onSelect} filters={{onlyOwned: true, noTokens: false, hasPubkey:true }}/>
+            <Balances usePioneer={usePioneer} onSelect={onSelect} />
           </Box>
         </div>
       )}

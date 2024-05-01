@@ -38,20 +38,20 @@ type ProviderRequestParams = {
 };
 
 const methodsToWrap = [
-  'approve',
-  'approvedAmount',
-  'call',
-  'sendTransaction',
-  'transfer',
-  'isApproved',
-  'approvedAmount',
-  'EIP1193SendTransaction',
-  'getFeeData',
-  'broadcastTransaction',
-  'estimateCall',
-  'estimateGasLimit',
-  'estimateGasPrices',
-  'createContractTxObject',
+  // 'approve',
+  // 'approvedAmount',
+  // 'call',
+  // 'sendTransaction',
+  // 'transfer',
+  // 'isApproved',
+  // 'approvedAmount',
+  // 'EIP1193SendTransaction',
+  // 'getFeeData',
+  // 'broadcastTransaction',
+  // 'estimateCall',
+  // 'estimateGasLimit',
+  // 'estimateGasPrices',
+  // 'createContractTxObject',
 ];
 
 export const prepareNetworkSwitch = <T extends { [key: string]: (...args: any[]) => any }>({

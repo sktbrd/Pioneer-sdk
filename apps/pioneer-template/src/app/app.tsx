@@ -20,7 +20,8 @@ import {
   SignTransaction,
   Pubkeys,
   Wallets,
-  Blockchains
+  Blockchains,
+  Balances
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 // import {
@@ -582,6 +583,9 @@ export default function App() {
         break;
       case 'blockchains':
         return <Blockchains usePioneer={usePioneer}/>;
+        break;
+      case 'balances':
+        return <Balances usePioneer={usePioneer}/>;
         break;
       case 'asset':
         return <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={selectedAsset}/>;

@@ -52,7 +52,13 @@ import {
 // } from '@coinmasters/tokens';
 import { Chain, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { ChainToNetworkId, tokenToCaip, caipToThorchain, caipToNetworkId, shortListSymbolToCaip } from '@pioneer-platform/pioneer-caip';
+import {
+  caipToNetworkId,
+  caipToThorchain,
+  ChainToNetworkId,
+  shortListSymbolToCaip,
+  tokenToCaip,
+} from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 // @ts-ignore
@@ -948,7 +954,7 @@ export class SDK {
         throw e;
       }
     };
-    this.getBalances = async function (filter?:any) {
+    this.getBalances = async function (filter?: any) {
       const tag = `${TAG} | getBalances | `;
       try {
         console.log('filter: ', filter);
@@ -1114,7 +1120,7 @@ export class SDK {
           if (this.balances.length > 0) {
             this.setContext(this.balances[0].context);
             this.setAssetContext(this.balances[0]);
-            this.setOutboundAssetContext(this.balances[1]);
+            if (this.balances[1]) this.setOutboundAssetContext(this.balances[1]);
           }
         }
 
@@ -1225,13 +1231,13 @@ export class SDK {
     this.setOutboundAssetContext = async function (asset: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
-        if (!asset.caip) {
+        if (!asset || !asset.caip) {
           console.error('Invalid asset caip is required!');
           throw Error('Invalid asset caip is required!');
         }
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        //console.log('priceData: ', priceData);
+        console.log('priceData: ', priceData);
         if (asset && this.outboundAssetContext !== asset) {
           if (!this.assets || this.assets.length === 0) await this.getAssets();
           let allAssets = this.assets;
