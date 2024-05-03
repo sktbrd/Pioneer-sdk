@@ -136,6 +136,10 @@ export function Swap({usePioneer}:any): JSX.Element {
       //get receiver context
       if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
 
+      //get USDvauleIn if < 50 throw error
+      const usdValue = parseFloat(swap.sellAmount) * swap.sellAsset.priceUsd;
+      if(usdValue < 50)  alert('Trades under 50 USD are high risk and have low success rates. currently not supported. Please try again with a higher amount.');
+
       const entry:any = {
         affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
         sellAsset: app.assetContext,
@@ -153,11 +157,13 @@ export function Swap({usePioneer}:any): JSX.Element {
       try {
         let result = await app.pioneer.Quote(entry);
         result = result.data;
-        //console.log('result: ', result);
+        console.log('Quote result: ', result);
 
-        if (result) {
+        if (result && result.length > 0) {
           setQuotesData(result);
           openModal(MODAL_STRINGS.selectQuote);
+        } else {
+          alert('No routes found!');
         }
 
         // if error, render Error

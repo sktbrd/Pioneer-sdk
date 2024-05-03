@@ -1,5 +1,17 @@
 # @internal/config
 
+## 2.7.8
+
+### Patch Changes
+
+- bump
+
+## 2.7.7
+
+### Patch Changes
+
+- bump
+
 ## 2.7.6
 
 ### Patch Changes

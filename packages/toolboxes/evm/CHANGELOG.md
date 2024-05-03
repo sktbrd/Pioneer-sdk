@@ -1,5 +1,25 @@
 # @coinmasters/toolbox-evm
 
+## 11.0.8
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/helpers@11.0.8
+  - @coinmasters/types@4.7.8
+
+## 11.0.7
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/helpers@11.0.7
+  - @coinmasters/types@4.7.7
+
 ## 11.0.6
 
 ### Patch Changes

@@ -15,7 +15,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId,shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 import {
     getPaths,
@@ -31,7 +31,10 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
 let TRADE_PAIR  = "ETH_ETH"
 let INPUT_ASSET = ASSET
+let INPUT_ASSET_CAIP = shortListSymbolToCaip["ETH"]
 let OUTPUT_ASSET = "BASE"
+let OUTPUT_ASSET_CAIP = shortListSymbolToCaip["BASE"]
+if(!OUTPUT_ASSET_CAIP) throw Error("OUTPUT_ASSET_CAIP not found")
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -39,6 +42,8 @@ console.log("wss: ",wss)
 let txid:string
 let IS_SIGNED: boolean
 
+//de231ea5-0598-41a7-a43f-d8a50648f425
+let INVOCATION_ID = 'de231ea5-0598-41a7-a43f-d8a50648f425'
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
@@ -146,12 +151,14 @@ const test_service = async function (this: any) {
         let balance = app.balances.filter((e:any) => e.symbol === ASSET)
         log.info(tag,"balance: ",balance)
 
+        let balanceIn = app.balances.filter((e:any) => e.caip === INPUT_ASSET_CAIP)
+        await app.setAssetContext(balanceIn[0]);
 
-        let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
+        let balanceOut = app.balances.filter((e:any) => e.caip === OUTPUT_ASSET_CAIP)
         log.info(tag,"balanceOut: ",balanceOut)
         assert(balanceOut[0])
 
-        if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
+        if(balanceOut[0].ticker !== 'ETH') throw Error("Invalid ticker for BASE! given: "+balanceOut[0].ticker)
         assert(balance.length > 0)
         //verify balances
         assert(balanceOut[0])
@@ -198,40 +205,60 @@ const test_service = async function (this: any) {
 
         //quote
         log.info(tag,"entry: ",entry)
-        let result = await app.pioneer.Quote(entry);
-        result = result?.data;
-        log.info(tag,"result: ",result)
+        if(!INVOCATION_ID){
+            let result = await app.pioneer.Quote(entry);
+            result = result?.data;
+            log.info(tag,"result: ",result)
 
-        //
-        let selected
-        //user selects route
-        for(let i = 0; i < result?.length; i++){
-            let route = result[i]
-            console.log("route: ", route)
-            selected = route.quote
+            //
+            let selected
+            //user selects route
+            for(let i = 0; i < result?.length; i++){
+                let route = result[i]
+                console.log("route: ", route)
+                selected = route.quote
+            }
+
+            const outputChain = app.outboundAssetContext?.chain;
+
+            const address = app?.swapKit.getAddress(outputChain);
+            log.info("address: ", address);
+
+
+            log.info("selected: ", selected);
+
+            //send
+            const txHash = await app?.swapKit.swap({
+                route:selected,
+                recipient: address,
+                feeOptionKey: FeeOption.Fast,
+            });
+            log.info("txHash: ",txHash)
         }
 
-        const outputChain = app.outboundAssetContext?.chain;
-
-        const address = app?.swapKit.getAddress(outputChain);
-        log.info("address: ", address);
-
-
-        log.info("selected: ", selected);
-
-        //send
-        const txHash = await app?.swapKit.swap({
-            route:selected,
-            recipient: address,
-            feeOptionKey: FeeOption.Fast,
-        });
-        log.info("txHash: ",txHash)
         // assert(txHash)
 
         //TODO monitor TX untill complete
 
         //TODO check balance
+        let status = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
+        status = status.data
+        log.info("status: ", status)
+        assert(status)
 
+        // monitor TX untill complete
+        let isComplete = false
+        while(!isComplete){
+            await sleep(30000)
+
+            //check tx by hash
+            const tx = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
+            log.info("tx: ",tx)
+            if(tx .statusCode > 4){
+                isComplete = true
+            }
+
+        }
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

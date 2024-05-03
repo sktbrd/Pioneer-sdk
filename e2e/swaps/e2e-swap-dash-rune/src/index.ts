@@ -11,15 +11,11 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | e2e-test | "
 import { WalletOption, availableChainsByWallet, FeeOption } from "@coinmasters/types";
-import { AssetValue } from '@coinmasters/core';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 import {
     getPaths,
@@ -36,6 +32,9 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let TRADE_PAIR  = "DASH_THOR"
 let INPUT_ASSET = ASSET
 let OUTPUT_ASSET = "THOR"
+let OUTPUT_ASSET_CAIP = shortListSymbolToCaip["RUNE"]
+console.log("OUTPUT_ASSET_CAIP: ",OUTPUT_ASSET_CAIP)
+if(!OUTPUT_ASSET_CAIP) throw Error("OUTPUT_ASSET_CAIP not found")
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
@@ -80,7 +79,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -107,7 +106,7 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT]
         log.info(tag,"blockchains: ",blockchains)
 
         //get paths for wallet
@@ -153,7 +152,7 @@ const test_service = async function (this: any) {
         assert(balance.length > 0)
         //verify balances
 
-        let balanceOut = app.balances.filter((e:any) => e.chain === OUTPUT_ASSET)
+        let balanceOut = app.balances.filter((e:any) => e.caip === OUTPUT_ASSET_CAIP)
         log.info(tag,"balanceOut: ",balanceOut)
         assert(balanceOut[0])
         await app.setOutboundAssetContext(balanceOut[0]);

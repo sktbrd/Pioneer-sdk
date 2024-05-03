@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  VStack,
-  HStack,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Text,
-  Icon,
-  Button,
-  Divider,
-  Flex,
+  Box, VStack, HStack, NumberInput, NumberInputField, NumberInputStepper,
+  NumberIncrementStepper, NumberDecrementStepper, Text, Icon, Button, Divider, Flex,
 } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
-function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
+function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const [depositAmount, setDepositAmount] = useState('');
@@ -26,28 +15,27 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
   useEffect(() => {
     if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
       let rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
-      rate = 1 / rate;
       setExchangeRate(rate || 0);
     }
   }, [app, app?.assetContext, app?.outboundAssetContext]);
 
-  const handleDepositChange = (valueAsString:any) => {
+  const handleDepositChange = (valueAsString: any) => {
     setDepositAmount(valueAsString);
     if (exchangeRate !== null) {
       setAmountSelected(true);
       const depositValue = parseFloat(valueAsString) || 0;
       setInputAmount(depositValue);
-      const receiveValue = depositValue / exchangeRate;
+      const receiveValue = depositValue * exchangeRate;
       setReceiveAmount(receiveValue.toFixed(4));
     }
   };
 
-  const handleReceiveChange = (valueAsString:any) => {
+  const handleReceiveChange = (valueAsString: any) => {
     setReceiveAmount(valueAsString);
     if (exchangeRate !== null) {
       setAmountSelected(true);
       const receiveValue = parseFloat(valueAsString) || 0;
-      const depositValue = receiveValue * exchangeRate;
+      const depositValue = receiveValue / exchangeRate;
       setInputAmount(depositValue);
       setDepositAmount(depositValue.toFixed(4));
     }
@@ -55,8 +43,12 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
 
   const maxDeposit = () => {
     const maxBalance = app.assetContext.balance || 0;
-    setDepositAmount(maxBalance.toString());
     handleDepositChange(maxBalance.toString());
+  };
+
+  const renderUSDAmount = (amount: string, priceUsd: number) => {
+    const numericAmount = parseFloat(amount) || 0;
+    return isNaN(numericAmount) ? '$0 USD' : `$${(numericAmount * priceUsd).toFixed(2)} USD`;
   };
 
   return (
@@ -68,31 +60,25 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
               <Text>Deposit</Text>
               <Icon as={ChevronRightIcon} />
             </HStack>
-            <NumberInput
-              variant="filled"
-              mb={2}
-              value={depositAmount}
-              onChange={(valueAsString) => handleDepositChange(valueAsString)}
-              _placeholder={{ color: 'gray.500' }}
-            >
-              <NumberInputField />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
+            <HStack width="full">
+              <NumberInput variant="filled" value={depositAmount} onChange={(valueAsString) => handleDepositChange(valueAsString)} mb={2} w="70%">
+                <NumberInputField placeholder="Enter native amount" />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <Button variant="outline" ml={2} w="40%">
+                {renderUSDAmount(depositAmount, app?.assetContext?.priceUsd)}
+              </Button>
+            </HStack>
             <Text fontSize="sm" color="gray.500">{app?.assetContext?.name} on {app?.assetContext?.chain}</Text>
-            {app?.assetContext?.balance && (
-              <HStack justifyContent="space-between">
-                <Text></Text> {/* Empty text for alignment */}
-                <HStack>
-                  <Text fontSize="xs" color="green.400">
-                    Balance: {parseFloat(app.assetContext.balance).toFixed(3)} (${parseFloat(app.assetContext.valueUsd).toFixed(0)} USD)
-                  </Text>
-                  <Button size="xs" ml={2} colorScheme="green" onClick={maxDeposit}>Max</Button>
-                </HStack>
-              </HStack>
-            )}
+            <HStack justifyContent="space-between" mt={2}>
+              <Text fontSize="xs" color="green.400">
+                Balance: {parseFloat(app?.assetContext?.balance).toFixed(3)} (${parseFloat(app?.assetContext?.valueUsd).toFixed(0)} USD)
+              </Text>
+              <Button size="xs" colorScheme="green" onClick={maxDeposit}>Max</Button>
+            </HStack>
           </Box>
           <Divider borderColor="gray.600" />
           <Box width="full">
@@ -100,19 +86,18 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }:any) {
               <Text>Receive</Text>
               <Icon as={ChevronRightIcon} />
             </HStack>
-            <NumberInput
-              variant="filled"
-              mb={2}
-              value={receiveAmount}
-              onChange={(valueAsString) => handleReceiveChange(valueAsString)}
-              _placeholder={{ color: 'gray.500' }}
-            >
-              <NumberInputField />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
+            <HStack width="full">
+              <NumberInput variant="filled" value={receiveAmount} onChange={(valueAsString) => handleReceiveChange(valueAsString)} mb={2} w="70%">
+                <NumberInputField placeholder="Enter native amount" />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <Button variant="outline" ml={2} w="40%">
+                {renderUSDAmount(receiveAmount, app?.outboundAssetContext?.priceUsd)}
+              </Button>
+            </HStack>
             {app?.outboundAssetContext?.balance && (
               <HStack justifyContent="space-between">
                 <Text></Text> {/* Empty text for alignment */}

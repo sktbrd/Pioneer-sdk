@@ -28,7 +28,7 @@ let BLOCKCHAIN_IN = ChainToNetworkId['DOGE']
 let BLOCKCHAIN_OUT = ChainToNetworkId['BCH']
 let ASSET = 'DOGE'
 let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.01"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "200"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "300"
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 
@@ -42,6 +42,9 @@ console.log("wss: ",wss)
 
 let txid:string
 let IS_SIGNED: boolean
+
+let INVOCATION_ID:any
+// let INVOCATION_ID = ''
 
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
@@ -193,63 +196,68 @@ const test_service = async function (this: any) {
 
         //quote
         log.info(tag,"entry: ",entry)
-        let result = await app.pioneer.Quote(entry);
-        result = result?.data;
-        log.info(tag,"result: ",result)
-        log.info(tag,"result: ",result[0].quote)
-        log.info(tag,"result: ",result[0].quote.id)
-        let quoteId = result[0].quote.id
-        assert(quoteId)
-        log.info(tag,'quoteId: ',quoteId)
+        if(!INVOCATION_ID){
+            let result = await app.pioneer.Quote(entry);
+            result = result?.data;
+            log.info(tag,"result: ",result)
+            log.info(tag,"result: ",result[0].quote)
+            log.info(tag,"result: ",result[0].quote.id)
+            let quoteId = result[0].quote.id
+            assert(quoteId)
+            log.info(tag,'quoteId: ',quoteId)
 
-        //quoteId
-        //verify quote exists
-        const quoteResponse = await axios.get(`https://swaps.pro/api/v1/quotes/${quoteId}`);
-        log.info('Quote details:', quoteResponse.data);
-        assert(quoteResponse.data);
+            //quoteId
+            //verify quote exists
+            // const quoteResponse = await axios.get(`https://swaps.pro/api/v1/quotes/${quoteId}`);
+            // log.info('Quote details:', quoteResponse.data);
+            // assert(quoteResponse.data);
+            //
+            //
+            // //verify trader exists
+            // const traderResponse = await axios.get(`https://swaps.pro/api/v1/traders/${TRADER_ADDRESS}`);
+            // log.info('Trader details:', traderResponse.data);
+            // assert(traderResponse.data);
 
 
-        //verify trader exists
-        const traderResponse = await axios.get(`https://swaps.pro/api/v1/traders/${TRADER_ADDRESS}`);
-        log.info('Trader details:', traderResponse.data);
-        assert(traderResponse.data);
+            let selected
+            //user selects route
+            for(let i = 0; i < result?.length; i++){
+                let route = result[i]
+                console.log("route: ", route)
+                //detect if erroed
+                if(route.integration === 'thorswap'){
+                    selected = route.quote.route
+                    break;
+                }
+                //log amountOut
 
-
-        let selected
-        //user selects route
-        for(let i = 0; i < result?.length; i++){
-            let route = result[i]
-            console.log("route: ", route)
-            //detect if erroed
-            if(route.integration === 'thorswap'){
-                selected = route.quote.route
-                break;
+                //log fee
             }
-            //log amountOut
-
-            //log fee
+            log.info("selected: ", selected);
+            log.info("app.assetContext.address: ", app.assetContext.address);
+            //send
+            const txHash = await app?.swapKit.swap({
+                route:selected,
+                recipient: app.assetContext.address,
+                feeOptionKey: FeeOption.Fast,
+            });
+            log.info("txHash: ",txHash)
+            assert(txHash)
         }
-        log.info("selected: ", selected);
-        log.info("app.assetContext.address: ", app.assetContext.address);
-        //send
-        const txHash = await app?.swapKit.swap({
-            route:selected,
-            recipient: app.assetContext.address,
-            feeOptionKey: FeeOption.Fast,
-        });
-        log.info("txHash: ",txHash)
-        assert(txHash)
 
-        let isComplete = false
 
         // monitor TX untill complete
-        // while(!isComplete){
-        //     await sleep(1000)
-        //
-        //     //check tx by hash
-        //     const tx = await app?.pioneer.GetTransaction('',txHash);
-        //
-        // }
+        let isComplete = false
+        while(!isComplete){
+            await sleep(30000)
+
+            //check tx by hash
+            const tx = await app.pioneer.Invocation({invocationId:INVOCATION_ID})
+            log.info("tx: ",tx)
+            if(tx .statusCode > 4){
+                isComplete = true
+            }
+        }
 
         //TODO check balance
 

@@ -724,14 +724,16 @@ export class SDK {
             );
             const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
             const balance = balanceObj ? balanceObj.balance : '';
-
+            if(asset.symbol && !asset.ticker) asset.ticker = asset.symbol;
             const searchNetworkId =
               balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
             const pubkeyObj = this.pubkeys.find((pubkey) =>
               pubkey.networks.includes(searchNetworkId),
             );
             const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-            const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+            let address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+            if (address && address.indexOf('bitcoincash:') > -1)
+              address = address.replace('bitcoincash:', '');
 
             return { ...asset, balance, valueUsd, pubkey, address };
           });
@@ -868,6 +870,8 @@ export class SDK {
           pubkey.type = path.type;
           let address = await this.swapKit?.getAddress(chain);
           if (!address) throw Error(`Failed to get address for ${chain}`);
+          if (address && address.indexOf('bitcoincash:') > -1)
+            address = address.replace('bitcoincash:', '');
 
           pubkey.master = address;
           if (path.type === 'address') {
@@ -983,7 +987,7 @@ export class SDK {
 
               //log.debug('balance: ', balance);
               let balanceString: any = {};
-              if (!balance.chain || !balance.type || !balance.address) {
+              if (!balance.chain || !balance.type) {
                 console.error('chain: ', balance);
                 // console.error('chain: ', balance[0]);
                 // console.error('chain: ', balance[0].chain);
@@ -1031,6 +1035,8 @@ export class SDK {
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.networkId = caipToNetworkId(caip);
                     balanceString.address = balance.address;
+                    if (balanceString.address && balanceString.address.indexOf('bitcoincash:') > -1)
+                      balanceString.address = balanceString.address.replace('bitcoincash:', '');
                     balanceString.symbol = balance.symbol;
                     balanceString.chain = balance.chain;
                     balanceString.ticker = balance.ticker;

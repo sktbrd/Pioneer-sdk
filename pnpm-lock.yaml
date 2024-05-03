@@ -731,6 +731,12 @@ importers:
       '@pioneer-platform/loggerdog':
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.5)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.16(@types/node@20.11.5)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.5
@@ -1931,6 +1937,55 @@ importers:
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/transfers/e2e-transfer-rune:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.13
+        version: 9.2.16(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -8814,6 +8869,18 @@ packages:
       - '@types/node'
     dev: false
 
+  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.5):
+    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.5)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
   /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.6):
     resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
     dependencies:
@@ -9442,8 +9509,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@shapeshiftoss/hdwallet-core@1.53.5:
-    resolution: {integrity: sha512-337lTljIQukFnXrMAulwgc3bLHGn1WdnN7dD0wkniuejoIYEGOdENDaPlyS280+aAD5quRUrkq4GXA/zVNWSJw==}
+  /@shapeshiftoss/hdwallet-core@1.53.6:
+    resolution: {integrity: sha512-jjcAGdoNImd0sPIEqGkh/2xL9TgQKZk7g5Ab5gdC4CZsgdrRXV9xk7HdwgMd/3cDdZp09rGTWEFsL9gUSkLmew==}
     dependencies:
       '@shapeshiftoss/proto-tx-builder': 0.8.0
       eip-712: 1.0.0
@@ -21811,7 +21878,7 @@ packages:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
-      '@shapeshiftoss/hdwallet-core': 1.53.5
+      '@shapeshiftoss/hdwallet-core': 1.53.6
       '@types/node': 15.14.9
       bip39: 3.1.0
       codeclimate-test-reporter: 0.5.1
