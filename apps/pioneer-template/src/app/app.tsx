@@ -20,10 +20,13 @@ import {
   SignTransaction,
   Pubkeys,
   Wallets,
-  Blockchains,
+  BlockchainsConfigure,
+  BlockchainsExplore,
+  DappsExplore,
   Balances
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
+
 // import {
 //   Pioneer,
 //   Basic,
@@ -419,7 +422,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('swaps');
+  const [intent, setIntent] = useState('dappssexplore');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -582,7 +585,13 @@ export default function App() {
         return <Basic usePioneer={usePioneer}/>;
         break;
       case 'blockchains':
-        return <Blockchains usePioneer={usePioneer}/>;
+        return <BlockchainsConfigure usePioneer={usePioneer}/>;
+        break;
+      case 'blockchainsexplore':
+        return <BlockchainsExplore usePioneer={usePioneer}/>;
+        break;
+      case 'dappssexplore':
+        return <DappsExplore usePioneer={usePioneer}/>;
         break;
       case 'balances':
         return <Balances usePioneer={usePioneer}/>;
@@ -646,7 +655,9 @@ export default function App() {
           <Select onChange={handleIntentChange} placeholder="Select Component" width="auto">
             <option value="basic">Basic</option>
             <option value="transfer">Transfer</option>
-            <option value="blockchains">Blockchains</option>
+            <option value="blockchains">Configure Blockchains</option>
+            <option value="blockchainsexplore">Explore Blockchains</option>
+            <option value="dappssexplore">Explore dapps</option>
             <option value="quote">Quote</option>
             <option value="asset">Asset</option>
             <option value="amount">amount</option>

@@ -14,7 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import Blockchains from '../../components/Blockchains';
+import Blockchains from '../../components/BlockchainsConfigure';
 import Wallets from '../../components/Wallets';
 import { getWalletContent } from '../../components/WalletIcon';
 

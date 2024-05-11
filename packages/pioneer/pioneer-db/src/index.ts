@@ -1,10 +1,10 @@
 const TAG = ' | Pioneer-db | ';
 
 // Import sqlite3 for Node.js environment
-let sqlite3: any;
-if (typeof window === 'undefined') {
-  sqlite3 = require('sqlite3').verbose();
-}
+// let sqlite3: any;
+// if (typeof window === 'undefined') {
+//   sqlite3 = require('sqlite3').verbose();
+// }
 
 export enum TransactionState {
   Unsigned = 'unsigned',
@@ -43,7 +43,7 @@ export class DB {
   constructor(config: any) {
     this.status = 'preInit';
     this.dbName = 'pioneer.db';
-    this.db = typeof window === 'undefined' ? new sqlite3.Database(this.dbName) : null;
+    // this.db = typeof window === 'undefined' ? new sqlite3.Database(this.dbName) : null;
 
     this.init = async (setup: any) => {
       const tag = `${TAG} | init | `;
@@ -92,91 +92,91 @@ export class DB {
           });
         } else {
           // Node.js environment
-          this.db.serialize(() => {
-            // Create 'transactions' table
-            this.db.run(`
-          CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            txid TEXT NOT NULL,
-            state TEXT NOT NULL
-          );
-        `, (err) => {
-              if (err) {
-                console.error(tag, 'Failed to create transactions table:', err);
-                throw err;
-              } else {
-                console.log(tag, 'Transactions table created or already exists.');
-              }
-            });
-
-            // Create 'pubkeys' table
-            this.db.run(`
-          CREATE TABLE IF NOT EXISTS pubkeys (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            master TEXT,
-            address TEXT,
-            pubkey TEXT UNIQUE,
-            context TEXT,
-            contextType TEXT,
-            networks TEXT
-          );
-        `, (err) => {
-              if (err) {
-                console.error(tag, 'Failed to create pubkeys table:', err);
-                throw err;
-              } else {
-                console.log(tag, 'Pubkeys table created or already exists.');
-              }
-            });
-
-            // Create 'balances' table
-            this.db.run(`
-          CREATE TABLE IF NOT EXISTS balances (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chain TEXT,
-            identifier TEXT,
-            decimals INTEGER,
-            type TEXT,
-            networkId TEXT,
-            caip TEXT,
-            symbol TEXT,
-            sourceList TEXT,
-            assetId TEXT,
-            chainId TEXT,
-            name TEXT,
-            networkName TEXT,
-            precision INTEGER,
-            color TEXT,
-            icon TEXT,
-            explorer TEXT,
-            explorerAddressLink TEXT,
-            explorerTxLink TEXT,
-            relatedAssetKey TEXT,
-            integrations TEXT,
-            memoless BOOLEAN,
-            balance TEXT,
-            pubkey TEXT,
-            address TEXT,
-            master TEXT,
-            context TEXT,
-            contextType TEXT,
-            ticker TEXT,
-            priceUsd REAL,
-            rank INTEGER,
-            alias INTEGER,
-            source TEXT,
-            valueUsd TEXT
-          );
-        `, (err) => {
-              if (err) {
-                console.error(tag, 'Failed to create balances table:', err);
-                throw err;
-              } else {
-                console.log(tag, 'Balances table created or already exists.');
-              }
-            });
-          });
-          return Promise.resolve(true);
+        //   this.db.serialize(() => {
+        //     // Create 'transactions' table
+        //     this.db.run(`
+        //   CREATE TABLE IF NOT EXISTS transactions (
+        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     txid TEXT NOT NULL,
+        //     state TEXT NOT NULL
+        //   );
+        // `, (err) => {
+        //       if (err) {
+        //         console.error(tag, 'Failed to create transactions table:', err);
+        //         throw err;
+        //       } else {
+        //         console.log(tag, 'Transactions table created or already exists.');
+        //       }
+        //     });
+        //
+        //     // Create 'pubkeys' table
+        //     this.db.run(`
+        //   CREATE TABLE IF NOT EXISTS pubkeys (
+        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     master TEXT,
+        //     address TEXT,
+        //     pubkey TEXT UNIQUE,
+        //     context TEXT,
+        //     contextType TEXT,
+        //     networks TEXT
+        //   );
+        // `, (err) => {
+        //       if (err) {
+        //         console.error(tag, 'Failed to create pubkeys table:', err);
+        //         throw err;
+        //       } else {
+        //         console.log(tag, 'Pubkeys table created or already exists.');
+        //       }
+        //     });
+        //
+        //     // Create 'balances' table
+        //     this.db.run(`
+        //   CREATE TABLE IF NOT EXISTS balances (
+        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     chain TEXT,
+        //     identifier TEXT,
+        //     decimals INTEGER,
+        //     type TEXT,
+        //     networkId TEXT,
+        //     caip TEXT,
+        //     symbol TEXT,
+        //     sourceList TEXT,
+        //     assetId TEXT,
+        //     chainId TEXT,
+        //     name TEXT,
+        //     networkName TEXT,
+        //     precision INTEGER,
+        //     color TEXT,
+        //     icon TEXT,
+        //     explorer TEXT,
+        //     explorerAddressLink TEXT,
+        //     explorerTxLink TEXT,
+        //     relatedAssetKey TEXT,
+        //     integrations TEXT,
+        //     memoless BOOLEAN,
+        //     balance TEXT,
+        //     pubkey TEXT,
+        //     address TEXT,
+        //     master TEXT,
+        //     context TEXT,
+        //     contextType TEXT,
+        //     ticker TEXT,
+        //     priceUsd REAL,
+        //     rank INTEGER,
+        //     alias INTEGER,
+        //     source TEXT,
+        //     valueUsd TEXT
+        //   );
+        // `, (err) => {
+        //       if (err) {
+        //         console.error(tag, 'Failed to create balances table:', err);
+        //         throw err;
+        //       } else {
+        //         console.log(tag, 'Balances table created or already exists.');
+        //       }
+        //     });
+        //   });
+        //   return Promise.resolve(true);
         }
       } catch (e) {
         console.error(tag, 'Error during database initialization:', e);
@@ -198,19 +198,19 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise<number>((resolve, reject) => {
-          this.db.run(
-            'INSERT INTO transactions (txid, state) VALUES (?, ?)',
-            [tx.txid, tx.state],
-            function (this: sqlite3.RunResult, err: Error | null) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(this.lastID as number);
-              }
-            },
-          );
-        });
+        // return new Promise<number>((resolve, reject) => {
+        //   this.db.run(
+        //     'INSERT INTO transactions (txid, state) VALUES (?, ?)',
+        //     [tx.txid, tx.state],
+        //     function (this: sqlite3.RunResult, err: Error | null) {
+        //       if (err) {
+        //         reject(err);
+        //       } else {
+        //         resolve(this.lastID as number);
+        //       }
+        //     },
+        //   );
+        // });
       }
     };
 
@@ -227,16 +227,16 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise((resolve, reject) => {
-          this.db.get(
-            'SELECT * FROM transactions WHERE txid = ?',
-            [txid],
-            function (err: any, row: any) {
-              if (err) reject(err);
-              else resolve(row);
-            },
-          );
-        });
+        // return new Promise((resolve, reject) => {
+        //   this.db.get(
+        //     'SELECT * FROM transactions WHERE txid = ?',
+        //     [txid],
+        //     function (err: any, row: any) {
+        //       if (err) reject(err);
+        //       else resolve(row);
+        //     },
+        //   );
+        // });
       }
     };
 
@@ -263,16 +263,16 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise((resolve, reject) => {
-          this.db.run(
-            'UPDATE transactions SET state = ? WHERE txid = ?',
-            [newState, txid],
-            function (err: any) {
-              if (err) reject(err);
-              else resolve();
-            },
-          );
-        });
+        // return new Promise((resolve, reject) => {
+        //   this.db.run(
+        //     'UPDATE transactions SET state = ? WHERE txid = ?',
+        //     [newState, txid],
+        //     function (err: any) {
+        //       if (err) reject(err);
+        //       else resolve();
+        //     },
+        //   );
+        // });
       }
     };
 
@@ -288,12 +288,12 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise((resolve, reject) => {
-          this.db.all('SELECT * FROM transactions', [], function (err: any, rows: any[]) {
-            if (err) reject(err);
-            else resolve(rows);
-          });
-        });
+        // return new Promise((resolve, reject) => {
+        //   this.db.all('SELECT * FROM transactions', [], function (err: any, rows: any[]) {
+        //     if (err) reject(err);
+        //     else resolve(rows);
+        //   });
+        // });
       }
     };
 
@@ -309,12 +309,12 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise((resolve, reject) => {
-          this.db.run('DELETE FROM transactions', function (err: any) {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
+        // return new Promise((resolve, reject) => {
+        //   this.db.run('DELETE FROM transactions', function (err: any) {
+        //     if (err) reject(err);
+        //     else resolve();
+        //   });
+        // });
       }
     };
 
@@ -344,26 +344,26 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise<number>((resolve, reject) => {
-          this.db.run(
-            'INSERT INTO pubkeys (master, address, pubkey, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?)',
-            [
-              pubkey.master,
-              pubkey.address,
-              pubkey.pubkey,
-              pubkey.context,
-              pubkey.contextType,
-              JSON.stringify(pubkey.networks),
-            ],
-            function (this: sqlite3.RunResult, err: Error | null) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(this.lastID as number);
-              }
-            },
-          );
-        });
+        // return new Promise<number>((resolve, reject) => {
+        //   this.db.run(
+        //     'INSERT INTO pubkeys (master, address, pubkey, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?)',
+        //     [
+        //       pubkey.master,
+        //       pubkey.address,
+        //       pubkey.pubkey,
+        //       pubkey.context,
+        //       pubkey.contextType,
+        //       JSON.stringify(pubkey.networks),
+        //     ],
+        //     function (this: sqlite3.RunResult, err: Error | null) {
+        //       if (err) {
+        //         reject(err);
+        //       } else {
+        //         resolve(this.lastID as number);
+        //       }
+        //     },
+        //   );
+        // });
       }
     };
 
@@ -403,31 +403,31 @@ export class DB {
         );
       } else {
         // Node.js environment: SQLite logic
-        let query = 'SELECT * FROM pubkeys WHERE 1=1';
-        const params = [];
-        if (filters.walletIds && filters.walletIds.length > 0) {
-          query += ' AND walletId IN (' + filters.walletIds.map(() => '?').join(',') + ')';
-          params.push(...filters.walletIds);
-        }
-        if (filters.blockchains && filters.blockchains.length > 0) {
-          query += ' AND blockchain IN (' + filters.blockchains.map(() => '?').join(',') + ')';
-          params.push(...filters.blockchains);
-        }
-        return new Promise<any[]>((resolve, reject) => {
-          this.db.all(query, params, (err: any, rows: any[]) => {
-            if (err) {
-              reject(err);
-            } else {
-              const pubkeys = rows.map((row) => {
-                // Ensure 'networks' is parsed as an array if it's stored as a string
-                row.networks =
-                  typeof row.networks === 'string' ? JSON.parse(row.networks) : row.networks;
-                return row;
-              });
-              resolve(pubkeys);
-            }
-          });
-        });
+        // let query = 'SELECT * FROM pubkeys WHERE 1=1';
+        // const params = [];
+        // if (filters.walletIds && filters.walletIds.length > 0) {
+        //   query += ' AND walletId IN (' + filters.walletIds.map(() => '?').join(',') + ')';
+        //   params.push(...filters.walletIds);
+        // }
+        // if (filters.blockchains && filters.blockchains.length > 0) {
+        //   query += ' AND blockchain IN (' + filters.blockchains.map(() => '?').join(',') + ')';
+        //   params.push(...filters.blockchains);
+        // }
+        // return new Promise<any[]>((resolve, reject) => {
+        //   this.db.all(query, params, (err: any, rows: any[]) => {
+        //     if (err) {
+        //       reject(err);
+        //     } else {
+        //       const pubkeys = rows.map((row) => {
+        //         // Ensure 'networks' is parsed as an array if it's stored as a string
+        //         row.networks =
+        //           typeof row.networks === 'string' ? JSON.parse(row.networks) : row.networks;
+        //         return row;
+        //       });
+        //       resolve(pubkeys);
+        //     }
+        //   });
+        // });
       }
     };
 
@@ -453,56 +453,56 @@ export class DB {
         });
       } else {
         // Node.js environment: SQLite logic
-        return new Promise((resolve, reject) => {
-          // Check for existing balance with the same caip and context
-          this.db.get(
-            'SELECT * FROM balances WHERE caip = ? AND context = ?',
-            [balance.caip, balance.context],
-            (err, row) => {
-              if (err) {
-                reject(err);
-              } else if (row) {
-                // Update existing balance
-                this.db.run(
-                  'UPDATE balances SET balance = ? WHERE id = ?',
-                  [balance.balance, row.id],
-                  function (err) {
-                    if (err) {
-                      reject(err);
-                    } else {
-                      resolve(this.changes);
-                    }
-                  },
-                );
-              } else {
-                // Insert new balance
-                this.db.run(
-                  `INSERT INTO balances (
-                chain, identifier, decimals, type, networkId, caip, symbol, assetId, chainId, name, networkName, 
-                precision, color, icon, explorer, explorerAddressLink, explorerTxLink, relatedAssetKey, integrations, 
-                memoless, balance, pubkey, address, master, context, contextType, ticker, priceUsd, rank, alias, source, valueUsd
-              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                  [
-                    balance.chain, balance.identifier, balance.decimals, balance.type, balance.networkId,
-                    balance.caip, balance.symbol, balance.assetId, balance.chainId, balance.name, balance.networkName,
-                    balance.precision, balance.color, balance.icon, balance.explorer, balance.explorerAddressLink,
-                    balance.explorerTxLink, balance.relatedAssetKey, JSON.stringify(balance.integrations),
-                    balance.memoless, balance.balance, balance.pubkey, balance.address, balance.master,
-                    balance.context, balance.contextType, balance.ticker, balance.priceUsd, balance.rank,
-                    balance.alias, balance.source, balance.valueUsd
-                  ],
-                  function (err) {
-                    if (err) {
-                      reject(err);
-                    } else {
-                      resolve(this.lastID);
-                    }
-                  },
-                );
-              }
-            },
-          );
-        });
+        // return new Promise((resolve, reject) => {
+        //   // Check for existing balance with the same caip and context
+        //   this.db.get(
+        //     'SELECT * FROM balances WHERE caip = ? AND context = ?',
+        //     [balance.caip, balance.context],
+        //     (err, row) => {
+        //       if (err) {
+        //         reject(err);
+        //       } else if (row) {
+        //         // Update existing balance
+        //         this.db.run(
+        //           'UPDATE balances SET balance = ? WHERE id = ?',
+        //           [balance.balance, row.id],
+        //           function (err) {
+        //             if (err) {
+        //               reject(err);
+        //             } else {
+        //               resolve(this.changes);
+        //             }
+        //           },
+        //         );
+        //       } else {
+        //         // Insert new balance
+        //         this.db.run(
+        //           `INSERT INTO balances (
+        //         chain, identifier, decimals, type, networkId, caip, symbol, assetId, chainId, name, networkName,
+        //         precision, color, icon, explorer, explorerAddressLink, explorerTxLink, relatedAssetKey, integrations,
+        //         memoless, balance, pubkey, address, master, context, contextType, ticker, priceUsd, rank, alias, source, valueUsd
+        //       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        //           [
+        //             balance.chain, balance.identifier, balance.decimals, balance.type, balance.networkId,
+        //             balance.caip, balance.symbol, balance.assetId, balance.chainId, balance.name, balance.networkName,
+        //             balance.precision, balance.color, balance.icon, balance.explorer, balance.explorerAddressLink,
+        //             balance.explorerTxLink, balance.relatedAssetKey, JSON.stringify(balance.integrations),
+        //             balance.memoless, balance.balance, balance.pubkey, balance.address, balance.master,
+        //             balance.context, balance.contextType, balance.ticker, balance.priceUsd, balance.rank,
+        //             balance.alias, balance.source, balance.valueUsd
+        //           ],
+        //           function (err) {
+        //             if (err) {
+        //               reject(err);
+        //             } else {
+        //               resolve(this.lastID);
+        //             }
+        //           },
+        //         );
+        //       }
+        //     },
+        //   );
+        // });
       }
     };
 
@@ -531,25 +531,25 @@ export class DB {
         );
       } else {
         // Node.js environment: SQLite logic
-        let query = 'SELECT * FROM balances WHERE 1=1';
-        const params = [];
-        if (filters.walletIds && filters.walletIds.length > 0) {
-          query += ' AND address IN (' + filters.walletIds.map(() => '?').join(',') + ')';
-          params.push(...filters.walletIds);
-        }
-        if (filters.blockchains && filters.blockchains.length > 0) {
-          query += ' AND chain IN (' + filters.blockchains.map(() => '?').join(',') + ')';
-          params.push(...filters.blockchains);
-        }
-        return new Promise<any[]>((resolve, reject) => {
-          this.db.all(query, params, (err: any, rows: any[]) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(rows);
-            }
-          });
-        });
+        // let query = 'SELECT * FROM balances WHERE 1=1';
+        // const params = [];
+        // if (filters.walletIds && filters.walletIds.length > 0) {
+        //   query += ' AND address IN (' + filters.walletIds.map(() => '?').join(',') + ')';
+        //   params.push(...filters.walletIds);
+        // }
+        // if (filters.blockchains && filters.blockchains.length > 0) {
+        //   query += ' AND chain IN (' + filters.blockchains.map(() => '?').join(',') + ')';
+        //   params.push(...filters.blockchains);
+        // }
+        // return new Promise<any[]>((resolve, reject) => {
+        //   this.db.all(query, params, (err: any, rows: any[]) => {
+        //     if (err) {
+        //       reject(err);
+        //     } else {
+        //       resolve(rows);
+        //     }
+        //   });
+        // });
       }
     };
 

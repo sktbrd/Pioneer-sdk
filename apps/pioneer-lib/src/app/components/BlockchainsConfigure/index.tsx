@@ -13,7 +13,7 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-export function Blockchains({usePioneer, onSelect}: any) {
+export function BlockchainsConfigure({usePioneer, onSelect}: any) {
   const { state } = usePioneer();
   const { app } = state;
 
@@ -147,4 +147,4 @@ export function Blockchains({usePioneer, onSelect}: any) {
     </Box>
   );
 }
-export default Blockchains;
+export default BlockchainsConfigure;

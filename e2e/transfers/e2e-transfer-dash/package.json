@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-dash",
-  "version": "1.7.8",
+  "version": "1.7.13",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

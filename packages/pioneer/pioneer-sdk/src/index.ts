@@ -717,25 +717,26 @@ export class SDK {
             });
           });
 
-          // Process all assets to enrich with additional data such as balances
+          // Process all assets to enrich with additional data such as balances, and pubkeys
           let allAssets = Array.from(tokenMap.values()).map((asset) => {
+            let balances = [];
+            let pubkeys = [];
+
             const balanceObj = this.balances.find(
               (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
             );
-            const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-            const balance = balanceObj ? balanceObj.balance : '';
-            if(asset.symbol && !asset.ticker) asset.ticker = asset.symbol;
-            const searchNetworkId =
-              balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
-            const pubkeyObj = this.pubkeys.find((pubkey) =>
-              pubkey.networks.includes(searchNetworkId),
-            );
-            const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-            let address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
-            if (address && address.indexOf('bitcoincash:') > -1)
-              address = address.replace('bitcoincash:', '');
+            console.log('matched balance for asset');
+            if (balanceObj) balances.push(balanceObj);
 
-            return { ...asset, balance, valueUsd, pubkey, address };
+            const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+              pubkey.networks.includes(asset.networkId),
+            );
+            console.log('matched pubkeyObj for asset');
+            if (pubkeyObj) pubkeys.push(pubkeyObj);
+
+            console.log('balances: ', balances);
+            console.log('pubkeys: ', pubkeys);
+            return { ...asset, balances, pubkeys };
           });
 
           this.assetsMap = tokenMap; // Update the main map to include all enriched assets

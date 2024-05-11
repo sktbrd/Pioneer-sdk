@@ -15,6 +15,7 @@
                              A Product of the CoinMasters Guild
                                               - Highlander
 */
+'use client';
 // @ts-ignore
 import DB from '@coinmasters/pioneer-db';
 // @ts-ignore

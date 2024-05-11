@@ -87,7 +87,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
               <Text fontSize="sm" color="gray.500">{app?.assetContext?.name} on {app?.assetContext?.chain}</Text>
               <HStack justifyContent="space-between" mt={2}>
                 <Text fontSize="xs" color="green.400">
-                  Balance: {parseFloat(app.assetContext.balance).toFixed(3)} (${parseFloat(app.assetContext.priceUsd).toFixed(0)} USD)
+                  Balance: {parseFloat(app?.assetContext?.balance).toFixed(3)} (${parseFloat(app?.assetContext?.priceUsd).toFixed(0)} USD)
                 </Text>
                 <Button size="xs" colorScheme="green" onClick={maxDeposit} isDisabled={!isValid}>Max</Button>
               </HStack>

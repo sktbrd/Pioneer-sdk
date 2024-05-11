@@ -6,13 +6,13 @@ import {
   Transaction,
   TransactionBuilder,
 } from '@psf/bitcoincashjs-lib';
-import {
-  detectAddressNetwork,
-  isValidAddress,
-  Network as bchNetwork,
-  toCashAddress,
-  toLegacyAddress,
-} from 'bchaddrjs';
+// import {
+//   detectAddressNetwork,
+//   isValidAddress,
+//   Network as bchNetwork,
+//   toCashAddress,
+//   toLegacyAddress,
+// } from 'bchaddrjs';
 import { Psbt } from 'bitcoinjs-lib';
 import { ECPairFactory } from 'ecpair';
 import * as coinSelect from 'coinselect';
@@ -56,7 +56,7 @@ type BCHMethods = {
 
 const chain = Chain.BitcoinCash as UTXOChain;
 
-const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
+// const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
 
 const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
   assetValue,
@@ -68,7 +68,8 @@ const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
 }) => {
   if (!validateAddress(recipient)) throw new Error('Invalid address');
   const utxos = await apiClient.scanUTXOs({
-    address: stripToCashAddress(sender),
+    address: sender,
+    // address: stripToCashAddress(sender),
     fetchTxHex: true,
   });
 
@@ -100,9 +101,11 @@ const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
     let out = undefined;
     if (!output.address) {
       //an empty address means this is the  change address
-      out = bchAddress.toOutputScript(toLegacyAddress(sender), getNetwork(chain));
+      out = bchAddress.toOutputScript(sender, getNetwork(chain));
+      // out = bchAddress.toOutputScript(toLegacyAddress(sender), getNetwork(chain));
     } else if (output.address) {
-      out = bchAddress.toOutputScript(toLegacyAddress(output.address), getNetwork(chain));
+      out = bchAddress.toOutputScript(output.address, getNetwork(chain));
+      // out = bchAddress.toOutputScript(toLegacyAddress(output.address), getNetwork(chain));
     }
     builder.addOutput(out, output.value);
   });
@@ -240,7 +243,8 @@ const buildTx = async ({
 
   // output to recipient
   targetOutputs.push({
-    address: toLegacyAddress(recipient),
+    address: recipient,
+    // address: toLegacyAddress(recipient),
     value: assetValue.getBaseValue('number'),
   });
 
@@ -310,7 +314,8 @@ const stripPrefix = (address: string) => address.replace(/(bchtest:|bitcoincash:
 const validateAddress = (address: string, _chain?: UTXOChain) => {
   const startsWithBCH = address.startsWith('bitcoincash:');
   if (startsWithBCH) return true;
-  return isValidAddress(address) && detectAddressNetwork(address) === bchNetwork.Mainnet;
+  return true
+  // return isValidAddress(address) && detectAddressNetwork(address) === bchNetwork.Mainnet;
 };
 
 const createKeysForPath: BCHMethods['createKeysForPath'] = async ({
@@ -338,7 +343,8 @@ const createKeysForPath: BCHMethods['createKeysForPath'] = async ({
 
 const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) => {
   const address = keys.getAddress(0);
-  return stripToCashAddress(address);
+  return address;
+  // return stripToCashAddress(address);
 };
 
 export const BCHToolbox = ({

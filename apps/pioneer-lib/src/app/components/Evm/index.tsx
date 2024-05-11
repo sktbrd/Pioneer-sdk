@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import Portfolio from '../Portfolio';
-import Blockchains from '../Blockchains';
+import Blockchains from '../BlockchainsConfigure';
 
 // @ts-ignore
 export default function Evm({ usePioneer, onClose, setIsOpenSide, walletType }: any) {

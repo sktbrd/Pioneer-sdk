@@ -31,6 +31,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
             integrations
           };
           const assets = await app.getAssets(filterParams);
+
           setFilteredAssets(assets);
         }
       } catch (e) {

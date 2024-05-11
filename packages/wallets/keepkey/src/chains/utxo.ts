@@ -10,7 +10,7 @@ import {
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, DerivationPath, FeeOption } from '@coinmasters/types';
 import { xpubConvert } from '@pioneer-platform/pioneer-coins';
-import { toCashAddress } from 'bchaddrjs';
+// import { toCashAddress } from 'bchaddrjs';
 import type { Psbt } from 'bitcoinjs-lib';
 
 import { bip32ToAddressNList, ChainToKeepKeyName } from '../helpers/coins.ts';
@@ -151,7 +151,7 @@ export const utxoWalletMethods = async ({
 
         const outputAddress =
           chain === Chain.BitcoinCash && address
-            ? (toolbox as ReturnType<typeof BCHToolbox>).stripPrefix(toCashAddress(address))
+            ? (toolbox as ReturnType<typeof BCHToolbox>).stripPrefix(address)
             : address;
 
         if (change || address === walletAddress) {

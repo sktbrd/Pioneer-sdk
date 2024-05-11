@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-lib",
-  "version": "0.1.11",
+  "version": "0.1.16",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -13,7 +13,9 @@
     "@fontsource/roboto": "^5.0.8",
     "@pioneer-platform/pioneer-caip": "^9.2.25",
     "@pioneer-platform/pioneer-coins": "^9.2.15",
+    "@tanstack/react-table": "^8.16.0",
     "axios": "^1.6.7",
+    "chakra-react-select": "^4.7.6",
     "chart.js": "^4.4.1",
     "framer-motion": "^11.0.23",
     "next": "14.1.0",
@@ -24,6 +26,7 @@
     "react-icons": "^5.0.1",
     "react-qr-code": "^2.0.12",
     "react-spinners": "^0.13.8",
+    "react-table": "^7.8.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
