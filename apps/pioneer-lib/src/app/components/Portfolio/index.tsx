@@ -1,5 +1,5 @@
 import { Box, Center, Flex, Text, Spinner, Button } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 
 // Import the Balances and Assets components as needed
@@ -13,10 +13,35 @@ export function Portfolio({ usePioneer, onSelect }: any) {
   const [lastClickedBalance, setLastClickedBalance] = useState(null);
   const [totalValueUsd, setTotalValueUsd] = useState(0);
   const [chartData, setChartData] = useState<any[]>([]);
+  const chartRef = useRef<any>(null);
 
-  const handleChartClick = (event: any, data: any, dataIndex: any) => {
-    const clickedAsset = chartData[dataIndex].title;
-    console.log(`Clicked on asset: ${clickedAsset}`);
+  const handleChartClick = (event: any) => {
+    const canvas = chartRef.current;
+    if (canvas) {
+      const { left, top } = canvas.getBoundingClientRect();
+      const x = event.clientX - left;
+      const y = event.clientY - top;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY);
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < radius) {
+        const angle = Math.atan2(dy, dx) + Math.PI / 2;
+        let startAngle = 0;
+
+        for (let i = 0; i < chartData.length; i++) {
+          const endAngle = startAngle + (chartData[i].value / 100) * 2 * Math.PI;
+          if (angle >= startAngle && angle < endAngle) {
+            console.log(`Clicked on asset: ${chartData[i].title}`);
+            return;
+          }
+          startAngle = endAngle;
+        }
+      }
+    }
   };
 
   const handleLegendClick = (index: number) => {
@@ -51,7 +76,7 @@ export function Portfolio({ usePioneer, onSelect }: any) {
 
     const chartData = filteredBalances.map((balance: any) => ({
       title: balance.symbol,
-      value: parseFloat(balance.valueUsd),
+      value: ((parseFloat(balance.valueUsd) / totalValue) * 100),
       percentage: ((parseFloat(balance.valueUsd) / totalValue) * 100).toFixed(2),
       color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
     }));
@@ -82,10 +107,10 @@ export function Portfolio({ usePioneer, onSelect }: any) {
         <div>
           <br />
           <Flex bottom="0" left="0" align="center">
-            <Box height="300px" width="300px" position="relative">
+            <Box height="300px" width="300px" position="relative" onClick={handleChartClick}>
               <PieChart
                 data={chartData}
-                onClick={handleChartClick}
+                ref={chartRef}
                 animate
                 radius={42}
                 lineWidth={20}
@@ -97,9 +122,9 @@ export function Portfolio({ usePioneer, onSelect }: any) {
                   fontFamily: 'sans-serif',
                 }}
               />
-              <Center bottom="0" left="0" position="absolute" right="0" top="0">
+              <Center bottom="0" left="0" position="absolute" right="8" top="0">
                 <Text fontSize="lg" fontWeight="bold" textAlign="center">
-                  Total Value: {totalValueUsd.toFixed(2)}
+                  Total Value: <br/>{totalValueUsd.toFixed(2)}
                 </Text>
               </Center>
             </Box>
