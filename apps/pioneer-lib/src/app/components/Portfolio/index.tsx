@@ -19,6 +19,11 @@ export function Portfolio({ usePioneer, onSelect }: any) {
     console.log(`Clicked on asset: ${clickedAsset}`);
   };
 
+  const handleLegendClick = (index: number) => {
+    const clickedLegend = chartData[index].title;
+    console.log(`Clicked on legend entry: ${clickedLegend}`);
+  };
+
   useEffect(() => {
     if (balances && balances.length > 0) {
       const largestBalance = balances.reduce(
@@ -101,9 +106,22 @@ export function Portfolio({ usePioneer, onSelect }: any) {
             <Box ml="20px">
               <Text fontWeight="bold" mb="10px">Legend</Text>
               {chartData.map((entry, index) => (
-                <Flex key={index} align="center" mb="5px">
+                <Flex
+                  key={index}
+                  align="center"
+                  mb="5px"
+                  onClick={() => handleLegendClick(index)}
+                  style={{ cursor: 'pointer' }}  // Change cursor to pointer for better UX
+                >
                   <Box width="20px" height="20px" backgroundColor={entry.color} mr="10px" />
-                  <Text>{entry.title}: {entry.percentage}%</Text>
+                  <Text
+                    width="100px"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                  >
+                    {entry.title}: {entry.percentage}%
+                  </Text>
                 </Flex>
               ))}
             </Box>
