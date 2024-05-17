@@ -18,22 +18,7 @@ import {
   SwapKitCore,
   WalletOption,
 } from '@coinmasters/core';
-import {
-  CoinGeckoList,
-  MayaList,
-  NativeList,
-  OneInchList,
-  PancakeswapETHList,
-  PancakeswapList,
-  PangolinList,
-  PioneerList,
-  StargateARBList,
-  SushiswapList,
-  ThorchainList,
-  TraderjoeList,
-  UniswapList,
-  WoofiList,
-} from '@coinmasters/tokens';
+import { MayaList, NativeList, PioneerList, ThorchainList } from '@coinmasters/tokens';
 // import {
 //   CoinGeckoList,
 //   MayaList,
@@ -350,7 +335,6 @@ export class SDK {
         this.assets = this.assets.map((asset: any) => {
           const caipKey = asset.caip.toLowerCase(); // assuming 'caip' is the key in assets similar to balances
           const balances = this.balances.filter((b: any) => b.caip.toLowerCase() === caipKey);
-
 
           const contextCaipMap = new Map();
           const uniqueBalances = balances.filter((balance: any) => {
@@ -784,7 +768,9 @@ export class SDK {
 
           // Filter by Ownership Presence
           if (filterParams.onlyOwned) {
-            currentAssets = currentAssets.filter((asset) => asset.balances && asset.balances.length > 0);
+            currentAssets = currentAssets.filter(
+              (asset) => asset.balances && asset.balances.length > 0,
+            );
             console.log(tag, `Assets after ownership filter: ${currentAssets.length}`);
           }
 
@@ -1217,61 +1203,86 @@ export class SDK {
     this.setAssetContext = async function (asset: any) {
       const tag = `${TAG} | setAssetContext | `;
       try {
-        if (!asset.caip) {
-          console.error('**** Invalid asset caip is required!', asset);
-          throw Error('setAssetContext Invalid asset caip is required!');
+        //accept null
+        if (!asset) {
+          this.assetContext = null;
+          return;
         }
-        //get verbose info
-        if (!this.assets || this.assets.length === 0) await this.getAssets();
-        //
+        if (!asset.caip) throw Error('Invalid Asset! missing caip!');
+        let assetInfo = this.assetsMap.get(asset.caip);
+        //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        //console.log('priceData: ', priceData);
-
-        let allAssets = this.assets;
-        let assetInfo = allAssets.find(
-          (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
+        if (priceData) assetInfo = { ...assetInfo, ...priceData };
+        const balances = this.balances.filter(
+          (b: any) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
         );
-        const balanceObj = this.balances.find(
-          (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        const pubkeys = this.pubkeys.filter((pubkey: any) =>
+          pubkey.networks.includes(asset.networkId),
         );
-        //console.log('balanceObj: ', balanceObj);
-        const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-        const priceUsd = priceData.priceUsd || 0;
-        const context = balanceObj ? balanceObj.context : 'external';
-        const balance = balanceObj ? balanceObj.balance : '';
+        assetInfo.balances = balances;
+        assetInfo.pubkeys = pubkeys;
+        this.events.emit('SET_ASSET_CONTEXT', assetInfo);
+        this.assetContext = assetInfo;
+        return { success: true };
 
-        // Condense the assetIdSearch assignment
-        let assetIdSearch = asset.networkId.includes('eip155') ? 'eip155:1' : asset.networkId;
-
-        // Attempt to find a corresponding pubkey object that includes the asset's networkId
-        const pubkeyObj = this.pubkeys.find((pubkey: any) =>
-          pubkey.networks.includes(assetIdSearch),
-        );
-        //console.log('pubkeyObj: ', pubkeyObj);
-
-        // Extract the pubkey value if the pubkeyObj is found
-        const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-        // Set the asset's address to pubkey.master or pubkey.address if available
-        const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
-        //console.log('assetInfo: ', assetInfo);
-        //console.log('valueUsd: ', valueUsd);
-        //console.log('priceUsd: ', priceUsd);
-        //console.log('context: ', context);
-        //console.log('balance: ', balance);
-        //console.log('pubkey: ', pubkey);
-        //console.log('address: ', address);
-
-        this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
-        this.events.emit('SET_ASSET_CONTEXT', {
-          ...assetInfo,
-          valueUsd,
-          priceUsd,
-          context,
-          balance,
-          pubkey,
-          address,
-        });
+        // //validate asset before switching
+        // if (!asset.caip) {
+        //   console.error('**** Invalid asset caip is required!', asset);
+        //   throw Error('setAssetContext Invalid asset caip is required!');
+        // }
+        // //get verbose info
+        // if (!this.assets || this.assets.length === 0) await this.getAssets();
+        // //
+        // let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        // priceData = priceData.data || {};
+        // console.log('priceData: ', priceData);
+        //
+        // let allAssets = this.assets;
+        // let assetInfo = allAssets.find(
+        //   (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        // );
+        // const balanceObj = this.balances.find(
+        //   (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        // );
+        // //console.log('balanceObj: ', balanceObj);
+        // const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        // const priceUsd = priceData.priceUsd || 0;
+        // const context = balanceObj ? balanceObj.context : 'external';
+        // const balance = balanceObj ? balanceObj.balance : '';
+        //
+        // // Condense the assetIdSearch assignment
+        // let assetIdSearch = asset.networkId.includes('eip155') ? 'eip155:1' : asset.networkId;
+        //
+        // // Attempt to find a corresponding pubkey object that includes the asset's networkId
+        // const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+        //   pubkey.networks.includes(assetIdSearch),
+        // );
+        // //console.log('pubkeyObj: ', pubkeyObj);
+        //
+        // // Extract the pubkey value if the pubkeyObj is found
+        // const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+        // // Set the asset's address to pubkey.master or pubkey.address if available
+        // const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        // //console.log('assetInfo: ', assetInfo);
+        // //console.log('valueUsd: ', valueUsd);
+        // //console.log('priceUsd: ', priceUsd);
+        // //console.log('context: ', context);
+        // //console.log('balance: ', balance);
+        // //console.log('pubkey: ', pubkey);
+        // //console.log('address: ', address);
+        //
+        // this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
+        // this.events.emit('SET_ASSET_CONTEXT', {
+        //   ...assetInfo,
+        //   valueUsd,
+        //   priceUsd,
+        //   context,
+        //   balance,
+        //   pubkey,
+        //   address,
+        // });
         return { success: true };
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -1281,57 +1292,82 @@ export class SDK {
     this.setOutboundAssetContext = async function (asset: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
-        console.log(tag, 'setOutboundAssetContext: ', asset);
-        if (!asset || !asset.caip) {
-          console.error('**** 8 ** Invalid asset caip is required!', asset);
-          throw Error('setOutboundAssetContext Invalid asset caip is required!');
+        //accept null
+        if (!asset) {
+          this.outboundAssetContext = null;
+          return;
         }
+        if (!asset.caip) throw Error('Invalid Asset! missing caip!');
+        let assetInfo = this.assetsMap.get(asset.caip);
+        if (assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
+        //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        // console.log('priceData: ', priceData);
-        if (asset && this.outboundAssetContext !== asset) {
-          if (!this.assets || this.assets.length === 0) await this.getAssets();
-          let allAssets = this.assets;
-          let assetInfo = allAssets.find(
-            (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
-          );
-          const balanceObj = this.balances.find(
-            (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
-          );
-          const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          const priceUsd = priceData.priceUsd || 0;
-          const context = balanceObj ? balanceObj.context : 'external';
-          const balance = balanceObj ? balanceObj.balance : '';
-          // Attempt to find a corresponding pubkey object that includes the asset's networkId
-          const pubkeyObj = this.pubkeys.find((pubkey: any) =>
-            pubkey.networks.includes(asset.networkId),
-          );
-          // Extract the pubkey value if the pubkeyObj is found
-          const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-          // Set the asset's address to pubkey.master or pubkey.address if available
-          const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
+        if (priceData) assetInfo = { ...assetInfo, ...priceData };
+        const balances = this.balances.filter(
+          (b: any) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
+        );
+        const pubkeys = this.pubkeys.filter((pubkey: any) =>
+          pubkey.networks.includes(asset.networkId),
+        );
+        assetInfo.balances = balances;
+        assetInfo.pubkeys = pubkeys;
+        this.events.emit('SET_ASSET_CONTEXT', assetInfo);
+        this.outboundAssetContext = assetInfo;
+        return { success: true };
 
-          this.outboundAssetContext = {
-            ...assetInfo,
-            valueUsd,
-            context,
-            priceUsd,
-            balance,
-            pubkey,
-            address,
-          };
-          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', {
-            ...assetInfo,
-            valueUsd,
-            priceUsd,
-            context,
-            balance,
-            pubkey,
-            address,
-          });
-          return { success: true };
-        }
-        return { success: false, error: `already asset context=${asset}` };
+        // console.log(tag, 'setOutboundAssetContext: ', asset);
+        // if (!asset || !asset.caip) {
+        //   console.error('**** 8 ** Invalid asset caip is required!', asset);
+        //   throw Error('setOutboundAssetContext Invalid asset caip is required!');
+        // }
+        // let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        // priceData = priceData.data || {};
+        // // console.log('priceData: ', priceData);
+        // if (asset && this.outboundAssetContext !== asset) {
+        //   if (!this.assets || this.assets.length === 0) await this.getAssets();
+        //   let allAssets = this.assets;
+        //   let assetInfo = allAssets.find(
+        //     (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        //   );
+        //   const balanceObj = this.balances.find(
+        //     (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        //   );
+        //   const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        //   const priceUsd = priceData.priceUsd || 0;
+        //   const context = balanceObj ? balanceObj.context : 'external';
+        //   const balance = balanceObj ? balanceObj.balance : '';
+        //   // Attempt to find a corresponding pubkey object that includes the asset's networkId
+        //   const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+        //     pubkey.networks.includes(asset.networkId),
+        //   );
+        //   // Extract the pubkey value if the pubkeyObj is found
+        //   const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+        //   // Set the asset's address to pubkey.master or pubkey.address if available
+        //   const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        //
+        //   this.outboundAssetContext = {
+        //     ...assetInfo,
+        //     valueUsd,
+        //     context,
+        //     priceUsd,
+        //     balance,
+        //     pubkey,
+        //     address,
+        //   };
+        //   this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', {
+        //     ...assetInfo,
+        //     valueUsd,
+        //     priceUsd,
+        //     context,
+        //     balance,
+        //     pubkey,
+        //     address,
+        //   });
+        //   return { success: true };
+        // }
+        // return { success: false, error: `already asset context=${asset}` };
       } catch (e) {
         console.error(tag, 'e: ', e);
         throw e;

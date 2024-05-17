@@ -5,11 +5,14 @@ import { PieChart } from 'react-minimal-pie-chart';
 // Import the Balances and Assets components as needed
 import Balances from '../../components/Balances';
 import Assets from '../../components/Assets';
+import Asset from '../../components/Asset';
+import { usePioneer } from '@coinmasters/pioneer-react';
 
-export function Portfolio({ usePioneer, onSelect }: any) {
+export function Portfolio({ usePioneer }: any) {
   const { state, showModal } = usePioneer();
   const { balances, app } = state;
   const [showAll, setShowAll] = useState(false);
+  const [showAssetPage, setShowAssetPage] = useState(false);
   const [lastClickedBalance, setLastClickedBalance] = useState(null);
   const [totalValueUsd, setTotalValueUsd] = useState(0);
   const [chartData, setChartData] = useState<any[]>([]);
@@ -44,10 +47,35 @@ export function Portfolio({ usePioneer, onSelect }: any) {
     }
   };
 
+
   const handleLegendClick = (index: number) => {
     const clickedLegend = chartData[index].title;
     console.log(`Clicked on legend entry: ${clickedLegend}`);
+    console.log(`Clicked on legend entry: ${chartData[index].caip}`);
+    if(chartData[index].caip){
+      let result = app.setAssetContext(chartData[index]);
+      console.log('result:', result);
+      setShowAssetPage(true);
+    }
   };
+
+  const onSelect = (asset: any) => {
+    console.log('Selected asset:', asset);
+    let result = app.setAssetContext(asset);
+    console.log('result:', asset);
+    setShowAssetPage(true);
+  }
+
+  //app
+  useEffect(() => {
+    if (app && app?.assetContext) {
+      console.log('Asset context:', app.assetContext);
+      setShowAssetPage(true);
+    } else {
+      console.log('Asset context NULL');
+      setShowAssetPage(null);
+    }
+  }, [app]);
 
   useEffect(() => {
     if (balances && balances.length > 0) {
@@ -76,12 +104,18 @@ export function Portfolio({ usePioneer, onSelect }: any) {
 
     const chartData = filteredBalances.map((balance: any) => ({
       title: balance.symbol,
+      caip: balance.caip,
+      context: balance.context,
       value: ((parseFloat(balance.valueUsd) / totalValue) * 100),
       percentage: ((parseFloat(balance.valueUsd) / totalValue) * 100).toFixed(2),
       color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
     }));
     setChartData(chartData);
   };
+
+  const onClose = () => {
+    setShowAssetPage(false);
+  }
 
   useEffect(() => {
     updateChart();
@@ -105,52 +139,57 @@ export function Portfolio({ usePioneer, onSelect }: any) {
         </Center>
       ) : (
         <div>
-          <br />
-          <Flex bottom="0" left="0" align="center">
-            <Box height="300px" width="300px" position="relative" onClick={handleChartClick}>
-              <PieChart
-                data={chartData}
-                ref={chartRef}
-                animate
-                radius={42}
-                lineWidth={20}
-                segmentsShift={(index) => (index === 0 ? 6 : 0)}
-                label={({ dataEntry }) => `${dataEntry.percentage} %`}
-                labelPosition={112}
-                labelStyle={{
-                  fontSize: '5px',
-                  fontFamily: 'sans-serif',
-                }}
-              />
-              <Center bottom="0" left="0" position="absolute" right="8" top="0">
-                <Text fontSize="lg" fontWeight="bold" textAlign="center">
-                  Total Value: <br/>{totalValueUsd.toFixed(2)}
-                </Text>
-              </Center>
-            </Box>
-            <Box ml="20px">
-              <Text fontWeight="bold" mb="10px">Legend</Text>
-              {chartData.map((entry, index) => (
-                <Flex
-                  key={index}
-                  align="center"
-                  mb="5px"
-                  onClick={() => handleLegendClick(index)}
-                  style={{ cursor: 'pointer' }}  // Change cursor to pointer for better UX
-                >
-                  <Box width="20px" height="20px" backgroundColor={entry.color} mr="10px" />
-                  <Text
-                    width="100px"
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                  >
-                    {entry.title}: {entry.percentage}%
+          {showAssetPage ? (<>
+            <Asset usePioneer={usePioneer} asset={app?.assetContext} onClose={onClose}></Asset>
+          </>) : (<>
+            <br />
+            <Flex bottom="0" left="0" align="center">
+              <Box height="300px" width="300px" position="relative" onClick={handleChartClick}>
+                <PieChart
+                  data={chartData}
+                  // ref={chartRef}
+                  animate
+                  radius={42}
+                  lineWidth={20}
+                  segmentsShift={(index) => (index === 0 ? 6 : 0)}
+                  label={({ dataEntry }) => `${dataEntry.percentage} %`}
+                  labelPosition={112}
+                  labelStyle={{
+                    fontSize: '5px',
+                    fontFamily: 'sans-serif',
+                  }}
+                />
+                <Center bottom="0" left="0" position="absolute" right="8" top="0">
+                  <Text fontSize="lg" fontWeight="bold" textAlign="center">
+                    Total Value: <br/>{totalValueUsd.toFixed(2)}
                   </Text>
-                </Flex>
-              ))}
-            </Box>
-          </Flex>
+                </Center>
+              </Box>
+              <Box ml="20px">
+                <Text fontWeight="bold" mb="10px">Legend</Text>
+                {chartData.map((entry, index) => (
+                  <Flex
+                    key={index}
+                    align="center"
+                    mb="5px"
+                    onClick={() => handleLegendClick(index)}
+                    style={{ cursor: 'pointer' }}  // Change cursor to pointer for better UX
+                  >
+                    <Box width="20px" height="20px" backgroundColor={entry.color} mr="10px" />
+                    <Text
+                      width="100px"
+                      whiteSpace="nowrap"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                    >
+                      {entry.title}: {entry.percentage}%
+                    </Text>
+                  </Flex>
+                ))}
+              </Box>
+            </Flex>
+            <Balances usePioneer={usePioneer} onSelect={onSelect}> </Balances>
+          </>)}
         </div>
       )}
     </Flex>

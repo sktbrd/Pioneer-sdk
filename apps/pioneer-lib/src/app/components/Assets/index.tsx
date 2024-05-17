@@ -12,7 +12,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
   const { app } = state;
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(filters?.searchQuery || '' );
   const [hasPubkey, setHasPubkey] = useState<boolean>(filters?.hasPubkey || false);
   const [onlyOwned, setOnlyOwned] = useState<boolean>(filters?.onlyOwned || false);
   const [noTokens, setNoTokens] = useState<boolean>(filters?.noTokens || false);
@@ -90,12 +90,12 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
                 <Avatar size='xl' src={asset.icon} />
                 <Box ml={3}>
                   <Text fontWeight="bold">{asset.name}</Text>
-                  <Text fontWeight="bold">{asset.networkId}</Text>
-                  <Text fontSize="sm">Symbol: {asset.symbol}</Text>
-                  <Text fontSize="sm">CAIP: {asset.caip}</Text>
-                  <Text fontSize="sm">Type: {asset.type}</Text>
-                  <Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>
-                  <Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>
+                  {/*<Text fontWeight="bold">{asset.networkId}</Text>*/}
+                  {/*<Text fontSize="sm">Symbol: {asset.symbol}</Text>*/}
+                  {/*<Text fontSize="sm">CAIP: {asset.caip}</Text>*/}
+                  {/*<Text fontSize="sm">Type: {asset.type}</Text>*/}
+                  {/*<Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>*/}
+                  {/*<Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>*/}
                   {asset?.pubkeys && (
                     <>
                       {asset?.pubkeys.map((pubkey: any, index: any) => (

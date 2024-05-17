@@ -17,7 +17,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, shortListNameToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 import {
     getPaths,
@@ -96,50 +96,76 @@ const test_service = async function (this: any) {
         walletsVerbose.push(walletKeepKey);
         // console.time('start2init');
         let resultInit = await app.init(walletsVerbose, {})
+        log.info(tag,"resultInit: ",resultInit)
 
-
-        //const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
-        let blockchains = AllChainsSupported.map(
-          // @ts-ignore
-          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        );
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
-        // //connect
-        // assert(blockchains)
-        // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains.length)
-        console.time('start2paired');
-        let pairObject = {
-            type:WalletOption.KEEPKEY,
-            blockchains
+        //lets test marketInfo on top assets
+        let topList = Object.keys(shortListNameToCaip)
+        log.info(tag,"topList: ",topList)
+        //topList creata a list of assets
+        for(let i =0; i<topList.length; i++){
+            let caip = shortListNameToCaip[topList[i]]
+            log.info(tag,"caip: ",caip)
+            //get marekt info
+            let priceData = await app.pioneer.MarketInfo({ caip });
+            priceData = priceData.data || {};
+            log.info(tag,"priceData: ",priceData)
+            assert(priceData)
         }
-        let resultPair = await app.pairWallet(pairObject)
-        log.info(tag,"resultPair: ",resultPair)
 
-        // let assets2 = await app.assets
-        // log.info(tag,"assets2: TOTAL: ",assets2.length)
+
+        // //const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
+        // let blockchains = AllChainsSupported.map(
+        //   // @ts-ignore
+        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        // );
+        //
+        // //get paths for wallet
+        // let paths = getPaths(blockchains)
+        // log.info("paths: ",paths.length)
+        // // @ts-ignore
+        // //HACK only use 1 path per chain
+        // //TODO get user input (performance or find all funds)
+        // let optimized:any = [];
+        // blockchains.forEach((network: any) => {
+        //     const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
+        //     if (pathForNetwork) {
+        //         optimized.push(pathForNetwork);
+        //     }
+        // });
+        // log.info("optimized: ", optimized.length);
+        // app.setPaths(optimized)
+        // // //connect
+        // // assert(blockchains)
+        // // assert(blockchains[0])
+        // log.info(tag,"blockchains: ",blockchains.length)
+        // console.time('start2paired');
+        // let pairObject = {
+        //     type:WalletOption.KEEPKEY,
+        //     blockchains
+        // }
+        // let resultPair = await app.pairWallet(pairObject)
+        // log.info(tag,"resultPair: ",resultPair)
+        //
+        // // let assets2 = await app.assets
+        // // log.info(tag,"assets2: TOTAL: ",assets2.length)
+        // // assert(assets)
+        //
+        // //get all assets
+        // let assets2 = await app.getAssets()
+        // log.info(tag,"assets2: TOTAL: ",assets2)
         // assert(assets)
-
-        //get all assets
-        let assets2 = await app.getAssets()
-        log.info(tag,"assets2: TOTAL: ",assets2)
-        assert(assets)
+        //
+        // let balances = await app.getBalances()
+        // log.info(tag,"balances: TOTAL: ",balances.length)
+        // assert(balances)
+        //
+        // for(let i = 0; i < balances.length; i++){
+        //     let balance = balances[i]
+        //     log.info(tag,"balance: ",balance)
+        //     assert(balance)
+        //     assert(balance.caip)
+        // }
 
         // //filter by memoless
         // let filterForMemoless = {
