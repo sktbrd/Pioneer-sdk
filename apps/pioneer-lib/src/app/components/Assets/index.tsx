@@ -3,7 +3,8 @@ import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-
+import { Pubkey } from '../Pubkey'
+import { Balance } from '../Balance'
 const itemsPerPage = 10; // Define how many items you want per page
 
 export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
@@ -57,7 +58,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
   };
 
   return (
-    <Stack spacing={4}>
+    <Stack >
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
@@ -85,7 +86,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
         <>
           {currentPageAssets.map((asset:any, index:any) => (
             <Box key={index} p={4} mb={2} borderRadius="md">
-              <Flex align="center">
+              <Flex>
                 <Avatar size='xl' src={asset.icon} />
                 <Box ml={3}>
                   <Text fontWeight="bold">{asset.name}</Text>
@@ -95,11 +96,19 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
                   <Text fontSize="sm">Type: {asset.type}</Text>
                   <Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>
                   <Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>
-                  {asset.address && (
-                    <Text fontSize="sm">Address: {asset.address}</Text>
+                  {asset?.pubkeys && (
+                    <>
+                      {asset?.pubkeys.map((pubkey: any, index: any) => (
+                        <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                      ))}
+                    </>
                   )}
-                  {asset.balance && asset.valueUsd > 0 && (
-                    <Text fontSize="sm">Balance: {asset.balance} ({parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
+                  {asset?.balances && (
+                    <>
+                      {asset?.balances.map((balance: any, index: any) => (
+                        <Balance key={index} usePioneer={usePioneer} balance={balance} />
+                      ))}
+                    </>
                   )}
                 </Box>
                 <Button ml="auto" onClick={() => onSelect(asset)}>

@@ -15,7 +15,7 @@ interface BalanceProps {
   balance: any;
 }
 
-export default function Balance({ usePioneer, onClose, balance }: any) {
+export function Balance({ usePioneer, onClose, balance }: any) {
   // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context } = state;
@@ -102,3 +102,4 @@ export default function Balance({ usePioneer, onClose, balance }: any) {
     </Stack>
   );
 }
+export default Balance;

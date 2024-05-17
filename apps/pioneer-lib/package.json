@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-lib",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -24,6 +24,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-icons": "^5.0.1",
+    "react-minimal-pie-chart": "^8.4.0",
     "react-qr-code": "^2.0.12",
     "react-spinners": "^0.13.8",
     "react-table": "^7.8.0",

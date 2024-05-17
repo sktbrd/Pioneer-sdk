@@ -1,85 +1,24 @@
-/*
-    Portfolio component
-
- */
-
 import { Box, Center, Flex, Text, Spinner, Button } from '@chakra-ui/react';
-import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import { PieChart } from 'react-minimal-pie-chart';
 
-// import { Balances } from '../Balances';
+// Import the Balances and Assets components as needed
 import Balances from '../../components/Balances';
 import Assets from '../../components/Assets';
-//import Basic from '@/app/components/Basic';
-// Adjust the import path according to your file structure
 
-// Register the necessary plugins for Chart.js
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-export function Portfolio({usePioneer}:any) {
+export function Portfolio({ usePioneer, onSelect }: any) {
   const { state, showModal } = usePioneer();
   const { balances, app } = state;
   const [showAll, setShowAll] = useState(false);
   const [lastClickedBalance, setLastClickedBalance] = useState(null);
-  const [activeSegment, setActiveSegment] = useState(null);
   const [totalValueUsd, setTotalValueUsd] = useState(0);
-  const [chartData, setChartData] = useState({
-    datasets: [],
-    labels: [],
-  });
-  const handleChartClick = (event: any, elements: any) => {
-    //console.log(`Clicked on asset`);
-    if (elements.length > 0) {
-      const elementIndex = elements[0].index;
-      const clickedAsset = balances[elementIndex];
-      //console.log(`Clicked on asset: ${clickedAsset.symbol}`);
-      // setLastClickedBalance(clickedAsset);
-    }
+  const [chartData, setChartData] = useState<any[]>([]);
+
+  const handleChartClick = (event: any, data: any, dataIndex: any) => {
+    const clickedAsset = chartData[dataIndex].title;
+    console.log(`Clicked on asset: ${clickedAsset}`);
   };
 
-  const options: any = {
-    responsive: true,
-    onClick: handleChartClick,
-    cutout: '75%',
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        // callbacks: {
-        //   label(context: any) {
-        //     let label = context.label || '';
-        //     if (label) {
-        //       label += ': ';
-        //     }
-        //     if (context.parsed !== null) {
-        //       const valueUsd = balances[context.dataIndex].valueUsd.toLocaleString('en-US', {
-        //         style: 'currency',
-        //         currency: 'USD',
-        //       });
-        //       label += `${context.parsed.toFixed(2)}%, ${valueUsd}`;
-        //     }
-        //     return label;
-        //   },
-        // },
-      },
-    },
-    // onHover: (event: any, chartElement: any) => {
-    //   //console.log('event: ', event);
-    //   if (chartElement.length) {
-    //     const { index } = chartElement[0];
-    //     setActiveSegment(index);
-    //   } else {
-    //     setActiveSegment(null);
-    //   }
-    // },
-    maintainAspectRatio: false,
-  };
-
-
-
-  // Initialize lastClickedBalance with the largest asset
   useEffect(() => {
     if (balances && balances.length > 0) {
       const largestBalance = balances.reduce(
@@ -105,53 +44,28 @@ export function Portfolio({usePioneer}:any) {
     );
     setTotalValueUsd(totalValue);
 
-    const chartData = filteredBalances.map(
-      (balance: any) => (parseFloat(balance.valueUsd) / totalValue) * 100,
-    );
-    const chartLabels = filteredBalances.map((balance: any) => balance.symbol);
-
-    const chartColors = filteredBalances.map(
-      () => `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    );
-    const dataSet: any = {
-      datasets: [
-        {
-          data: chartData,
-          backgroundColor: chartColors,
-          hoverBackgroundColor: chartColors.map((color: any) => `${color}B3`),
-          borderColor: 'white',
-          borderWidth: 2,
-        },
-      ],
-      labels: chartLabels,
-    };
-    setChartData(dataSet);
-  };
-
-  let onSelect = (balance: any) => {
-    console.log('balance: ', balance);
-    // setLastClickedBalance(balance);
+    const chartData = filteredBalances.map((balance: any) => ({
+      title: balance.symbol,
+      value: parseFloat(balance.valueUsd),
+      percentage: ((parseFloat(balance.valueUsd) / totalValue) * 100).toFixed(2),
+      color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+    }));
+    setChartData(chartData);
   };
 
   useEffect(() => {
-    //console.log('activeSegment: ', activeSegment);
     updateChart();
   }, [balances]);
 
   return (
     <Flex direction="column" align="center" justify="center">
-
-      {/* Balances Component or Loading Spinner */}
       {balances.length === 0 ? (
         <Center mt="20px">
           assets: {app?.assets?.length}
           pubkeys: {app?.pubkeys?.length}
           balances: {app?.balances?.length}
-
           {app?.pubkeys?.length === 0 ? (
-            <Button colorScheme="blue">
-              Pair Wallets
-            </Button>
+            <Button colorScheme="blue">Pair Wallets</Button>
           ) : (
             <>
               <Spinner mr="3" />
@@ -161,22 +75,39 @@ export function Portfolio({usePioneer}:any) {
         </Center>
       ) : (
         <div>
-          <br/>
-          {/* Doughnut Chart */}
-          <Center bottom="0" left="0" >
-          <Box height="300px" width="300px" position="relative">
-            <Doughnut data={chartData} options={options} />
-            <Center bottom="0" left="0" position="absolute" right="0" top="0">
-              <Text fontSize="lg" fontWeight="bold" textAlign="center">
-                Total Value: {totalValueUsd.toFixed(2)}
-              </Text>
-            </Center>
-          </Box>
-          </Center>
-          <br/>
-          <Box width="100%" maxHeight="600px" overflowY="auto" mt="20px">
-            <Balances usePioneer={usePioneer} onSelect={onSelect} />
-          </Box>
+          <br />
+          <Flex bottom="0" left="0" align="center">
+            <Box height="300px" width="300px" position="relative">
+              <PieChart
+                data={chartData}
+                onClick={handleChartClick}
+                animate
+                radius={42}
+                lineWidth={20}
+                segmentsShift={(index) => (index === 0 ? 6 : 0)}
+                label={({ dataEntry }) => `${dataEntry.percentage} %`}
+                labelPosition={112}
+                labelStyle={{
+                  fontSize: '5px',
+                  fontFamily: 'sans-serif',
+                }}
+              />
+              <Center bottom="0" left="0" position="absolute" right="0" top="0">
+                <Text fontSize="lg" fontWeight="bold" textAlign="center">
+                  Total Value: {totalValueUsd.toFixed(2)}
+                </Text>
+              </Center>
+            </Box>
+            <Box ml="20px">
+              <Text fontWeight="bold" mb="10px">Legend</Text>
+              {chartData.map((entry, index) => (
+                <Flex key={index} align="center" mb="5px">
+                  <Box width="20px" height="20px" backgroundColor={entry.color} mr="10px" />
+                  <Text>{entry.title}: {entry.percentage}%</Text>
+                </Flex>
+              ))}
+            </Box>
+          </Flex>
         </div>
       )}
     </Flex>

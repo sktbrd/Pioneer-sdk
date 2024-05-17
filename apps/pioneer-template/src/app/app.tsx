@@ -422,7 +422,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('dappssexplore');
+  const [intent, setIntent] = useState('portfolio');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -558,11 +558,11 @@ export default function App() {
   };
 
   const onClose = () => {
-    //console.log("onClose")
+    console.log("onClose")
   };
 
   const onSelect = (asset: any) => {
-    //console.log("onSelect: ", asset)
+    console.log("onSelect: ", asset)
   }
 
   const onAcceptSign = (tx: any) => {
@@ -615,7 +615,7 @@ export default function App() {
         return <SignTransaction usePioneer={usePioneer} setTxHash={setTxHash} onClose={onClose} quote={SAMPLE_DATA[0]}/>;
         break;
       case 'portfolio':
-        return <Portfolio usePioneer={usePioneer} />;
+        return <Portfolio usePioneer={usePioneer} onSelect={onSelect}/>;
         break;
       case 'pubkeys':
         return <Pubkeys usePioneer={usePioneer}/>;

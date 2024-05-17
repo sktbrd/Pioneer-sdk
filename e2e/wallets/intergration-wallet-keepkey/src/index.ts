@@ -59,7 +59,7 @@ const test_service = async function (this: any) {
             username,
             queryKey,
             spec,
-            keepkeyApiKey:process.env.KEEPKEY_API_KEY,
+            keepkeyApiKey:process.env.KEEPKEY_API_KEY || '',
             paths:pathsAdd,
             // @ts-ignore
             ethplorerApiKey:
@@ -96,44 +96,50 @@ const test_service = async function (this: any) {
         let resultInit = await app.init(walletsVerbose, {})
         console.timeEnd('start2init');
         // log.info(tag,"resultInit: ",resultInit)
-        log.info(tag,"wallets: ",app.wallets.length)
+        log.info(tag,"wallets: ",app.wallets)
 
-        let txsCache = await txDB.getAllTransactions()
-        let pubkeysCache = await txDB.getPubkeys({})
+        // let txsCache = await txDB.getAllTransactions()
+        // let pubkeysCache = await txDB.getPubkeys({})
+        // if(!pubkeysCache) pubkeysCache = []
+        // assert(pubkeysCache)
+        // log.info(tag,"pubkeysCache: ",pubkeysCache)
+        //
+        // if(pubkeysCache.length == 0){
+        //     log.info(tag,"DB empty: ",pubkeysCache)
+        //     //add mm to pubkeys
+        //     let pubkeysMM = [
+        //       {"type":"address",
+        //           "master":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //           "address":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //           "pubkey":"0xe6F612699AA300d4C61571a101f726B4c59D0577","context":"metamask:device.wallet","contextType":"metamask",
+        //           "networks":["eip155:1","eip155:8453"]
+        //       }
+        //       ]
+        //     let saved = await txDB.createPubkey(pubkeysMM[0])
+        //     pubkeysCache = await txDB.getPubkeys({})
+        // }
+        // log.info(tag,"pubkeysCache: ",pubkeysCache)
+        // assert(pubkeysCache)
 
-        if(pubkeysCache.length == 0){
-            log.info(tag,"DB empty: ",pubkeysCache)
-            //add mm to pubkeys
-            let pubkeysMM = [
-              {"type":"address",
-                  "master":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
-                  "address":"0xe6F612699AA300d4C61571a101f726B4c59D0577",
-                  "pubkey":"0xe6F612699AA300d4C61571a101f726B4c59D0577","context":"metamask:device.wallet","contextType":"metamask",
-                  "networks":["eip155:1","eip155:8453"]
-              }
-              ]
-            let saved = await txDB.createPubkey(pubkeysMM[0])
-            pubkeysCache = await txDB.getPubkeys({})
-        }
-        log.info(tag,"pubkeysCache: ",pubkeysCache)
-        assert(pubkeysCache)
+        // let pubkeysCache:any = []
+        // //load pubkeys
+        // console.time('loadPubkeyCache');
+        // await app.loadPubkeyCache(pubkeysCache)
+        // console.timeEnd('loadPubkeyCache');
 
-        //load pubkeys
-        console.time('loadPubkeyCache');
-        await app.loadPubkeyCache(pubkeysCache)
-        console.timeEnd('loadPubkeyCache');
+        log.info(tag,"app: ",app)
 
-        let pubkeys = app.pubkeys
-        log.info(tag,"app.pubkeys: ",pubkeys)
-        assert(pubkeys)
-        if(pubkeys.length == 0) throw Error("Failed to load pubkey cache")
+        // let pubkeys = app.pubkeys
+        // log.info(tag,"app.pubkeys: ",pubkeys)
+        // assert(pubkeys)
+        // if(pubkeys.length == 0) throw Error("Failed to load pubkey cache")
 
         const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        let blockchains = AllChainsSupported.map(
-          // @ts-ignore
-          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        );
-        // let blockchains = [ChainToNetworkId['ETH'],ChainToNetworkId['BASE']]
+        // let blockchains = AllChainsSupported.map(
+        //   // @ts-ignore
+        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        // );
+        let blockchains = [ChainToNetworkId['ETH'],ChainToNetworkId['BASE']]
         //get paths for wallet
         console.time('getPaths');
         let paths = getPaths(blockchains)
@@ -177,11 +183,30 @@ const test_service = async function (this: any) {
 
 
         console.time('start2getBalances');
-        // await app.getBalances()
-        // log.info(tag,"balances: ",app.balances)
-        log.info(tag,"balances: ",app.balances.length)
+        await app.getBalances()
+        log.info(tag,"*** balances: ",app.balances)
+        // log.info(tag,"balances: ",app.balances.length)
         console.timeEnd('start2getBalances');
         console.timeEnd('start2end');
+
+        let assets = await app.getAssets()
+        log.info(tag,"assetsFiltered: (with pubkey)",assets.length)
+
+        //get assets
+        //filter for pubkeys
+        let filterForPubkey = {
+            hasPubkey: true,
+            onlyOwned: true,
+            noTokens: false,
+            // searchQuery:"",
+            // memoless:true,
+            // integrations: ['thorswap'],
+            // networks: ['eip155:1']
+        }
+        let assetsFiltered6 = await app.getAssets(filterForPubkey)
+        log.info(tag,"assetsFiltered: (with pubkey)",assetsFiltered6.length)
+        //verify balances are in assets
+
 
         //Pre OPT
         //start2end: 17.147s

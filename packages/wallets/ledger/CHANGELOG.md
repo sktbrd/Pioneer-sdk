@@ -1,5 +1,18 @@
 # @coinmasters/wallet-ledger
 
+## 11.0.14
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.14
+  - @coinmasters/helpers@11.0.14
+  - @coinmasters/toolbox-utxo@11.0.14
+  - @coinmasters/types@4.7.14
+  - @coinmasters/toolbox-evm@11.0.14
+
 ## 11.0.13
 
 ### Patch Changes
