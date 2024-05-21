@@ -1,10 +1,6 @@
 const TAG = ' | Pioneer-db | ';
 
-// Import sqlite3 for Node.js environment
-// let sqlite3: any;
-// if (typeof window === 'undefined') {
-//   sqlite3 = require('sqlite3').verbose();
-// }
+const sqlite3 = require('sqlite3').verbose();
 
 export enum TransactionState {
   Unsigned = 'unsigned',

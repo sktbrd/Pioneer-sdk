@@ -4,6 +4,8 @@ import {
 } from '@chakra-ui/react';
 import { Pubkey } from '../Pubkey';
 import { Balance } from '../Balance';
+import { Transfer } from '../Transfer';
+import { Receive } from '../Receive';
 
 const Card = ({ children }: any) => (
   <Box
@@ -31,6 +33,8 @@ const CardBody = ({ children }: any) => (
 
 export function Asset({ usePioneer, onClose, asset }: any) {
   const [showManualAddressForm, setShowManualAddressForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<'send' | 'receive' | null>(null);
+  const [showAdvancedView, setShowAdvancedView] = useState(false);
 
   const { state, showModal } = usePioneer();
   const { balances, app } = state;
@@ -53,7 +57,7 @@ export function Asset({ usePioneer, onClose, asset }: any) {
           <Heading size='md'><Text fontWeight="bold">{asset?.name} Asset Page</Text></Heading>
         </CardHeader>
         <CardBody>
-          {asset ? (
+          {activeTab === null && asset ? (
             <>
               <Flex align="center" justifyContent="space-between" mb={4}>
                 <Avatar size='xl' src={asset.icon} />
@@ -63,48 +67,56 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                 </Box>
               </Flex>
 
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
-                <Stat>
-                  <StatLabel>CAIP</StatLabel>
-                  <StatNumber>{asset.caip}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Type</StatLabel>
-                  <StatNumber>{asset.type}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Price USD</StatLabel>
-                  <StatNumber>${parseFloat(asset.priceUsd).toFixed(2)}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Address</StatLabel>
-                  <StatNumber>{asset.address}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Network</StatLabel>
-                  <StatNumber>{asset.networkName}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Decimals</StatLabel>
-                  <StatNumber>{asset.decimals}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Explorer</StatLabel>
-                  <StatNumber>
-                    <a href={`${asset.explorerAddressLink}${asset.address}`} target="_blank" rel="noopener noreferrer">
-                      {asset.explorer}
-                    </a>
-                  </StatNumber>
-                </Stat>
-              </SimpleGrid>
+              <Button size="sm" onClick={() => setShowAdvancedView(!showAdvancedView)}>
+                {showAdvancedView ? 'Hide Advanced View' : 'Show Advanced View'}
+              </Button>
 
-              {asset.pubkeys && asset.pubkeys.length > 0 && (
+              {showAdvancedView && (
                 <>
-                  <Heading size="sm" mb={2}>Public Keys</Heading>
-                  {asset.pubkeys.map((pubkey: any, index: any) => (
-                    <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                  ))}
-                  <Divider my={4} />
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
+                    <Stat>
+                      <StatLabel>CAIP</StatLabel>
+                      <StatNumber>{asset.caip}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Type</StatLabel>
+                      <StatNumber>{asset.type}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Price USD</StatLabel>
+                      <StatNumber>${parseFloat(asset.priceUsd).toFixed(2)}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Address</StatLabel>
+                      <StatNumber>{asset.address}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Network</StatLabel>
+                      <StatNumber>{asset.networkName}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Decimals</StatLabel>
+                      <StatNumber>{asset.decimals}</StatNumber>
+                    </Stat>
+                    <Stat>
+                      <StatLabel>Explorer</StatLabel>
+                      <StatNumber>
+                        <a href={`${asset.explorerAddressLink}${asset.address}`} target="_blank" rel="noopener noreferrer">
+                          {asset.explorer}
+                        </a>
+                      </StatNumber>
+                    </Stat>
+                  </SimpleGrid>
+
+                  {asset.pubkeys && asset.pubkeys.length > 0 && (
+                    <>
+                      <Heading size="sm" mb={2}>Public Keys</Heading>
+                      {asset.pubkeys.map((pubkey: any, index: any) => (
+                        <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                      ))}
+                      <Divider my={4} />
+                    </>
+                  )}
                 </>
               )}
 
@@ -117,15 +129,28 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                 </>
               )}
 
+              <Flex justifyContent="space-between" mt={4} mb={4}>
+                <Button colorScheme="teal" onClick={() => setActiveTab('send')}>
+                  Send
+                </Button>
+                <Button colorScheme="blue" onClick={() => setActiveTab('receive')}>
+                  Receive
+                </Button>
+              </Flex>
+
               <Button
                 mt={4}
                 borderRadius="full"
                 colorScheme="gray"
                 onClick={() => clearAssetContext()}
               >
-                Clear Asset Context
+                Go Back
               </Button>
             </>
+          ) : activeTab === 'send' ? (
+            <Transfer usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
+          ) : activeTab === 'receive' ? (
+            <Receive usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : (
             <Flex justifyContent="center" p={5}>
               <Text>No asset selected</Text>

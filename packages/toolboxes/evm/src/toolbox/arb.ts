@@ -25,7 +25,7 @@ export const getNetworkParams = () => ({
 const estimateGasPrices = async (provider: Provider) => {
   try {
     const { gasPrice } = await provider.getFeeData();
-
+    console.log('Arb estimateGasPrices gasPrice: ', gasPrice);
     if (!gasPrice) throw new Error('No fee data available');
 
     return {

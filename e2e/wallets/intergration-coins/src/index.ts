@@ -39,78 +39,79 @@ const test_service = async function (this: any) {
         console.time('start2build');
         console.time('start2broadcast');
         console.time('start2end');
-        // if force new user
-        const queryKey = "sdk:pair-keepkey:"+Math.random();
-        log.info(tag,"queryKey: ",queryKey)
-        assert(queryKey)
 
-        const username = "user:"+Math.random()
-        assert(username)
-
-        //add custom path
-        let pathsAdd:any = [
-        ]
-
-        let config:any = {
-            username,
-            queryKey,
-            spec,
-            keepkeyApiKey:process.env.KEEPKEY_API_KEY,
-            paths:pathsAdd,
-            // @ts-ignore
-            ethplorerApiKey:
-            // @ts-ignore
-              process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7',
-            // @ts-ignore
-            covalentApiKey:
-            // @ts-ignore
-              process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
-            // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
-            // @ts-ignore
-            walletConnectProjectId:
-            // @ts-ignore
-              process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
-        };
-
-        //console.log(tag,' CHECKPOINT 2');
-        //console.log(tag,' config: ',config);
-        let app = new SDK.SDK(spec,config)
-
-        let assets = await app.getAssets()
-        log.info(tag,"assets: TOTAL: ",assets.length)
-        assert(assets)
-        if(assets.length > 0) throw Error("Assets should filter on pubkeys, no pubkeys no assets!")
-
-        const walletsVerbose: any = [];
-        const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-        log.info(tag,"walletKeepKey: ",keepkeyWallet)
-        const walletKeepKey = {
-            type: WalletOption.KEEPKEY,
-            icon: "https://pioneers.dev/coins/keepkey.png",
-            chains: availableChainsByWallet[WalletOption.KEEPKEY],
-            wallet: keepkeyWallet,
-            status: "offline",
-            isConnected: false,
-        };
-        walletsVerbose.push(walletKeepKey);
-        // console.time('start2init');
-        let resultInit = await app.init(walletsVerbose, {})
-        log.info(tag,"resultInit: ",resultInit)
-
-        //lets test marketInfo on top assets
-        let topList = Object.keys(shortListNameToCaip)
-        log.info(tag,"topList: ",topList)
-        //topList creata a list of assets
-        for(let i =0; i<topList.length; i++){
-            let caip = shortListNameToCaip[topList[i]]
-            log.info(tag,"caip: ",caip)
-            //get marekt info
-            let priceData = await app.pioneer.MarketInfo({ caip });
-            priceData = priceData.data || {};
-            log.info(tag,"priceData: ",priceData)
-            assert(priceData)
-        }
+        // // if force new user
+        // const queryKey = "sdk:pair-keepkey:"+Math.random();
+        // log.info(tag,"queryKey: ",queryKey)
+        // assert(queryKey)
+        //
+        // const username = "user:"+Math.random()
+        // assert(username)
+        //
+        // //add custom path
+        // let pathsAdd:any = [
+        // ]
+        //
+        // let config:any = {
+        //     username,
+        //     queryKey,
+        //     spec,
+        //     keepkeyApiKey:process.env.KEEPKEY_API_KEY,
+        //     paths:pathsAdd,
+        //     // @ts-ignore
+        //     ethplorerApiKey:
+        //     // @ts-ignore
+        //       process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7',
+        //     // @ts-ignore
+        //     covalentApiKey:
+        //     // @ts-ignore
+        //       process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
+        //     // @ts-ignore
+        //     utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
+        //     // @ts-ignore
+        //     walletConnectProjectId:
+        //     // @ts-ignore
+        //       process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
+        // };
+        //
+        // //console.log(tag,' CHECKPOINT 2');
+        // //console.log(tag,' config: ',config);
+        // let app = new SDK.SDK(spec,config)
+        //
+        // let assets = await app.getAssets()
+        // log.info(tag,"assets: TOTAL: ",assets.length)
+        // assert(assets)
+        // if(assets.length > 0) throw Error("Assets should filter on pubkeys, no pubkeys no assets!")
+        //
+        // const walletsVerbose: any = [];
+        // const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+        // log.info(tag,"walletKeepKey: ",keepkeyWallet)
+        // const walletKeepKey = {
+        //     type: WalletOption.KEEPKEY,
+        //     icon: "https://pioneers.dev/coins/keepkey.png",
+        //     chains: availableChainsByWallet[WalletOption.KEEPKEY],
+        //     wallet: keepkeyWallet,
+        //     status: "offline",
+        //     isConnected: false,
+        // };
+        // walletsVerbose.push(walletKeepKey);
+        // // console.time('start2init');
+        // let resultInit = await app.init(walletsVerbose, {})
+        // log.info(tag,"resultInit: ",resultInit)
+        //
+        // //lets test marketInfo on top assets
+        // let topList = Object.keys(shortListNameToCaip)
+        // log.info(tag,"topList: ",topList)
+        // //topList creata a list of assets
+        // for(let i =0; i<topList.length; i++){
+        //     let caip = shortListNameToCaip[topList[i]]
+        //     log.info(tag,"caip: ",caip)
+        //     //get marekt info
+        //     let priceData = await app.pioneer.MarketInfo({ caip });
+        //     priceData = priceData.data || {};
+        //     log.info(tag,"priceData: ",priceData)
+        //     assert(priceData)
+        // }
 
 
         // //const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
@@ -438,21 +439,23 @@ const test_service = async function (this: any) {
         // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         // console.log("assetValue: ",assetValue)
 
-        // // let assetString = 'MAYA.MAYA'
-        // // let assetString = 'ZEC.ZEC'
+        let assetString = 'ARB.ETH'
+        // let assetString = 'ARB/ETH'
+        // let assetString = 'MAYA.MAYA'
+        // let assetString = 'ZEC.ZEC'
         // let assetString = 'BASE.ETH'
         // let assetString = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630'
-        // // let assetString = 'ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7'
-        // // let assetString = 'ETH.FOX-0xc770eefad204b5180df6a14ee197d99d808ee52d'
-        //
-        // await AssetValue.loadStaticAssets();
-        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("500"));
-        // console.log("assetValue: ",assetValue)
-        //
-        //
-        // console.log("assetValue: ",assetValue?.decimal)
-        // console.log("assetValue: ",assetValue?.toString())
-        // console.log("assetValue: ",assetValue?.getValue('string'))
+        // let assetString = 'ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7'
+        // let assetString = 'ETH.FOX-0xc770eefad204b5180df6a14ee197d99d808ee52d'
+
+        await AssetValue.loadStaticAssets();
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat("500"));
+        console.log("assetValue: ",assetValue)
+        assert(assetValue)
+
+        console.log("assetValue: ",assetValue?.decimal)
+        console.log("assetValue: ",assetValue?.toString())
+        console.log("assetValue: ",assetValue?.getValue('string'))
         //verify it set
         
         //get all outputs available

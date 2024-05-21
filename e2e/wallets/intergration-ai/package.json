@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-ai",
-  "version": "1.7.14",
+  "version": "1.7.16",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

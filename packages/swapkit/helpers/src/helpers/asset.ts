@@ -113,7 +113,6 @@ export const getCommonAssetInfo = (
       return { identifier: 'ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044', decimal: 18 };
     case 'ETH.vTHOR':
       return { identifier: 'ETH.vTHOR-0x815c23eca83261b6ec689b60cc4a58b54bc24d8d', decimal: 18 };
-
     case Chain.Cosmos:
       return { identifier: 'GAIA.ATOM', decimal: BaseDecimal[assetString] };
     case Chain.THORChain:
@@ -124,20 +123,24 @@ export const getCommonAssetInfo = (
       return { identifier: 'MAYA.CACAO', decimal: BaseDecimal.MAYA };
     case 'MAYA.MAYA':
       return { identifier: 'MAYA.MAYA', decimal: 4 };
+    case Chain.Arbitrum:
+      return { identifier: 'ARB.ETH', decimal: 18 };
+    case Chain.Base:
+      return { identifier: 'BASE.ETH', decimal: 18 };
+    case Chain.Optimism:
+      return { identifier: 'OP.ETH', decimal: 18 };
+    case Chain.Avalanche:
+      return { identifier: 'AVAX.ETH', decimal: 18 };
     case Chain.Ripple:
     case Chain.Kujira:
-    case Chain.Arbitrum:
-    case Chain.Optimism:
     case Chain.BitcoinCash:
     case Chain.Zcash:
     case Chain.Dash:
     case Chain.Litecoin:
     case Chain.Dogecoin:
     case Chain.Binance:
-    case Chain.Avalanche:
     case Chain.Polygon:
     case Chain.Bitcoin:
-    case Chain.Base:
     case Chain.Ethereum:
       return { identifier: `${assetString}.${assetString}`, decimal: BaseDecimal[assetString] };
   }

@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-swap-lp-pro",
-  "version": "1.7.14",
+  "version": "1.7.16",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -25,7 +25,7 @@
     "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "^9.2.25",
-    "@pioneer-platform/pioneer-coins": "^9.2.15",
+    "@pioneer-platform/pioneer-coins": "latest",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",

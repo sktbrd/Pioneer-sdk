@@ -10,6 +10,7 @@ import {
   Basic,
   Portfolio,
   Transfer,
+  Classic,
   Assets,
   Asset,
   Amount,
@@ -42,6 +43,7 @@ import {
 //   SignTransaction
 //   //@ts-ignore
 // } from '@coinmasters/pioneer-lib';
+import { useOnStartApp } from "../utils/onStart";
 import Image from 'next/image';
 
 let SAMPLE_DATA: any = [
@@ -422,7 +424,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('portfolio');
+  const [intent, setIntent] = useState('classic');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -605,6 +607,9 @@ export default function App() {
       case 'assets':
         return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false }}/>;
         break;
+      case 'classic':
+        return <Classic usePioneer={usePioneer} />;
+        break;
       case 'wallets':
         return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
         break;
@@ -665,6 +670,7 @@ export default function App() {
             <option value="wallets">Wallets</option>
             <option value="pubkeys">Pubkeys</option>
             <option value="assets">Assets</option>
+            <option value="classic">Classic</option>
             <option value="track">Track</option>
             <option value="swap">Swap</option>
           </Select>
