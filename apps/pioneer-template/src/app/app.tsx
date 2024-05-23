@@ -2,6 +2,8 @@
 import { Select, Box, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
 import * as React from 'react';
 import { usePioneer } from "@coinmasters/pioneer-react"
+import { ChakraProvider, useColorMode } from '@chakra-ui/react';
+import { theme } from '../styles/theme';
 import { availableChainsByWallet, WalletOption } from '@coinmasters/types';
 import { useState, useEffect } from 'react';
 //components
@@ -10,7 +12,6 @@ import {
   Basic,
   Portfolio,
   Transfer,
-  Classic,
   Assets,
   Asset,
   Amount,
@@ -43,7 +44,6 @@ import {
 //   SignTransaction
 //   //@ts-ignore
 // } from '@coinmasters/pioneer-lib';
-import { useOnStartApp } from "../utils/onStart";
 import Image from 'next/image';
 
 let SAMPLE_DATA: any = [
@@ -424,7 +424,7 @@ let SAMPLE_SWAP_TXID = '3ad1d73872a12de069fc23d419d3ee56b635c22485c7162beb31a800
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('classic');
+  const [intent, setIntent] = useState('portfolio');
   const [tabIndex, setTabIndex] = useState(1);
   const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -607,9 +607,6 @@ export default function App() {
       case 'assets':
         return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false }}/>;
         break;
-      case 'classic':
-        return <Classic usePioneer={usePioneer} />;
-        break;
       case 'wallets':
         return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
         break;
@@ -650,6 +647,7 @@ export default function App() {
 
   return (
     <>
+      <ChakraProvider theme={theme}>
       {/* Header */}
       <header className="flex justify-between items-center w-full px-10 py-5 bg-gray-100 dark:bg-gray-800">
         <div className="flex items-center gap-4">
@@ -670,7 +668,6 @@ export default function App() {
             <option value="wallets">Wallets</option>
             <option value="pubkeys">Pubkeys</option>
             <option value="assets">Assets</option>
-            <option value="classic">Classic</option>
             <option value="track">Track</option>
             <option value="swap">Swap</option>
           </Select>
@@ -687,6 +684,7 @@ export default function App() {
       <footer className="w-full px-10 py-5 bg-gray-200 dark:bg-gray-900 text-center">
         Powered by <a href="https://pioneers.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500 keychainify-checked">Pioneers</a>
       </footer>
+      </ChakraProvider>
     </>
   );
 }
