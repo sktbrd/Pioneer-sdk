@@ -3,8 +3,7 @@ import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { Pubkey } from '../Pubkey'
-import { Balance } from '../Balance'
+
 const itemsPerPage = 10; // Define how many items you want per page
 
 export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
@@ -12,7 +11,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
   const { app } = state;
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(filters?.searchQuery || '' );
+  const [searchQuery, setSearchQuery] = useState('');
   const [hasPubkey, setHasPubkey] = useState<boolean>(filters?.hasPubkey || false);
   const [onlyOwned, setOnlyOwned] = useState<boolean>(filters?.onlyOwned || false);
   const [noTokens, setNoTokens] = useState<boolean>(filters?.noTokens || false);
@@ -32,7 +31,6 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
             integrations
           };
           const assets = await app.getAssets(filterParams);
-
           setFilteredAssets(assets);
         }
       } catch (e) {
@@ -58,7 +56,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
   };
 
   return (
-    <Stack >
+    <Stack spacing={4}>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
@@ -81,36 +79,26 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
       {filteredAssets.length === 0 ? (
         <Flex justifyContent="center" alignItems="center" height="100vh">
           <Spinner size="xl" />
-          blockchains{app?.blockchains.length}
-          Loading....
         </Flex>
       ) : (
         <>
           {currentPageAssets.map((asset:any, index:any) => (
             <Box key={index} p={4} mb={2} borderRadius="md">
-              <Flex>
+              <Flex align="center">
                 <Avatar size='xl' src={asset.icon} />
                 <Box ml={3}>
                   <Text fontWeight="bold">{asset.name}</Text>
-                  {/*<Text fontWeight="bold">{asset.networkId}</Text>*/}
-                  {/*<Text fontSize="sm">Symbol: {asset.symbol}</Text>*/}
-                  {/*<Text fontSize="sm">CAIP: {asset.caip}</Text>*/}
-                  {/*<Text fontSize="sm">Type: {asset.type}</Text>*/}
-                  {/*<Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>*/}
-                  {/*<Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>*/}
-                  {asset?.pubkeys && (
-                    <>
-                      {asset?.pubkeys.map((pubkey: any, index: any) => (
-                        <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                      ))}
-                    </>
+                  <Text fontWeight="bold">{asset.networkId}</Text>
+                  <Text fontSize="sm">Symbol: {asset.symbol}</Text>
+                  <Text fontSize="sm">CAIP: {asset.caip}</Text>
+                  <Text fontSize="sm">Type: {asset.type}</Text>
+                  <Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>
+                  <Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>
+                  {asset.address && (
+                    <Text fontSize="sm">Address: {asset.address}</Text>
                   )}
-                  {asset?.balances && (
-                    <>
-                      {asset?.balances.map((balance: any, index: any) => (
-                        <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                      ))}
-                    </>
+                  {asset.balance && asset.valueUsd > 0 && (
+                    <Text fontSize="sm">Balance: {asset.balance} ({parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
                   )}
                 </Box>
                 <Button ml="auto" onClick={() => onSelect(asset)}>

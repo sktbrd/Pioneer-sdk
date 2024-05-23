@@ -31,7 +31,7 @@ export interface BalancesProps
 
 export function Balances({usePioneer, onSelect}:any) {
   const { state } = usePioneer();
-  const { app } = state;
+  const { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
   // const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [showOwnedAssets, setShowOwnedAssets] = useState(false);
@@ -43,7 +43,8 @@ export function Balances({usePioneer, onSelect}:any) {
 
   const handleSelectClick = async (asset: any) => {
     try {
-      onSelect(asset);
+      onOpen();
+      app.setAssetContext(asset);
       setSelectedBalance(asset);
     } catch (e) {
       console.error(e);
@@ -69,9 +70,9 @@ export function Balances({usePioneer, onSelect}:any) {
 
   const fetchPage = async () => {
     try {
-      if (app && app.balances) {
+      if (balances) {
         setShowOwnedAssets(true);
-        setCurrentPage(app.balances);
+        setCurrentPage(balances);
         //console.log('balances: ', balances);
         // setTotalAssets(balances.length);
       }
@@ -82,16 +83,26 @@ export function Balances({usePioneer, onSelect}:any) {
 
   useEffect(() => {
     fetchPage();
-  }, [app]);
+  }, [balances]);
 
   return (
     <Stack spacing={4}>
-      {/*<InputGroup>*/}
-      {/*  <InputLeftElement pointerEvents="none">*/}
-      {/*    <Search2Icon color="gray.300" />*/}
-      {/*  </InputLeftElement>*/}
-      {/*  <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />*/}
-      {/*</InputGroup>*/}
+      <Modal isOpen={isOpen} onClose={onModalClose} size={'xxl'}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Balance Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedBalance && <Balance usePioneer={usePioneer} onClose={onModalClose} balance={selectedBalance} />}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <Search2Icon color="gray.300" />
+        </InputLeftElement>
+        <Input onChange={handleSearchChange} placeholder="Bitcoin..." type="text" value={search} />
+      </InputGroup>
       <Box>
         {/* <Text fontSize="2xl">Total Assets: {totalAssets}</Text> */}
         {/* <Checkbox */}
@@ -100,11 +111,11 @@ export function Balances({usePioneer, onSelect}:any) {
         {/* > */}
         {/*  Show only owned assets */}
         {/* </Checkbox> */}
-        {/*<Button onClick={toggleSortOrder} size="sm">*/}
-        {/*  Sort by Value {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}*/}
-        {/*</Button>*/}
-        {/*<br />*/}
-        {/*<br />*/}
+        <Button onClick={toggleSortOrder} size="sm">
+          Sort by Value {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Button>
+        <br />
+        <br />
         {filteredAssets.map((asset: any, index: number) => (
           // eslint-disable-next-line react/no-array-index-key
           <Box key={index}>
