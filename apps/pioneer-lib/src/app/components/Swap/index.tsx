@@ -112,73 +112,73 @@ export function Swap({usePioneer}:any): JSX.Element {
   }, [app, app?.assetContext, app?.assetContext?.balance]);
 
   const fetchQuote = async () => {
-    try {
-      //console.log('sliderValue: ', sliderValue);
-      let senderAddress
-      if(!memoless){
-        senderAddress = assetContext.address;
-        if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
-      }
-
-      let recipientAddress = app.outboundAssetContext.address;
-      let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
-      let trader
-      if(ethPubkey){
-        trader = ethPubkey.address
-        console.log("trader: ",trader)
-      }
-
-      if(!inputAmount || inputAmount <= 0) {
-        throw Error('Invalid amount!');
-      }
-
-
-      //get receiver context
-      if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
-
-      //get USDvauleIn if < 50 throw error
-      const usdValue = parseFloat(swap.sellAmount) * swap.sellAsset.priceUsd;
-      if(usdValue < 50)  alert('Trades under 50 USD are high risk and have low success rates. currently not supported. Please try again with a higher amount.');
-
-      const entry:any = {
-        affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
-        sellAsset: app.assetContext,
-        // @ts-ignore
-        sellAmount: parseFloat(inputAmount).toPrecision(8),
-        buyAsset: app.outboundAssetContext,
-        recipientAddress,
-        slippage: '3',
-      };
-      if(senderAddress) entry.senderAddress = senderAddress
-      if(trader) entry.trader = trader;
-      if(memoless) entry.memoless = true;
-      console.log('entry: ', entry);
-      console.log('entry: ', JSON.stringify(entry));
-      try {
-        let result = await app.pioneer.Quote(entry);
-        result = result.data;
-        console.log('Quote result: ', result);
-
-        if (result && result.length > 0) {
-          setQuotesData(result);
-          openModal(MODAL_STRINGS.selectQuote);
-        } else {
-          alert('No routes found!');
-        }
-
-        // if error, render Error
-        if (result && result.error) {
-          openModal(MODAL_STRINGS.errorQuote);
-          setError(result);
-        }
-      } catch (e) {
-        openModal(MODAL_STRINGS.errorQuote);
-        setError(`Invalid request: ${e}`);
-      }
-    } catch (e: any) {
-      console.error('ERROR: ', e);
-      // alert(`Failed to get quote! ${e.message}`);
-    }
+    // try {
+    //   //console.log('sliderValue: ', sliderValue);
+    //   let senderAddress
+    //   if(!memoless){
+    //     senderAddress = assetContext.address;
+    //     if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
+    //   }
+    //
+    //   let recipientAddress = app.outboundAssetContext.address;
+    //   let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
+    //   let trader
+    //   if(ethPubkey){
+    //     trader = ethPubkey.address
+    //     console.log("trader: ",trader)
+    //   }
+    //
+    //   if(!inputAmount || inputAmount <= 0) {
+    //     throw Error('Invalid amount!');
+    //   }
+    //
+    //
+    //   //get receiver context
+    //   if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
+    //
+    //   //get USDvauleIn if < 50 throw error
+    //   const usdValue = parseFloat(swap?.sellAmount) * swap?.sellAsset?.priceUsd;
+    //   if(usdValue < 50)  alert('Trades under 50 USD are high risk and have low success rates. currently not supported. Please try again with a higher amount.');
+    //
+    //   const entry:any = {
+    //     affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
+    //     sellAsset: app.assetContext,
+    //     // @ts-ignore
+    //     sellAmount: parseFloat(inputAmount).toPrecision(8),
+    //     buyAsset: app.outboundAssetContext,
+    //     recipientAddress,
+    //     slippage: '3',
+    //   };
+    //   if(senderAddress) entry.senderAddress = senderAddress
+    //   if(trader) entry.trader = trader;
+    //   if(memoless) entry.memoless = true;
+    //   console.log('entry: ', entry);
+    //   console.log('entry: ', JSON.stringify(entry));
+    //   try {
+    //     let result = await app.pioneer.Quote(entry);
+    //     result = result.data;
+    //     console.log('Quote result: ', result);
+    //
+    //     if (result && result.length > 0) {
+    //       setQuotesData(result);
+    //       openModal(MODAL_STRINGS.selectQuote);
+    //     } else {
+    //       alert('No routes found!');
+    //     }
+    //
+    //     // if error, render Error
+    //     if (result && result.error) {
+    //       openModal(MODAL_STRINGS.errorQuote);
+    //       setError(result);
+    //     }
+    //   } catch (e) {
+    //     openModal(MODAL_STRINGS.errorQuote);
+    //     setError(`Invalid request: ${e}`);
+    //   }
+    // } catch (e: any) {
+    //   console.error('ERROR: ', e);
+    //   // alert(`Failed to get quote! ${e.message}`);
+    // }
   };
 
   let handleQuoteSelection = function (quote: any) {
