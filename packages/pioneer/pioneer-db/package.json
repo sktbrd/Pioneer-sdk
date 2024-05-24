@@ -1,11 +1,9 @@
 {
   "author": "highlander",
   "name": "@coinmasters/pioneer-db",
-  "version": "4.7.8",
+  "version": "4.7.15",
   "dependencies": {
-    "idb": "^8.0.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "idb": "^8.0.0"
   },
   "description": "Pioneer DB tools",
   "devDependencies": {

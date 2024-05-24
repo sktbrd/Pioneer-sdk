@@ -23,7 +23,8 @@ import {
 
 // let BLOCKCHAIN = 'DOGE'
 // let BLOCKCHAIN = 'BTC'
-let BLOCKCHAIN = 'ETH'
+// let BLOCKCHAIN = 'ETH'
+let BLOCKCHAIN = 'THOR'
 
 const getWalletByChain = async (keepkey:any, chain:any) => {
     if (!keepkey[chain]) return null;
@@ -190,15 +191,12 @@ const test_service = async function (this: any) {
         // ]
         // Step 1: Invoke the outer function with the input object
         const connectFunction = walletKeepKey.wallet.connect(input);
-        let paths = getPaths([ChainToNetworkId[BLOCKCHAIN]])
+        let networkId = ChainToNetworkId[BLOCKCHAIN]
+        log.info("networkId: ",networkId)
+        let paths = getPaths([networkId])
         log.info("paths: ",paths)
         //get default paths
-        const filteredPaths = paths.filter((p:any) => p.symbolSwapKit == BLOCKCHAIN);
-        log.info("filteredPaths: ",filteredPaths)
-        log.info("filteredPaths: ",filteredPaths.length)
-        assert(filteredPaths.length > 0, "No paths found for the specified chain")
-        // Step 2: Invoke the inner function with chains and paths
-        let kkApikey = await connectFunction(chains, filteredPaths);
+        let kkApikey = await connectFunction(chains, paths);
         log.info("kkApikey: ", kkApikey);
         log.info("keepkey: ",keepkey)
 
@@ -261,6 +259,38 @@ const test_service = async function (this: any) {
             transferDash
             transferMaya
          */
+
+        /*
+               SYNTH RUNE
+         */
+
+
+        //deposit maya
+        //get assetValue for asset
+        // let assetString = 'ETH.USDT'
+        let assetString = 'THOR.RUNE'
+        // create assetValue
+        // const assetString = `${ASSET}.${ASSET}`;
+       log.info('assetString: ', assetString);
+        let TEST_AMOUNT = "0.01"
+        // await AssetValue.loadStaticAssets();
+        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        let assetValue = await AssetValue.fromString(
+          assetString,
+          parseFloat(TEST_AMOUNT),
+        );
+        log.info("assetValue: ",assetValue)
+        let memo = '=:r:thor1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfhgnzx'
+        //send
+        let sendPayload = {
+            assetValue,
+            memo
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await  keepkey[Chain.THORChain].walletMethods.deposit(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
         /*
                 SEND MAYA

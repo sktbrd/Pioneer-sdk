@@ -12,45 +12,26 @@
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 
+import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
+// import { NativeList } from '@coinmasters/tokens';
 import {
-  availableChainsByWallet,
-  EVMChainList,
-  SwapKitCore,
-  WalletOption,
-} from '@coinmasters/core';
-import {
-  CoinGeckoList,
-  MayaList,
+  //   CoinGeckoList,
+  //   MayaList,
   NativeList,
-  OneInchList,
-  PancakeswapETHList,
-  PancakeswapList,
-  PangolinList,
+  //   OneInchList,
+  //   PancakeswapETHList,
+  //   PancakeswapList,
+  //   PangolinList,
   PioneerList,
-  StargateARBList,
-  SushiswapList,
-  ThorchainList,
-  TraderjoeList,
-  UniswapList,
-  WoofiList,
+  //   StargateARBList,
+  //   SushiswapList,
+  //   ThorchainList,
+  //   TraderjoeList,
+  //   UniswapList,
+  //   WoofiList,
 } from '@coinmasters/tokens';
-// import {
-//   CoinGeckoList,
-//   MayaList,
-//   NativeList,
-//   OneInchList,
-//   PancakeswapETHList,
-//   PancakeswapList,
-//   PangolinList,
-//   PioneerList,
-//   StargateARBList,
-//   SushiswapList,
-//   ThorchainList,
-//   TraderjoeList,
-//   UniswapList,
-//   WoofiList,
-// } from '@coinmasters/tokens';
-import { Chain, NetworkIdToChain } from '@coinmasters/types';
+import type { Chain } from '@coinmasters/types';
+import { NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
 import {
   caipToNetworkId,
@@ -181,7 +162,7 @@ export class SDK {
   // @ts-ignore
   public loadBalanceCache: (balances: any) => Promise<void>;
   public loadPubkeyCache: (pubkeys: any) => Promise<void>;
-  public getPubkeys: (networkIds?: string[]) => Promise<any[]>;
+  public getPubkeys: (wallets?: string[]) => Promise<any[]>;
   public getBalances: (filter?: any) => Promise<boolean>;
   public blockchains: any[];
   public clearWalletState: () => Promise<boolean>;
@@ -207,9 +188,7 @@ export class SDK {
     this.utxoApiKey = config.utxoApiKey;
     this.walletConnectProjectId = config.walletConnectProjectId;
     this.paths = config.paths || [];
-    this.blockchains = availableChainsByWallet[WalletOption.KEEPKEY].map(
-      (chain: any) => ChainToNetworkId[chain],
-    );
+    this.blockchains = config.blockchains || [];
     this.pubkeys = [];
     this.balances = [];
     this.assets = [];
@@ -300,10 +279,10 @@ export class SDK {
         //if balances load
 
         //else defaults
-        this.setAssetContext(
-          this.assetsMap.get('bip122:000000000019d6689c085ae165831e93/slip44:0'),
-        );
-        this.setOutboundAssetContext(this.assetsMap.get('eip155:1/slip44:60'));
+        // this.setAssetContext(
+        //   this.assetsMap.get('bip122:000000000019d6689c085ae165831e93/slip44:0'),
+        // );
+        // this.setOutboundAssetContext(this.assetsMap.get('eip155:1/slip44:60'));
 
         return this.pioneer;
       } catch (e) {
@@ -349,21 +328,26 @@ export class SDK {
         //update assets
         this.assets = this.assets.map((asset: any) => {
           const caipKey = asset.caip.toLowerCase(); // assuming 'caip' is the key in assets similar to balances
-          const balance = this.balances.find((b: any) => b.caip.toLowerCase() === caipKey);
+          const balances = this.balances.filter((b: any) => b.caip.toLowerCase() === caipKey);
 
-          if (balance) {
-            // If a matching balance is found, create a new asset object with updated data
-            const updatedAsset = {
+          const contextCaipMap = new Map();
+          const uniqueBalances = balances.filter((balance: any) => {
+            const key = `${balance.context}:${balance.caip}`;
+            if (!contextCaipMap.has(key)) {
+              contextCaipMap.set(key, true);
+              return true;
+            }
+            return false;
+          });
+
+          if (uniqueBalances.length > 0) {
+            const updatedAsset: any = {
               ...asset,
-              balance: balance.balance,
-              valueUsd: balance.valueUsd,
+              balances: uniqueBalances,
             };
-
-            // Update the assetsMap with the new asset data
             this.assetsMap.set(caipKey, updatedAsset);
             return updatedAsset;
           } else {
-            // If no matching balance, return the asset unchanged
             return asset;
           }
         });
@@ -374,7 +358,7 @@ export class SDK {
         if (this.balances.length > 0) {
           this.setContext(this.balances[0].context);
           this.setAssetContext(this.balances[0]);
-          this.setOutboundAssetContext(this.balances[1]);
+          if (this.balances[1]) this.setOutboundAssetContext(this.balances[1]);
         }
       } catch (e) {
         console.error('Failed to load balances! e: ', e);
@@ -409,30 +393,38 @@ export class SDK {
         // Iterate over assets and update them based on matching conditions
         this.assets.forEach((existingAsset: any, index: any) => {
           const networkId = existingAsset.networkId;
-          let matchedPubkey = null;
+          let matchedPubkeys = [];
 
           if (networkId.includes('eip155')) {
             // Handle 'eip155' specifically
-            const matchPubkeys = pubkeysMap.get('eip155:1');
-            if (matchPubkeys && matchPubkeys.length > 0) {
-              matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+            const pubkeys = pubkeysMap.get('eip155:1');
+            if (pubkeys && pubkeys.length > 0) {
+              matchedPubkeys = pubkeys; // Attach all matched pubkeys
             }
           } else {
             // Check for a direct match in other networks
             if (pubkeysMap.has(networkId)) {
-              const matchPubkeys = pubkeysMap.get(networkId);
-              if (matchPubkeys && matchPubkeys.length > 0) {
-                matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+              const pubkeys = pubkeysMap.get(networkId);
+              if (pubkeys && pubkeys.length > 0) {
+                matchedPubkeys = pubkeys; // Attach all matched pubkeys
               }
             }
           }
 
-          if (matchedPubkey) {
-            // Update the asset and the map entry
+          if (matchedPubkeys.length > 0) {
+            const contextAddressMap = new Map();
+            const uniqueMatchedPubkeys = matchedPubkeys.filter((pubkey: any) => {
+              const key = `${pubkey.context}:${pubkey.address}`;
+              if (!contextAddressMap.has(key)) {
+                contextAddressMap.set(key, true);
+                return true;
+              }
+              return false;
+            });
+            // Update the asset to include all matched pubkeys' balances and USD values
             const updatedAsset: any = {
               ...existingAsset,
-              balance: matchedPubkey.balance,
-              valueUsd: matchedPubkey.valueUsd,
+              pubkeys: uniqueMatchedPubkeys,
             };
             this.assets[index] = updatedAsset;
             this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
@@ -444,37 +436,37 @@ export class SDK {
         console.error('Failed to load pubkeys! e: ', e);
       }
     };
-    this.verifyWallet = async function () {
-      try {
-        if (this.paths.length === 0) throw Error('No paths to verify!');
-        if (this.blockchains.length === 0) throw Error('No blockchains to verify!');
-
-        //log.debug('Verifying paths for blockchains...');
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < this.blockchains.length; i++) {
-          let blockchain = this.blockchains[i];
-          //log.debug(`Checking paths for blockchain: ${blockchain}`);
-          let pathsForChain;
-          if (blockchain.indexOf('eip155') > -1) {
-            //log.debug('ETH like detected!');
-            //all eip155 blockchains use the same path
-            pathsForChain = this.paths.filter((path) => path.network === 'eip155:1');
-            pathsForChain = Chain.Ethereum;
-          } else {
-            //get paths for each blockchain
-            pathsForChain = this.paths.filter((path) => path.network === blockchain);
-          }
-          if (pathsForChain.length === 0) {
-            console.error(`Available paths: ${JSON.stringify(this.paths)}`);
-            throw Error(`No paths for blockchain: ${blockchain}`);
-          }
-        }
-        //log.debug('All blockchains have paths.');
-      } catch (e) {
-        console.error('Failed to verify wallet: ', e);
-        throw e;
-      }
-    };
+    // this.verifyWallet = async function () {
+    //   try {
+    //     if (this.paths.length === 0) throw Error('No paths to verify!');
+    //     if (this.blockchains.length === 0) throw Error('No blockchains to verify!');
+    //
+    //     //log.debug('Verifying paths for blockchains...');
+    //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    //     for (let i = 0; i < this.blockchains.length; i++) {
+    //       let blockchain = this.blockchains[i];
+    //       //log.debug(`Checking paths for blockchain: ${blockchain}`);
+    //       let pathsForChain;
+    //       if (blockchain.indexOf('eip155') > -1) {
+    //         //log.debug('ETH like detected!');
+    //         //all eip155 blockchains use the same path
+    //         pathsForChain = this.paths.filter((path) => path.network === 'eip155:1');
+    //         pathsForChain = Chain.Ethereum;
+    //       } else {
+    //         //get paths for each blockchain
+    //         pathsForChain = this.paths.filter((path) => path.network === blockchain);
+    //       }
+    //       if (pathsForChain.length === 0) {
+    //         console.error(`Available paths: ${JSON.stringify(this.paths)}`);
+    //         throw Error(`No paths for blockchain: ${blockchain}`);
+    //       }
+    //     }
+    //     //log.debug('All blockchains have paths.');
+    //   } catch (e) {
+    //     console.error('Failed to verify wallet: ', e);
+    //     throw e;
+    //   }
+    // };
     this.pairWallet = async function (options: any) {
       const tag = `${TAG} | pairWallet | `;
       try {
@@ -504,7 +496,7 @@ export class SDK {
             })(),
         );
 
-        await this.verifyWallet();
+        // await this.verifyWallet();
 
         let resultPair: string;
         console.log(tag, 'type: ', walletSelected.type);
@@ -623,9 +615,12 @@ export class SDK {
           // this.wallets[matchingWalletIndex].connected = true;
           this.wallets[matchingWalletIndex].status = 'connected';
           this.setContext(context);
-          // this.refresh(context);
+          console.log('assets pre: ', this.assets.length);
+          await this.getAssets();
+          console.log('assets post: ', this.assets.length);
 
-          //log.debug('PRE-register balances: ', balances);
+          await this.getPubkeys();
+          await this.getBalances();
         } else {
           throw Error(`Failed to pair wallet! ${walletSelected.type}`);
         }
@@ -651,23 +646,31 @@ export class SDK {
         throw e;
       }
     };
+    /*
+      Get Asset Rules
+
+      asset MUST have a balance if a token to be tracked
+      asset MUST have a pubkey to be tracked
+
+     */
     //@ts-ignore
     this.getAssets = async function (filterParams?: any) {
       try {
         const tag = `${TAG} | getAssets | `;
         //console.log(tag, 'filter: ', filter);
-        if (!this.assets || !this.assets.length) {
+        if (!this.assetsMap || !this.assetsMap.length) {
           console.log('No cached assets, loading...');
           let tokenMap = new Map();
           let chains = new Set();
           let chainTokenCounts = {};
           this.assetsMap = new Map();
-
+          let allAssets = [];
           // Function to add tokens with their source list
           const addTokens = (tokens, sourceList) => {
             tokens.forEach((token) => {
               chains.add(token.chain);
               chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
+              console.log('*** token: ', token);
               let expandedInfo = tokenToCaip(token);
               if (expandedInfo.caip) {
                 expandedInfo.sourceList = sourceList;
@@ -675,72 +678,95 @@ export class SDK {
                 let assetInfo = assetData[assetInfoKey];
                 if (assetInfo) {
                   let combinedInfo = { ...expandedInfo, ...assetInfo, integrations: [] }; // Prepare integration array
-                  tokenMap.set(assetInfoKey, combinedInfo);
+                  if (this.blockchains.includes(combinedInfo.networkId)) {
+                    const balances = this.balances.filter(
+                      (b) => b.caip.toLowerCase() === combinedInfo.caip.toLowerCase(),
+                    );
+                    const pubkeys = this.pubkeys.filter((pubkey: any) =>
+                      pubkey.networks.includes(combinedInfo.networkId),
+                    );
+                    combinedInfo = { ...combinedInfo, balances, pubkeys };
+                    tokenMap.set(assetInfoKey, combinedInfo);
+                    allAssets.push(combinedInfo);
+                  } else {
+                    console.error('***  Skipping token: ', token);
+                    console.error('***  Not in supported blockchains: ', this.blockchains);
+                  }
+                } else {
+                  console.error('Missing assetInfo for: ', token);
                 }
+              } else {
+                console.error('***  expandedInfo: ', expandedInfo);
+                console.error('***  Failed to expand token: ', token);
               }
             });
           };
+          console.log('NativeList:', NativeList.tokens);
 
           // Add tokens from various lists with their source
           [
             NativeList,
-            MayaList,
-            CoinGeckoList,
-            OneInchList,
-            PancakeswapETHList,
-            PancakeswapList,
-            PangolinList,
+            // MayaList,
+            // CoinGeckoList,
+            // OneInchList,
+            // PancakeswapETHList,
+            // PancakeswapList,
+            // PangolinList,
             PioneerList,
-            StargateARBList,
-            SushiswapList,
-            ThorchainList,
-            TraderjoeList,
-            UniswapList,
-            WoofiList,
+            // StargateARBList,
+            // SushiswapList,
+            // ThorchainList,
+            // TraderjoeList,
+            // UniswapList,
+            // WoofiList,
           ].forEach((list: any) => addTokens(list.tokens, list.name));
 
           // Get integration support by asset and enrich the token map with this data
-          let integrationSupport = await this.pioneer.SupportByAsset();
-          integrationSupport = integrationSupport.data || {};
-          //console.log('integrationSupport: ', integrationSupport);
+          if (this.pioneer) {
+            let integrationSupport = await this.pioneer.SupportByAsset();
+            integrationSupport = integrationSupport.data || {};
+            //console.log('integrationSupport: ', integrationSupport);
 
-          // Enrich tokenMap directly with integration support
-          Object.keys(integrationSupport).forEach((key) => {
-            integrationSupport[key].forEach((id) => {
-              if (id) {
-                let asset = tokenMap.get(id.toLowerCase());
-                if (asset) {
-                  if (MEMOLESS_INTERGRATIONS.indexOf(key) > -1) asset.memoless = true;
-                  asset.integrations.push(key);
+            // Enrich tokenMap directly with integration support
+            Object.keys(integrationSupport).forEach((key) => {
+              integrationSupport[key].forEach((id) => {
+                if (id) {
+                  let asset = tokenMap.get(id.toLowerCase());
+                  if (asset) {
+                    if (MEMOLESS_INTERGRATIONS.indexOf(key) > -1) asset.memoless = true;
+                    asset.integrations.push(key);
+                  }
                 }
-              }
+              });
             });
-          });
+          }
 
-          // Process all assets to enrich with additional data such as balances
-          let allAssets = Array.from(tokenMap.values()).map((asset) => {
-            const balanceObj = this.balances.find(
-              (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
-            );
-            const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-            const balance = balanceObj ? balanceObj.balance : '';
-            if(asset.symbol && !asset.ticker) asset.ticker = asset.symbol;
-            const searchNetworkId =
-              balanceObj && balanceObj.networkId.includes('155') ? 'eip155:1' : asset.networkId;
-            const pubkeyObj = this.pubkeys.find((pubkey) =>
-              pubkey.networks.includes(searchNetworkId),
-            );
-            const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-            let address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
-            if (address && address.indexOf('bitcoincash:') > -1)
-              address = address.replace('bitcoincash:', '');
+          console.log('tokenMap: ', Object.keys(tokenMap).length);
+          // Process all assets to enrich with additional data such as balances, and pubkeys
+          // let allAssets = Array.from(tokenMap.values()).map((asset) => {
+          //   const balances = this.balances.filter(
+          //     (b) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
+          //   );
+          //   const pubkeys = this.pubkeys.filter((pubkey: any) =>
+          //     pubkey.networks.includes(asset.networkId),
+          //   );
+          //   console.log('matched pubkeyObj for asset');
+          //   console.log('balances: ', balances);
+          //   console.log('pubkeys: ', pubkeys);
+          //   return { ...asset, balances, pubkeys };
+          // });
 
-            return { ...asset, balance, valueUsd, pubkey, address };
-          });
-
-          this.assetsMap = tokenMap; // Update the main map to include all enriched assets
-          this.assets = allAssets; // Also keep a separate array if needed
           console.log('Processed Assets: ', allAssets.length);
+          //filter assets for blockchain
+          this.assetsMap = tokenMap; // Update the main map to include all enriched assets
+          this.assets = allAssets;
+          //default
+          if (!filterParams)
+            filterParams = {
+              hasPubkey: true,
+              onlyOwned: false,
+              noTokens: true,
+            };
         }
 
         if (filterParams) {
@@ -760,15 +786,16 @@ export class SDK {
             console.log(tag, `Assets after search query filter: ${currentAssets.length}`);
           }
 
-          // Filter by Ownership
+          // Filter by Ownership Presence
           if (filterParams.onlyOwned) {
             currentAssets = currentAssets.filter(
-              (asset) => asset.balance && parseFloat(asset.balance) > 0,
+              (asset) => asset.balances && asset.balances.length > 0,
             );
             console.log(tag, `Assets after ownership filter: ${currentAssets.length}`);
           }
 
           // Filter by Token Type
+          console.log(tag, `Before token type filter: ${currentAssets.length}`);
           if (filterParams.noTokens) {
             currentAssets = currentAssets.filter((asset) => asset.type !== 'token');
             console.log(tag, `Assets after token type filter: ${currentAssets.length}`);
@@ -782,7 +809,9 @@ export class SDK {
 
           // Filter by Public Key Presence
           if (filterParams.hasPubkey) {
-            currentAssets = currentAssets.filter((asset) => asset.pubkey);
+            currentAssets = currentAssets.filter(
+              (asset) => asset.pubkeys && asset.pubkeys.length > 0,
+            );
             console.log(tag, `Assets after public key presence filter: ${currentAssets.length}`);
           }
 
@@ -836,6 +865,7 @@ export class SDK {
             console.log(tag, `Assets after asset context filter: ${currentAssets.length}`);
           }
 
+          console.log(tag, `Total assets after all filters: ${currentAssets}`);
           console.log(tag, `Total assets after all filters: ${currentAssets.length}`);
           return currentAssets;
         } else {
@@ -846,124 +876,327 @@ export class SDK {
         throw e;
       }
     };
-    this.getPubkeys = async function (networkIds?: string[]) {
+    this.getPubkeys = async function (wallets?: any) {
       const tag = `${TAG} | getPubkeys | `;
       try {
-        if (this.paths.length === 0) throw Error('No paths found!');
-        if (!this.swapKit) throw Error('SwapKit not initialized!');
+        if (this.paths.length === 0) throw new Error('No paths found!');
+        if (!this.swapKit) throw new Error('SwapKit not initialized!');
         console.log('PRE this.pubkeys: ', this.pubkeys.length);
         console.log('PRE this.paths: ', this.paths.length);
+        console.log('PRE this.blockchains: ', this.blockchains);
 
-        // If no specific networkIds are requested, use all available in paths
-        if (!networkIds || networkIds.length === 0) {
-          networkIds = this.paths.map((path) => path.network);
-        }
+        let pubkeysNew = [];
+        // For each enabled blockchain
+        for (let i = 0; i < this.blockchains.length; i++) {
+          let blockchain = this.blockchains[i];
+          console.log('blockchain: ', blockchain);
 
-        let pubkeysNew: any = [...this.pubkeys];
-
-        // Filter paths first by requested networkIds to minimize wallet accesses
-        let filteredPaths = this.paths.filter((path) => networkIds.includes(path.network));
-
-        for (let path of filteredPaths) {
-          let chain: Chain = NetworkIdToChain[path.network];
-          let pubkey: any = {};
-          pubkey.type = path.type;
-          let address = await this.swapKit?.getAddress(chain);
-          if (!address) throw Error(`Failed to get address for ${chain}`);
-          if (address && address.indexOf('bitcoincash:') > -1)
-            address = address.replace('bitcoincash:', '');
-
-          pubkey.master = address;
-          if (path.type === 'address') {
-            pubkey.address = address;
-            pubkey.pubkey = address;
-          } else if (path.type === 'xpub' || path.type === 'zpub') {
-            let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-            if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
-            let pubkeyForPath = pubkeys.find(
-              (p: any) => p.addressNList.toString() === path.addressNList.toString(),
-            );
-            if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
-            pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
-          }
-
-          pubkey.context = this.context;
-          pubkey.contextType = this.contextType.split(':')[0];
-          pubkey.networks = [path.network];
-          if (path.network === 'eip155:1') {
-            pubkey.networks = [
-              path.network,
-              ...(path.network === 'eip155:1'
-                ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
-                : []),
-            ];
-          }
-
-          // Ensure networks are unique
-          pubkey.networks = Array.from(new Set(pubkey.networks));
-          pubkeysNew.push(pubkey);
-        }
-        // Cache and return the processed pubkeys
-        this.pubkeys = pubkeysNew;
-        const pubkeysMap = new Map();
-        this.pubkeys.forEach((pubkey: any) => {
-          pubkey.networks.forEach((network: any) => {
-            if (!pubkeysMap.has(network)) {
-              pubkeysMap.set(network, []);
+          let filteredPaths = this.paths.filter((path) => {
+            // Ensure path.networks is defined
+            if (!path.networks) {
+              console.error('path.networks is undefined for path: ', path);
+              return false;
             }
-            pubkeysMap.get(network).push(pubkey);
+
+            // Handle special case for eip155
+            if (blockchain.startsWith('eip155')) {
+              return path.networks.some((network) => network.startsWith('eip155:'));
+            }
+
+            // General case
+            return path.networks.includes(blockchain);
           });
-        });
 
-        // Iterate over assets and update them based on matching conditions
-        this.assets.forEach((existingAsset: any, index: any) => {
-          const networkId = existingAsset.networkId;
-          let matchedPubkey = null;
+          console.log('filteredPaths: ', filteredPaths);
 
-          if (networkId.includes('eip155')) {
-            // Handle 'eip155' specifically
-            const matchPubkeys = pubkeysMap.get('eip155:1');
-            if (matchPubkeys && matchPubkeys.length > 0) {
-              matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+          if (!filteredPaths || filteredPaths.length === 0)
+            throw new Error('Unable to get pubkey for blockchain: ' + blockchain);
+
+          // Get address for all paths for this blockchain
+          for (let path of filteredPaths) {
+            let chain: Chain = NetworkIdToChain[blockchain];
+            console.log('chain: ', chain);
+
+            if (!chain) throw new Error('missing chain for blockchain!');
+
+            let pubkey: any = {};
+            pubkey.type = path.type;
+            console.log('path: ', path);
+
+            let address = await this.swapKit?.getAddress(chain);
+            if (!address) throw new Error(`Failed to get address for ${chain}`);
+            if (address && address.indexOf('bitcoincash:') > -1)
+              address = address.replace('bitcoincash:', '');
+
+            pubkey.master = address;
+
+            if (path.type === 'address') {
+              pubkey.address = address;
+              pubkey.pubkey = address;
+            } else if (path.type === 'xpub' || path.type === 'zpub') {
+              let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+              if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
+              console.log('pubkeys: ', pubkeys);
+              let pubkeyForPath = pubkeys.find(
+                (p: any) => p.addressNList.toString() === path.addressNList.toString(),
+              );
+              if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
+
+              pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
             }
-          } else {
-            // Check for a direct match in other networks
-            if (pubkeysMap.has(networkId)) {
-              const matchPubkeys = pubkeysMap.get(networkId);
-              if (matchPubkeys && matchPubkeys.length > 0) {
-                matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
-              }
-            }
-          }
 
-          if (matchedPubkey) {
-            //console.log('matchedPubkey: ', matchedPubkey);
-            // Update the asset and the map entry
-            const updatedAsset: any = {
-              ...existingAsset,
-              pubkey: matchedPubkey.pubkey,
-              address: matchedPubkey.address || matchedPubkey.master,
-              master: matchedPubkey.master,
-            };
-            //console.log('updatedAsset: ', updatedAsset);
-            this.assets[index] = updatedAsset;
-            this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
+            pubkey.context = this.context;
+            pubkey.contextType = this.contextType.split(':')[0];
+            pubkey.networks = path.networks;
+            pubkeysNew.push(pubkey);
+          }
+        }
+
+        // add pubkeys to this.pubkeys
+        pubkeysNew.forEach((newPubkey: any) => {
+          const exists = this.pubkeys.some(
+            (existingPubkey: any) => existingPubkey.pubkey === newPubkey.pubkey,
+          );
+          if (!exists) {
+            this.pubkeys.push(newPubkey);
           }
         });
+        this.events.emit('SET_PUBKEYS', this.pubkeys);
 
-        this.events.emit('SET_PUBKEYS', pubkeysNew);
+        //update assets
+        //@ts-ignore
+        for (let i = 0; i < this.assets.length; i++) {
+          //lookup pubkeys for asset
+          const asset = this.assets[i];
+          const assetPubkeys = [];
+
+          // Lookup pubkeys for the asset based on networkId
+          this.pubkeys.forEach((pubkeyObj: any) => {
+            if (pubkeyObj.networks && pubkeyObj.networks.includes(asset.networkId)) {
+              assetPubkeys.push(pubkeyObj);
+            }
+          });
+
+          // Update the asset's pubkeys array
+          asset.pubkeys = assetPubkeys;
+
+          // Update the assetsMap as well
+          this.assetsMap.set(asset.caip, asset);
+
+          // Update the asset in its place within the this.assets array
+          this.assets[i] = asset;
+        }
+
         return pubkeysNew;
       } catch (e) {
         console.error(tag, 'Error: ', e);
         throw e;
       }
     };
+    // this.getPubkeys = async function (wallets?: any) {
+    //   const tag = `${TAG} | getPubkeys | `;
+    //   try {
+    //     if (this.paths.length === 0) throw Error('No paths found!');
+    //     if (!this.swapKit) throw Error('SwapKit not initialized!');
+    //     console.log('PRE this.pubkeys: ', this.pubkeys.length);
+    //     console.log('PRE this.paths: ', this.paths.length);
+    //
+    //     console.log('PRE this.paths: ', this.blockchains);
+    //     let pubkeysNew = [];
+    //     //for each enabled blockchain
+    //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    //     for (let i = 0; i < this.blockchains.length; i++) {
+    //       //getPubkeyForChain
+    //       let blockchain = this.blockchains[i];
+    //       console.log('blockchain: ', blockchain);
+    //       //if blockchain has eip155
+    //       //search for path that has eip155* in neworks
+    //       let filteredPaths = this.paths.filter((path) => {
+    //         // Handle special case for eip155
+    //         if (blockchain.startsWith('eip155')) {
+    //           return path.networks.some((network) => network.startsWith('eip155:'));
+    //         }
+    //         // General case
+    //         return path.networks.includes(blockchain);
+    //       });
+    //       console.log('filteredPaths: ', filteredPaths);
+    //       if (!filteredPaths || filteredPaths.length === 0)
+    //         throw Error('Unable to get pubkey for blockchain: ' + blockchain);
+    //
+    //       //get address for all paths for this blockchain
+    //       for (let path of filteredPaths) {
+    //         let chain: Chain = NetworkIdToChain[blockchain];
+    //         console.log('chain: ', chain);
+    //         if(!chain) throw Error("missing chain for blockchain!")
+    //         let pubkey: any = {};
+    //         pubkey.type = path.type;
+    //         console.log('path: ', path);
+    //
+    //         let address = await this.swapKit?.getAddress(chain);
+    //         if (!address) throw Error(`Failed to get address for ${chain}`);
+    //         if (address && address.indexOf('bitcoincash:') > -1)
+    //           address = address.replace('bitcoincash:', '');
+    //
+    //         pubkey.master = address;
+    //         if (path.type === 'address') {
+    //           pubkey.address = address;
+    //           pubkey.pubkey = address;
+    //         } else if (path.type === 'xpub' || path.type === 'zpub') {
+    //           let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+    //           if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
+    //           let pubkeyForPath = pubkeys.find(
+    //             (p: any) => p.addressNList.toString() === path.addressNList.toString(),
+    //           );
+    //           if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
+    //           pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
+    //         }
+    //
+    //         pubkey.context = this.context;
+    //         pubkey.contextType = this.contextType.split(':')[0];
+    //         pubkey.networks = [path.network];
+    //         if (path.network === 'eip155:1') {
+    //           pubkey.networks = [
+    //             path.network,
+    //             ...(path.network === 'eip155:1'
+    //               ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
+    //               : []),
+    //           ];
+    //         }
+    //
+    //         // Ensure networks are unique
+    //         pubkey.networks = Array.from(new Set(pubkey.networks));
+    //         pubkeysNew.push(pubkey);
+    //       }
+    //       // Cache and return the processed pubkeys
+    //       this.pubkeys = pubkeysNew;
+    //     }
+    //
+    //     return pubkeysNew;
+    //   } catch (e) {
+    //     console.error(tag, 'Error: ', e);
+    //     throw e;
+    //   }
+    // };
+    // this.getPubkeys = async function (networkIds?: string[]) {
+    //   const tag = `${TAG} | getPubkeys | `;
+    //   try {
+    //     if (this.paths.length === 0) throw Error('No paths found!');
+    //     if (!this.swapKit) throw Error('SwapKit not initialized!');
+    //     console.log('PRE this.pubkeys: ', this.pubkeys.length);
+    //     console.log('PRE this.paths: ', this.paths.length);
+    //
+    //     // If no specific networkIds are requested, use all available in paths
+    //     if (!networkIds || networkIds.length === 0) {
+    //       networkIds = this.paths.map((path) => path.network);
+    //     }
+    //
+    //     let pubkeysNew: any = [...this.pubkeys];
+    //
+    //     // Filter paths first by requested networkIds to minimize wallet accesses
+    //     let filteredPaths = this.paths.filter((path) => networkIds.includes(path.network));
+    //     console.log('filteredPaths: ', filteredPaths);
+    //
+    //     for (let path of filteredPaths) {
+    //       let chain: Chain = NetworkIdToChain[path.network];
+    //       let pubkey: any = {};
+    //       pubkey.type = path.type;
+    //       console.log('path: ', path);
+    //
+    //       let address = await this.swapKit?.getAddress(chain);
+    //       if (!address) throw Error(`Failed to get address for ${chain}`);
+    //       if (address && address.indexOf('bitcoincash:') > -1)
+    //         address = address.replace('bitcoincash:', '');
+    //
+    //       pubkey.master = address;
+    //       if (path.type === 'address') {
+    //         pubkey.address = address;
+    //         pubkey.pubkey = address;
+    //       } else if (path.type === 'xpub' || path.type === 'zpub') {
+    //         let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+    //         if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
+    //         let pubkeyForPath = pubkeys.find(
+    //           (p: any) => p.addressNList.toString() === path.addressNList.toString(),
+    //         );
+    //         if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
+    //         pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
+    //       }
+    //
+    //       pubkey.context = this.context;
+    //       pubkey.contextType = this.contextType.split(':')[0];
+    //       pubkey.networks = [path.network];
+    //       if (path.network === 'eip155:1') {
+    //         pubkey.networks = [
+    //           path.network,
+    //           ...(path.network === 'eip155:1'
+    //             ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
+    //             : []),
+    //         ];
+    //       }
+    //
+    //       // Ensure networks are unique
+    //       pubkey.networks = Array.from(new Set(pubkey.networks));
+    //       pubkeysNew.push(pubkey);
+    //     }
+    //     // Cache and return the processed pubkeys
+    //     this.pubkeys = pubkeysNew;
+    //     const pubkeysMap = new Map();
+    //     this.pubkeys.forEach((pubkey: any) => {
+    //       pubkey.networks.forEach((network: any) => {
+    //         if (!pubkeysMap.has(network)) {
+    //           pubkeysMap.set(network, []);
+    //         }
+    //         pubkeysMap.get(network).push(pubkey);
+    //       });
+    //     });
+    //
+    //     // Iterate over assets and update them based on matching conditions
+    //     this.assets.forEach((existingAsset: any, index: any) => {
+    //       const networkId = existingAsset.networkId;
+    //       let matchedPubkey = null;
+    //
+    //       if (networkId.includes('eip155')) {
+    //         // Handle 'eip155' specifically
+    //         const matchPubkeys = pubkeysMap.get('eip155:1');
+    //         if (matchPubkeys && matchPubkeys.length > 0) {
+    //           matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+    //         }
+    //       } else {
+    //         // Check for a direct match in other networks
+    //         if (pubkeysMap.has(networkId)) {
+    //           const matchPubkeys = pubkeysMap.get(networkId);
+    //           if (matchPubkeys && matchPubkeys.length > 0) {
+    //             matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
+    //           }
+    //         }
+    //       }
+    //
+    //       if (matchedPubkey) {
+    //         //console.log('matchedPubkey: ', matchedPubkey);
+    //         // Update the asset and the map entry
+    //         const updatedAsset: any = {
+    //           ...existingAsset,
+    //           pubkey: matchedPubkey.pubkey,
+    //           address: matchedPubkey.address || matchedPubkey.master,
+    //           master: matchedPubkey.master,
+    //         };
+    //         //console.log('updatedAsset: ', updatedAsset);
+    //         this.assets[index] = updatedAsset;
+    //         this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
+    //       }
+    //     });
+    //
+    //     this.events.emit('SET_PUBKEYS', pubkeysNew);
+    //     return pubkeysNew;
+    //   } catch (e) {
+    //     console.error(tag, 'Error: ', e);
+    //     throw e;
+    //   }
+    // };
     this.getBalances = async function (filter?: any) {
       const tag = `${TAG} | getBalances | `;
       try {
         console.log('filter: ', filter);
         if (!this.assets || this.assets.length === 0) await this.getAssets();
-        const assetDetailsMap = this.assets;
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
         console.log('this.blockchains: ', this.blockchains);
@@ -1034,9 +1267,6 @@ export class SDK {
                     balanceString.ref = balanceString.context + caip;
                     balanceString.identifier = caipToThorchain(caip, balance.ticker);
                     balanceString.networkId = caipToNetworkId(caip);
-                    balanceString.address = balance.address;
-                    if (balanceString.address && balanceString.address.indexOf('bitcoincash:') > -1)
-                      balanceString.address = balanceString.address.replace('bitcoincash:', '');
                     balanceString.symbol = balance.symbol;
                     balanceString.chain = balance.chain;
                     balanceString.ticker = balance.ticker;
@@ -1048,12 +1278,39 @@ export class SDK {
                       console.error("invalid balance! doesn't have toFixed: ", balance);
                       throw Error('Invalid balance!');
                     }
-                    let assetInfo = assetDetailsMap.filter(
+                    //update asset
+                    // Update the asset in the assetsMap
+                    let assetInMap = this.assetsMap.get(caip.toLowerCase());
+                    if (assetInMap) {
+                      if (!assetInMap.balances) {
+                        assetInMap.balances = [];
+                      }
+                      assetInMap.balances.push(balanceString);
+                      this.assetsMap.set(caip.toLowerCase(), assetInMap);
+                    }
+
+                    // Update the asset in the assets array
+                    const assetIndex = this.assets.findIndex(
+                      (asset: any) => asset.caip.toLowerCase() === caip.toLowerCase(),
+                    );
+                    if (assetIndex !== -1) {
+                      if (!this.assets[assetIndex].balances) {
+                        this.assets[assetIndex].balances = [];
+                      }
+                      this.assets[assetIndex].balances.push(balanceString);
+                    }
+                    //console.log('assetInfo: ', assetInfo);
+                    let assetInfo = this.assets.filter(
                       (e: any) => e.caip.toLowerCase() === caip.toLowerCase(),
                     );
                     assetInfo = assetInfo[0];
                     //console.log('assetInfo: ', assetInfo);
-                    balances.push({ ...assetInfo, ...balanceString });
+                    let balanceExists: any = false;
+                    if (this.assets[assetIndex])
+                      balanceExists = this.assets[assetIndex].balances.some(
+                        (b: any) => b.ref === balanceString.ref,
+                      );
+                    if (!balanceExists) balances.push({ ...assetInfo, ...balanceString });
                   } else {
                     console.error('Failed to get caip for balance: ', balance);
                   }
@@ -1066,6 +1323,9 @@ export class SDK {
           }
         }
         console.log('Pubkeys: ', this.pubkeys);
+        balances = balances.filter(
+          (balance, index, self) => index === self.findIndex((b) => b.ref === balance.ref),
+        );
         console.log('PRE-register balances: ', balances);
         const register: any = {
           username: this.username,
@@ -1099,17 +1359,16 @@ export class SDK {
           //update assets
           this.assets = this.assets.map((asset: any) => {
             const caipKey = asset.caip;
-            const balance = this.balances.find(
+            const balances = this.balances.filter(
               (b: any) => b.caip.toLowerCase() === caipKey.toLowerCase(),
             );
 
-            if (balance) {
+            if (balances) {
               //console.log('MATCH balance: ', balance);
               // If a matching balance is found, create a new asset object with updated data
               const updatedAsset = {
                 ...asset,
-                balance: balance.balance,
-                valueUsd: balance.valueUsd,
+                balances,
               };
               //console.log('updatedAsset: ', updatedAsset);
               // Update the assetsMap with the new asset data
@@ -1123,11 +1382,12 @@ export class SDK {
           this.assets.sort((a, b) => b.valueUsd - a.valueUsd);
           this.balances.sort((a, b) => b.valueUsd - a.valueUsd);
           this.events.emit('SET_BALANCES', this.balances);
-          if (this.balances.length > 0) {
-            this.setContext(this.balances[0].context);
-            this.setAssetContext(this.balances[0]);
-            if (this.balances[1]) this.setOutboundAssetContext(this.balances[1]);
-          }
+          console.log('init: this.balances: ', this.balances.length);
+          // if (this.balances.length > 0) {
+          //   this.setContext(this.balances[0].context);
+          //   this.setAssetContext(this.balances[0]);
+          //   if (this.balances[1]) this.setOutboundAssetContext(this.balances[1]);
+          // }
         }
 
         return true;
@@ -1173,61 +1433,86 @@ export class SDK {
     this.setAssetContext = async function (asset: any) {
       const tag = `${TAG} | setAssetContext | `;
       try {
-        if (!asset.caip) {
-          console.error('Invalid asset caip is required!');
-          throw Error('Invalid asset caip is required!');
+        //accept null
+        if (!asset) {
+          this.assetContext = null;
+          return;
         }
-        //get verbose info
-        if (!this.assets || this.assets.length === 0) await this.getAssets();
-        //
+        if (!asset.caip) throw Error('Invalid Asset! missing caip!');
+        let assetInfo = this.assetsMap.get(asset.caip);
+        //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        //console.log('priceData: ', priceData);
-
-        let allAssets = this.assets;
-        let assetInfo = allAssets.find(
-          (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
+        if (priceData) assetInfo = { ...assetInfo, ...priceData };
+        const balances = this.balances.filter(
+          (b: any) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
         );
-        const balanceObj = this.balances.find(
-          (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        const pubkeys = this.pubkeys.filter((pubkey: any) =>
+          pubkey.networks.includes(asset.networkId),
         );
-        //console.log('balanceObj: ', balanceObj);
-        const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-        const priceUsd = priceData.priceUsd || 0;
-        const context = balanceObj ? balanceObj.context : 'external';
-        const balance = balanceObj ? balanceObj.balance : '';
+        assetInfo.balances = balances;
+        assetInfo.pubkeys = pubkeys;
+        this.events.emit('SET_ASSET_CONTEXT', assetInfo);
+        this.assetContext = assetInfo;
+        return { success: true };
 
-        // Condense the assetIdSearch assignment
-        let assetIdSearch = asset.networkId.includes('eip155') ? 'eip155:1' : asset.networkId;
-
-        // Attempt to find a corresponding pubkey object that includes the asset's networkId
-        const pubkeyObj = this.pubkeys.find((pubkey: any) =>
-          pubkey.networks.includes(assetIdSearch),
-        );
-        //console.log('pubkeyObj: ', pubkeyObj);
-
-        // Extract the pubkey value if the pubkeyObj is found
-        const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-        // Set the asset's address to pubkey.master or pubkey.address if available
-        const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
-        //console.log('assetInfo: ', assetInfo);
-        //console.log('valueUsd: ', valueUsd);
-        //console.log('priceUsd: ', priceUsd);
-        //console.log('context: ', context);
-        //console.log('balance: ', balance);
-        //console.log('pubkey: ', pubkey);
-        //console.log('address: ', address);
-
-        this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
-        this.events.emit('SET_ASSET_CONTEXT', {
-          ...assetInfo,
-          valueUsd,
-          priceUsd,
-          context,
-          balance,
-          pubkey,
-          address,
-        });
+        // //validate asset before switching
+        // if (!asset.caip) {
+        //   console.error('**** Invalid asset caip is required!', asset);
+        //   throw Error('setAssetContext Invalid asset caip is required!');
+        // }
+        // //get verbose info
+        // if (!this.assets || this.assets.length === 0) await this.getAssets();
+        // //
+        // let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        // priceData = priceData.data || {};
+        // console.log('priceData: ', priceData);
+        //
+        // let allAssets = this.assets;
+        // let assetInfo = allAssets.find(
+        //   (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        // );
+        // const balanceObj = this.balances.find(
+        //   (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        // );
+        // //console.log('balanceObj: ', balanceObj);
+        // const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        // const priceUsd = priceData.priceUsd || 0;
+        // const context = balanceObj ? balanceObj.context : 'external';
+        // const balance = balanceObj ? balanceObj.balance : '';
+        //
+        // // Condense the assetIdSearch assignment
+        // let assetIdSearch = asset.networkId.includes('eip155') ? 'eip155:1' : asset.networkId;
+        //
+        // // Attempt to find a corresponding pubkey object that includes the asset's networkId
+        // const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+        //   pubkey.networks.includes(assetIdSearch),
+        // );
+        // //console.log('pubkeyObj: ', pubkeyObj);
+        //
+        // // Extract the pubkey value if the pubkeyObj is found
+        // const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+        // // Set the asset's address to pubkey.master or pubkey.address if available
+        // const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        // //console.log('assetInfo: ', assetInfo);
+        // //console.log('valueUsd: ', valueUsd);
+        // //console.log('priceUsd: ', priceUsd);
+        // //console.log('context: ', context);
+        // //console.log('balance: ', balance);
+        // //console.log('pubkey: ', pubkey);
+        // //console.log('address: ', address);
+        //
+        // this.assetContext = { ...assetInfo, valueUsd, priceUsd, context, balance, pubkey, address };
+        // this.events.emit('SET_ASSET_CONTEXT', {
+        //   ...assetInfo,
+        //   valueUsd,
+        //   priceUsd,
+        //   context,
+        //   balance,
+        //   pubkey,
+        //   address,
+        // });
         return { success: true };
       } catch (e) {
         console.error(tag, 'e: ', e);
@@ -1237,56 +1522,82 @@ export class SDK {
     this.setOutboundAssetContext = async function (asset: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
-        if (!asset || !asset.caip) {
-          console.error('Invalid asset caip is required!');
-          throw Error('Invalid asset caip is required!');
+        //accept null
+        if (!asset) {
+          this.outboundAssetContext = null;
+          return;
         }
+        if (!asset.caip) throw Error('Invalid Asset! missing caip!');
+        let assetInfo = this.assetsMap.get(asset.caip);
+        if (assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
+        //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
-        console.log('priceData: ', priceData);
-        if (asset && this.outboundAssetContext !== asset) {
-          if (!this.assets || this.assets.length === 0) await this.getAssets();
-          let allAssets = this.assets;
-          let assetInfo = allAssets.find(
-            (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
-          );
-          const balanceObj = this.balances.find(
-            (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
-          );
-          const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
-          const priceUsd = priceData.priceUsd || 0;
-          const context = balanceObj ? balanceObj.context : 'external';
-          const balance = balanceObj ? balanceObj.balance : '';
-          // Attempt to find a corresponding pubkey object that includes the asset's networkId
-          const pubkeyObj = this.pubkeys.find((pubkey: any) =>
-            pubkey.networks.includes(asset.networkId),
-          );
-          // Extract the pubkey value if the pubkeyObj is found
-          const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
-          // Set the asset's address to pubkey.master or pubkey.address if available
-          const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
+        if (priceData) assetInfo = { ...assetInfo, ...priceData };
+        const balances = this.balances.filter(
+          (b: any) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
+        );
+        const pubkeys = this.pubkeys.filter((pubkey: any) =>
+          pubkey.networks.includes(asset.networkId),
+        );
+        assetInfo.balances = balances;
+        assetInfo.pubkeys = pubkeys;
+        this.events.emit('SET_ASSET_CONTEXT', assetInfo);
+        this.outboundAssetContext = assetInfo;
+        return { success: true };
 
-          this.outboundAssetContext = {
-            ...assetInfo,
-            valueUsd,
-            context,
-            priceUsd,
-            balance,
-            pubkey,
-            address,
-          };
-          this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', {
-            ...assetInfo,
-            valueUsd,
-            priceUsd,
-            context,
-            balance,
-            pubkey,
-            address,
-          });
-          return { success: true };
-        }
-        return { success: false, error: `already asset context=${asset}` };
+        // console.log(tag, 'setOutboundAssetContext: ', asset);
+        // if (!asset || !asset.caip) {
+        //   console.error('**** 8 ** Invalid asset caip is required!', asset);
+        //   throw Error('setOutboundAssetContext Invalid asset caip is required!');
+        // }
+        // let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        // priceData = priceData.data || {};
+        // // console.log('priceData: ', priceData);
+        // if (asset && this.outboundAssetContext !== asset) {
+        //   if (!this.assets || this.assets.length === 0) await this.getAssets();
+        //   let allAssets = this.assets;
+        //   let assetInfo = allAssets.find(
+        //     (a: any) => a.caip.toLowerCase() === asset.caip.toLowerCase(),
+        //   );
+        //   const balanceObj = this.balances.find(
+        //     (balance: any) => balance.caip.toLowerCase() === asset.caip.toLowerCase(),
+        //   );
+        //   const valueUsd = balanceObj ? parseFloat(balanceObj.valueUsd) : 0;
+        //   const priceUsd = priceData.priceUsd || 0;
+        //   const context = balanceObj ? balanceObj.context : 'external';
+        //   const balance = balanceObj ? balanceObj.balance : '';
+        //   // Attempt to find a corresponding pubkey object that includes the asset's networkId
+        //   const pubkeyObj = this.pubkeys.find((pubkey: any) =>
+        //     pubkey.networks.includes(asset.networkId),
+        //   );
+        //   // Extract the pubkey value if the pubkeyObj is found
+        //   const pubkey = pubkeyObj ? pubkeyObj.pubkey : null;
+        //   // Set the asset's address to pubkey.master or pubkey.address if available
+        //   const address = pubkeyObj ? pubkeyObj.master || pubkeyObj.address : null;
+        //
+        //   this.outboundAssetContext = {
+        //     ...assetInfo,
+        //     valueUsd,
+        //     context,
+        //     priceUsd,
+        //     balance,
+        //     pubkey,
+        //     address,
+        //   };
+        //   this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', {
+        //     ...assetInfo,
+        //     valueUsd,
+        //     priceUsd,
+        //     context,
+        //     balance,
+        //     pubkey,
+        //     address,
+        //   });
+        //   return { success: true };
+        // }
+        // return { success: false, error: `already asset context=${asset}` };
       } catch (e) {
         console.error(tag, 'e: ', e);
         throw e;

@@ -338,6 +338,55 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
+  e2e/explore/e2e-blockchains:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: latest
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: latest
+        version: 9.2.21(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/lp/e2e-lp-cacao-dash:
     dependencies:
       '@coinmasters/core':
@@ -362,11 +411,11 @@ importers:
         specifier: ^8.1.31
         version: 8.3.1(@types/node@20.11.24)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.21
-        version: 9.2.23
+        specifier: latest
+        version: 9.2.26
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.15(@types/node@20.11.24)
+        specifier: latest
+        version: 9.2.21(@types/node@20.11.24)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.24
@@ -417,8 +466,8 @@ importers:
         specifier: ^9.2.25
         version: 9.2.26
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.16(@types/node@20.11.30)
+        specifier: latest
+        version: 9.2.21(@types/node@20.11.30)
       '@types/node':
         specifier: ^20.10.4
         version: 20.11.30
@@ -1369,6 +1418,104 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/synths/e2e-deposit-rune:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.13
+        version: 9.2.21(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
+  e2e/synths/e2e-withdrawal-rune:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:^
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keepkey
+      '@coinmasters/wallet-keystore':
+        specifier: workspace:*
+        version: link:../../../packages/wallets/keystore
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.1.31
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.13
+        version: 9.2.21(@types/node@20.11.30)
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/transfers/e2e-transfer-arbitrum:
     dependencies:
       '@coinmasters/core':
@@ -1395,6 +1542,9 @@ importers:
       '@pioneer-platform/pioneer-caip':
         specifier: latest
         version: 9.2.22
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.19
+        version: 9.2.21(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -1494,8 +1644,8 @@ importers:
         specifier: latest
         version: 9.2.22
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.13
-        version: 9.2.13(@types/node@20.10.4)
+        specifier: ^9.2.21
+        version: 9.2.21(@types/node@20.10.4)
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
@@ -2239,6 +2389,61 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
 
+  e2e/wallets/intergration-ai:
+    dependencies:
+      '@coinmasters/core':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/core
+      '@coinmasters/pioneer-db':
+        specifier: workspace:*
+        version: link:../../../packages/pioneer/pioneer-db
+      '@coinmasters/pioneer-sdk':
+        specifier: workspace:^
+        version: link:../../../packages/pioneer/pioneer-sdk
+      '@coinmasters/types':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/types
+      '@coinmasters/wallet-keepkey':
+        specifier: workspace:^
+        version: link:../../../packages/wallets/keepkey
+      '@pioneer-platform/loggerdog':
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
+      '@pioneer-platform/pioneer-coins':
+        specifier: ^9.2.16
+        version: 9.2.21(@types/node@20.11.30)
+      '@pioneer-platform/pioneer-ollama':
+        specifier: ^0.0.3
+        version: 0.0.3
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.30
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
+      dotenv:
+        specifier: ^6.2.0
+        version: 6.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      wait-promise:
+        specifier: ^0.4.1
+        version: 0.4.1
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@coinmasters/helpers':
+        specifier: workspace:*
+        version: link:../../../packages/swapkit/helpers
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+
   e2e/wallets/intergration-coins:
     dependencies:
       '@coinmasters/core':
@@ -2640,6 +2845,46 @@ importers:
       idb:
         specifier: ^8.0.0
         version: 8.0.0
+    devDependencies:
+      '@coinmasters/types':
+        specifier: workspace:*
+        version: link:../../swapkit/types
+      '@internal/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+      '@types/bn.js':
+        specifier: 5.1.5
+        version: 5.1.5
+      '@types/crypto-js':
+        specifier: 4.2.1
+        version: 4.2.1
+      '@types/elliptic':
+        specifier: 6.4.18
+        version: 6.4.18
+      '@types/long':
+        specifier: 4.0.2
+        version: 4.0.2
+      '@types/node':
+        specifier: 20.10.0
+        version: 20.10.0
+      '@types/tiny-secp256k1':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@vitest/coverage-istanbul':
+        specifier: 0.34.6
+        version: 0.34.6(vitest@0.34.6)
+      vite:
+        specifier: 4.5.0
+        version: 4.5.0(@types/node@20.10.0)
+      vitest:
+        specifier: 0.34.6
+        version: 0.34.6
+
+  packages/pioneer/pioneer-db-sql:
+    dependencies:
+      idb:
+        specifier: ^8.0.0
+        version: 8.0.0
       sqlite:
         specifier: ^5.1.1
         version: 5.1.1
@@ -2696,8 +2941,8 @@ importers:
         specifier: ^9.2.26
         version: 9.2.26
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.15(@types/node@18.15.13)
+        specifier: ^9.2.21
+        version: 9.2.21(@types/node@18.15.13)
       '@types/node':
         specifier: 18.15.13
         version: 18.15.13
@@ -2775,14 +3020,14 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@20.10.0)
       '@pioneer-platform/pioneer-caip':
-        specifier: ^9.2.25
-        version: 9.2.25
+        specifier: latest
+        version: 9.2.26
       '@pioneer-platform/pioneer-client':
         specifier: ^9.2.5
         version: 9.2.5
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.16
-        version: 9.2.16(@types/node@20.10.0)
+        specifier: ^9.2.21
+        version: 9.2.21(@types/node@20.10.0)
       '@pioneer-platform/pioneer-discovery':
         specifier: ^0.0.7
         version: 0.0.7
@@ -3275,9 +3520,6 @@ importers:
       '@scure/bip39':
         specifier: 1.2.1
         version: 1.2.1
-      bchaddrjs:
-        specifier: 0.5.2
-        version: 0.5.2
       bitcoinjs-lib:
         specifier: 6.1.5
         version: 6.1.5
@@ -3300,9 +3542,6 @@ importers:
       '@internal/config':
         specifier: workspace:*
         version: link:../../../internal/config
-      '@types/bchaddrjs':
-        specifier: 0.4.0
-        version: 0.4.0
       '@types/node':
         specifier: 20.5.9
         version: 20.5.9
@@ -3380,14 +3619,11 @@ importers:
         specifier: ^8.1.31
         version: 8.1.31(@types/node@20.11.30)
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.15(@types/node@20.11.30)
+        specifier: latest
+        version: 9.2.21(@types/node@20.11.30)
       '@types/bchaddrjs':
         specifier: 0.4.0
         version: 0.4.0
-      bchaddrjs:
-        specifier: 0.5.2
-        version: 0.5.2
       bitcoinjs-lib:
         specifier: 5.2.0
         version: 5.2.0
@@ -3524,8 +3760,8 @@ importers:
         specifier: 6.28.0
         version: 6.28.0
       '@pioneer-platform/pioneer-coins':
-        specifier: ^9.2.15
-        version: 9.2.15(@types/node@20.10.0)
+        specifier: latest
+        version: 9.2.21(@types/node@20.10.0)
       ripemd160:
         specifier: 2.0.2
         version: 2.0.2
@@ -3633,8 +3869,8 @@ importers:
         specifier: 0.31.1
         version: 0.31.1
       '@pioneer-platform/pioneer-coins':
-        specifier: 9.2.15
-        version: 9.2.15(@types/node@20.11.30)
+        specifier: latest
+        version: 9.2.21(@types/node@20.11.30)
       '@shapeshiftoss/hdwallet-core':
         specifier: ^1.50.5
         version: 1.50.5
@@ -6149,7 +6385,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm64@0.20.2:
@@ -6174,7 +6409,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm@0.20.2:
@@ -6199,7 +6433,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-x64@0.20.2:
@@ -6224,7 +6457,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.20.2:
@@ -6249,7 +6481,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.20.2:
@@ -6274,7 +6505,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.20.2:
@@ -6299,7 +6529,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.20.2:
@@ -6324,7 +6553,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.20.2:
@@ -6349,7 +6577,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.20.2:
@@ -6374,7 +6601,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.20.2:
@@ -6399,7 +6625,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.20.2:
@@ -6424,7 +6649,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.20.2:
@@ -6449,7 +6673,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.20.2:
@@ -6474,7 +6697,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.20.2:
@@ -6499,7 +6721,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.20.2:
@@ -6524,7 +6745,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.20.2:
@@ -6549,7 +6769,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.20.2:
@@ -6574,7 +6793,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.20.2:
@@ -6599,7 +6817,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.20.2:
@@ -6624,7 +6841,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.20.2:
@@ -6649,7 +6865,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.20.2:
@@ -6674,7 +6889,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.20.2:
@@ -8527,6 +8741,18 @@ packages:
       - '@types/node'
     dev: false
 
+  /@pioneer-platform/loggerdog@8.3.1(@types/node@13.13.52):
+    resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
+    dependencies:
+      os: 0.1.2
+      ts-node: 10.9.2(@types/node@13.13.52)(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
   /@pioneer-platform/loggerdog@8.3.1(@types/node@15.14.9):
     resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
     dependencies:
@@ -8756,28 +8982,6 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/pioneer-coins@9.2.15(@types/node@18.15.13):
-    resolution: {integrity: sha512-2uxZJ2H1vLNPsgXSklwjuNgnUzzZfbkM/HHz1XG51ZwceVwrrDTBetoBeH4gihLK0OKIFO7flVo7PRA9+s2u4Q==}
-    dependencies:
-      '@pioneer-platform/loggerdog': 8.3.1(@types/node@18.15.13)
-      bignumber.js: 9.1.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-    dev: false
-
-  /@pioneer-platform/pioneer-coins@9.2.15(@types/node@20.10.0):
-    resolution: {integrity: sha512-2uxZJ2H1vLNPsgXSklwjuNgnUzzZfbkM/HHz1XG51ZwceVwrrDTBetoBeH4gihLK0OKIFO7flVo7PRA9+s2u4Q==}
-    dependencies:
-      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
-      bignumber.js: 9.1.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-    dev: false
-
   /@pioneer-platform/pioneer-coins@9.2.15(@types/node@20.10.4):
     resolution: {integrity: sha512-2uxZJ2H1vLNPsgXSklwjuNgnUzzZfbkM/HHz1XG51ZwceVwrrDTBetoBeH4gihLK0OKIFO7flVo7PRA9+s2u4Q==}
     dependencies:
@@ -8833,18 +9037,6 @@ packages:
       - '@types/node'
     dev: false
 
-  /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.10.0):
-    resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
-    dependencies:
-      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
-      bignumber.js: 9.1.2
-      bs58check: 3.0.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-    dev: false
-
   /@pioneer-platform/pioneer-coins@9.2.16(@types/node@20.11.24):
     resolution: {integrity: sha512-9VgXFgZFW89vyfVCsEnVgiEqh7p7jH8iGUS+awcrjbHHqnMi5RCElN5rIG/6kyknA1vx62LHdvVM2KsH+ARZYA==}
     dependencies:
@@ -8893,8 +9085,90 @@ packages:
       - '@types/node'
     dev: false
 
+  /@pioneer-platform/pioneer-coins@9.2.21(@types/node@18.15.13):
+    resolution: {integrity: sha512-G3m2SzhyAKwyuZmCAay/bYsu7eCXXmR/kZmfeOM/lv0B0m0txeaR3pQhvzGt515FiqbJze0QXUNxZyZ93X/IBw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@18.15.13)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.21(@types/node@20.10.0):
+    resolution: {integrity: sha512-G3m2SzhyAKwyuZmCAay/bYsu7eCXXmR/kZmfeOM/lv0B0m0txeaR3pQhvzGt515FiqbJze0QXUNxZyZ93X/IBw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.0)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.21(@types/node@20.10.4):
+    resolution: {integrity: sha512-G3m2SzhyAKwyuZmCAay/bYsu7eCXXmR/kZmfeOM/lv0B0m0txeaR3pQhvzGt515FiqbJze0QXUNxZyZ93X/IBw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.10.4)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.21(@types/node@20.11.24):
+    resolution: {integrity: sha512-G3m2SzhyAKwyuZmCAay/bYsu7eCXXmR/kZmfeOM/lv0B0m0txeaR3pQhvzGt515FiqbJze0QXUNxZyZ93X/IBw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.24)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
+  /@pioneer-platform/pioneer-coins@9.2.21(@types/node@20.11.30):
+    resolution: {integrity: sha512-G3m2SzhyAKwyuZmCAay/bYsu7eCXXmR/kZmfeOM/lv0B0m0txeaR3pQhvzGt515FiqbJze0QXUNxZyZ93X/IBw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@20.11.30)
+      bignumber.js: 9.1.2
+      bs58check: 3.0.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+    dev: false
+
   /@pioneer-platform/pioneer-discovery@0.0.7:
     resolution: {integrity: sha512-6GPVUDhc6XQBGhMHpopo2Qlp6+HZ13yBQojb/Trxu8spSKorh7+geVIf1oZXC4l3tstBKKqW04vWTn4lLUs/pg==}
+    dev: false
+
+  /@pioneer-platform/pioneer-ollama@0.0.3:
+    resolution: {integrity: sha512-Z/1+cBRYCCoKyVBrYXFiz2kk3NSWeIq5Tc+KNHYUOK0fCkHoJGvUein69NUyUb7JUoBOufVkEOwrnS9kNGViVw==}
+    dependencies:
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@13.13.52)
+      '@types/node': 13.13.52
+      axios: 0.19.2
+      dotenv: 8.6.0
+      fs-extra: 9.1.0
+      nodemon: 2.0.22
+      ollama: 0.5.1
+      openai: 3.3.0
+      request: 2.88.2
+      ts-node: 8.10.2(typescript@5.2.2)
+      typescript: 5.2.2
+      wait-promise: 0.4.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - debug
+      - supports-color
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -9509,8 +9783,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@shapeshiftoss/hdwallet-core@1.53.6:
-    resolution: {integrity: sha512-jjcAGdoNImd0sPIEqGkh/2xL9TgQKZk7g5Ab5gdC4CZsgdrRXV9xk7HdwgMd/3cDdZp09rGTWEFsL9gUSkLmew==}
+  /@shapeshiftoss/hdwallet-core@1.54.0:
+    resolution: {integrity: sha512-86HWxMXjEd87/Iw//M3xd+I8uDRIgmIauubdXzY8HpHytV3H0a1IO5cfB3dfMClE6OVWndmKjKONwcSN8uYtUw==}
     dependencies:
       '@shapeshiftoss/proto-tx-builder': 0.8.0
       eip-712: 1.0.0
@@ -10774,7 +11048,7 @@ packages:
   /@types/chai-subset@1.3.3:
     resolution: {integrity: sha512-frBecisrNGz+F4T6bcc+NLeolfiojh5FxW2klu669+8BARtyQv2C/GkNW6FUodVe4BroGMP/wER/YDGc7rEllw==}
     dependencies:
-      '@types/chai': 4.3.12
+      '@types/chai': 4.3.14
     dev: true
 
   /@types/chai-subset@1.3.5:
@@ -10966,6 +11240,10 @@ packages:
   /@types/node@12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
     dev: true
+
+  /@types/node@13.13.52:
+    resolution: {integrity: sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==}
+    dev: false
 
   /@types/node@15.14.9:
     resolution: {integrity: sha512-qjd88DrCxupx/kJD5yQgZdcYKZKSIGBVDIBE1/LTGcNm3d2Np/jxojkdePDdfnBHJc5W7vSMpbJ1aB7p/Py69A==}
@@ -12380,6 +12658,7 @@ packages:
   /are-we-there-yet@3.0.1:
     resolution: {integrity: sha512-QZW4EDmGwlYur0Yyf/b2uGucHQMa8aFUP7eu9ddR73vvhFyt4V0Vl3QHPcTNJ8l6qYOBdxgXdnBXQrHilfRQBg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
     requiresBuild: true
     dependencies:
       delegates: 1.0.0
@@ -12664,6 +12943,15 @@ packages:
   /axe-core@4.7.0:
     resolution: {integrity: sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==}
     engines: {node: '>=4'}
+
+  /axios@0.19.2:
+    resolution: {integrity: sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==}
+    deprecated: Critical security vulnerability fixed in v0.21.1. For more information, see https://github.com/axios/axios/pull/3410
+    dependencies:
+      follow-redirects: 1.5.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /axios@0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
@@ -14058,7 +14346,18 @@ packages:
       ms: 2.0.0
     dev: false
 
-  /debug@3.2.7:
+  /debug@3.1.0:
+    resolution: {integrity: sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.0.0
+    dev: false
+
+  /debug@3.2.7(supports-color@5.5.0):
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
     peerDependencies:
       supports-color: '*'
@@ -14067,6 +14366,7 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.3
+      supports-color: 5.5.0
 
   /debug@4.3.4(supports-color@8.1.1):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -14341,7 +14641,6 @@ packages:
   /dotenv@8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
-    dev: true
 
   /drbg.js@1.0.1:
     resolution: {integrity: sha512-F4wZ06PvqxYLFEZKkFxTDcns9oFNk34hvmJSEwdzsxVQ8YI5YaxtACgQatkYgv2VI2CFkUd2Y+xosPQnHv809g==}
@@ -14892,7 +15191,6 @@ packages:
       '@esbuild/win32-arm64': 0.19.3
       '@esbuild/win32-ia32': 0.19.3
       '@esbuild/win32-x64': 0.19.3
-    dev: true
 
   /esbuild@0.20.2:
     resolution: {integrity: sha512-WdOOppmUNU+IbZ0PaDiTst80zjnrOkyJNHoKupIcVyU8Lvla3Ugx94VzkQ32Ijqd7UhHJy75gNWDMUekcrSJ6g==}
@@ -15030,7 +15328,7 @@ packages:
   /eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       is-core-module: 2.13.1
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -15080,7 +15378,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/parser': 6.12.0(eslint@8.57.0)(typescript@5.2.2)
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.12.0)(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0)
@@ -15109,7 +15407,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/parser': 6.12.0(eslint@8.54.0)(typescript@5.2.2)
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       eslint: 8.54.0
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
@@ -15183,7 +15481,7 @@ packages:
       array.prototype.findlastindex: 1.2.5
       array.prototype.flat: 1.3.2
       array.prototype.flatmap: 1.3.2
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       doctrine: 2.1.0
       eslint: 8.54.0
       eslint-import-resolver-node: 0.3.9
@@ -15218,7 +15516,7 @@ packages:
       array.prototype.findlastindex: 1.2.5
       array.prototype.flat: 1.3.2
       array.prototype.flatmap: 1.3.2
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       doctrine: 2.1.0
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
@@ -16050,6 +16348,15 @@ packages:
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
 
+  /follow-redirects@1.5.10:
+    resolution: {integrity: sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==}
+    engines: {node: '>=4.0'}
+    dependencies:
+      debug: 3.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -16222,6 +16529,7 @@ packages:
   /gauge@4.0.4:
     resolution: {integrity: sha512-f9m+BEN5jkg6a0fZjleidjN51VE1X+mPFQ2DJ0uv1V39oCLCbsGe6yjbBnp7eK7z/+GAon99a3nHuqbuuthyPg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
     requiresBuild: true
     dependencies:
       aproba: 2.0.0
@@ -16897,6 +17205,10 @@ packages:
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
     requiresBuild: true
+
+  /ignore-by-default@1.0.1:
+    resolution: {integrity: sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==}
+    dev: false
 
   /ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
@@ -18754,6 +19066,23 @@ packages:
       vm-browserify: 1.1.2
     dev: true
 
+  /nodemon@2.0.22:
+    resolution: {integrity: sha512-B8YqaKMmyuCO7BowF1Z1/mkPqLk6cs/l63Ojtd6otKjMx47Dq1utxfRxcavH1I7VSaL8n5BUaoutadnsX3AAVQ==}
+    engines: {node: '>=8.10.0'}
+    hasBin: true
+    dependencies:
+      chokidar: 3.6.0
+      debug: 3.2.7(supports-color@5.5.0)
+      ignore-by-default: 1.0.1
+      minimatch: 3.1.2
+      pstree.remy: 1.1.8
+      semver: 5.7.2
+      simple-update-notifier: 1.1.0
+      supports-color: 5.5.0
+      touch: 3.1.1
+      undefsafe: 2.0.5
+    dev: false
+
   /nofilter@3.1.0:
     resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
     engines: {node: '>=12.19'}
@@ -18808,6 +19137,7 @@ packages:
   /npmlog@6.0.2:
     resolution: {integrity: sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
     requiresBuild: true
     dependencies:
       are-we-there-yet: 3.0.1
@@ -18919,6 +19249,12 @@ packages:
       node-fetch-native: 1.4.1
       ufo: 1.3.2
 
+  /ollama@0.5.1:
+    resolution: {integrity: sha512-mAiCHxdvu63E8EFopz0y82QG7rGfYmKAWgmjG2C7soiRuz/Sj3r/ebvCOp+jasiCubqUPE0ZThKT5LR6wrrPtA==}
+    dependencies:
+      whatwg-fetch: 3.6.20
+    dev: false
+
   /on-exit-leak-free@0.2.0:
     resolution: {integrity: sha512-dqaz3u44QbRXQooZLTUKU41ZrzYrcvLISVgbrzbyCMxpmSLJvZ3ZamIJIZ29P6OhZIkNIQKosdeM6t1LYbA9hg==}
 
@@ -18939,6 +19275,15 @@ packages:
     dependencies:
       is-docker: 2.2.1
       is-wsl: 2.2.0
+    dev: false
+
+  /openai@3.3.0:
+    resolution: {integrity: sha512-uqxI/Au+aPRnsaQRe8CojU0eCR7I0mBiKjD3sNMzY6DaC1ZVrc85u98mtJW6voDug8fgGN+DIZmTDxTthxb7dQ==}
+    dependencies:
+      axios: 0.26.1
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /optionator@0.8.3:
@@ -19325,7 +19670,7 @@ packages:
     resolution: {integrity: sha512-nN7pYi0AQqJnoLPC9eHFQ8AcyaixBUOwvqc5TDnIKCMEE6I0y8P7OKA7fPexsXGCGxQDl/cmrLAp26LhcwxZ4A==}
     dependencies:
       jsonc-parser: 3.2.0
-      mlly: 1.5.0
+      mlly: 1.6.1
       pathe: 1.1.2
 
   /pngjs@5.0.0:
@@ -19983,6 +20328,10 @@ packages:
 
   /psl@1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
+    dev: false
+
+  /pstree.remy@1.1.8:
+    resolution: {integrity: sha512-77DZwxQmxKnu3aR542U+X8FypNzbfJ+C5XQDk3uWjWxn6151aIMGthWYRXTqT1E5oJvg+ljaa2OJi+VfvCOQ8w==}
     dev: false
 
   /public-encrypt@4.0.3:
@@ -20944,6 +21293,11 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
+  /semver@7.0.0:
+    resolution: {integrity: sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==}
+    hasBin: true
+    dev: false
+
   /semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
     engines: {node: '>=10'}
@@ -21116,6 +21470,13 @@ packages:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
+    dev: false
+
+  /simple-update-notifier@1.1.0:
+    resolution: {integrity: sha512-VpsrsJSUcJEseSbMHkrsrAVSdvVS5I96Qo1QAQ4FxQ9wXFcB+pjj7FB7/us9+GcgfW4ziHtYMc1J0PLczb55mg==}
+    engines: {node: '>=8.10.0'}
+    dependencies:
+      semver: 7.0.0
     dev: false
 
   /size-limit@11.0.0:
@@ -21878,7 +22239,7 @@ packages:
       '@bithighlander/bitcoin-cash-js-lib': 5.2.1
       '@pioneer-platform/loggerdog': 8.3.1(@types/node@15.14.9)
       '@pioneer-platform/pioneer-coins': 8.1.90(@types/node@15.14.9)
-      '@shapeshiftoss/hdwallet-core': 1.53.6
+      '@shapeshiftoss/hdwallet-core': 1.54.0
       '@types/node': 15.14.9
       bip39: 3.1.0
       codeclimate-test-reporter: 0.5.1
@@ -22061,6 +22422,11 @@ packages:
     engines: {node: '>=0.6'}
     dev: true
 
+  /touch@3.1.1:
+    resolution: {integrity: sha512-r0eojU4bI8MnHr8c5bNo7lJDdI2qXlWWJk6a9EAFG7vbhTjElYhBVS3/miuE0uOuoLdb8Mc/rVfsmm6eo5o9GA==}
+    hasBin: true
+    dev: false
+
   /tough-cookie@2.5.0:
     resolution: {integrity: sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==}
     engines: {node: '>=0.8'}
@@ -22151,6 +22517,37 @@ packages:
   /ts-mixer@6.0.3:
     resolution: {integrity: sha512-k43M7uCG1AkTyxgnmI5MPwKoUvS/bRvLvUb7+Pgpdlmok8AoqmUaZxUUw8zKM5B1lqZrt41GjYgnvAi0fppqgQ==}
     requiresBuild: true
+    dev: false
+
+  /ts-node@10.9.2(@types/node@13.13.52)(typescript@5.2.2):
+    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: 5.2.2
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 13.13.52
+      acorn: 8.11.3
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.2.2
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
     dev: false
 
   /ts-node@10.9.2(@types/node@15.14.9)(typescript@5.2.2):
@@ -22459,6 +22856,21 @@ packages:
       make-error: 1.3.6
       typescript: 5.2.2
       v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: false
+
+  /ts-node@8.10.2(typescript@5.2.2):
+    resolution: {integrity: sha512-ISJJGgkIpDdBhWVu3jufsWpK3Rzo7bdiIXJjQc0ynKxVOVcg2oIrf2H2cejminGrptVc6q6/uynAHNCuWGbpVA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: 5.2.2
+    dependencies:
+      arg: 4.1.3
+      diff: 4.0.2
+      make-error: 1.3.6
+      source-map-support: 0.5.21
+      typescript: 5.2.2
       yn: 3.1.1
     dev: false
 
@@ -22862,6 +23274,10 @@ packages:
   /uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
 
+  /undefsafe@2.0.5:
+    resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
+    dev: false
+
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
@@ -23216,7 +23632,7 @@ packages:
       mlly: 1.6.1
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.2.2(@types/node@20.11.30)
+      vite: 5.0.2(@types/node@20.11.30)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -23668,7 +24084,6 @@ packages:
       rollup: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@5.2.2(@types/node@20.11.30):
     resolution: {integrity: sha512-FWZbz0oSdLq5snUI0b6sULbz58iXFXdvkZfZWR/F0ZJuKTSPO7v72QPXt6KqYeMFb0yytNp6kZosxJ96Nr/wDQ==}
@@ -24053,6 +24468,10 @@ packages:
       - utf-8-validate
     dev: false
 
+  /whatwg-fetch@3.6.20:
+    resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
+    dev: false
+
   /whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
     dependencies:
@@ -24408,3 +24827,7 @@ packages:
     optionalDependencies:
       commander: 9.5.0
     dev: true
+
+  /zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+    dev: false

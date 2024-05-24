@@ -1,5 +1,93 @@
 # @coinmasters/wallet-wc
 
+## 11.0.16
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.16
+  - @coinmasters/types@4.7.16
+  - @coinmasters/toolbox-evm@11.0.16
+
+## 11.0.15
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.15
+  - @coinmasters/types@4.7.15
+  - @coinmasters/toolbox-evm@11.0.15
+
+## 11.0.14
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.14
+  - @coinmasters/types@4.7.14
+  - @coinmasters/toolbox-evm@11.0.14
+
+## 11.0.13
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.13
+  - @coinmasters/types@4.7.13
+  - @coinmasters/toolbox-evm@11.0.13
+
+## 11.0.12
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.12
+  - @coinmasters/types@4.7.12
+  - @coinmasters/toolbox-evm@11.0.12
+
+## 11.0.11
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.11
+  - @coinmasters/types@4.7.11
+  - @coinmasters/toolbox-evm@11.0.11
+
+## 11.0.10
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.10
+  - @coinmasters/types@4.7.10
+  - @coinmasters/toolbox-evm@11.0.10
+
+## 11.0.9
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.9
+  - @coinmasters/types@4.7.9
+  - @coinmasters/toolbox-evm@11.0.9
+
 ## 11.0.8
 
 ### Patch Changes

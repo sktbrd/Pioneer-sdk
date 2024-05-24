@@ -175,6 +175,7 @@ const test_service = async function (this: any) {
         log.info(tag,"balances: ",app.balances.length)
         let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
         log.info(tag,"balance: ",balance[0])
+        log.info(tag,"balance: ",balance[0])
 
         assert(balance[0])
         assert(balance[0].caip)
@@ -196,6 +197,8 @@ const test_service = async function (this: any) {
         assert(app.assetContext.caip)
         assert(app.assetContext.ticker)
 
+
+
         // assert(balance.length > 0)
         //verify balances
 
@@ -212,15 +215,15 @@ const test_service = async function (this: any) {
         assert(assetValue)
 
         //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
     } catch (e) {

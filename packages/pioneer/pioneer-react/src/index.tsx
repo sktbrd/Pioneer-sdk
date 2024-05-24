@@ -15,6 +15,7 @@
                              A Product of the CoinMasters Guild
                                               - Highlander
 */
+'use client';
 // @ts-ignore
 import DB from '@coinmasters/pioneer-db';
 // @ts-ignore
@@ -64,6 +65,7 @@ const initialState: InitialState = {
   blockchains: [],
   balances: [],
   pubkeys: [],
+  assets: [],
   wallets: [],
   walletDescriptions: [],
   totalValueUsd: 0,
@@ -151,6 +153,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     case WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT:
       return { ...state, outboundPubkeyContext: action.payload };
 
+    case WalletActions.SET_ASSETS:
+      return { ...state, assets: action.payload };
+
     case WalletActions.SET_BLOCKCHAINS:
       return { ...state, blockchains: action.payload };
 
@@ -179,6 +184,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         blockchains: [],
         balances: [],
         pubkeys: [],
+        assets: [],
       };
 
     default:
@@ -448,8 +454,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
-      const blockchains: any = [];
-      const paths: any = [];
+      const blockchains: any = ['bip122:000000000019d6689c085ae165831e93'];
+      const paths: any = [''];
       const spec =
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
@@ -519,6 +525,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       dispatch({ type: WalletActions.SET_API, payload: api });
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
+      console.log('appInit.assets: ', appInit.assets);
+      // @ts-ignore
+      dispatch({ type: WalletActions.SET_ASSETS, payload: appInit.assets });
 
       // // @ts-ignore
       const { events } = appInit;
@@ -548,17 +557,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               console.log('pubkey: ', pubkey);
               let saved = await db.createPubkey(pubkey);
               console.log('SET_PUBKEYS saved pubkey: ', saved);
-            }
-          }
-
-          if (action === WalletActions.SET_BALANCES) {
-            console.log('SET_BALANCES setting balances: ', data);
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let i = 0; i < data.length; i++) {
-              let balance = data[i];
-              console.log('balance: ', balance);
-              let saved = await db.createBalance(balance);
-              console.log('SET_BALANCES saved balance: ', saved);
             }
           }
 

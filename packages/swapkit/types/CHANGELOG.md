@@ -1,5 +1,53 @@
 # @swapkit/types
 
+## 4.7.16
+
+### Patch Changes
+
+- bump
+
+## 4.7.15
+
+### Patch Changes
+
+- bump
+
+## 4.7.14
+
+### Patch Changes
+
+- bump
+
+## 4.7.13
+
+### Patch Changes
+
+- bump
+
+## 4.7.12
+
+### Patch Changes
+
+- bump
+
+## 4.7.11
+
+### Patch Changes
+
+- bump
+
+## 4.7.10
+
+### Patch Changes
+
+- bump
+
+## 4.7.9
+
+### Patch Changes
+
+- bump
+
 ## 4.7.8
 
 ### Patch Changes

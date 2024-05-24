@@ -11,9 +11,8 @@
     "@cosmjs/stargate": "0.31.1",
     "@keepkey/keepkey-sdk": "^0.2.55",
     "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-coins": "^9.2.15",
+    "@pioneer-platform/pioneer-coins": "latest",
     "@types/bchaddrjs": "0.4.0",
-    "bchaddrjs": "0.5.2",
     "bitcoinjs-lib": "5.2.0",
     "ethers": "^6.7.1"
   },
@@ -66,5 +65,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "13.0.8"
+  "version": "13.0.16"
 }

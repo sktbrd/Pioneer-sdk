@@ -9,6 +9,7 @@ export enum WalletActions {
   SET_CONTEXT_TYPE = 'SET_CONTEXT_TYPE',
   SET_INTENT = 'SET_INTENT',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
+  SET_ASSETS = 'SET_ASSETS',
   SET_BLOCKCHAIN_CONTEXT = 'SET_BLOCKCHAIN_CONTEXT',
   SET_PUBKEY_CONTEXT = 'SET_PUBKEY_CONTEXT',
   SET_OUTBOUND_CONTEXT = 'SET_OUTBOUND_CONTEXT',
@@ -43,6 +44,7 @@ export interface InitialState {
   blockchains: string[];
   balances: any[];
   pubkeys: any[];
+  assets: any[];
   wallets: any[];
   walletDescriptions: any[];
   totalValueUsd: number;
@@ -70,6 +72,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT; payload: string | null }
   | { type: WalletActions.SET_BLOCKCHAINS; payload: string[] }
   | { type: WalletActions.SET_BALANCES; payload: any[] }
+  | { type: WalletActions.SET_ASSETS; payload: any[] }
   | { type: WalletActions.SET_PUBKEYS; payload: any[] }
   | { type: WalletActions.ADD_WALLET; payload: any }
   | { type: WalletActions.RESET_STATE; payload: null };

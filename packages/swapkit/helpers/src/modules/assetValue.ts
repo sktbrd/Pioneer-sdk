@@ -131,19 +131,19 @@ export class AssetValue extends BigIntArithmetics {
 
   static fromStringSync(assetString: string, value: NumberPrimitives = 0) {
     const { isSynthetic, symbol, chain, isGasAsset, ticker, address } = getAssetInfo(assetString);
-    //console.log('getAssetInfo: ', { isSynthetic, symbol, chain, isGasAsset, ticker, address });
+    console.log('getAssetInfo: ', { isSynthetic, symbol, chain, isGasAsset, ticker, address });
     const {
       tax,
       decimal,
       identifier: tokenIdentifier,
     } = getStaticToken(assetString as unknown as TokenNames);
-    //console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
+    console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
     const parsedValue = safeValue(value, decimal);
-    //console.log('parsedValue: ', parsedValue);
+    console.log('parsedValue: ', parsedValue);
     let asset: AssetValue | undefined;
 
     if (tokenIdentifier) {
-      //console.log('tokenIdentifier is truthy'); // Indicates tokenIdentifier has a value considered true in a boolean context
+      console.log('tokenIdentifier is truthy'); // Indicates tokenIdentifier has a value considered true in a boolean context
       asset = new AssetValue({
         tax,
         decimal,
@@ -151,7 +151,7 @@ export class AssetValue extends BigIntArithmetics {
         value: parsedValue,
       });
     } else if (isSynthetic) {
-      //console.log('isSynthetic is true'); // Indicates the asset is synthetic
+      console.log('isSynthetic is true'); // Indicates the asset is synthetic
       asset = new AssetValue({
         tax,
         decimal: 8, // Synthetic assets use a fixed decimal value
@@ -244,6 +244,7 @@ export const getMinAmountByChain = (chain: Chain) => {
       return asset.set(1.00000001);
 
     case Chain.Base:
+    case Chain.Arbitrum:
     case Chain.Avalanche:
     case Chain.Ethereum:
       return asset.set(0.00000001);

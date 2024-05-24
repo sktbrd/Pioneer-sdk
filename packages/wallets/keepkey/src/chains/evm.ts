@@ -78,6 +78,11 @@ export class KeepKeySigner extends AbstractSigner {
     if (!data) throw new Error('Missing data');
 
     const isEIP1559 = maxFeePerGas && maxPriorityFeePerGas;
+    console.log('isEIP1559: ', isEIP1559);
+    console.log('maxFeePerGas: ', maxFeePerGas);
+    console.log('maxPriorityFeePerGas: ', maxPriorityFeePerGas);
+    console.log('gasPrice: ', gasPrice);
+
     if (isEIP1559 && !maxFeePerGas) throw new Error('Missing maxFeePerGas');
     if (isEIP1559 && !maxPriorityFeePerGas) throw new Error('Missing maxFeePerGas');
     if (!isEIP1559 && !gasPrice) throw new Error('Missing gasPrice');
@@ -90,10 +95,11 @@ export class KeepKeySigner extends AbstractSigner {
     const nonceHex = '0x' + nonceValue.toString(16);
 
     //fix bugged gasLimit
-    const fixBuggedGasLimit = (gasLimit: any): bigint => typeof gasLimit === 'bigint' ? gasLimit : BigInt(String(gasLimit).replace(/^0x0x/, '0x'));
+    const fixBuggedGasLimit = (gasLimit: any): bigint =>
+      typeof gasLimit === 'bigint' ? gasLimit : BigInt(String(gasLimit).replace(/^0x0x/, '0x'));
     gasLimit = fixBuggedGasLimit(gasLimit);
 
-    const input = {
+    const input: any = {
       gas: toHexString(BigInt(gasLimit)),
       addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
       from: this.address,
@@ -108,10 +114,10 @@ export class KeepKeySigner extends AbstractSigner {
             maxPriorityFeePerGas: toHexString(BigInt(maxPriorityFeePerGas?.toString() || '0')),
           }
         : {
-            gasPrice:
-              'gasPrice' in restTx ? toHexString(BigInt(gasPrice?.toString() || '0')) : undefined, // Fixed syntax error and structure here
+            gasPrice: toHexString(BigInt(gasPrice?.toString() || '0')), // Ensure gasPrice is converted correctly
           }),
     };
+    if (!input.maxFeePerGas && !input.gasPrice) throw Error('invalid must a gasPrice');
     console.log('KEEPKEY input: ', input);
     const responseSign = await this.sdk.eth.ethSignTransaction(input);
     console.log('KEEPKEY responseSign: ', input);

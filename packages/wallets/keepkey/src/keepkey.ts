@@ -255,6 +255,7 @@ const connectKeepkey =
     await checkAndLaunch();
 
     if (!paths) paths = [];
+    console.log('keepkey: paths: ', paths);
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
     // console.log('keepKeySdk: ', keepKeySdk);
@@ -265,17 +266,6 @@ const connectKeepkey =
       if (!chain) return;
 
       const chainLogLabel = `Chain ${chain} processing time`;
-      // console.time(chainLogLabel);
-      // console.log('Processing chain: ', chain);
-
-      // Get paths for chain
-      // console.log('paths: ', paths);
-      // eslint-disable-next-line eqeqeq
-      const filteredPaths = paths.filter((p) => p.symbolSwapKit == chain);
-      console.log('filteredPaths: ', filteredPaths.length);
-      if (!filteredPaths.length) {
-        console.log('No paths found for chain: ', chain);
-      }
 
       const { address, walletMethods } = await getToolbox({
         sdk: keepKeySdk,
@@ -285,7 +275,7 @@ const connectKeepkey =
         covalentApiKey,
         ethplorerApiKey,
         utxoApiKey,
-        paths: filteredPaths,
+        paths,
       });
 
       addChain({
