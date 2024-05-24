@@ -153,16 +153,8 @@ export function Asset({ usePioneer, onClose, asset }: any) {
             <Receive usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : (
             <Flex justifyContent="center" p={5}>
-              <Text>No asset selected</Text>
+              No asset selected
               <Spinner ml={4} />
-              <Button
-                mt={2}
-                borderRadius="full"
-                colorScheme="gray"
-                onClick={() => clearAssetContext()}
-              >
-                Clear Asset Context
-              </Button>
             </Flex>
           )}
         </CardBody>

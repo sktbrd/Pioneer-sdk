@@ -20,7 +20,7 @@
 import DB from '@coinmasters/pioneer-db';
 // @ts-ignore
 import { SDK } from '@coinmasters/pioneer-sdk';
-import { availableChainsByWallet, getChainEnumValue } from '@coinmasters/types';
+import { availableChainsByWallet, prefurredChainsByWallet, getChainEnumValue, WalletOption } from '@coinmasters/types';
 import {
   ChainToNetworkId,
   // @ts-ignore
@@ -454,7 +454,24 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         username = username.substring(0, 13);
         localStorage.setItem('username', username);
       }
+      //
+      // const walletType = WalletOption.KEEPKEY;
+      // const preferredChains = prefurredChainsByWallet[walletType] || [];
+      // const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
+      //   const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
+      //   return ChainToNetworkId[chainEnum];
+      // };
+      // const blockchains = preferredChains
+      //   .map(getNetworkIdFromChainStr)
+      //   .filter((networkId: any): networkId is string => networkId !== undefined);
+      //
+      // console.log('Default blockchains for startup:', blockchains);
+
+      //get default blockchains for startup
       const blockchains: any = ['bip122:000000000019d6689c085ae165831e93'];
+
+
+      // const blockchains: any = ['bip122:000000000019d6689c085ae165831e93'];
       const paths: any = [''];
       const spec =
         localStorage.getItem('pioneerUrl') ||
