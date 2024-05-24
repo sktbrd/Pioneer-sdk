@@ -1,6 +1,6 @@
-import { ChevronLeftIcon, ChevronRightIcon, Search2Icon } from '@chakra-ui/icons';
+import { ChevronLeftIcon } from '@chakra-ui/icons';
 import {
-  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
+  Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox, IconButton
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Asset } from '../Asset';
@@ -34,6 +34,14 @@ export function Classic({ usePioneer }: any) {
 
   return (
     <Stack>
+      <Flex alignItems="center" p={4} borderBottom="1px solid #ccc">
+        <IconButton
+          icon={<ChevronLeftIcon />}
+          aria-label="Go back"
+          onClick={onClose}
+        />
+        <Text ml={4} fontWeight="bold">Assets</Text>
+      </Flex>
       {assetContext ? (
         <Asset usePioneer={usePioneer} onClose={onClose} asset={app.assetContext}/>
       ) : (
