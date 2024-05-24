@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, Stack, Avatar, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
 
-export default function Pubkey({ usePioneer, onClose, pubkey }: any) {
+export function Pubkey({ usePioneer, onClose, pubkey }: any) {
   const { state } = usePioneer();
   const { app } = state;
 
@@ -38,3 +38,4 @@ export default function Pubkey({ usePioneer, onClose, pubkey }: any) {
     </Stack>
   );
 }
+export default Pubkey;

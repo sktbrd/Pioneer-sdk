@@ -22,7 +22,8 @@ import {
   Pubkeys,
   Wallets,
   Blockchains,
-  Balances
+  Balances,
+  Classic
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 
@@ -47,7 +48,7 @@ import Image from 'next/image';
 export default function App() {
   const { onStart, state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('swaps');
+  const [intent, setIntent] = useState('classic');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -203,59 +204,62 @@ export default function App() {
   }
 
   // Function to determine which component to render based on intent
-  // const renderComponent = () => {
-  //   // Your switch case logic here, similar to the original
-  //   switch (intent) {
-  //     case 'basic':
-  //       return <Basic usePioneer={usePioneer}/>;
-  //       break;
-  //     case 'blockchains':
-  //       return <Blockchains usePioneer={usePioneer}/>;
-  //       break;
-  //     case 'balances':
-  //       return <Balances usePioneer={usePioneer}/>;
-  //       break;
-  //     case 'asset':
-  //       return <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={selectedAsset}/>;
-  //       break;
-  //     case 'amount':
-  //       return <Amount usePioneer={usePioneer} onClose={onClose} asset={selectedAsset} setInputAmount={setInputAmount}/>;
-  //       break;
-  //     case 'assets':
-  //       return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false }}/>;
-  //       break;
-  //     case 'wallets':
-  //       return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
-  //       break;
-  //     case 'transfer':
-  //       return <Transfer usePioneer={usePioneer} />;
-  //       break;
-  //     case 'sign':
-  //       return <SignTransaction usePioneer={usePioneer} setTxHash={setTxHash} onClose={onClose} quote={SAMPLE_DATA[0]}/>;
-  //       break;
-  //     case 'portfolio':
-  //       return <Portfolio usePioneer={usePioneer} />;
-  //       break;
-  //     case 'pubkeys':
-  //       return <Pubkeys usePioneer={usePioneer}/>;
-  //       break;
-  //     case 'quote':
-  //       return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
-  //       break;
-  //     case 'quotes':
-  //       return <Quotes onClose={onClose} onSelectQuote={onSelect} Quotes={SAMPLE_DATA}/>;
-  //       break;
-  //     case 'track':
-  //       return <Track txHash={SAMPLE_SWAP_TXID}/>;
-  //     case 'swaps':
-  //     case 'swap':
-  //       return <Swap usePioneer={usePioneer}/>;
-  //       break;
-  //     // Handle other cases as needed
-  //     default:
-  //       return <div>No valid intent selected</div>;
-  //   }
-  // };
+  const renderComponent = () => {
+    // Your switch case logic here, similar to the original
+    switch (intent) {
+      case 'basic':
+        return <Basic usePioneer={usePioneer}/>;
+        break;
+      case 'blockchains':
+        return <Blockchains usePioneer={usePioneer}/>;
+        break;
+      case 'balances':
+        return <Balances usePioneer={usePioneer}/>;
+        break;
+      case 'asset':
+        return <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={selectedAsset}/>;
+        break;
+      case 'amount':
+        return <Amount usePioneer={usePioneer} onClose={onClose} asset={selectedAsset} setInputAmount={setInputAmount}/>;
+        break;
+      case 'assets':
+        return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false }}/>;
+        break;
+      case 'wallets':
+        return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
+        break;
+      case 'transfer':
+        return <Transfer usePioneer={usePioneer} />;
+        break;
+      // case 'sign':
+      //   return <SignTransaction usePioneer={usePioneer} setTxHash={setTxHash} onClose={onClose} quote={SAMPLE_DATA[0]}/>;
+      //   break;
+      case 'portfolio':
+        return <Portfolio usePioneer={usePioneer} />;
+        break;
+      case 'classic':
+        return <Classic usePioneer={usePioneer}/>;
+        break;
+      case 'pubkeys':
+        return <Pubkeys usePioneer={usePioneer}/>;
+        break;
+      // case 'quote':
+      //   return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
+      //   break;
+      // case 'quotes':
+      //   return <Quotes onClose={onClose} onSelectQuote={onSelect} Quotes={SAMPLE_DATA}/>;
+      //   break;
+      // case 'track':
+      //   return <Track txHash={SAMPLE_SWAP_TXID}/>;
+      case 'swaps':
+      case 'swap':
+        return <Swap usePioneer={usePioneer}/>;
+        break;
+      // Handle other cases as needed
+      default:
+        return <div>No valid intent selected</div>;
+    }
+  };
 
   const handleIntentChange = (event: any) => {
     setIntent(event.target.value);
@@ -281,6 +285,7 @@ export default function App() {
             <option value="sign">sign</option>
             <option value="wallets">Wallets</option>
             <option value="pubkeys">Pubkeys</option>
+            <option value="classic">Classic</option>
             <option value="assets">Assets</option>
             <option value="track">Track</option>
             <option value="swap">Swap</option>
@@ -291,7 +296,7 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-grow">
-        {/*{renderComponent()}*/}
+        {renderComponent()}
       </main>
 
       {/* Footer */}
