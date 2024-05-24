@@ -90,11 +90,12 @@ export const utxoWalletMethods = async ({
   // @ts-ignore
   const _getPubkeys = async (paths: any) => {
     try {
-      //console.log('paths: ', paths);
-
+      console.log('paths: ', paths);
+      if (!paths || !paths.length) return [];
       console.time('getPubkeys Duration' + chain); // Starts the timer
       const pubkeys = await Promise.all(
         paths.map(async (path) => {
+          console.log('path: ', path);
           // Marked as async to use await inside
           // Create the path query for public key retrieval
           const pathQuery = {
@@ -106,6 +107,7 @@ export const utxoWalletMethods = async ({
           };
 
           // Get the public key
+          console.log('pathQuery: ', pathQuery);
           const pubkeyResponse = await sdk.system.info.getPublicKey(pathQuery);
 
           // Create the address info query for master address retrieval
@@ -140,8 +142,8 @@ export const utxoWalletMethods = async ({
     }
   };
   const pubkeys = await _getPubkeys(paths);
-  const getPubkeys = async () => pubkeys;
-  //console.log('pubkeys: ', pubkeys);
+  const getPubkeys = async (paths) => _getPubkeys(paths);
+  console.log('pubkeys: ', pubkeys);
 
   const signTransaction = async (psbt: Psbt, inputs: KeepKeyInputObject[], memo: string = '') => {
     //console.log('psbt.txOutputs: ', psbt.txOutputs);

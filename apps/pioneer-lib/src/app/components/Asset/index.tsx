@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Avatar, Box, Stack, Flex, Text, Heading, useColorModeValue, Spinner, Button, Divider, Stat, StatLabel, StatNumber, SimpleGrid
+  VStack, Avatar, Box, Stack, Flex, Text, Heading, useColorModeValue, Spinner, Button, Divider, Stat, StatLabel, StatNumber, SimpleGrid, IconButton
 } from '@chakra-ui/react';
+import { ChevronLeftIcon, RepeatIcon } from '@chakra-ui/icons';
 import { Pubkey } from '../Pubkey';
 import { Balance } from '../Balance';
 import { Transfer } from '../Transfer';
@@ -32,12 +33,10 @@ const CardBody = ({ children }: any) => (
 );
 
 export function Asset({ usePioneer, onClose, asset }: any) {
-  const [showManualAddressForm, setShowManualAddressForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'send' | 'receive' | null>(null);
-  const [showAdvancedView, setShowAdvancedView] = useState(false);
 
-  const { state, showModal } = usePioneer();
-  const { balances, app } = state;
+  const { state } = usePioneer();
+  const { app } = state;
 
   const clearAssetContext = () => {
     app.setAssetContext(null);
@@ -53,9 +52,6 @@ export function Asset({ usePioneer, onClose, asset }: any) {
   return (
     <Stack spacing={4} width="100%">
       <Card>
-        <CardHeader>
-          <Heading size='md'><Text fontWeight="bold">{asset?.name} Asset Page</Text></Heading>
-        </CardHeader>
         <CardBody>
           {activeTab === null && asset ? (
             <>
@@ -67,93 +63,28 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                 </Box>
               </Flex>
 
-              <Button size="sm" onClick={() => setShowAdvancedView(!showAdvancedView)}>
-                {showAdvancedView ? 'Hide Advanced View' : 'Show Advanced View'}
-              </Button>
-
-              {showAdvancedView && (
-                <>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
-                    <Stat>
-                      <StatLabel>CAIP</StatLabel>
-                      <StatNumber>{asset.caip}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Type</StatLabel>
-                      <StatNumber>{asset.type}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Price USD</StatLabel>
-                      <StatNumber>${parseFloat(asset.priceUsd).toFixed(2)}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Address</StatLabel>
-                      <StatNumber>{asset.address}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Network</StatLabel>
-                      <StatNumber>{asset.networkName}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Decimals</StatLabel>
-                      <StatNumber>{asset.decimals}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Explorer</StatLabel>
-                      <StatNumber>
-                        <a href={`${asset.explorerAddressLink}${asset.address}`} target="_blank" rel="noopener noreferrer">
-                          {asset.explorer}
-                        </a>
-                      </StatNumber>
-                    </Stat>
-                  </SimpleGrid>
-
-                  {asset.pubkeys && asset.pubkeys.length > 0 && (
-                    <>
-                      <Heading size="sm" mb={2}>Public Keys</Heading>
-                      {asset.pubkeys.map((pubkey: any, index: any) => (
-                        <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                      ))}
-                      <Divider my={4} />
-                    </>
-                  )}
-                </>
-              )}
-
-              {asset.balances && asset.balances.length > 0 && (
-                <>
-                  <Heading size="sm" mb={2}>Balances</Heading>
-                  {asset.balances.map((balance: any, index: any) => (
-                    <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                  ))}
-                </>
-              )}
-
-              <Flex justifyContent="space-between" mt={4} mb={4}>
-                <Button colorScheme="teal" onClick={() => setActiveTab('send')}>
-                  Send
+              <VStack spacing={2}>
+                <Button size="sm" onClick={() => setActiveTab('send')}>
+                  Send Bitcoin
                 </Button>
-                <Button colorScheme="blue" onClick={() => setActiveTab('receive')}>
-                  Receive
-                </Button>
-              </Flex>
 
-              <Button
-                mt={4}
-                borderRadius="full"
-                colorScheme="gray"
-                onClick={() => clearAssetContext()}
-              >
-                Go Back
-              </Button>
+                <Button size="sm" onClick={() => setActiveTab('receive')}>
+                  Receive Bitcoin
+                </Button>
+
+                <Button size="sm" onClick={() => console.log('Transactions')}>
+                  Transactions
+                </Button>
+              </VStack>
             </>
+
           ) : activeTab === 'send' ? (
             <Transfer usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : activeTab === 'receive' ? (
             <Receive usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : (
             <Flex justifyContent="center" p={5}>
-              No asset selected
+              <Text>No asset selected</Text>
               <Spinner ml={4} />
             </Flex>
           )}

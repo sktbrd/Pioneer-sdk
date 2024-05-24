@@ -81,17 +81,17 @@ const test_service = async function (this: any) {
         //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
         // })
 
-        paths.push({
-            note:"Bitcoin account 1 legacy",
-            networks: ['bip122:000000000019d6689c085ae165831e93'],
-            script_type:"p2pkh",
-            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
-            type:"xpub",
-            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
-            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
-            curve: 'secp256k1',
-            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-        })
+        // paths.push({
+        //     note:"Bitcoin account 1 legacy",
+        //     networks: ['bip122:000000000019d6689c085ae165831e93'],
+        //     script_type:"p2pkh",
+        //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+        //     type:"xpub",
+        //     addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
+        //     addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+        //     curve: 'secp256k1',
+        //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        // })
 
         let config:any = {
             username,
@@ -136,6 +136,12 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
+        //paths
+        let paths2 = app.paths
+        console.assert(paths2)
+        log.info(tag,"paths2: ",paths2)
+        log.info(tag,"paths2[0]: ",paths2[0])
+        log.info(tag,"paths2[0].addressNList: ",paths2[0].addressNList)
 
         // //connect
         // assert(blockchains)
@@ -177,7 +183,6 @@ const test_service = async function (this: any) {
 
         assert(app.pubkeys)
         assert(app.pubkeys[0])
-
         log.info(tag,"balances: ",app.balances)
         log.info(tag,"balances: ",app.balances.length)
         // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
@@ -188,6 +193,15 @@ const test_service = async function (this: any) {
         //get wallet for chain
         // let walletSwapkit = await app.swapKit.getWalletByChain('BTC')
         // log.info("walletSwapkit: ",walletSwapkit)
+
+        let assets = app.assets
+        log.info(tag,"assets: ",assets)
+        log.info(tag,"assets[0].pubkeys[0]: ",assets[0].pubkeys[0])
+        assert(assets)
+        assert(assets[0])
+        assert(assets[0].caip)
+        assert(assets[0].pubkeys)
+        assert(assets[0].pubkeys[0])
 
         //TODO view inputs for pubkeys
 

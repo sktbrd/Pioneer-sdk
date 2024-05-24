@@ -26,7 +26,6 @@ export type EVMWalletOptions =
 const AllChainsSupported = [
   Chain.Arbitrum,
   Chain.Avalanche,
-  Chain.Binance,
   Chain.BinanceSmartChain,
   Chain.Bitcoin,
   Chain.BitcoinCash,
@@ -50,7 +49,6 @@ export const availableChainsByWallet: any = {
     Chain.Arbitrum,
     Chain.Base,
     Chain.Avalanche,
-    Chain.Binance,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -74,7 +72,6 @@ export const availableChainsByWallet: any = {
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.Base,
-    Chain.Binance,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,

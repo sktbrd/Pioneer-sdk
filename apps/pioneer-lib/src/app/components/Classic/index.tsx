@@ -2,6 +2,10 @@ import { ChevronLeftIcon, RepeatIcon, AddIcon } from '@chakra-ui/icons';
 import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox, IconButton
 } from '@chakra-ui/react';
+import {
+  getPaths,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 import { Asset } from '../Asset';
 import { Pubkey } from '../Pubkey';
@@ -32,9 +36,17 @@ export function Classic({ usePioneer }: any) {
     setAssetContext(null);
   }
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     console.log("onRefresh");
-    // Add your refresh logic here
+    if(app){
+      console.log("blockchains", app.blockchains)
+      let paths = getPaths(app.blockchains)
+      console.log("paths", paths)
+      await app.setPaths(paths)
+      await app.getPubkeys()
+      await app.getBalances()
+      console.log("app.assets", app.assets)
+    }
   }
 
   const onAdd = () => {

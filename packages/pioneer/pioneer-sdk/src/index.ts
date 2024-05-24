@@ -934,13 +934,14 @@ export class SDK {
               pubkey.address = address;
               pubkey.pubkey = address;
             } else if (path.type === 'xpub' || path.type === 'zpub') {
-              let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
+              let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys([path]);
               if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
               console.log('pubkeys: ', pubkeys);
-              let pubkeyForPath = pubkeys.find(
-                (p: any) => p.addressNList.toString() === path.addressNList.toString(),
-              );
-              if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
+              let pubkeyForPath = pubkeys[0];
+              // let pubkeyForPath = pubkeys.find(
+              //   (p: any) => p.addressNList.toString() === path.addressNList.toString(),
+              // );
+              // if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
 
               pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
             }
@@ -993,209 +994,10 @@ export class SDK {
         throw e;
       }
     };
-    // this.getPubkeys = async function (wallets?: any) {
-    //   const tag = `${TAG} | getPubkeys | `;
-    //   try {
-    //     if (this.paths.length === 0) throw Error('No paths found!');
-    //     if (!this.swapKit) throw Error('SwapKit not initialized!');
-    //     console.log('PRE this.pubkeys: ', this.pubkeys.length);
-    //     console.log('PRE this.paths: ', this.paths.length);
-    //
-    //     console.log('PRE this.paths: ', this.blockchains);
-    //     let pubkeysNew = [];
-    //     //for each enabled blockchain
-    //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    //     for (let i = 0; i < this.blockchains.length; i++) {
-    //       //getPubkeyForChain
-    //       let blockchain = this.blockchains[i];
-    //       console.log('blockchain: ', blockchain);
-    //       //if blockchain has eip155
-    //       //search for path that has eip155* in neworks
-    //       let filteredPaths = this.paths.filter((path) => {
-    //         // Handle special case for eip155
-    //         if (blockchain.startsWith('eip155')) {
-    //           return path.networks.some((network) => network.startsWith('eip155:'));
-    //         }
-    //         // General case
-    //         return path.networks.includes(blockchain);
-    //       });
-    //       console.log('filteredPaths: ', filteredPaths);
-    //       if (!filteredPaths || filteredPaths.length === 0)
-    //         throw Error('Unable to get pubkey for blockchain: ' + blockchain);
-    //
-    //       //get address for all paths for this blockchain
-    //       for (let path of filteredPaths) {
-    //         let chain: Chain = NetworkIdToChain[blockchain];
-    //         console.log('chain: ', chain);
-    //         if(!chain) throw Error("missing chain for blockchain!")
-    //         let pubkey: any = {};
-    //         pubkey.type = path.type;
-    //         console.log('path: ', path);
-    //
-    //         let address = await this.swapKit?.getAddress(chain);
-    //         if (!address) throw Error(`Failed to get address for ${chain}`);
-    //         if (address && address.indexOf('bitcoincash:') > -1)
-    //           address = address.replace('bitcoincash:', '');
-    //
-    //         pubkey.master = address;
-    //         if (path.type === 'address') {
-    //           pubkey.address = address;
-    //           pubkey.pubkey = address;
-    //         } else if (path.type === 'xpub' || path.type === 'zpub') {
-    //           let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-    //           if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
-    //           let pubkeyForPath = pubkeys.find(
-    //             (p: any) => p.addressNList.toString() === path.addressNList.toString(),
-    //           );
-    //           if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
-    //           pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
-    //         }
-    //
-    //         pubkey.context = this.context;
-    //         pubkey.contextType = this.contextType.split(':')[0];
-    //         pubkey.networks = [path.network];
-    //         if (path.network === 'eip155:1') {
-    //           pubkey.networks = [
-    //             path.network,
-    //             ...(path.network === 'eip155:1'
-    //               ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
-    //               : []),
-    //           ];
-    //         }
-    //
-    //         // Ensure networks are unique
-    //         pubkey.networks = Array.from(new Set(pubkey.networks));
-    //         pubkeysNew.push(pubkey);
-    //       }
-    //       // Cache and return the processed pubkeys
-    //       this.pubkeys = pubkeysNew;
-    //     }
-    //
-    //     return pubkeysNew;
-    //   } catch (e) {
-    //     console.error(tag, 'Error: ', e);
-    //     throw e;
-    //   }
-    // };
-    // this.getPubkeys = async function (networkIds?: string[]) {
-    //   const tag = `${TAG} | getPubkeys | `;
-    //   try {
-    //     if (this.paths.length === 0) throw Error('No paths found!');
-    //     if (!this.swapKit) throw Error('SwapKit not initialized!');
-    //     console.log('PRE this.pubkeys: ', this.pubkeys.length);
-    //     console.log('PRE this.paths: ', this.paths.length);
-    //
-    //     // If no specific networkIds are requested, use all available in paths
-    //     if (!networkIds || networkIds.length === 0) {
-    //       networkIds = this.paths.map((path) => path.network);
-    //     }
-    //
-    //     let pubkeysNew: any = [...this.pubkeys];
-    //
-    //     // Filter paths first by requested networkIds to minimize wallet accesses
-    //     let filteredPaths = this.paths.filter((path) => networkIds.includes(path.network));
-    //     console.log('filteredPaths: ', filteredPaths);
-    //
-    //     for (let path of filteredPaths) {
-    //       let chain: Chain = NetworkIdToChain[path.network];
-    //       let pubkey: any = {};
-    //       pubkey.type = path.type;
-    //       console.log('path: ', path);
-    //
-    //       let address = await this.swapKit?.getAddress(chain);
-    //       if (!address) throw Error(`Failed to get address for ${chain}`);
-    //       if (address && address.indexOf('bitcoincash:') > -1)
-    //         address = address.replace('bitcoincash:', '');
-    //
-    //       pubkey.master = address;
-    //       if (path.type === 'address') {
-    //         pubkey.address = address;
-    //         pubkey.pubkey = address;
-    //       } else if (path.type === 'xpub' || path.type === 'zpub') {
-    //         let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys();
-    //         if (!pubkeys) throw Error(`Failed to get pubkeys for ${chain}`);
-    //         let pubkeyForPath = pubkeys.find(
-    //           (p: any) => p.addressNList.toString() === path.addressNList.toString(),
-    //         );
-    //         if (!pubkeyForPath) throw Error(`Failed to get pubkey for path in ${chain}`);
-    //         pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
-    //       }
-    //
-    //       pubkey.context = this.context;
-    //       pubkey.contextType = this.contextType.split(':')[0];
-    //       pubkey.networks = [path.network];
-    //       if (path.network === 'eip155:1') {
-    //         pubkey.networks = [
-    //           path.network,
-    //           ...(path.network === 'eip155:1'
-    //             ? this.blockchains.filter((blockchain) => blockchain.includes('eip155'))
-    //             : []),
-    //         ];
-    //       }
-    //
-    //       // Ensure networks are unique
-    //       pubkey.networks = Array.from(new Set(pubkey.networks));
-    //       pubkeysNew.push(pubkey);
-    //     }
-    //     // Cache and return the processed pubkeys
-    //     this.pubkeys = pubkeysNew;
-    //     const pubkeysMap = new Map();
-    //     this.pubkeys.forEach((pubkey: any) => {
-    //       pubkey.networks.forEach((network: any) => {
-    //         if (!pubkeysMap.has(network)) {
-    //           pubkeysMap.set(network, []);
-    //         }
-    //         pubkeysMap.get(network).push(pubkey);
-    //       });
-    //     });
-    //
-    //     // Iterate over assets and update them based on matching conditions
-    //     this.assets.forEach((existingAsset: any, index: any) => {
-    //       const networkId = existingAsset.networkId;
-    //       let matchedPubkey = null;
-    //
-    //       if (networkId.includes('eip155')) {
-    //         // Handle 'eip155' specifically
-    //         const matchPubkeys = pubkeysMap.get('eip155:1');
-    //         if (matchPubkeys && matchPubkeys.length > 0) {
-    //           matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
-    //         }
-    //       } else {
-    //         // Check for a direct match in other networks
-    //         if (pubkeysMap.has(networkId)) {
-    //           const matchPubkeys = pubkeysMap.get(networkId);
-    //           if (matchPubkeys && matchPubkeys.length > 0) {
-    //             matchedPubkey = matchPubkeys[0]; // Assuming the first match is acceptable
-    //           }
-    //         }
-    //       }
-    //
-    //       if (matchedPubkey) {
-    //         //console.log('matchedPubkey: ', matchedPubkey);
-    //         // Update the asset and the map entry
-    //         const updatedAsset: any = {
-    //           ...existingAsset,
-    //           pubkey: matchedPubkey.pubkey,
-    //           address: matchedPubkey.address || matchedPubkey.master,
-    //           master: matchedPubkey.master,
-    //         };
-    //         //console.log('updatedAsset: ', updatedAsset);
-    //         this.assets[index] = updatedAsset;
-    //         this.assetsMap.set(existingAsset.caip.toLowerCase(), updatedAsset);
-    //       }
-    //     });
-    //
-    //     this.events.emit('SET_PUBKEYS', pubkeysNew);
-    //     return pubkeysNew;
-    //   } catch (e) {
-    //     console.error(tag, 'Error: ', e);
-    //     throw e;
-    //   }
-    // };
     this.getBalances = async function (filter?: any) {
       const tag = `${TAG} | getBalances | `;
       try {
-        console.log('filter: ', filter);
+        if(filter)console.log('filter: ', filter);
         if (!this.assets || this.assets.length === 0) await this.getAssets();
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
@@ -1207,9 +1009,9 @@ export class SDK {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
-          //console.log('getWalletByChain: ', chain);
+          console.log('getWalletByChain: ', chain);
           let walletForChain = await this.swapKit?.getWalletByChain(chain);
-          //console.log(chain + ' walletForChain: ', walletForChain);
+          console.log(chain + ' walletForChain: ', walletForChain);
           if (walletForChain && walletForChain.balance) {
             // @ts-ignore
             //console.log('walletForChain.balance: ', walletForChain.balance);
@@ -1257,7 +1059,7 @@ export class SDK {
                     }
                   };
                   let caip = balanceToCaip(balance);
-                  //console.log('balanceToCaip: result: ', caip);
+                  console.log('balanceToCaip: result: ', caip);
                   if (caip) {
                     //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
@@ -1304,7 +1106,7 @@ export class SDK {
                       (e: any) => e.caip.toLowerCase() === caip.toLowerCase(),
                     );
                     assetInfo = assetInfo[0];
-                    //console.log('assetInfo: ', assetInfo);
+                    console.log('assetInfo: ', assetInfo);
                     let balanceExists: any = false;
                     if (this.assets[assetIndex])
                       balanceExists = this.assets[assetIndex].balances.some(
