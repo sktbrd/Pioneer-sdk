@@ -60,45 +60,45 @@ export function Balance({ usePioneer, onClose, balance }: any) {
           {/*<Button colorScheme="purple" size="lg" onClick={() => handleModal('swap')}>Swap</Button>*/}
         </Box>
       </Flex>
-      <Collapse in={showAdvanced} animateOpacity>
-        <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4}>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Key</Th>
-                <Th>Value</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {Object.entries(data as Record<string, unknown>).map(([key, value]) => (
-                <Tr key={key}>
-                  <Td>{key}</Td>
-                  <Td>
-                    {typeof value === 'string'
-                      ? value
-                      : typeof value === 'number'
-                        ? value.toString()
-                        : typeof value === 'boolean'
-                          ? value.toString()
-                          : value === null
-                            ? 'null'
-                            : typeof value === 'object'
-                              ? JSON.stringify(value)
-                              : 'Unsupported Type'}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </Box>
-      </Collapse>
-      <Box alignSelf="flex-end">
-        <IconButton
-          icon={<ChevronDownIcon />}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          aria-label="Show Advanced"
-        />
-      </Box>
+      {/*<Collapse in={showAdvanced} animateOpacity>*/}
+      {/*  <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4}>*/}
+      {/*    <Table variant="simple">*/}
+      {/*      <Thead>*/}
+      {/*        <Tr>*/}
+      {/*          <Th>Key</Th>*/}
+      {/*          <Th>Value</Th>*/}
+      {/*        </Tr>*/}
+      {/*      </Thead>*/}
+      {/*      <Tbody>*/}
+      {/*        {Object.entries(data as Record<string, unknown>).map(([key, value]) => (*/}
+      {/*          <Tr key={key}>*/}
+      {/*            <Td>{key}</Td>*/}
+      {/*            <Td>*/}
+      {/*              {typeof value === 'string'*/}
+      {/*                ? value*/}
+      {/*                : typeof value === 'number'*/}
+      {/*                  ? value.toString()*/}
+      {/*                  : typeof value === 'boolean'*/}
+      {/*                    ? value.toString()*/}
+      {/*                    : value === null*/}
+      {/*                      ? 'null'*/}
+      {/*                      : typeof value === 'object'*/}
+      {/*                        ? JSON.stringify(value)*/}
+      {/*                        : 'Unsupported Type'}*/}
+      {/*            </Td>*/}
+      {/*          </Tr>*/}
+      {/*        ))}*/}
+      {/*      </Tbody>*/}
+      {/*    </Table>*/}
+      {/*  </Box>*/}
+      {/*</Collapse>*/}
+      {/*<Box alignSelf="flex-end">*/}
+      {/*  <IconButton*/}
+      {/*    icon={<ChevronDownIcon />}*/}
+      {/*    onClick={() => setShowAdvanced(!showAdvanced)}*/}
+      {/*    aria-label="Show Advanced"*/}
+      {/*  />*/}
+      {/*</Box>*/}
     </Stack>
   );
 }

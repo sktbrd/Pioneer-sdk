@@ -18,32 +18,32 @@ import {
   ModalBody,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MiddleEllipsis from '../../components/MiddleEllipsis';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import OutputSelect from '../../components/OutputSelect';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-export default function Receive({ usePioneer, onClose }: any) {
+export function Receive({ usePioneer, onClose }: any) {
   const { state } = usePioneer();
   const { app, assetContext, balances, context } = state;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const { hasCopied, onCopy } = useClipboard(assetContext?.address || '');
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    if (onClose) onClose();
-  };
+  // const openModal = () => setIsModalOpen(true);
+  // const closeModal = () => {
+  //   setIsModalOpen(false);
+  //   if (onClose) onClose();
+  // };
 
-  let onSelect = async function(asset: any) {
-    //console.log("onSelect: ", asset);
-    await app.setAssetContext(asset);
-    closeModal();
-  }
+  // let onSelect = async function(asset: any) {
+  //   //console.log("onSelect: ", asset);
+  //   await app.setAssetContext(asset);
+  //   closeModal();
+  // }
 
   useEffect(() => {
     if (assetContext && COIN_MAP_LONG[assetContext.chain as keyof typeof COIN_MAP_LONG]) {
@@ -65,7 +65,7 @@ export default function Receive({ usePioneer, onClose }: any) {
         <Avatar size="xxl" src={avatarUrl}>
           {getWalletBadgeContent(walletType, '8em')}
         </Avatar>
-        <Button onClick={openModal} colorScheme="blue">Change Asset</Button>
+        {/*<Button onClick={openModal} colorScheme="blue">Change Asset</Button>*/}
       </Flex>
 
       <Text fontSize="xl" fontWeight="bold">Receive</Text>
@@ -96,16 +96,8 @@ export default function Receive({ usePioneer, onClose }: any) {
         </Flex>
       )}
       <Button onClick={onCopy}>{hasCopied ? 'Copied' : 'Copy Address'}</Button>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Output Selection</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <OutputSelect usePioneer={usePioneer} onClose={closeModal} onSelect={onSelect}/>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <Button onClick={onClose}>Go Back</Button>
     </Box>
   );
 }
+export default Receive;

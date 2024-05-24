@@ -3,70 +3,82 @@ import {
   Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Spinner, Checkbox
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { Pubkey } from '../Pubkey'
-import { Balance } from '../Balance'
-const itemsPerPage = 10; // Define how many items you want per page
+import { Asset } from '../Asset';
+import { Pubkey } from '../Pubkey';
+import { Balance } from '../Balance';
 
-export function Classic({ usePioneer, onSelect, onClose, filters }:any) {
+export function Classic({ usePioneer }: any) {
   const { state } = usePioneer();
   const { app } = state;
-  const [filteredAssets, setFilteredAssets] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(filters?.searchQuery || '' );
-  const [hasPubkey, setHasPubkey] = useState<boolean>(filters?.hasPubkey || false);
-  const [onlyOwned, setOnlyOwned] = useState<boolean>(filters?.onlyOwned || false);
-  const [noTokens, setNoTokens] = useState<boolean>(filters?.noTokens || false);
-  const [memoless, setMemoless] = useState<boolean>(filters?.memoless || false);
-  const [integrations, setIntegrations] = useState(filters?.integrations || []);
+  const [assetContext, setAssetContext] = useState(app.assetContext);
 
+  useEffect(() => {
+    setAssetContext(app.assetContext);
+  }, [app.assetContext]);
 
+  const onSelect = (asset: any) => {
+    console.log("onSelect", asset);
+    if (asset.caip) {
+      app.setAssetContext(asset);
+    } else {
+      console.error('invalid asset', asset);
+    }
+  }
+
+  const onClose = async () => {
+    console.log("onClose");
+    await app.setAssetContext(null);
+    console.log('app.assetContext', app.assetContext);
+    setAssetContext(null);
+  }
 
   return (
-    <Stack >
-      {app?.assets.length === 0 ? (
-        <Flex justifyContent="center" alignItems="center" height="100vh">
-          <Spinner size="xl" />
-          blockchains{app?.blockchains.length}
-          Loading....
-        </Flex>
+    <Stack>
+      {assetContext ? (
+        <Asset usePioneer={usePioneer} onClose={onClose} asset={app.assetContext}/>
       ) : (
         <>
-          {app?.assets.map((asset:any, index:any) => (
-            <Box key={index} p={4} mb={2} borderRadius="md">
-              <Flex>
-                <Avatar size='xl' src={asset.icon} />
-                <Box ml={3}>
-                  <Text fontWeight="bold">{asset.name}</Text>
-                  {/*<Text fontWeight="bold">{asset.networkId}</Text>*/}
-                  {/*<Text fontSize="sm">Symbol: {asset.symbol}</Text>*/}
-                  {/*<Text fontSize="sm">CAIP: {asset.caip}</Text>*/}
-                  {/*<Text fontSize="sm">Type: {asset.type}</Text>*/}
-                  {/*<Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>*/}
-                  {/*<Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>*/}
-                  {asset?.pubkeys && (
-                    <>
-                      {asset?.pubkeys.map((pubkey: any, index: any) => (
-                        <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                      ))}
-                    </>
-                  )}
-                  {asset?.balances && (
-                    <>
-                      {asset?.balances.map((balance: any, index: any) => (
-                        <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                      ))}
-                    </>
-                  )}
+          {app?.assets.length === 0 ? (
+            <Flex justifyContent="center" alignItems="center" height="100vh">
+              <Spinner size="xl" />
+              blockchains{app?.blockchains.length}
+              Loading....
+            </Flex>
+          ) : (
+            <>
+              {app?.assets.map((asset: any, index: any) => (
+                <Box key={index} p={4} mb={2} borderRadius="md">
+                  <Flex>
+                    <Avatar size='xl' src={asset.icon} />
+                    <Box ml={3}>
+                      <Text fontWeight="bold">{asset.name}</Text>
+                      {asset?.pubkeys && (
+                        <>
+                          {asset?.pubkeys.map((pubkey: any, index: any) => (
+                            <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                          ))}
+                        </>
+                      )}
+                      {asset?.balances && (
+                        <>
+                          {asset?.balances.map((balance: any, index: any) => (
+                            <Balance key={index} usePioneer={usePioneer} balance={balance} />
+                          ))}
+                        </>
+                      )}
+                    </Box>
+                    <Button ml="auto" onClick={() => onSelect(asset)}>
+                      Select
+                    </Button>
+                  </Flex>
                 </Box>
-                <Button ml="auto" onClick={() => onSelect(asset)}>
-                  Select
-                </Button>
-              </Flex>
-            </Box>
-          ))}
+              ))}
+            </>
+          )}
         </>
       )}
     </Stack>
   );
 }
+
 export default Classic;
