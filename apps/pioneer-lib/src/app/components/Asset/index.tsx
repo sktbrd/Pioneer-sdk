@@ -62,7 +62,24 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   <Text fontSize="md" color="gray.500">{asset.symbol}</Text>
                 </Box>
               </Flex>
-
+              <Flex align="center" justifyContent="space-between" mb={4}>
+              {asset?.pubkeys && (
+                <>
+                  {asset?.pubkeys.map((pubkey: any, index: any) => (
+                    <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                  ))}
+                </>
+              )}
+              </Flex>
+              <Flex align="center" justifyContent="space-between" mb={4}>
+              {asset?.balances && (
+                <>
+                  {asset?.balances.map((balance: any, index: any) => (
+                    <Balance key={index} usePioneer={usePioneer} balance={balance} />
+                  ))}
+                </>
+              )}
+              </Flex>
               <VStack spacing={2}>
                 <Button size="sm" onClick={() => setActiveTab('send')}>
                   Send Bitcoin
@@ -72,9 +89,9 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   Receive Bitcoin
                 </Button>
 
-                <Button size="sm" onClick={() => console.log('Transactions')}>
-                  Transactions
-                </Button>
+                {/*<Button size="sm" onClick={() => console.log('Transactions')}>*/}
+                {/*  Transactions*/}
+                {/*</Button>*/}
               </VStack>
             </>
 

@@ -44,7 +44,7 @@ export interface InitialState {
   blockchains: string[];
   balances: any[];
   pubkeys: any[];
-  assets: any[];
+  assets: Map<string, any>;
   wallets: any[];
   walletDescriptions: any[];
   totalValueUsd: number;

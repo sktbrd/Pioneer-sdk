@@ -1,7 +1,3 @@
-/*
-    Transfer
-      This component is used to send crypto to another address.
- */
 import {
   Avatar,
   Box,
@@ -12,51 +8,41 @@ import {
   Grid,
   Heading,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Text,
-  useDisclosure,
-  useToast,
   VStack,
   Tooltip,
+  useToast,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { AssetValue, Chain } from '@coinmasters/core';
+import { AssetValue } from '@coinmasters/core';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-// import { Chain } from '@pioneer-platform/types';
 import React, { useCallback, useEffect, useState } from 'react';
-
-import Assets from '../Assets';
-// import { usePioneer } from '@coinmasters/pioneer-react';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-export function Transfer({usePioneer}:any): JSX.Element {
+export function Transfer({ usePioneer }: any): JSX.Element {
   const toast = useToast();
   const { state, setIntent, connectWallet } = usePioneer();
-  const { app, assetContext, balances, context } = state;
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Add disclosure for modal
+  const { app, assetContext, context } = state;
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(false);
   const [isMax, setisMax] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   const [sendAmount, setSendAmount] = useState<any | undefined>();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [memo, setMemo] = useState('');
-
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
-  const [modalType, setModalType] = useState(''); // Add state for modal type
+  const [maxSpendable, setMaxSpendable] = useState('');
+  const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(false);
 
-  // Update avatar URL when assetContext changes
+  const textColor = useColorModeValue('gray.600', 'gray.200');
+  const bgColor = useColorModeValue('white', 'gray.700');
+  const headingColor = useColorModeValue('teal.500', 'teal.300');
+
   useEffect(() => {
     if (assetContext && COIN_MAP_LONG[assetContext.chain as keyof typeof COIN_MAP_LONG]) {
       const newAvatarUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[assetContext.chain as keyof typeof COIN_MAP_LONG]}.png`;
@@ -66,77 +52,98 @@ export function Transfer({usePioneer}:any): JSX.Element {
 
   useEffect(() => {
     if (context) {
-      //console.log('context: ', context);
       setWalletType(context.split(':')[0]);
     }
-  }, [context, app]);
+  }, [context]);
 
-  // start the context provider
   useEffect(() => {
     setIsPairing(false);
-  }, [app, app?.context]);
+  }, [app]);
 
-  const handleInputChange = (value: string) => {
-    setInputAmount(value);
-    if (!assetContext) return;
-    setSendAmount('');
+  useEffect(() => {
+    const calculateMaxSpendable = async () => {
+      setLoadingMaxSpendable(true);
+      try {
+        const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+        if (!walletInfo) {
+          let blockchains = [assetContext.networkId];
+          app.setBlockchains(blockchains);
+
+          let walletType = app.context.split(':')[0];
+          await connectWallet(walletType.toUpperCase());
+        } else {
+          let pubkeys = await app.pubkeys;
+          pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
+
+          let estimatePayload: any = {
+            feeRate: 10,
+            pubkeys,
+            memo,
+            recipient,
+          };
+          let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
+          setMaxSpendable(maxSpendableAmount.getValue('string'));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      setLoadingMaxSpendable(false);
+    };
+
+    if (assetContext) {
+      calculateMaxSpendable();
+    }
+  }, [assetContext, app, connectWallet]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputAmount(event.target.value);
+  };
+
+  const handleRecipientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRecipient(event.target.value);
   };
 
   const handleSend = useCallback(async () => {
     try {
-      if (!inputAmount) alert('You MUST input an amount to send!');
-      if (!recipient) alert('You MUST input a recipient to send to!');
-      //@TODO Validate Address!
-      //verify is connected
-      //const isContextExist = app.wallets.some((wallet: any) => wallet.context === context);
-      //console.log("isContextExist: ", isContextExist);
-      ////get context of swapkit
-      //let swapKitContext = await getSwapKitContext();
-      //console.log("swapKitContext: ", swapKitContext);
-      //console.log('assetContext: ', assetContext);
+      if (!inputAmount) {
+        alert('You MUST input an amount to send!');
+        return;
+      }
+      if (!recipient) {
+        alert('You MUST input a recipient to send to!');
+        return;
+      }
       setIntent(
         'transfer:' +
-          assetContext.chain +
-          ':' +
-          assetContext.symbol +
-          ':' +
-          inputAmount +
-          ':' +
-          recipient,
+        assetContext.chain +
+        ':' +
+        assetContext.symbol +
+        ':' +
+        inputAmount +
+        ':' +
+        recipient,
       );
       const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
 
       if (!walletInfo) {
-        //get wallet for context
         let walletType = app.context.split(':')[0];
-        //console.log('Wallet not connected, opening modal for: ', walletType);
-        //open wallet for context
-
         connectWallet(walletType.toUpperCase());
         setTimeout(() => {
-          //console.log('Retrying wallet connection...');
           handleSend();
         }, 3000);
-        // pairWallet();
       } else {
         setIsSubmitting(true);
-        // create assetValue
         const assetString = `${assetContext.chain}.${assetContext.symbol}`;
-        //console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        // @ts-ignore
+        //@ts-ignore
         const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(inputAmount));
-        //console.log('assetValue: ', assetValue);
 
-        // modify assetVaule for input
-        let sendPayload:any = {
+        let sendPayload: any = {
           assetValue,
-          memo: '',
+          memo,
           recipient,
-        }
-        if(isMax) sendPayload.isMax = true
-        // let assetValue;
-        //console.log("sendPayload: ", sendPayload)
+        };
+        if (isMax) sendPayload.isMax = true;
         const txHash = await app.swapKit.transfer(sendPayload);
         if (typeof window !== 'undefined') {
           window.open(
@@ -157,104 +164,32 @@ export function Transfer({usePioneer}:any): JSX.Element {
     }
   }, [assetContext, inputAmount, app, recipient, sendAmount, toast]);
 
-  // Function to show modal with a specific type
-  const showModalWithType = (type: any) => {
-    setModalType(type);
-    onOpen();
+  const setMaxAmount = () => {
+    setInputAmount(maxSpendable);
   };
 
-  const onSelect = async function (asset: any) {
-    try {
-      //console.log('onSelect: ', asset);
-      await app.setAssetContext(asset);
-      onClose();
-      setModalType('');
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-
-  const setMaxAmount = async function () {
-    try {
-      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-      //console.log('walletInfo: ', walletInfo);
-      setisMax(true);
-      if(!walletInfo){
-        //console.log("app.context: ",app.context)
-        //console.log("aassetContext: ",assetContext)
-        //console.log("aassetContext.chain: ",assetContext.chain)
-        //console.log("aassetContext.networkId: ",assetContext.networkId)
-        //set blockchains to JUST input asset
-        let blockchains = [assetContext.networkId]
-        //console.log("new blockchains: ",blockchains)
-        app.setBlockchains(blockchains)
-
-        //walletType
-        let walletType = app.context.split(':')[0];
-        //console.log('Wallet not connected, opening modal for: ', walletType);
-
-        //connect wallet
-        await connectWallet(walletType.toUpperCase());
-      } else {
-
-        //console.log('onSetMax: ');
-        let pubkeys = await app.pubkeys
-        //console.log("pubkeys: ",pubkeys)
-        //filter by chain
-        pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
-
-        //send
-        let estimatePayload:any = {
-          feeRate: 10,
-          pubkeys,
-          memo,
-          recipient,
-        }
-        //console.log("app.swapKit: ",app.swapKit)
-        //console.log("app.swapKit: ",app.estimateMaxSendableAmount)
-        //verify amount is < max spendable
-        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:assetContext.chain, params:estimatePayload})
-        //console.log("maxSpendable: ",maxSpendable)
-        //console.log("maxSpendable: ",maxSpendable.getValue('string'))
-        setInputAmount(maxSpendable.getValue('string'))
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  if (loadingMaxSpendable) {
+    return (
+      <Flex align="center" justify="center" height="100vh">
+        <Box p={10} borderRadius="md" boxShadow="lg" bg={bgColor}>
+          <Flex align="center" justify="center">
+            <Spinner size="xl" />
+            <Text ml={4}>Calculating max spendable amount...</Text>
+          </Flex>
+        </Box>
+      </Flex>
+    );
+  }
 
   return (
-    <VStack align="start" borderRadius="md" p={6} spacing={5}>
-      <Modal
-        isOpen={isOpen}
-        onClose={() => {
-          onClose();
-          setModalType('');
-        }}
-        size="xl"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Choose Asset</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {modalType === 'SELECT' && (
-              <div>
-                <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: true, noTokens: true, hasPubkey:true }}/>
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter />
-        </ModalContent>
-      </Modal>
-      <Heading as="h1" mb={4} size="lg">
+    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} boxShadow="lg" width={{ base: '100%', md: '75%', lg: '50%' }} margin="0 auto">
+      <Heading as="h1" mb={4} size="lg" color={headingColor}>
         Send Crypto!
       </Heading>
 
       {isPairing ? (
         <Box>
-          <Text mb={2}>
+          <Text mb={2} color={textColor}>
             Connecting to {context}...
             <Spinner size="xl" />
             Please check your wallet to approve the connection.
@@ -269,16 +204,12 @@ export function Transfer({usePioneer}:any): JSX.Element {
               </Avatar>
             </Box>
             <Box>
-              <Text mb={2}>Asset: {assetContext?.name || 'N/A'}</Text>
-              <Text mb={2}>Chain: {assetContext?.chain || 'N/A'}</Text>
-              <Text mb={4}>Symbol: {assetContext?.symbol || 'N/A'}</Text>
-              <Button
-                colorScheme="blue"
-                isDisabled={!balances}
-                onClick={() => showModalWithType('SELECT')}
-              >
-                Change Asset
-              </Button>
+              <Text mb={2} color={textColor}>Asset: {assetContext?.name || 'N/A'}</Text>
+              <Text mb={2} color={textColor}>Chain: {assetContext?.chain || 'N/A'}</Text>
+              <Text mb={4} color={textColor}>Symbol: {assetContext?.symbol || 'N/A'}</Text>
+              <Text mb={4} color={textColor}>
+                Max Spendable: {maxSpendable} {assetContext?.symbol}
+              </Text>
             </Box>
           </Flex>
           <br />
@@ -288,17 +219,17 @@ export function Transfer({usePioneer}:any): JSX.Element {
             w="full"
           >
             <FormControl>
-              <FormLabel>Recipient:</FormLabel>
+              <FormLabel color={textColor}>Recipient:</FormLabel>
               <Input
-                onChange={(e) => setRecipient(e.target.value)}
+                onChange={handleRecipientChange}
                 placeholder="Address"
                 value={recipient}
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Input Amount:</FormLabel>
+              <FormLabel color={textColor}>Input Amount:</FormLabel>
               <Input
-                onChange={(e) => handleInputChange(e.target.value)}
+                onChange={handleInputChange}
                 placeholder="0.0"
                 value={inputAmount}
               />
@@ -315,7 +246,7 @@ export function Transfer({usePioneer}:any): JSX.Element {
           </Flex>
           {showAdvanced && (
             <FormControl>
-              <FormLabel>
+              <FormLabel color={textColor}>
                 Memo:
                 <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
                   <InfoOutlineIcon ml="2" />
@@ -325,10 +256,7 @@ export function Transfer({usePioneer}:any): JSX.Element {
             </FormControl>
           )}
           <br />
-          <Text>
-            Available Balance: {assetContext?.balance} ({assetContext?.symbol})
-          </Text>
-          <Button onClick={setMaxAmount} size={'sm'}>MAX</Button>
+          <Button onClick={setMaxAmount} size="sm" colorScheme="teal">MAX</Button>
         </div>
       )}
 
@@ -336,13 +264,13 @@ export function Transfer({usePioneer}:any): JSX.Element {
         colorScheme="green"
         w="full"
         mt={4}
-        // isLoading={isSubmitting}
         onClick={handleSend}
+        isLoading={isSubmitting}
       >
-        {isSubmitting ? <Spinner size="xs" /> : 'Send'}
+        {isSubmitting ? 'Sending...' : 'Send'}
       </Button>
     </VStack>
   );
-};
+}
 
 export default Transfer;

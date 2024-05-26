@@ -51,8 +51,13 @@ export function Balance({ usePioneer, onClose, balance }: any) {
         </Avatar>
         <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4} flexGrow={1}>
           <Badge colorScheme="blue" mb={2}>{balance.ticker || 'N/A'}</Badge>
+          {/*<Text fontSize="lg">ref: {balance.ref}</Text>*/}
           <Text fontSize="lg">Balance: {balanceFormatted}</Text>
-          <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
+          {balance.valueUsd ? (
+            <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
+          ) : (
+            <></>
+          )}
         </Box>
         <Box ml={4}>
           {/*<Button colorScheme="blue" size="lg" onClick={() => handleModal('transfer')}>Send</Button>*/}
