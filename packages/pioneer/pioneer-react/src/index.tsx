@@ -352,8 +352,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               type: WalletActions.SET_HARDWARE_ERROR,
               payload: resultPairWallet.error,
             });
-          } else {
+          } else if (resultPairWallet) {
             console.log('keepkeyApiKey: ', state.app.keepkeyApiKey);
+            console.log('resultPairWallet: ', resultPairWallet);
 
             if (resultPairWallet) localStorage.setItem('keepkeyApiKey', state.app.keepkeyApiKey);
             console.log('state.app.assetContext: ', state.app.assetContext);
@@ -420,6 +421,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
                 payload: state.app.pubkeyContext,
               });
             }
+          } else {
+            console.error('Error connecting wallet');
           }
         }
       } catch (e) {
@@ -526,6 +529,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       };
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
+      console.log(tag, 'appInit: ', appInit);
+      console.log(tag, 'keepkeyApiKey: ', keepkeyApiKey);
       //Network actions
       if (appInit.keepkeyApiKey !== keepkeyApiKey) {
         console.log('SAVING API KEY. ');

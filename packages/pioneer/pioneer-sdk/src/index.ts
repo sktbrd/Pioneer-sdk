@@ -615,6 +615,7 @@ export class SDK {
                 AllChainsSupported,
                 this.paths,
               )) || '';
+            console.log(tag, 'this.keepkeyApiKey: ', this.keepkeyApiKey);
             resultPair = 'success';
             break;
           case 'WALLETCONNECT':

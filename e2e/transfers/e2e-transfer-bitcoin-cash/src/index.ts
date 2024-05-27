@@ -10,7 +10,7 @@ require('dotenv').config({path:"./../../.env"});
 require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
-const TAG  = " | intergration-test | "
+const TAG  = " | integration-test | "
 //@ts-ignore
 import { getPaths } from '@pioneer-platform/pioneer-coins';
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
