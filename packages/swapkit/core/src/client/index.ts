@@ -50,7 +50,7 @@ import type {
   Wallet,
   WalletMethods,
 } from './types.ts';
-const TAG = ' | TAG | ';
+const TAG = ' | CORE | ';
 
 const getEmptyWalletStructure = () =>
   (Object.values(Chain) as Chain[]).reduce(
@@ -151,7 +151,7 @@ export class SwapKitCore<T = ''> {
         }
 
         case 'SWAP_OUT': {
-          console.log("route: ", route)
+          console.log('route: ', route);
           if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
           const asset = await AssetValue.fromString(route.calldata.fromAsset);
           if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
@@ -448,17 +448,30 @@ export class SwapKitCore<T = ''> {
     this.getWallet(chain)?.validateAddress?.(address);
 
   transfer = async (params: CoreTxParams & { router?: string }) => {
-    const walletInstance = this.connectedWallets[params.assetValue.chain];
-    if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
-
+    let tag = TAG + ' | transfer | ';
     try {
+      console.log(tag, 'params: ', params);
+      const walletInstance = this.connectedWallets[params.assetValue.chain];
+      if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
       let transferParams = await this.#prepareTxParams(params);
-      //console.log('CORE transferParams: ', transferParams);
+      console.log(tag, 'CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
-      throw new SwapKitError('core_swap_transaction_error', error);
+      throw new SwapKitError('core_transfer_transaction_error', error);
     }
   };
+  // transfer = async (params: CoreTxParams & { router?: string }) => {
+  //   const walletInstance = this.connectedWallets[params.assetValue.chain];
+  //   if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
+  //
+  //   try {
+  //     let transferParams = await this.#prepareTxParams(params);
+  //     console.log(tag, 'CORE transferParams: ', transferParams);
+  //     return await walletInstance.transfer(transferParams);
+  //   } catch (error) {
+  //     throw new SwapKitError('core_transfer_transaction_error', error);
+  //   }
+  // };
 
   deposit = async ({
     assetValue,

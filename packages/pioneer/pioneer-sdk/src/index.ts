@@ -1154,14 +1154,13 @@ export class SDK {
             } else if (path.type === 'xpub' || path.type === 'zpub') {
               let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys([path]);
               if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
-              console.log('pubkeys: ', pubkeys);
+              console.log(tag, ' pubkeys: ', pubkeys);
               let pubkeyForPath = pubkeys[0];
               // let pubkeyForPath = pubkeys.find(
               //   (p: any) => p.addressNList.toString() === path.addressNList.toString(),
               // );
               // if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
-
-              pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
+              if (pubkeyForPath) pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
             }
 
             pubkey.context = this.context;

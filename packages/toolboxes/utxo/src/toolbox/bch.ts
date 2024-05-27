@@ -1,3 +1,7 @@
+/*
+    BCH tx builder!
+
+ */
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, DerivationPath, FeeOption, RPCUrl } from '@coinmasters/types';
 import {
@@ -6,17 +10,18 @@ import {
   Transaction,
   TransactionBuilder,
 } from '@psf/bitcoincashjs-lib';
-// import {
-//   detectAddressNetwork,
-//   isValidAddress,
-//   Network as bchNetwork,
-//   toCashAddress,
-//   toLegacyAddress,
-// } from 'bchaddrjs';
+import {
+  detectAddressNetwork,
+  isValidAddress,
+  Network as bchNetwork,
+  toCashAddress,
+  toLegacyAddress,
+} from 'bchaddrjs';
 import { Psbt } from 'bitcoinjs-lib';
-import { ECPairFactory } from 'ecpair';
 import * as coinSelect from 'coinselect';
 import * as split from 'coinselect/split';
+import { ECPairFactory } from 'ecpair';
+
 import type { BlockchairApiType } from '../api/blockchairApi.ts';
 import { blockchairApi } from '../api/blockchairApi.ts';
 import { broadcastUTXOTx } from '../api/rpcApi.ts';
@@ -31,6 +36,7 @@ import type { UTXOType } from '../types/index.ts';
 import { accumulative, compileMemo, getNetwork, getSeed } from '../utils/index.ts';
 
 import { BaseUTXOToolbox } from './BaseUTXOToolbox.ts';
+const TAG = ' | toolbox-bch | ';
 
 // needed because TS can not infer types
 type BCHMethods = {
@@ -56,7 +62,7 @@ type BCHMethods = {
 
 const chain = Chain.BitcoinCash as UTXOChain;
 
-// const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
+const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
 
 const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
   assetValue,
@@ -68,8 +74,7 @@ const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
 }) => {
   if (!validateAddress(recipient)) throw new Error('Invalid address');
   const utxos = await apiClient.scanUTXOs({
-    address: sender,
-    // address: stripToCashAddress(sender),
+    address: stripToCashAddress(sender),
     fetchTxHex: true,
   });
 
@@ -101,11 +106,9 @@ const buildBCHTx: BCHMethods['buildBCHTx'] = async ({
     let out = undefined;
     if (!output.address) {
       //an empty address means this is the  change address
-      out = bchAddress.toOutputScript(sender, getNetwork(chain));
-      // out = bchAddress.toOutputScript(toLegacyAddress(sender), getNetwork(chain));
+      out = bchAddress.toOutputScript(toLegacyAddress(sender), getNetwork(chain));
     } else if (output.address) {
-      out = bchAddress.toOutputScript(output.address, getNetwork(chain));
-      // out = bchAddress.toOutputScript(toLegacyAddress(output.address), getNetwork(chain));
+      out = bchAddress.toOutputScript(toLegacyAddress(output.address), getNetwork(chain));
     }
     builder.addOutput(out, output.value);
   });
@@ -167,155 +170,288 @@ const buildTx = async ({
   sender,
   apiClient,
 }: UTXOBuildTxParams & { apiClient: BlockchairApiType }) => {
-  const recipientCashAddress = toCashAddress(recipient);
-  if (!validateAddress(recipientCashAddress)) throw new Error('Invalid address');
+  let tag = TAG + ' | buildTx | ';
+  try {
+    const recipientCashAddress = toCashAddress(recipient);
+    if (!validateAddress(recipientCashAddress)) throw new Error('Invalid address');
 
-  //console.log('pubkeys: ', pubkeys);
-  //select a single pubkey
-  //choose largest balance
-  let largestBalance = -Infinity; // Initialize with a very small value
-  let pubkeyWithLargestBalance = null; // Initialize as null
+    let utxos = [];
 
-  // eslint-disable-next-line @typescript-eslint/prefer-for-of
-  for (let i = 0; i < pubkeys.length; i++) {
-    const pubkey = pubkeys[i];
-    const balance = parseFloat(pubkey.balance);
+    for (let i = 0; i < pubkeys.length; i++) {
+      const pubkey = pubkeys[i];
 
-    if (!isNaN(balance) && balance > largestBalance) {
-      largestBalance = balance;
-      pubkeyWithLargestBalance = pubkey;
+      // Get UTXOs for the current pubkey
+      //@ts-ignore
+      let currentUtxos = await apiClient.listUnspent({
+        pubkey: pubkey.xpub,
+        chain,
+        apiKey: apiClient.apiKey,
+      });
+
+      // Add UTXOs to the array
+      if (currentUtxos && Array.isArray(currentUtxos)) {
+        utxos = utxos.concat(currentUtxos);
+      }
     }
-  }
 
-  //pubkeyWithLargestBalance
-  let utxos = await apiClient.listUnspent({
-    pubkey: pubkeyWithLargestBalance.xpub,
-    chain,
-    apiKey: apiClient.apiKey,
-  });
+    // Transform UTXOs to the desired format
+    // eslint-disable-next-line no-inner-declarations
+    function transformInput(input) {
+      const {
+        txid,
+        vout,
+        value,
+        address,
+        height,
+        confirmations,
+        path,
+        hex: txHex,
+        tx,
+        coin,
+        network,
+      } = input;
 
-  //console.log("inputs total: ",utxos)
-  //console.log("inputs total: ",utxos.length)
-  // Create a function to transform an input into the desired output format
-  function transformInput(input) {
-    const {
-      txid,
-      vout,
-      value,
-      address,
-      height,
-      confirmations,
-      path,
-      hex: txHex,
-      tx,
-      coin,
-      network,
-    } = input;
+      return {
+        address,
+        hash: txid, // Rename txid to hash
+        index: vout,
+        value: parseInt(value),
+        height,
+        confirmations,
+        path,
+        txHex,
+        tx,
+        coin,
+        network,
+        witnessUtxo: {
+          value: parseInt(input.tx.vout[0].value),
+          script: Buffer.from(input.tx.vout[0].scriptPubKey.hex, 'hex'),
+        },
+      };
+    }
+    utxos = utxos.map(transformInput);
 
-    return {
-      address,
-      hash: txid, // Rename txid to hash
-      index: vout,
-      value: parseInt(value),
-      height,
-      confirmations,
-      path,
-      txHex,
-      tx,
-      coin,
-      network,
-      witnessUtxo: {
-        value: parseInt(input.tx.vout[0].value),
-        script: Buffer.from(input.tx.vout[0].scriptPubKey.hex, 'hex'),
-      },
-    };
-  }
-  utxos = utxos.map(transformInput);
-  // const utxos = await apiClient.scanUTXOs({
-  //   address: stripToCashAddress(sender),
-  //   fetchTxHex: true,
-  // });
+    // const feeRateWhole = Number(feeRate.toFixed(0));
+    const compiledMemo = memo ? compileMemo(memo) : null;
 
-  const feeRateWhole = Number(feeRate.toFixed(0));
-  const compiledMemo = memo ? compileMemo(memo) : null;
+    let targetOutputs = [] as any;
 
-  let targetOutputs = [] as any;
+    // Output to recipient
+    targetOutputs.push({
+      address: toLegacyAddress(recipient),
+      value: assetValue.getBaseValue('number'),
+    });
 
-  // output to recipient
-  targetOutputs.push({
-    address: recipient,
-    // address: toLegacyAddress(recipient),
-    value: assetValue.getBaseValue('number'),
-  });
+    // Add memo output to targets (optional)
+    if (compiledMemo) {
+      targetOutputs.push({ script: compiledMemo, value: 0 });
+    }
 
-  //2. add output memo to targets (optional)
-  if (compiledMemo) {
-    targetOutputs.push({ script: compiledMemo, value: 0 });
-  }
-
-  let inputs: any[], outputs: any[];
-  if (isMax) {
-    console.log('isMax: detected!');
-    console.log('targetOutputs: ', targetOutputs);
-    targetOutputs = targetOutputs
-      // .filter((output) => output.address !== undefined)
-      .map((output) => {
+    let inputs: any[], outputs: any[];
+    if (isMax) {
+      console.log(tag, 'isMax: detected!');
+      console.log(tag, 'targetOutputs: ', targetOutputs);
+      targetOutputs = targetOutputs.map((output) => {
         const newOutput = { ...output };
         delete newOutput.value;
         return newOutput;
       });
-    console.log('targetOutputs: ', targetOutputs);
-    ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
-  } else {
-    console.log('isMax: not detected!');
-    //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
-    //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
-
-    ({ inputs, outputs } = coinSelect.default(utxos, targetOutputs, feeRate));
-  }
-
-  // const { inputs, outputs } = accumulative({
-  //   inputs: utxos,
-  //   outputs: targetOutputs,
-  //   feeRate: feeRateWhole,
-  //   chain,
-  // });
-
-  // .inputs and .outputs will be undefined if no solution was found
-  if (!inputs || !outputs) throw new Error('Balance insufficient for transaction');
-  const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
-  //console.log("inputs: ",inputs)
-  //Inputs
-  inputs.forEach(({ hash, index, witnessUtxo }: UTXOType) =>
-    psbt.addInput({ hash, index, witnessUtxo }),
-  );
-
-  // Outputs
-
-  outputs.forEach((output: any) => {
-    output.address = toLegacyAddress(output.address || sender);
-
-    if (!output.script) {
-      psbt.addOutput(output);
+      console.log(tag, 'targetOutputs: ', targetOutputs);
+      ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
     } else {
-      //we need to add the compiled memo this way to
-      //avoid dust error tx when accumulating memo output with 0 value
-      if (compiledMemo) {
-        psbt.addOutput({ script: compiledMemo, value: 0 });
-      }
+      console.log(tag, 'isMax: not detected!');
+      ({ inputs, outputs } = coinSelect.default(utxos, targetOutputs, feeRate));
     }
-  });
 
-  return { psbt, utxos, inputs: inputs as UTXOType[] };
+    if (!inputs || !outputs) throw new Error('Balance insufficient for transaction');
+
+    const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
+
+    // Inputs
+    inputs.forEach(({ hash, index, witnessUtxo }: UTXOType) =>
+      psbt.addInput({ hash, index, witnessUtxo }),
+    );
+
+    // Outputs
+    outputs.forEach((output: any) => {
+      // output.address = output.address || sender;
+      // output.address = output.address.replace('bitcoincash:', '');
+      output.address = toLegacyAddress(output.address || sender);
+
+      if (!output.script) {
+        psbt.addOutput(output);
+      } else {
+        if (compiledMemo) {
+          psbt.addOutput({ script: compiledMemo, value: 0 });
+        }
+      }
+    });
+
+    return { psbt, utxos, inputs: inputs as UTXOType[] };
+  } catch (error) {
+    console.error(tag, 'Error in buildTx:', error);
+    throw new Error('Transaction building failed');
+  }
 };
+
+// const buildTx = async ({
+//   assetValue,
+//   recipient,
+//   pubkeys,
+//   memo,
+//   isMax,
+//   feeRate,
+//   sender,
+//   apiClient,
+// }: UTXOBuildTxParams & { apiClient: BlockchairApiType }) => {
+//   let tag = TAG + ' | buildTx | ';
+//   const recipientCashAddress = toCashAddress(recipient);
+//   if (!validateAddress(recipientCashAddress)) throw new Error('Invalid address');
+//
+//   //console.log('pubkeys: ', pubkeys);
+//   //select a single pubkey
+//   //choose largest balance
+//   let largestBalance = -Infinity; // Initialize with a very small value
+//   let pubkeyWithLargestBalance = null; // Initialize as null
+//
+//   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+//   for (let i = 0; i < pubkeys.length; i++) {
+//     const pubkey = pubkeys[i];
+//     const balance = parseFloat(pubkey.balance);
+//
+//     if (!isNaN(balance) && balance > largestBalance) {
+//       largestBalance = balance;
+//       pubkeyWithLargestBalance = pubkey;
+//     }
+//   }
+//
+//   //pubkeyWithLargestBalance
+//   let utxos = await apiClient.listUnspent({
+//     pubkey: pubkeyWithLargestBalance.xpub,
+//     chain,
+//     apiKey: apiClient.apiKey,
+//   });
+//
+//   //console.log("inputs total: ",utxos)
+//   //console.log("inputs total: ",utxos.length)
+//   // Create a function to transform an input into the desired output format
+//   function transformInput(input) {
+//     const {
+//       txid,
+//       vout,
+//       value,
+//       address,
+//       height,
+//       confirmations,
+//       path,
+//       hex: txHex,
+//       tx,
+//       coin,
+//       network,
+//     } = input;
+//
+//     return {
+//       address,
+//       hash: txid, // Rename txid to hash
+//       index: vout,
+//       value: parseInt(value),
+//       height,
+//       confirmations,
+//       path,
+//       txHex,
+//       tx,
+//       coin,
+//       network,
+//       witnessUtxo: {
+//         value: parseInt(input.tx.vout[0].value),
+//         script: Buffer.from(input.tx.vout[0].scriptPubKey.hex, 'hex'),
+//       },
+//     };
+//   }
+//   utxos = utxos.map(transformInput);
+//   // const utxos = await apiClient.scanUTXOs({
+//   //   address: stripToCashAddress(sender),
+//   //   fetchTxHex: true,
+//   // });
+//
+//   const feeRateWhole = Number(feeRate.toFixed(0));
+//   const compiledMemo = memo ? compileMemo(memo) : null;
+//
+//   let targetOutputs = [] as any;
+//
+//   // output to recipient
+//   targetOutputs.push({
+//     address: toLegacyAddress(recipient),
+//     value: assetValue.getBaseValue('number'),
+//   });
+//
+//   //2. add output memo to targets (optional)
+//   if (compiledMemo) {
+//     targetOutputs.push({ script: compiledMemo, value: 0 });
+//   }
+//
+//   let inputs: any[], outputs: any[];
+//   if (isMax) {
+//     console.log('isMax: detected!');
+//     console.log('targetOutputs: ', targetOutputs);
+//     targetOutputs = targetOutputs
+//       // .filter((output) => output.address !== undefined)
+//       .map((output) => {
+//         const newOutput = { ...output };
+//         delete newOutput.value;
+//         return newOutput;
+//       });
+//     console.log('targetOutputs: ', targetOutputs);
+//     ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
+//   } else {
+//     console.log('isMax: not detected!');
+//     //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
+//     //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
+//
+//     ({ inputs, outputs } = coinSelect.default(utxos, targetOutputs, feeRate));
+//   }
+//
+//   // const { inputs, outputs } = accumulative({
+//   //   inputs: utxos,
+//   //   outputs: targetOutputs,
+//   //   feeRate: feeRateWhole,
+//   //   chain,
+//   // });
+//
+//   // .inputs and .outputs will be undefined if no solution was found
+//   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction');
+//   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
+//   //console.log("inputs: ",inputs)
+//   //Inputs
+//   inputs.forEach(({ hash, index, witnessUtxo }: UTXOType) =>
+//     psbt.addInput({ hash, index, witnessUtxo }),
+//   );
+//
+//   // Outputs
+//
+//   outputs.forEach((output: any) => {
+//     output.address = toLegacyAddress(output.address || sender);
+//
+//     if (!output.script) {
+//       psbt.addOutput(output);
+//     } else {
+//       //we need to add the compiled memo this way to
+//       //avoid dust error tx when accumulating memo output with 0 value
+//       if (compiledMemo) {
+//         psbt.addOutput({ script: compiledMemo, value: 0 });
+//       }
+//     }
+//   });
+//
+//   return { psbt, utxos, inputs: inputs as UTXOType[] };
+// };
 
 const stripPrefix = (address: string) => address.replace(/(bchtest:|bitcoincash:)/, '');
 
 const validateAddress = (address: string, _chain?: UTXOChain) => {
   const startsWithBCH = address.startsWith('bitcoincash:');
   if (startsWithBCH) return true;
-  return true
-  // return isValidAddress(address) && detectAddressNetwork(address) === bchNetwork.Mainnet;
+  return isValidAddress(address) && detectAddressNetwork(address) === bchNetwork.Mainnet;
 };
 
 const createKeysForPath: BCHMethods['createKeysForPath'] = async ({
@@ -343,8 +479,7 @@ const createKeysForPath: BCHMethods['createKeysForPath'] = async ({
 
 const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) => {
   const address = keys.getAddress(0);
-  return address;
-  // return stripToCashAddress(address);
+  return stripToCashAddress(address);
 };
 
 export const BCHToolbox = ({

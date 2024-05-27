@@ -1,3 +1,10 @@
+/*
+      BaseUTXOToolbox
+            -Highlander
+
+     X-pub based
+ */
+const TAG = " | BaseUTXOToolbox | "
 import { AssetValue, SwapKitNumber } from '@coinmasters/helpers';
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, FeeOption } from '@coinmasters/types';
@@ -107,13 +114,14 @@ const transfer = async ({
 
 const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: BlockchairApiType) {
   try {
-    //console.log('getPubkeyBalance pubkey: ', pubkey);
-    //console.log('getPubkeyBalance type: ', type);
+    console.log('getPubkeyBalance pubkey: ', pubkey);
+    console.log('getPubkeyBalance type: ', type);
     switch (type) {
       case 'pubkey':
       case 'zpub':
       case 'xpub':
-        //console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
+        console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
+        console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
         // eslint-disable-next-line no-case-declarations
         const xpubBalance = await apiClient.getBalanceXpub(
           pubkey.pubkey.xpub || pubkey.xpub || pubkey.pubkey,

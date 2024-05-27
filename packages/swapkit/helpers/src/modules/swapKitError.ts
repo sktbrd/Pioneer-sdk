@@ -29,7 +29,6 @@ const errorMessages = {
   core_swap_contract_not_found: 10203,
   core_swap_route_transaction_not_found: 10204,
   core_swap_contract_not_supported: 10205,
-  core_swap_transaction_error: 10206,
   core_swap_quote_mode_not_supported: 10207,
   /**
    * Core - Transaction
@@ -47,8 +46,9 @@ const errorMessages = {
   core_transaction_deposit_insufficient_funds_error: 10311,
   core_transaction_deposit_gas_error: 10312,
   core_transaction_invalid_sender_address: 10313,
-  core_transaction_deposit_server_error: 10313,
+  core_transaction_deposit_server_error: 10314,
 
+  core_swap_transaction_error: 10400,
   /**
    * Wallets
    */

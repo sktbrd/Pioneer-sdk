@@ -162,8 +162,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     case WalletActions.SET_BLOCKCHAINS:
       return { ...state, blockchains: action.payload };
 
-    case WalletActions.SET_PATHS:
-      return { ...state, paths: action.payload };
+    // case WalletActions.SET_PATHS:
+    //   return { ...state, paths: action.payload };
 
     case WalletActions.SET_BALANCES:
       return { ...state, balances: action.payload };
