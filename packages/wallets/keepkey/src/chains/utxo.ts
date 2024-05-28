@@ -14,7 +14,7 @@ import { xpubConvert } from '@pioneer-platform/pioneer-coins';
 import type { Psbt } from 'bitcoinjs-lib';
 
 import { bip32ToAddressNList, ChainToKeepKeyName } from '../helpers/coins.ts';
-
+const TAG = ' | keepkey-utxo | ';
 type Params = {
   sdk: any;
   chain: UTXOChain;
@@ -89,12 +89,16 @@ export const utxoWalletMethods = async ({
 
   // @ts-ignore
   const _getPubkeys = async (paths: any) => {
+    let tag = TAG + ' | getPubkeys | ';
     try {
-      //console.log('paths: ', paths);
+      console.log('paths: ', paths); //filter for UTXO paths
 
       console.time('getPubkeys Duration' + chain); // Starts the timer
       const pubkeys = await Promise.all(
         paths.map(async (path) => {
+          if (path.type === 'address') return; //skip address paths (not UTXO paths)
+          console.log(tag, 'UTXO path: ', path);
+
           // Marked as async to use await inside
           // Create the path query for public key retrieval
           const pathQuery = {
