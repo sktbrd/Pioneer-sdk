@@ -1,99 +1,96 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Avatar, Box, Stack, Flex, Text, Heading, useColorModeValue, Spinner, Button, AvatarGroup, Divider, Input
+  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, useColorModeValue
 } from '@chakra-ui/react';
+import { Pubkey } from '../Pubkey';
+import { Balance } from '../Balance';
+import { Transfer } from '../Transfer';
+import { Receive } from '../Receive';
 
-const Card = ({ children }:any) => (
+const Card = ({ children }: any) => (
   <Box
     border="1px solid"
     borderColor={useColorModeValue('gray.200', 'gray.700')}
     borderRadius="lg"
     overflow="hidden"
     bg={useColorModeValue('white', 'gray.800')}
+    width="100%"
   >
     {children}
   </Box>
 );
 
-const CardHeader = ({ children }:any) => (
-  <Box bg={useColorModeValue('gray.50', 'gray.900')} px={4} py={2}>
-    {children}
-  </Box>
-);
-
-const CardBody = ({ children }:any) => (
+const CardBody = ({ children }: any) => (
   <Box p={4}>
     {children}
   </Box>
 );
 
-export function Asset({ asset }:any) {
-  const [showManualAddressForm, setShowManualAddressForm] = useState(false);
+export function Asset({ usePioneer, onClose, asset }: any) {
+  const [activeTab, setActiveTab] = useState<'send' | 'receive' | null>(null);
+
+  const { state } = usePioneer();
+  const { app } = state;
+
+  const clearAssetContext = () => {
+    app.setAssetContext(null);
+    onClose();
+  };
+
+  useEffect(() => {
+    if (asset) {
+      console.log('asset:', asset);
+    }
+  }, [asset]);
 
   return (
     <Stack spacing={4} width="100%">
       <Card>
-        <CardHeader>
-          <Heading size='md'><Text fontWeight="bold">{asset?.name}</Text></Heading>
-        </CardHeader>
         <CardBody>
-          {asset ? (
-            <Flex align="center" justifyContent="space-between">
-              <Avatar size='xl' src={asset.icon} />
-              <Box ml={3} flex="1">
-                <Text fontSize="sm">Symbol: {asset.symbol}</Text>
-                <Text fontSize="sm" textAlign="right">CAIP: {asset.caip}</Text>
-                <Text fontSize="sm">Type: {asset.type}</Text>
-                <Text fontSize="sm">Price USD: ${parseFloat(asset.priceUsd).toFixed(2)}</Text>
-                {asset.address ? (
-                  <Text fontSize="sm">Address: {asset.address}</Text>
-                ) : (
-                  <>
-                    <Flex mt={2} justifyContent="flex-end" alignItems="center">
-                      <AvatarGroup size="md" max={3}>
-                        {/*<Avatar name="Wallet 1" src="" />*/}
-                        {/*<Avatar name="Wallet 2" src="" />*/}
-                        {/*<Avatar name="Wallet 3" src="" />*/}
-                      </AvatarGroup>
-                      {/*<Button*/}
-                      {/*  ml={2}*/}
-                      {/*  colorScheme="blue"*/}
-                      {/*  borderRadius="full"*/}
-                      {/*  onClick={() => setShowManualAddressForm(!showManualAddressForm)}*/}
-                      {/*>*/}
-                      {/*  Pair Wallet*/}
-                      {/*</Button>*/}
-                    </Flex>
-                    {/*{showManualAddressForm && (*/}
-                    {/*  <>*/}
-                    {/*    <Input*/}
-                    {/*      placeholder="Enter address manually"*/}
-                    {/*      size="md"*/}
-                    {/*      mt={2}*/}
-                    {/*    />*/}
-                    {/*    <Button mt={2} colorScheme="teal">Submit Address</Button>*/}
-                    {/*  </>*/}
-                    {/*)}*/}
-                    <Divider my={2} />
-                    <Text fontSize="sm" color="red.500" mt={2}>No address found</Text>
-                    {/*<Button*/}
-                    {/*  mt={2}*/}
-                    {/*  borderRadius="full"*/}
-                    {/*  colorScheme="gray" // Ensure no green colors*/}
-                    {/*  onClick={() => setShowManualAddressForm(true)}*/}
-                    {/*>*/}
-                    {/*  Add Address Manually*/}
-                    {/*</Button>*/}
-                  </>
-                )}
-                {asset.balance && asset.valueUsd > 0 && (
-                  <Text fontSize="sm">Balance: {asset.balance} (${parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
-                )}
-              </Box>
-            </Flex>
+          {activeTab === null && asset ? (
+            <>
+              <Flex align="center" justifyContent="space-between" mb={4}>
+                <Avatar size='xl' src={asset.icon} />
+                <Box ml={3} flex="1">
+                  <Text fontSize="lg" fontWeight="bold">{asset.name}</Text>
+                  <Text fontSize="md" color="gray.500">{asset.symbol}</Text>
+                </Box>
+              </Flex>
+              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
+                <VStack width="100%">
+                  {app.pubkeys
+                    .filter((pubkey: any) => pubkey.networks.includes(asset.networkId))
+                    .map((pubkey: any, index: any) => (
+                      <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                    ))}
+                </VStack>
+              </Flex>
+              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
+                <VStack width="100%">
+                  {app.balances
+                    .filter((balance: any) => balance.caip === asset.caip)
+                    .map((balance: any, index: any) => (
+                      <Balance key={index} usePioneer={usePioneer} balance={balance} />
+                    ))}
+                </VStack>
+              </Flex>
+              <VStack spacing={2}>
+                <Button size="sm" onClick={() => setActiveTab('send')}>
+                  Send {asset.name}
+                </Button>
+
+                <Button size="sm" onClick={() => setActiveTab('receive')}>
+                  Receive {asset.name}
+                </Button>
+              </VStack>
+            </>
+          ) : activeTab === 'send' ? (
+            <Transfer usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
+          ) : activeTab === 'receive' ? (
+            <Receive usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : (
             <Flex justifyContent="center" p={5}>
-              No asset selected
+              <Text>No asset selected</Text>
               <Spinner ml={4} />
             </Flex>
           )}

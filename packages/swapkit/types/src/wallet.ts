@@ -26,7 +26,6 @@ export type EVMWalletOptions =
 const AllChainsSupported = [
   Chain.Arbitrum,
   Chain.Avalanche,
-  Chain.Binance,
   Chain.BinanceSmartChain,
   Chain.Bitcoin,
   Chain.BitcoinCash,
@@ -50,7 +49,6 @@ export const availableChainsByWallet: any = {
     Chain.Arbitrum,
     Chain.Base,
     Chain.Avalanche,
-    Chain.Binance,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -74,7 +72,6 @@ export const availableChainsByWallet: any = {
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.Base,
-    Chain.Binance,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -133,5 +130,20 @@ export const availableChainsByWallet: any = {
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.Cosmos,
+  ],
+};
+
+//prefurred chains for wallets (for large wallets this set help performance)
+export const prefurredChainsByWallet: any = {
+  [WalletOption.KEEPKEY]: [
+    Chain.Bitcoin,
+    Chain.BitcoinCash,
+    Chain.Ripple,
+    Chain.Dogecoin,
+    Chain.THORChain,
+    Chain.Ethereum,
+    Chain.Base,
+    Chain.Dash,
+    Chain.Arbitrum,
   ],
 };

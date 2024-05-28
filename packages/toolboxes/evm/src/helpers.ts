@@ -173,13 +173,15 @@ export const estimateMaxSendableAmount = async function ({
 }: EVMMaxSendableAmountsParams) {
   let tag = TAG + ' | estimateMaxSendableAmount | ';
   try {
-    //console.log(tag, 'checkpoint ');
+    console.log(tag, 'checkpoint ');
+    console.log(tag, 'from: ', from);
+    if (!from) throw new Error('Missing from address');
     const balance = (await toolbox.getBalance([{ address: from }])).find(({ symbol, chain }) =>
       assetValue
         ? symbol === assetValue.symbol
         : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
     );
-    //console.log(tag, 'balance: ', balance);
+    console.log(tag, 'balance: ', balance);
 
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
     //console.log(tag, 'fees: ', fees);
@@ -192,42 +194,42 @@ export const estimateMaxSendableAmount = async function ({
     ) {
       return balance;
     }
+    //TODO this makes no sense to me. If you are sending native token, its not a smart contract fee
+    //and if you are sending a token the fee amount of the gass asset has nothing to do with the token max sendable amount
+    // if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
+    //   throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
+    // }
+    //
+    // const gasLimit =
+    //   abi && funcName && funcParams && contractAddress
+    //     ? await toolbox.estimateCall({
+    //         contractAddress,
+    //         abi,
+    //         funcName,
+    //         funcParams,
+    //         txOverrides,
+    //       })
+    //     : await toolbox.estimateGasLimit({
+    //         from,
+    //         recipient: from,
+    //         memo,
+    //         assetValue,
+    //       });
+    // //console.log(tag, 'gasLimit: ', gasLimit);
+    //
+    // const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
+    // const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
+    //
+    // if (!isFeeEVMLegacyCompatible && !isFeeEIP1559Compatible)
+    //   throw new Error('Could not fetch fee data');
+    //
+    // const fee =
+    //   gasLimit *
+    //   (isFeeEIP1559Compatible
+    //     ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
+    //     : fees.gasPrice!);
 
-    if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
-      throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
-    }
-
-    const gasLimit =
-      abi && funcName && funcParams && contractAddress
-        ? await toolbox.estimateCall({
-            contractAddress,
-            abi,
-            funcName,
-            funcParams,
-            txOverrides,
-          })
-        : await toolbox.estimateGasLimit({
-            from,
-            recipient: from,
-            memo,
-            assetValue,
-          });
-    //console.log(tag, 'gasLimit: ', gasLimit);
-
-    const isFeeEIP1559Compatible = 'maxFeePerGas' in fees;
-    const isFeeEVMLegacyCompatible = 'gasPrice' in fees;
-
-    if (!isFeeEVMLegacyCompatible && !isFeeEIP1559Compatible)
-      throw new Error('Could not fetch fee data');
-
-    const fee =
-      gasLimit *
-      (isFeeEIP1559Compatible
-        ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
-        : fees.gasPrice!);
-    const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint')).sub(
-      fee.toString(),
-    );
+    const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint'));
     //console.log(tag, 'fee: ', fee);
 
     return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));

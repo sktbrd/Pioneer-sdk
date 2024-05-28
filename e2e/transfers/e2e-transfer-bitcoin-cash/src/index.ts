@@ -10,7 +10,7 @@ require('dotenv').config({path:"./../../.env"});
 require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
-const TAG  = " | intergration-test | "
+const TAG  = " | integration-test | "
 //@ts-ignore
 import { getPaths } from '@pioneer-platform/pioneer-coins';
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
@@ -25,7 +25,7 @@ let sleep = wait.sleep;
 let BLOCKCHAIN = ChainToNetworkId['BCH']
 let ASSET = 'BCH'
 let MIN_BALANCE = process.env['MIN_BALANCE_BCH'] || "0.004"
-let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
+let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.0001"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 let FAUCET_BCH_ADDRESS = process.env['FAUCET_BCH_ADDRESS']
@@ -203,9 +203,9 @@ const test_service = async function (this: any) {
 
         //send
         let sendPayload = {
-            // assetValue,
-            assetValue:maxSpendable,
-            isMax: true,
+            assetValue,
+            // assetValue:maxSpendable,
+            // isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }
@@ -214,7 +214,7 @@ const test_service = async function (this: any) {
         log.info("txHash: ",txHash)
         assert(txHash)
 
-        console.log("************************* TEST PASS *************************")
+        log.info("************************* TEST PASS *************************")
     } catch (e) {
         log.error(e)
         //process

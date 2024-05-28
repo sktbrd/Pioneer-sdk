@@ -288,7 +288,7 @@ export function Swap({usePioneer}:any): JSX.Element {
 
   let onSelectOutput = async function (asset: any) {
     //console.log('onSelectOutput');
-    if(app.assetContext && app.assetContext.caip === asset.caip) {
+    if(app?.assetContext && app?.assetContext.caip === asset.caip) {
       alert('Must select a different asset! input === output');
     } else {
       await app.setOutboundAssetContext(asset);

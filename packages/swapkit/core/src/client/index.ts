@@ -50,7 +50,7 @@ import type {
   Wallet,
   WalletMethods,
 } from './types.ts';
-const TAG = ' | TAG | ';
+const TAG = ' | CORE | ';
 
 const getEmptyWalletStructure = () =>
   (Object.values(Chain) as Chain[]).reduce(
@@ -89,7 +89,13 @@ export class SwapKitCore<T = ''> {
     this.stagenet = !!stagenet;
   }
 
-  getAddress = (chain: Chain) => this.connectedChains[chain]?.address || '';
+  getAddress = (chain: Chain) => {
+    const address = this.connectedChains[chain]?.address;
+    if (!address) {
+      throw new Error(`Not connected to chain: ${chain}`);
+    }
+    return address;
+  };
   getExplorerTxUrl = (chain: Chain, txHash: string) => getExplorerTxUrl({ chain, txHash });
   getWallet = (chain: Chain) => this.connectedWallets[chain] as WalletMethods[Chain];
   getExplorerAddressUrl = (chain: Chain, address: string) =>
@@ -151,7 +157,7 @@ export class SwapKitCore<T = ''> {
         }
 
         case 'SWAP_OUT': {
-          console.log("route: ", route)
+          console.log('route: ', route);
           if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
           const asset = await AssetValue.fromString(route.calldata.fromAsset);
           if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
@@ -362,67 +368,67 @@ export class SwapKitCore<T = ''> {
       // let balance = [];
       //console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
       //for each pubkey iterate and sum the balance
-      let balance: AssetValue[] = [];
-      if (pubkeys.length === 0) {
-        //get inputs
-        //console.log(tag, 'Get balance for Address! address: ' + address);
-        //console.log(tag, 'Get balance for Address! chain: ' + chain);
-        //use address balance
-        balance = await this.getWallet(chain)?.getBalance([{ address }]);
-        //console.log(tag, 'balance: ' + balance);
-
-        //console.log('Get balance for Address! chain: ' + chain);
-
-        // for (let i = 0; i < balance.length; i++) {
-        //   balance[i].address = address;
-        // }
-      } else {
-        //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
-        /*
-              Logic assumptions
-                * Every pubkey will be a UTXO
-                * every UXTO has only 1 asset balance (fungable)
-                * we sum ALL balances of all pubkeys and return as 1 balance
-                  (aka you have x amount bitcoin) as is commonly used in wallets
-
-                Notes: we will only allow sending FROM 1 xpub at a time
-                *so the MAX spendable is the balance of highest balance xpub.*
-
-                blockbook has a wallet gap limit of 20
-           */
-        //use pubkey balances
-        let balanceTotal = 0;
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < pubkeys.length; i++) {
-          const pubkey = pubkeys[i];
-          //console.log(tag, 'Get balance for xpub!');
-          //console.log(tag, 'pubkey: ', pubkey);
-          let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-          //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
-          //console.log(
-          //   tag,
-          //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
-          //   pubkeyBalance[0].decimal,
-          // );
-          pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-          //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
-          if (isNaN(pubkeyBalance)) {
-            pubkeyBalance = 0;
-          }
-          //TODO get string balance
-          pubkeys[i].balance = pubkeyBalance;
-          //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
-          //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
-          balanceTotal += parseFloat(pubkeyBalance);
-        }
-        //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
-        // balanceTotal = balanceTotal / 100000000;
-        let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
-        balanceValue.address = address;
-        balance = [balanceValue];
-      }
+      // let balance: AssetValue[] = [];
+      // if (pubkeys.length === 0) {
+      //   //get inputs
+      //   //console.log(tag, 'Get balance for Address! address: ' + address);
+      //   //console.log(tag, 'Get balance for Address! chain: ' + chain);
+      //   //use address balance
+      //   balance = await this.getWallet(chain)?.getBalance([{ address }]);
+      //   //console.log(tag, 'balance: ' + balance);
+      //
+      //   //console.log('Get balance for Address! chain: ' + chain);
+      //
+      //   // for (let i = 0; i < balance.length; i++) {
+      //   //   balance[i].address = address;
+      //   // }
+      // } else {
+      //   //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
+      //   /*
+      //         Logic assumptions
+      //           * Every pubkey will be a UTXO
+      //           * every UXTO has only 1 asset balance (fungable)
+      //           * we sum ALL balances of all pubkeys and return as 1 balance
+      //             (aka you have x amount bitcoin) as is commonly used in wallets
+      //
+      //           Notes: we will only allow sending FROM 1 xpub at a time
+      //           *so the MAX spendable is the balance of highest balance xpub.*
+      //
+      //           blockbook has a wallet gap limit of 20
+      //      */
+      //   //use pubkey balances
+      //   let balanceTotal = 0;
+      //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      //   for (let i = 0; i < pubkeys.length; i++) {
+      //     const pubkey = pubkeys[i];
+      //     //console.log(tag, 'Get balance for xpub!');
+      //     //console.log(tag, 'pubkey: ', pubkey);
+      //     let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
+      //     //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
+      //     //console.log(
+      //     //   tag,
+      //     //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
+      //     //   pubkeyBalance[0].decimal,
+      //     // );
+      //     pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
+      //     //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
+      //     if (isNaN(pubkeyBalance)) {
+      //       pubkeyBalance = 0;
+      //     }
+      //     //TODO get string balance
+      //     pubkeys[i].balance = pubkeyBalance;
+      //     //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
+      //     //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
+      //     balanceTotal += parseFloat(pubkeyBalance);
+      //   }
+      //   //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
+      //   // balanceTotal = balanceTotal / 100000000;
+      //   let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
+      //   balanceValue.address = address;
+      //   balance = [balanceValue];
+      // }
       //if inputs add inputs
-
+      let balance = [];
       //if features (keepkey) add to object
       this.connectedChains[chain] = {
         address,
@@ -448,17 +454,30 @@ export class SwapKitCore<T = ''> {
     this.getWallet(chain)?.validateAddress?.(address);
 
   transfer = async (params: CoreTxParams & { router?: string }) => {
-    const walletInstance = this.connectedWallets[params.assetValue.chain];
-    if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
-
+    let tag = TAG + ' | transfer | ';
     try {
+      console.log(tag, 'params: ', params);
+      const walletInstance = this.connectedWallets[params.assetValue.chain];
+      if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
       let transferParams = await this.#prepareTxParams(params);
-      //console.log('CORE transferParams: ', transferParams);
+      console.log(tag, 'CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
-      throw new SwapKitError('core_swap_transaction_error', error);
+      throw new SwapKitError('core_transfer_transaction_error', error);
     }
   };
+  // transfer = async (params: CoreTxParams & { router?: string }) => {
+  //   const walletInstance = this.connectedWallets[params.assetValue.chain];
+  //   if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
+  //
+  //   try {
+  //     let transferParams = await this.#prepareTxParams(params);
+  //     console.log(tag, 'CORE transferParams: ', transferParams);
+  //     return await walletInstance.transfer(transferParams);
+  //   } catch (error) {
+  //     throw new SwapKitError('core_transfer_transaction_error', error);
+  //   }
+  // };
 
   deposit = async ({
     assetValue,
@@ -791,46 +810,126 @@ export class SwapKitCore<T = ''> {
     params: any;
     // params: { from: string; recipient: string; assetValue: AssetValue };
   }) => {
-    const walletMethods = this.getWallet<typeof chain>(chain);
+    const tag = TAG + ' | EstimateMaxSendableAmount | ';
+    try {
+      const walletMethods = this.getWallet<typeof chain>(chain);
+      if (!walletMethods) throw Error('Failed to getWallet for chain: ' + chain);
+      switch (chain) {
+        case Chain.Arbitrum:
+        case Chain.Avalanche:
+        case Chain.BinanceSmartChain:
+        case Chain.Base:
+        case Chain.Ethereum:
+        case Chain.Optimism:
+        case Chain.Polygon: {
+          const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
+          console.log(
+            tag,
+            ` Estimating max sendable amount for EVM chain ${chain} with params:`,
+            params,
+          );
+          const result = await estimateMaxSendableAmount({
+            ...params,
+            toolbox: walletMethods as EVMToolbox,
+          });
+          console.log(`${TAG} Estimated max sendable amount for EVM chain ${chain}:`, result);
+          return result;
+        }
 
-    switch (chain) {
-      case Chain.Arbitrum:
-      case Chain.Avalanche:
-      case Chain.BinanceSmartChain:
-      case Chain.Base:
-      case Chain.Ethereum:
-      case Chain.Optimism:
-      case Chain.Polygon: {
-        const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
-        return estimateMaxSendableAmount({
-          ...params,
-          toolbox: walletMethods as EVMToolbox,
-        });
+        case Chain.Bitcoin:
+        case Chain.BitcoinCash:
+        case Chain.Dogecoin:
+        case Chain.Dash:
+        case Chain.Zcash:
+        case Chain.Litecoin: {
+          console.log(
+            `${TAG} Estimating max sendable amount for UTXO chain ${chain} with params:`,
+            params,
+          );
+          if(!walletMethods) throw new Error('Wallet methods not found');
+          console.log(tag, 'walletMethods', walletMethods);
+          const result = (walletMethods as any).estimateMaxSendableAmount(params);
+          console.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);
+          return result;
+        }
+
+        case Chain.Binance:
+        case Chain.Mayachain:
+        case Chain.THORChain:
+        case Chain.Cosmos: {
+          const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
+          console.log(
+            `${TAG} Estimating max sendable amount for Cosmos-like chain ${chain} with params:`,
+            params,
+          );
+          const result = await estimateMaxSendableAmount({
+            ...params,
+            toolbox: walletMethods as CosmosLikeToolbox,
+          });
+          console.log(
+            `${TAG} Estimated max sendable amount for Cosmos-like chain ${chain}:`,
+            result,
+          );
+          return result;
+        }
+
+        default:
+          throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
       }
-
-      case Chain.Bitcoin:
-      case Chain.BitcoinCash:
-      case Chain.Dogecoin:
-      case Chain.Dash:
-      case Chain.Zcash:
-      case Chain.Litecoin:
-        return (walletMethods as UTXOToolbox).estimateMaxSendableAmount(params);
-
-      case Chain.Binance:
-      case Chain.Mayachain:
-      case Chain.THORChain:
-      case Chain.Cosmos: {
-        const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
-        return estimateMaxSendableAmount({
-          ...params,
-          toolbox: walletMethods as CosmosLikeToolbox,
-        });
-      }
-
-      default:
-        throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
+    } catch (error) {
+      console.error(`${TAG} Error estimating max sendable amount:`, error);
+      throw error;
     }
   };
+
+  // estimateMaxSendableAmount = async ({
+  //   chain,
+  //   params,
+  // }: {
+  //   chain: Chain;
+  //   params: any;
+  //   // params: { from: string; recipient: string; assetValue: AssetValue };
+  // }) => {
+  //   const walletMethods = this.getWallet<typeof chain>(chain);
+  //
+  //   switch (chain) {
+  //     case Chain.Arbitrum:
+  //     case Chain.Avalanche:
+  //     case Chain.BinanceSmartChain:
+  //     case Chain.Base:
+  //     case Chain.Ethereum:
+  //     case Chain.Optimism:
+  //     case Chain.Polygon: {
+  //       const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
+  //       return estimateMaxSendableAmount({
+  //         ...params,
+  //         toolbox: walletMethods as EVMToolbox,
+  //       });
+  //     }
+  //
+  //     case Chain.Bitcoin:
+  //     case Chain.BitcoinCash:
+  //     case Chain.Dogecoin:
+  //     case Chain.Dash:
+  //     case Chain.Zcash:
+  //     case Chain.Litecoin:
+  //       return (walletMethods as UTXOToolbox).estimateMaxSendableAmount(params);
+  //
+  //     case Chain.Binance:
+  //     case Chain.Mayachain:
+  //     case Chain.THORChain:
+  //     case Chain.Cosmos: {
+  //       const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
+  //       return estimateMaxSendableAmount({
+  //         ...params,
+  //         toolbox: walletMethods as CosmosLikeToolbox,
+  //       });
+  //     }
+  //
+  //     default:
+  //       throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
+  //   }
+  // };
 
   /**
    * Wallet connection methods

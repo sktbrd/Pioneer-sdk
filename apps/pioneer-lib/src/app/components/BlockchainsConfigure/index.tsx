@@ -18,7 +18,7 @@ export function Blockchains({usePioneer, onSelect}: any) {
   const { app } = state;
 
   const [allChains, setAllChains] = useState<string[]>([]);
-  const [wallet, setWallet] = useState<string>('');
+  const [wallet, setWallet] = useState<string>('KEEPKEY');
   const [walletOptions, setWalletOptions] = useState<string[]>(Object.keys(availableChainsByWallet));
   const [enabledChains, setEnabledChains] = useState<string[]>([]);
   const [context, setContext] = useState(app?.context);
@@ -114,17 +114,17 @@ export function Blockchains({usePioneer, onSelect}: any) {
 
   return (
     <Box>
-      <Flex justifyContent="space-between" mb={4}>
-        <Select placeholder="Select wallet" onChange={handleWalletChange}>
-          {walletOptions.map(option => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </Select>
-        <Button colorScheme="green" onClick={selectAllChains}>Select All</Button>
-        <Button colorScheme="red" onClick={unselectAllChains}>Unselect All</Button>
-      </Flex>
-      {context && <Text fontSize="xl" my={4}>Current Context: {context}</Text>}
-      {contextType && <Text fontSize="xl" my={4}>Context Type: {contextType}</Text>}
+      {/*<Flex justifyContent="space-between" mb={4}>*/}
+      {/*  <Select placeholder="Select wallet" onChange={handleWalletChange}>*/}
+      {/*    {walletOptions.map(option => (*/}
+      {/*      <option key={option} value={option}>{option}</option>*/}
+      {/*    ))}*/}
+      {/*  </Select>*/}
+      {/*  <Button colorScheme="green" onClick={selectAllChains}>Select All</Button>*/}
+      {/*  <Button colorScheme="red" onClick={unselectAllChains}>Unselect All</Button>*/}
+      {/*</Flex>*/}
+      {/*{context && <Text fontSize="xl" my={4}>Current Context: {context}</Text>}*/}
+      {/*{contextType && <Text fontSize="xl" my={4}>Context Type: {contextType}</Text>}*/}
       {UTXO.length > 0 && (
         <>
           <Text fontSize="xl" mb={4}>UTXO Chains</Text>

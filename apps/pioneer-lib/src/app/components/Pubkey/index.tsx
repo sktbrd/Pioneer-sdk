@@ -1,40 +1,53 @@
-import React, { useEffect } from 'react';
-import { Box, Stack, Avatar, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import {
+  Box, Stack, Avatar, Table, Thead, Tbody, Tr, Th, Td, Text, Button, Collapse, IconButton
+} from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import {
+  getWalletBadgeContent,
+  getWalletContent,
+  pioneerImagePng,
+} from '../WalletIcon';
 
-export default function Pubkey({ usePioneer, onClose, pubkey }: any) {
+export function Pubkey({ usePioneer, pubkey }: any) {
   const { state } = usePioneer();
   const { app } = state;
+  const [showDetails, setShowDetails] = useState(false);
 
-  useEffect(() => {
-    if (app?.pubkeys) {
-      //console.log('app?.pubkeys: ', app?.pubkeys);
-    }
-  }, [app, app?.pubkeys]);
-
-  // Checking if pubkey is already an object, if not, parse it.
-  const data = (typeof pubkey === 'object' && pubkey !== null) ? pubkey : JSON.parse(pubkey || '{}');
+  const toggleDetails = () => setShowDetails(!showDetails);
 
   return (
     <Stack>
-      <Box>
-        <Avatar size="xl" name="Placeholder Icon" /> {/* Placeholder for avatar icon */}
+      <Box display="flex" alignItems="center">
+        {getWalletContent(pubkey.context.split(":")[0])}
+        <Box ml={3}>
+          <Text fontWeight="bold">Address: {pubkey.master || pubkey.address}</Text>
+          {/*<IconButton*/}
+          {/*  icon={showDetails ? <ChevronUpIcon /> : <ChevronDownIcon />}*/}
+          {/*  onClick={toggleDetails}*/}
+          {/*  aria-label="Toggle details"*/}
+          {/*/>*/}
+        </Box>
       </Box>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Key</Th>
-            <Th>Value</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {Object.entries(data).map(([key]: any) => (
-            <Tr key={key}>
-              <Td>{key}</Td>
-              {/*<Td>{value}</Td>*/}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      {/*<Collapse in={showDetails} animateOpacity>*/}
+      {/*  <Table variant="simple" mt={4}>*/}
+      {/*    <Thead>*/}
+      {/*      <Tr>*/}
+      {/*        <Th>Key</Th>*/}
+      {/*        <Th>Value</Th>*/}
+      {/*      </Tr>*/}
+      {/*    </Thead>*/}
+      {/*    <Tbody>*/}
+      {/*      /!*{Object.entries(data).map(([key, value]) => (*!/*/}
+      {/*      /!*  <Tr key={key}>*!/*/}
+      {/*      /!*    <Td>{key}</Td>*!/*/}
+      {/*      /!*    <Td>{typeof value === 'object' ? JSON.stringify(value) : value}</Td>*!/*/}
+      {/*      /!*  </Tr>*!/*/}
+      {/*      /!*))}*!/*/}
+      {/*    </Tbody>*/}
+      {/*  </Table>*/}
+      {/*</Collapse>*/}
     </Stack>
   );
 }
+export default Pubkey;

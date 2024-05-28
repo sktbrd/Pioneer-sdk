@@ -258,7 +258,8 @@ const connectKeepkey =
     console.log('keepkey: paths: ', paths);
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-    // console.log('keepKeySdk: ', keepKeySdk);
+    console.log('keepKeySdk: ', keepKeySdk);
+    console.log('keepkeyConfig.apiKey: ', keepkeyConfig.apiKey);
     let features = await keepKeySdk.system.info.getFeatures();
     // console.log('features: ', features);
 

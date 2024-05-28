@@ -10,40 +10,21 @@ import {
   Tbody,
   Tr,
   Td,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
+  Select,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
-import React, { useEffect, useState } from "react";
-import MiddleEllipsis from '../../components/MiddleEllipsis';
+import { useEffect, useState } from "react";
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-import OutputSelect from '../../components/OutputSelect';
 import { getWalletBadgeContent } from '../WalletIcon';
 
-export default function Receive({ usePioneer, onClose }: any) {
+export function Receive({ usePioneer, onClose }: any) {
   const { state } = usePioneer();
-  const { app, assetContext, balances, context } = state;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { app, assetContext, context } = state;
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
-  const { hasCopied, onCopy } = useClipboard(assetContext?.address || '');
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    if (onClose) onClose();
-  };
-
-  let onSelect = async function(asset: any) {
-    //console.log("onSelect: ", asset);
-    await app.setAssetContext(asset);
-    closeModal();
-  }
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const { hasCopied, onCopy } = useClipboard(selectedAddress);
 
   useEffect(() => {
     if (assetContext && COIN_MAP_LONG[assetContext.chain as keyof typeof COIN_MAP_LONG]) {
@@ -54,21 +35,29 @@ export default function Receive({ usePioneer, onClose }: any) {
 
   useEffect(() => {
     if (context) {
-      //console.log('context: ', context);
       setWalletType(context.split(':')[0]);
     }
   }, [context, app]);
 
+  useEffect(() => {
+    if (assetContext?.pubkeys?.length > 0) {
+      setSelectedAddress(assetContext.pubkeys[0].address || assetContext.pubkeys[0].master);
+    }
+  }, [assetContext]);
+
+  const handleAddressChange = (event: any) => {
+    setSelectedAddress(event.target.value);
+  };
+
   return (
     <Box border="1px" borderColor="white" p={4}>
-      <Flex align="center" justify="space-between" mb={4}>
+      <Flex align="center" justify="center" mb={4}>
         <Avatar size="xxl" src={avatarUrl}>
           {getWalletBadgeContent(walletType, '8em')}
         </Avatar>
-        <Button onClick={openModal} colorScheme="blue">Change Asset</Button>
       </Flex>
 
-      <Text fontSize="xl" fontWeight="bold">Receive</Text>
+      <Text fontSize="xl" fontWeight="bold" textAlign="center">Receive</Text>
       <Table variant="simple">
         <Tbody>
           <Tr>
@@ -76,36 +65,36 @@ export default function Receive({ usePioneer, onClose }: any) {
             <Td><Badge>{assetContext?.chain}</Badge></Td>
           </Tr>
           <Tr>
-            <Td>Ticker</Td>
-            <Td><Badge>{assetContext?.ticker}</Badge></Td>
-          </Tr>
-          <Tr>
             <Td>CAIP</Td>
-            <Td><MiddleEllipsis text={assetContext?.caip} /></Td>
+            <Td>{assetContext?.caip}</Td>
           </Tr>
           <Tr>
             <Td>Address</Td>
-            <Td fontWeight="bold"><MiddleEllipsis text={assetContext?.address} /></Td>
+            <Td>
+              <Select value={selectedAddress} onChange={handleAddressChange}>
+                {assetContext?.pubkeys?.map((pubkey: any, index: number) => (
+                  <option key={index} value={pubkey.address || pubkey.master}>
+                    <Flex align="center">
+                      <Avatar size="sm" src={avatarUrl} mr={2} />
+                      <Text>{pubkey.address || pubkey.master}</Text>
+                    </Flex>
+                  </option>
+                ))}
+              </Select>
+            </Td>
           </Tr>
         </Tbody>
       </Table>
 
-      {assetContext?.address && (
+      {selectedAddress && (
         <Flex align="center" justify="center" my={4}>
-          <QRCode value={assetContext.address} />
+          <QRCode value={selectedAddress} />
         </Flex>
       )}
-      <Button onClick={onCopy}>{hasCopied ? 'Copied' : 'Copy Address'}</Button>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Output Selection</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <OutputSelect usePioneer={usePioneer} onClose={closeModal} onSelect={onSelect}/>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <Flex align="center" justify="center" my={4}>
+        <Button onClick={onCopy} mx={2}>{hasCopied ? 'Copied' : 'Copy Address'}</Button>
+      </Flex>
     </Box>
   );
 }
+export default Receive;

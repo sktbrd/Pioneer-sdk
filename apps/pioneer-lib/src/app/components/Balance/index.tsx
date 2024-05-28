@@ -15,7 +15,7 @@ interface BalanceProps {
   balance: any;
 }
 
-export default function Balance({ usePioneer, onClose, balance }: any) {
+export function Balance({ usePioneer, onClose, balance }: any) {
   // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, balances, context } = state;
@@ -51,8 +51,13 @@ export default function Balance({ usePioneer, onClose, balance }: any) {
         </Avatar>
         <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4} flexGrow={1}>
           <Badge colorScheme="blue" mb={2}>{balance.ticker || 'N/A'}</Badge>
+          {/*<Text fontSize="lg">ref: {balance.ref}</Text>*/}
           <Text fontSize="lg">Balance: {balanceFormatted}</Text>
-          <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
+          {balance.valueUsd ? (
+            <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
+          ) : (
+            <></>
+          )}
         </Box>
         <Box ml={4}>
           {/*<Button colorScheme="blue" size="lg" onClick={() => handleModal('transfer')}>Send</Button>*/}
@@ -60,45 +65,46 @@ export default function Balance({ usePioneer, onClose, balance }: any) {
           {/*<Button colorScheme="purple" size="lg" onClick={() => handleModal('swap')}>Swap</Button>*/}
         </Box>
       </Flex>
-      <Collapse in={showAdvanced} animateOpacity>
-        <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4}>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Key</Th>
-                <Th>Value</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {Object.entries(data as Record<string, unknown>).map(([key, value]) => (
-                <Tr key={key}>
-                  <Td>{key}</Td>
-                  <Td>
-                    {typeof value === 'string'
-                      ? value
-                      : typeof value === 'number'
-                        ? value.toString()
-                        : typeof value === 'boolean'
-                          ? value.toString()
-                          : value === null
-                            ? 'null'
-                            : typeof value === 'object'
-                              ? JSON.stringify(value)
-                              : 'Unsupported Type'}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </Box>
-      </Collapse>
-      <Box alignSelf="flex-end">
-        <IconButton
-          icon={<ChevronDownIcon />}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          aria-label="Show Advanced"
-        />
-      </Box>
+      {/*<Collapse in={showAdvanced} animateOpacity>*/}
+      {/*  <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4}>*/}
+      {/*    <Table variant="simple">*/}
+      {/*      <Thead>*/}
+      {/*        <Tr>*/}
+      {/*          <Th>Key</Th>*/}
+      {/*          <Th>Value</Th>*/}
+      {/*        </Tr>*/}
+      {/*      </Thead>*/}
+      {/*      <Tbody>*/}
+      {/*        {Object.entries(data as Record<string, unknown>).map(([key, value]) => (*/}
+      {/*          <Tr key={key}>*/}
+      {/*            <Td>{key}</Td>*/}
+      {/*            <Td>*/}
+      {/*              {typeof value === 'string'*/}
+      {/*                ? value*/}
+      {/*                : typeof value === 'number'*/}
+      {/*                  ? value.toString()*/}
+      {/*                  : typeof value === 'boolean'*/}
+      {/*                    ? value.toString()*/}
+      {/*                    : value === null*/}
+      {/*                      ? 'null'*/}
+      {/*                      : typeof value === 'object'*/}
+      {/*                        ? JSON.stringify(value)*/}
+      {/*                        : 'Unsupported Type'}*/}
+      {/*            </Td>*/}
+      {/*          </Tr>*/}
+      {/*        ))}*/}
+      {/*      </Tbody>*/}
+      {/*    </Table>*/}
+      {/*  </Box>*/}
+      {/*</Collapse>*/}
+      {/*<Box alignSelf="flex-end">*/}
+      {/*  <IconButton*/}
+      {/*    icon={<ChevronDownIcon />}*/}
+      {/*    onClick={() => setShowAdvanced(!showAdvanced)}*/}
+      {/*    aria-label="Show Advanced"*/}
+      {/*  />*/}
+      {/*</Box>*/}
     </Stack>
   );
 }
+export default Balance;

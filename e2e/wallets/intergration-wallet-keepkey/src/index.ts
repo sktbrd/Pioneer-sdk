@@ -52,15 +52,28 @@ const test_service = async function (this: any) {
 
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        // let pathsAdd:any = [
+        // ]
+
+        const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        // let blockchains = AllChainsSupported.map(
+        //   // @ts-ignore
+        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        // );
+        let blockchains = [ChainToNetworkId['ETH'],ChainToNetworkId['BASE']]
+        //get paths for wallet
+        console.time('getPaths');
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+
 
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY || '',
-            paths:pathsAdd,
+            blockchains,
+            paths,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -95,8 +108,15 @@ const test_service = async function (this: any) {
         console.time('start2init');
         let resultInit = await app.init(walletsVerbose, {})
         console.timeEnd('start2init');
-        // log.info(tag,"resultInit: ",resultInit)
+
+        let assets = await app.assetsMap
+        log.info(tag,"assets:",assets)
+        assert(assets)
+
+        log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets)
+
+
 
         // let txsCache = await txDB.getAllTransactions()
         // let pubkeysCache = await txDB.getPubkeys({})
@@ -134,45 +154,35 @@ const test_service = async function (this: any) {
         // assert(pubkeys)
         // if(pubkeys.length == 0) throw Error("Failed to load pubkey cache")
 
-        const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        // let blockchains = AllChainsSupported.map(
-        //   // @ts-ignore
-        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        // );
-        let blockchains = [ChainToNetworkId['ETH'],ChainToNetworkId['BASE']]
-        //get paths for wallet
-        console.time('getPaths');
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        app.setPaths(paths)
-        console.timeEnd('getPaths');
+
+
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
-        log.info(tag,"blockchains: ",blockchains.length)
-        console.time('start2paired');
-        let pairObject = {
-            type:WalletOption.KEEPKEY,
-            blockchains
-        }
-        console.time('pairWallet');
-        resultInit = await app.pairWallet(pairObject)
-        console.timeEnd('pairWallet');
-        console.timeEnd('start2paired'); // End timing for pairing
-        log.debug(tag,"resultInit: ",resultInit)
-
-        //check pairing
-        // //context should match first account
-        let context = await app.context
-        log.info(tag,"context: ",context)
-        assert(context)
+        // log.info(tag,"blockchains: ",blockchains.length)
+        // console.time('start2paired');
+        // let pairObject = {
+        //     type:WalletOption.KEEPKEY,
+        //     blockchains
+        // }
+        // console.time('pairWallet');
+        // resultInit = await app.pairWallet(pairObject)
+        // console.timeEnd('pairWallet');
+        // console.timeEnd('start2paired'); // End timing for pairing
+        // log.debug(tag,"resultInit: ",resultInit)
+        //
+        // //check pairing
+        // // //context should match first account
+        // let context = await app.context
+        // log.info(tag,"context: ",context)
+        // assert(context)
 
         console.time('start2getPubkeys');
         //init start2end: 9.129s
 
         //With getPubkeys
-        await app.getPubkeys()
-        console.timeEnd('start2getPubkeys');
+        // await app.getPubkeys()
+        // console.timeEnd('start2getPubkeys');
         // log.info(tag,"***** pubkeys: ",app.pubkeys)
         // log.info(tag,"***** pubkeys: ",app.pubkeys.length)
         // assert(app.pubkeys)
@@ -182,30 +192,29 @@ const test_service = async function (this: any) {
         // assert(assetinfoIn)
 
 
-        console.time('start2getBalances');
-        await app.getBalances()
-        log.info(tag,"*** balances: ",app.balances)
-        // log.info(tag,"balances: ",app.balances.length)
-        console.timeEnd('start2getBalances');
-        console.timeEnd('start2end');
+        // console.time('start2getBalances');
+        // await app.getBalances()
+        // log.info(tag,"*** balances: ",app.balances)
+        // // log.info(tag,"balances: ",app.balances.length)
+        // console.timeEnd('start2getBalances');
+        // console.timeEnd('start2end');
 
-        let assets = await app.getAssets()
-        log.info(tag,"assetsFiltered: (with pubkey)",assets.length)
+
 
         //get assets
         //filter for pubkeys
-        let filterForPubkey = {
-            hasPubkey: true,
-            onlyOwned: true,
-            noTokens: false,
-            // searchQuery:"",
-            // memoless:true,
-            // integrations: ['thorswap'],
-            // networks: ['eip155:1']
-        }
-        let assetsFiltered6 = await app.getAssets(filterForPubkey)
-        log.info(tag,"assetsFiltered: (with pubkey)",assetsFiltered6.length)
-        //verify balances are in assets
+        // let filterForPubkey = {
+        //     hasPubkey: true,
+        //     onlyOwned: true,
+        //     noTokens: false,
+        //     // searchQuery:"",
+        //     // memoless:true,
+        //     // integrations: ['thorswap'],
+        //     // networks: ['eip155:1']
+        // }
+        // let assetsFiltered6 = await app.getAssets(filterForPubkey)
+        // log.info(tag,"assetsFiltered: (with pubkey)",assetsFiltered6.length)
+        // //verify balances are in assets
 
 
         //Pre OPT
