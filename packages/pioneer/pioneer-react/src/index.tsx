@@ -20,7 +20,12 @@
 import DB from '@coinmasters/pioneer-db';
 // @ts-ignore
 import { SDK } from '@coinmasters/pioneer-sdk';
-import { availableChainsByWallet, getChainEnumValue, WalletOption } from '@coinmasters/types';
+import {
+  availableChainsByWallet,
+  getChainEnumValue,
+  prefurredChainsByWallet,
+  WalletOption,
+} from '@coinmasters/types';
 import {
   ChainToNetworkId,
   // @ts-ignore
@@ -435,17 +440,17 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   const onStart = async function (wallets: any, setup: any) {
     let tag = TAG + ' | onStart | ';
     try {
-      console.log('onStart: ', wallets);
-      console.log('setup:', setup);
+      console.log(tag, 'onStart: ', wallets);
+      console.log(tag, 'setup:', setup);
       if (!wallets) throw Error('wallets is required! onStart');
       if (!setup) throw Error('setup is required! onStart');
 
       await db.init({});
-      console.log('Database initialized');
+      console.log(tag, 'Database initialized');
       let txs = await db.getAllTransactions();
-      console.log('txs: ', txs);
+      console.log(tag, 'txs: ', txs);
       let pubkeys = await db.getPubkeys({});
-      console.log('pubkeys: ', pubkeys);
+      console.log(tag, 'pubkeys: ', pubkeys);
 
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
@@ -466,32 +471,34 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('username', username);
       }
 
-      //@TODO re-enable this for prod
+      // Define constants
       const walletType = WalletOption.KEEPKEY;
-      // const preferredChains = prefurredChainsByWallet[walletType] || [];
-      // const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
-      //   const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
-      //   return ChainToNetworkId[chainEnum];
-      // };
-      // const blockchains = preferredChains
-      //   .map(getNetworkIdFromChainStr)
-      //   .filter((networkId: any): networkId is string => networkId !== undefined);
+      const localStorageKey = `cache:blockchains:${walletType}`;
+      const preferredChains = prefurredChainsByWallet[walletType] || [];
 
-      // console.log('Default blockchains for startup:', blockchains);
+      // Function to get NetworkId from chain string
+      const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
+        const chainEnum: any = getChainEnumValue(chainStr) as any;
+        return ChainToNetworkId[chainEnum];
+      };
 
-      //get default blockchains for startup
-      // const blockchains: any = ['bip122:000000000019d6689c085ae165831e93'];
+      // Fetch blockchains from local storage or use default preferredChains
+      let blockchainsCached: string[] = JSON.parse(localStorage.getItem(localStorageKey) || '[]');
 
-      let blockchainsCached = JSON.parse(
-        localStorage.getItem('cache:blockchains:' + walletType) || '[]',
-      );
-      console.log(' | Pioneer-react |  blockchainsCached: ', blockchainsCached);
+      if (blockchainsCached.length === 0) {
+        blockchainsCached = preferredChains
+          .map(getNetworkIdFromChainStr)
+          .filter((networkId: any): networkId is string => networkId !== undefined);
 
-      //TODO get paths cached
+        localStorage.setItem(localStorageKey, JSON.stringify(blockchainsCached));
+      }
 
-      const blockchains: any = blockchainsCached;
+      const blockchains: string[] = blockchainsCached;
+      console.log(tag, 'blockchains: ', blockchains);
+
+      // Fetch paths based on blockchains
       const paths: any = getPaths(blockchains);
-      console.log(' | Pioneer-react |  paths: ', paths);
+      console.log(tag, 'paths: ', paths);
 
       const spec =
         localStorage.getItem('pioneerUrl') ||
@@ -531,6 +538,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const appInit = new SDK(spec, configPioneer);
       console.log(tag, 'appInit: ', appInit);
       console.log(tag, 'keepkeyApiKey: ', keepkeyApiKey);
+      console.log(tag, 'assetsMap: ', appInit.assetsMap);
       //Network actions
       if (appInit.keepkeyApiKey !== keepkeyApiKey) {
         console.log('SAVING API KEY. ');
@@ -542,14 +550,14 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       let pubkeyCache = await db.getPubkeys({});
       console.log('pubkeyCache: ', pubkeyCache);
       if (pubkeyCache && pubkeyCache.length > 0) {
-        console.log('Loading cache: pubkeys!');
+        console.log(tag, 'Loading cache: pubkeys!');
         await appInit.loadPubkeyCache(pubkeyCache);
       } else {
         console.log(tag, 'Empty pubkey cache!');
       }
 
       let balanceCache = await db.getBalances({});
-      console.log('balanceCache: ', balanceCache);
+      console.log(tag, 'balanceCache: ', balanceCache);
       if (balanceCache && balanceCache.length > 0) {
         await appInit.loadBalanceCache(balanceCache);
         //@ts-ignore
@@ -559,14 +567,18 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
 
       // @ts-ignore
-      console.log('appInit.wallets: ', appInit.wallets);
+      console.log(tag, 'appInit.wallets: ', appInit.wallets);
       // @ts-ignore
       dispatch({ type: WalletActions.SET_API, payload: api });
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
       // @ts-ignore
-      dispatch({ type: WalletActions.SET_ASSETS, payload: appInit.assetsMap });
+      if (appInit.assetsMap) {
+        console.log(tag, 'setting assetsMap: ', appInit.assetsMap);
+        // @ts-ignore
+        dispatch({ type: WalletActions.SET_ASSETS, payload: appInit.assetsMap });
+      }
 
       // // @ts-ignore
       const { events } = appInit;

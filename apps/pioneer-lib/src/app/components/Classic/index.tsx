@@ -20,13 +20,13 @@ import {
 
 export function Classic({ usePioneer }: any) {
   const { state } = usePioneer();
-  const { app } = state;
+  const { app, assets } = state;
   const [assetContext, setAssetContext] = useState(app?.assetContext);
   const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
 
   let onStart = async function(){
     try{
-      if(app && app.pairWallet){
+      if(app && app.pairWallet && !app.swapKit){
         let walletType = WalletOption.KEEPKEY;
         const cachedBlockchains = JSON.parse(localStorage.getItem(`cache:blockchains:${walletType}`) || '[]');
         const blockchains = cachedBlockchains.length > 0 ? cachedBlockchains : (prefurredChainsByWallet[walletType] || [])
@@ -53,6 +53,10 @@ export function Classic({ usePioneer }: any) {
     setAssetContext(app?.assetContext);
   }, [app, app?.assetContext]);
 
+  useEffect(() => {
+    if(assets)console.log("assets", assets);
+  }, [app, assets]);
+
   const onSelect = (asset: any) => {
     console.log("onSelect", asset);
     if (asset.caip) {
@@ -78,7 +82,7 @@ export function Classic({ usePioneer }: any) {
       await app.setPaths(paths);
       await app.getPubkeys();
       await app.getBalances();
-      console.log("app.assets", app.assets);
+      console.log("assets", assets);
     }
   }
 
@@ -117,7 +121,7 @@ export function Classic({ usePioneer }: any) {
             <Asset usePioneer={usePioneer} onClose={onClose} asset={app?.assetContext}/>
           ) : (
             <>
-              {!app?.assets || app.assets.size === 0 ? (
+              {!assets || assets.size === 0 ? (
                 <Flex justifyContent="center" alignItems="center" height="100vh">
                   <Spinner size="xl" />
                   blockchains{app?.blockchains.length}
@@ -125,7 +129,7 @@ export function Classic({ usePioneer }: any) {
                 </Flex>
               ) : (
                 <>
-                  {[...app.assets.values()].map((asset: any, index: any) => (
+                  {[...assets.values()].map((asset: any, index: any) => (
                     <Box key={index} p={4} mb={2} borderRadius="md">
                       <Flex>
                         <Avatar size='xl' src={asset.icon} />

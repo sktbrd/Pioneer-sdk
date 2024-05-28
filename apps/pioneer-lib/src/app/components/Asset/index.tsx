@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  VStack, Avatar, Box, Stack, Flex, Text, Heading, useColorModeValue, Spinner, Button, Divider, Stat, StatLabel, StatNumber, SimpleGrid, IconButton
+  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, useColorModeValue
 } from '@chakra-ui/react';
-import { ChevronLeftIcon, RepeatIcon } from '@chakra-ui/icons';
 import { Pubkey } from '../Pubkey';
 import { Balance } from '../Balance';
 import { Transfer } from '../Transfer';
@@ -15,13 +14,8 @@ const Card = ({ children }: any) => (
     borderRadius="lg"
     overflow="hidden"
     bg={useColorModeValue('white', 'gray.800')}
+    width="100%"
   >
-    {children}
-  </Box>
-);
-
-const CardHeader = ({ children }: any) => (
-  <Box bg={useColorModeValue('gray.50', 'gray.900')} px={4} py={2}>
     {children}
   </Box>
 );
@@ -62,39 +56,34 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   <Text fontSize="md" color="gray.500">{asset.symbol}</Text>
                 </Box>
               </Flex>
-              <Flex align="center" justifyContent="space-between" mb={4}>
-              {asset?.pubkeys && (
-                <>
-                  {asset?.pubkeys.map((pubkey: any, index: any) => (
-                    <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                  ))}
-                </>
-              )}
+              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
+                <VStack width="100%">
+                  {app.pubkeys
+                    .filter((pubkey: any) => pubkey.networks.includes(asset.networkId))
+                    .map((pubkey: any, index: any) => (
+                      <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+                    ))}
+                </VStack>
               </Flex>
-              <Flex align="center" justifyContent="space-between" mb={4}>
-              {asset?.balances && (
-                <>
-                  {asset?.balances.map((balance: any, index: any) => (
-                    <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                  ))}
-                </>
-              )}
+              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
+                <VStack width="100%">
+                  {app.balances
+                    .filter((balance: any) => balance.caip === asset.caip)
+                    .map((balance: any, index: any) => (
+                      <Balance key={index} usePioneer={usePioneer} balance={balance} />
+                    ))}
+                </VStack>
               </Flex>
               <VStack spacing={2}>
                 <Button size="sm" onClick={() => setActiveTab('send')}>
-                  Send Bitcoin
+                  Send {asset.name}
                 </Button>
 
                 <Button size="sm" onClick={() => setActiveTab('receive')}>
-                  Receive Bitcoin
+                  Receive {asset.name}
                 </Button>
-
-                {/*<Button size="sm" onClick={() => console.log('Transactions')}>*/}
-                {/*  Transactions*/}
-                {/*</Button>*/}
               </VStack>
             </>
-
           ) : activeTab === 'send' ? (
             <Transfer usePioneer={usePioneer} onClose={() => setActiveTab(null)} />
           ) : activeTab === 'receive' ? (

@@ -804,46 +804,125 @@ export class SwapKitCore<T = ''> {
     params: any;
     // params: { from: string; recipient: string; assetValue: AssetValue };
   }) => {
-    const walletMethods = this.getWallet<typeof chain>(chain);
+    const tag = TAG + ' | EstimateMaxSendableAmount | ';
+    try {
+      const walletMethods = this.getWallet<typeof chain>(chain);
+      if (!walletMethods) throw Error('Failed to getWallet for chain: ' + chain);
+      switch (chain) {
+        case Chain.Arbitrum:
+        case Chain.Avalanche:
+        case Chain.BinanceSmartChain:
+        case Chain.Base:
+        case Chain.Ethereum:
+        case Chain.Optimism:
+        case Chain.Polygon: {
+          const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
+          console.log(
+            `${TAG} Estimating max sendable amount for EVM chain ${chain} with params:`,
+            params,
+          );
+          const result = await estimateMaxSendableAmount({
+            ...params,
+            toolbox: walletMethods as EVMToolbox,
+          });
+          console.log(`${TAG} Estimated max sendable amount for EVM chain ${chain}:`, result);
+          return result;
+        }
 
-    switch (chain) {
-      case Chain.Arbitrum:
-      case Chain.Avalanche:
-      case Chain.BinanceSmartChain:
-      case Chain.Base:
-      case Chain.Ethereum:
-      case Chain.Optimism:
-      case Chain.Polygon: {
-        const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
-        return estimateMaxSendableAmount({
-          ...params,
-          toolbox: walletMethods as EVMToolbox,
-        });
+        case Chain.Bitcoin:
+        case Chain.BitcoinCash:
+        case Chain.Dogecoin:
+        case Chain.Dash:
+        case Chain.Zcash:
+        case Chain.Litecoin: {
+          console.log(
+            `${TAG} Estimating max sendable amount for UTXO chain ${chain} with params:`,
+            params,
+          );
+          if(!walletMethods) throw new Error('Wallet methods not found');
+          console.log(tag, 'walletMethods', walletMethods);
+          const result = (walletMethods as any).estimateMaxSendableAmount(params);
+          console.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);
+          return result;
+        }
+
+        case Chain.Binance:
+        case Chain.Mayachain:
+        case Chain.THORChain:
+        case Chain.Cosmos: {
+          const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
+          console.log(
+            `${TAG} Estimating max sendable amount for Cosmos-like chain ${chain} with params:`,
+            params,
+          );
+          const result = await estimateMaxSendableAmount({
+            ...params,
+            toolbox: walletMethods as CosmosLikeToolbox,
+          });
+          console.log(
+            `${TAG} Estimated max sendable amount for Cosmos-like chain ${chain}:`,
+            result,
+          );
+          return result;
+        }
+
+        default:
+          throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
       }
-
-      case Chain.Bitcoin:
-      case Chain.BitcoinCash:
-      case Chain.Dogecoin:
-      case Chain.Dash:
-      case Chain.Zcash:
-      case Chain.Litecoin:
-        return (walletMethods as UTXOToolbox).estimateMaxSendableAmount(params);
-
-      case Chain.Binance:
-      case Chain.Mayachain:
-      case Chain.THORChain:
-      case Chain.Cosmos: {
-        const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
-        return estimateMaxSendableAmount({
-          ...params,
-          toolbox: walletMethods as CosmosLikeToolbox,
-        });
-      }
-
-      default:
-        throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
+    } catch (error) {
+      console.error(`${TAG} Error estimating max sendable amount:`, error);
+      throw error;
     }
   };
+
+  // estimateMaxSendableAmount = async ({
+  //   chain,
+  //   params,
+  // }: {
+  //   chain: Chain;
+  //   params: any;
+  //   // params: { from: string; recipient: string; assetValue: AssetValue };
+  // }) => {
+  //   const walletMethods = this.getWallet<typeof chain>(chain);
+  //
+  //   switch (chain) {
+  //     case Chain.Arbitrum:
+  //     case Chain.Avalanche:
+  //     case Chain.BinanceSmartChain:
+  //     case Chain.Base:
+  //     case Chain.Ethereum:
+  //     case Chain.Optimism:
+  //     case Chain.Polygon: {
+  //       const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
+  //       return estimateMaxSendableAmount({
+  //         ...params,
+  //         toolbox: walletMethods as EVMToolbox,
+  //       });
+  //     }
+  //
+  //     case Chain.Bitcoin:
+  //     case Chain.BitcoinCash:
+  //     case Chain.Dogecoin:
+  //     case Chain.Dash:
+  //     case Chain.Zcash:
+  //     case Chain.Litecoin:
+  //       return (walletMethods as UTXOToolbox).estimateMaxSendableAmount(params);
+  //
+  //     case Chain.Binance:
+  //     case Chain.Mayachain:
+  //     case Chain.THORChain:
+  //     case Chain.Cosmos: {
+  //       const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
+  //       return estimateMaxSendableAmount({
+  //         ...params,
+  //         toolbox: walletMethods as CosmosLikeToolbox,
+  //       });
+  //     }
+  //
+  //     default:
+  //       throw new SwapKitError('core_estimated_max_spendable_chain_not_supported');
+  //   }
+  // };
 
   /**
    * Wallet connection methods
