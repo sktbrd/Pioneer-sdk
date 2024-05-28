@@ -37,7 +37,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [maxSpendable, setMaxSpendable] = useState('');
-  const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(false);
+  const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(true);
 
   const textColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'gray.700');
@@ -54,115 +54,41 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   }, [app]);
 
   let onStart = async function () {
-    let tag = " | onStart Transfer | "
-    try{
-      if(app && app.swapKit && assetContext && assetContext.chain && app.swapKit.estimateMaxSendableAmount && assetContext.networkId){
-          console.log("onStart Transfer page")
-          //figure out if we need to connect the wallet
-          console.log(tag,"assetContext: ",assetContext)
-          const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-          if (!walletInfo) {
-            //connect to wallet
-            console.log(tag,"connectWallet needed!")
-            // let blockchains = [assetContext.networkId];
-            // await app.setBlockchains(blockchains);
-            console.log(tag,"assetContext: ",assetContext)
-            await connectWallet('KEEPKEY');
-            // let walletType = assetContext.context.split(':')[0];
-            // console.log(tag,"walletType: ",walletType)
-            // if(walletType){
-            //   await connectWallet('KEEPKEY');
-            // }
-            //TODO wait, try again
-            setTimeout(onStart, 10000);
-          } else {
-            let pubkeys = await app.pubkeys;
-            pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
-            console.log("onStart Transfer pubkeys", pubkeys)
-            let estimatePayload: any = {
-              feeRate: 10,
-              pubkeys,
-              memo,
-              recipient,
-            };
-            let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
-            console.log("onStart Transfer pubkeys", pubkeys)
-            setMaxSpendable(maxSpendableAmount.getValue('string'));
-          }
-      }
+    let tag = " | onStart Transfer | ";
+    try {
+      if (app && app.swapKit && assetContext && assetContext.chain && app.swapKit.estimateMaxSendableAmount && assetContext.networkId) {
+        console.log("onStart Transfer page");
+        console.log(tag, "assetContext: ", assetContext);
 
-    }catch(e){
+        const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+        if (!walletInfo) {
+          console.log(tag, "connectWallet needed!");
+          await connectWallet('KEEPKEY');
+          setTimeout(onStart, 10000);
+        } else {
+          let pubkeys = await app.pubkeys;
+          pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
+          console.log("onStart Transfer pubkeys", pubkeys);
+          let estimatePayload: any = {
+            feeRate: 10,
+            pubkeys,
+            memo,
+            recipient,
+          };
+          let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
+          console.log("onStart Transfer pubkeys", pubkeys);
+          setMaxSpendable(maxSpendableAmount.getValue('string'));
+          setLoadingMaxSpendable(false);
+        }
+      }
+    } catch (e) {
       console.error('Failed to get Max Spendable', e);
     }
-  }
+  };
 
   useEffect(() => {
     onStart();
   }, [app, app?.swapKit, assetContext]);
-
-  // let onStart = async function () {
-  //   try{
-  //     if(app && app.swapKit && assetContext && app.swapKit.estimateMaxSendableAmount && assetContext.networkId){
-  //         console.log("onStart Transfer page")
-  //         //figure out if we need to connect the wallet
-  //
-  //         let pubkeys = await app.pubkeys;
-  //         pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
-  //         console.log("onStart Transfer pubkeys", pubkeys)
-  //         let estimatePayload: any = {
-  //           feeRate: 10,
-  //           pubkeys,
-  //           memo,
-  //           recipient,
-  //         };
-  //         let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
-  //         console.log("onStart Transfer pubkeys", pubkeys)
-  //         setMaxSpendable(maxSpendableAmount.getValue('string'));
-  //     }
-  //
-  //   }catch(e){
-  //     console.error('Failed to get Max Spendable', e);
-  //   }
-  // }
-  //
-  // useEffect(() => {
-  //   onStart();
-  // }, [app, app?.swapKit, assetContext]);
-
-  // useEffect(() => {
-  //   const calculateMaxSpendable = async () => {
-  //     setLoadingMaxSpendable(true);
-  //     try {
-  //       const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-  //       if (!walletInfo) {
-  //         let blockchains = [assetContext.networkId];
-  //         app.setBlockchains(blockchains);
-  //
-  //         let walletType = app.context.split(':')[0];
-  //         await connectWallet(walletType.toUpperCase());
-  //       } else {
-  //         let pubkeys = await app.pubkeys;
-  //         pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
-  //
-  //         let estimatePayload: any = {
-  //           feeRate: 10,
-  //           pubkeys,
-  //           memo,
-  //           recipient,
-  //         };
-  //         let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
-  //         setMaxSpendable(maxSpendableAmount.getValue('string'));
-  //       }
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //     setLoadingMaxSpendable(false);
-  //   };
-  //
-  //   if (assetContext.chain && assetContext.networkId) {
-  //     calculateMaxSpendable();
-  //   }
-  // }, [assetContext.chain, assetContext.networkId, memo, recipient, app, connectWallet]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputAmount(event.target.value);
