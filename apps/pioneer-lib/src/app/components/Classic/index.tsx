@@ -1,6 +1,20 @@
 import { ChevronLeftIcon, RepeatIcon, AddIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
-  Avatar, Box, Button, Flex, Text, Spinner, IconButton, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, useDisclosure
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Text,
+  Spinner,
+  IconButton,
+  Stack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useDisclosure,
 } from '@chakra-ui/react';
 import {
   getPaths,
@@ -14,7 +28,7 @@ import { Balance } from '../Balance';
 import { WalletOption, prefurredChainsByWallet } from '@coinmasters/types';
 import {
   ChainToNetworkId,
-  getChainEnumValue
+  getChainEnumValue,
   //@ts-ignore
 } from '@pioneer-platform/pioneer-caip';
 
@@ -22,16 +36,28 @@ export function Classic({ usePioneer }: any) {
   const { state } = usePioneer();
   const { app, assets } = state;
   const [assetContext, setAssetContext] = useState(app?.assetContext);
-  const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
 
-  let onStart = async function(){
-    try{
-      if(app && app.pairWallet && !app.swapKit){
+  const {
+    isOpen: isSettingsOpen,
+    onOpen: onSettingsOpen,
+    onClose: onSettingsClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAddAssetOpen,
+    onOpen: onAddAssetOpen,
+    onClose: onAddAssetClose,
+  } = useDisclosure();
+
+  let onStart = async function () {
+    try {
+      if (app && app.pairWallet && !app.swapKit) {
         let walletType = WalletOption.KEEPKEY;
         const cachedBlockchains = JSON.parse(localStorage.getItem(`cache:blockchains:${walletType}`) || '[]');
-        const blockchains = cachedBlockchains.length > 0 ? cachedBlockchains : (prefurredChainsByWallet[walletType] || [])
-          .map((chain: any) => ChainToNetworkId[getChainEnumValue(chain)])
-          .filter((networkId:any) => networkId !== undefined);
+        const blockchains = cachedBlockchains.length > 0
+          ? cachedBlockchains
+          : (prefurredChainsByWallet[walletType] || [])
+            .map((chain: any) => ChainToNetworkId[getChainEnumValue(chain)])
+            .filter((networkId: any) => networkId !== undefined);
 
         console.log('onStart blockchains', blockchains);
         const pairObject = { type: WalletOption.KEEPKEY, blockchains };
@@ -40,10 +66,10 @@ export function Classic({ usePioneer }: any) {
       } else {
         console.log('App not loaded yet... can not connect');
       }
-    }catch(e){
+    } catch (e) {
       console.error("onStart error", e);
     }
-  }
+  };
 
   useEffect(() => {
     onStart();
@@ -54,7 +80,7 @@ export function Classic({ usePioneer }: any) {
   }, [app, app?.assetContext]);
 
   useEffect(() => {
-    if(assets)console.log("assets", assets);
+    if (assets) console.log("assets", assets);
   }, [app, assets]);
 
   const onSelect = (asset: any) => {
@@ -64,18 +90,18 @@ export function Classic({ usePioneer }: any) {
     } else {
       console.error('invalid asset', asset);
     }
-  }
+  };
 
   const onClose = async () => {
     console.log("onClose");
     await app?.setAssetContext(null);
     console.log('app.assetContext', app?.assetContext);
     setAssetContext(null);
-  }
+  };
 
   const onRefresh = async () => {
     console.log("onRefresh");
-    if(app){
+    if (app) {
       console.log("blockchains", app.blockchains);
       let paths = getPaths(app.blockchains);
       console.log("paths", paths);
@@ -84,12 +110,11 @@ export function Classic({ usePioneer }: any) {
       await app.getBalances();
       console.log("assets", assets);
     }
-  }
+  };
 
   const onAdd = () => {
-    console.log("onAdd");
-    // Add your logic for the "+" button here
-  }
+    onAddAssetOpen();
+  };
 
   return (
     <Flex direction="column" height="100vh">
@@ -104,7 +129,7 @@ export function Classic({ usePioneer }: any) {
           <IconButton
             icon={<SettingsIcon />}
             aria-label="Settings"
-            onClick={onOpen}
+            onClick={onSettingsOpen}
           />
         )}
         <Text ml={4} fontWeight="bold">Assets</Text>
@@ -118,7 +143,7 @@ export function Classic({ usePioneer }: any) {
       <Flex flex="1" overflowY="auto">
         <Stack width="100%">
           {assetContext ? (
-            <Asset usePioneer={usePioneer} onClose={onClose} asset={app?.assetContext}/>
+            <Asset usePioneer={usePioneer} onClose={onClose} asset={app?.assetContext} />
           ) : (
             <>
               {!assets || assets.size === 0 ? (
@@ -167,10 +192,20 @@ export function Classic({ usePioneer }: any) {
           ml="auto"
         />
       </Flex>
-      <Modal isOpen={isOpen} onClose={onCloseModal} size="xl">
+      <Modal isOpen={isSettingsOpen} onClose={onSettingsClose} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Settings</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isAddAssetOpen} onClose={onAddAssetClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Asset</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Blockchains usePioneer={usePioneer} />

@@ -89,7 +89,13 @@ export class SwapKitCore<T = ''> {
     this.stagenet = !!stagenet;
   }
 
-  getAddress = (chain: Chain) => this.connectedChains[chain]?.address || '';
+  getAddress = (chain: Chain) => {
+    const address = this.connectedChains[chain]?.address;
+    if (!address) {
+      throw new Error(`Not connected to chain: ${chain}`);
+    }
+    return address;
+  };
   getExplorerTxUrl = (chain: Chain, txHash: string) => getExplorerTxUrl({ chain, txHash });
   getWallet = (chain: Chain) => this.connectedWallets[chain] as WalletMethods[Chain];
   getExplorerAddressUrl = (chain: Chain, address: string) =>
@@ -362,67 +368,67 @@ export class SwapKitCore<T = ''> {
       // let balance = [];
       //console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
       //for each pubkey iterate and sum the balance
-      let balance: AssetValue[] = [];
-      if (pubkeys.length === 0) {
-        //get inputs
-        //console.log(tag, 'Get balance for Address! address: ' + address);
-        //console.log(tag, 'Get balance for Address! chain: ' + chain);
-        //use address balance
-        balance = await this.getWallet(chain)?.getBalance([{ address }]);
-        //console.log(tag, 'balance: ' + balance);
-
-        //console.log('Get balance for Address! chain: ' + chain);
-
-        // for (let i = 0; i < balance.length; i++) {
-        //   balance[i].address = address;
-        // }
-      } else {
-        //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
-        /*
-              Logic assumptions
-                * Every pubkey will be a UTXO
-                * every UXTO has only 1 asset balance (fungable)
-                * we sum ALL balances of all pubkeys and return as 1 balance
-                  (aka you have x amount bitcoin) as is commonly used in wallets
-
-                Notes: we will only allow sending FROM 1 xpub at a time
-                *so the MAX spendable is the balance of highest balance xpub.*
-
-                blockbook has a wallet gap limit of 20
-           */
-        //use pubkey balances
-        let balanceTotal = 0;
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < pubkeys.length; i++) {
-          const pubkey = pubkeys[i];
-          //console.log(tag, 'Get balance for xpub!');
-          //console.log(tag, 'pubkey: ', pubkey);
-          let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-          //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
-          //console.log(
-          //   tag,
-          //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
-          //   pubkeyBalance[0].decimal,
-          // );
-          pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-          //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
-          if (isNaN(pubkeyBalance)) {
-            pubkeyBalance = 0;
-          }
-          //TODO get string balance
-          pubkeys[i].balance = pubkeyBalance;
-          //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
-          //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
-          balanceTotal += parseFloat(pubkeyBalance);
-        }
-        //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
-        // balanceTotal = balanceTotal / 100000000;
-        let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
-        balanceValue.address = address;
-        balance = [balanceValue];
-      }
+      // let balance: AssetValue[] = [];
+      // if (pubkeys.length === 0) {
+      //   //get inputs
+      //   //console.log(tag, 'Get balance for Address! address: ' + address);
+      //   //console.log(tag, 'Get balance for Address! chain: ' + chain);
+      //   //use address balance
+      //   balance = await this.getWallet(chain)?.getBalance([{ address }]);
+      //   //console.log(tag, 'balance: ' + balance);
+      //
+      //   //console.log('Get balance for Address! chain: ' + chain);
+      //
+      //   // for (let i = 0; i < balance.length; i++) {
+      //   //   balance[i].address = address;
+      //   // }
+      // } else {
+      //   //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
+      //   /*
+      //         Logic assumptions
+      //           * Every pubkey will be a UTXO
+      //           * every UXTO has only 1 asset balance (fungable)
+      //           * we sum ALL balances of all pubkeys and return as 1 balance
+      //             (aka you have x amount bitcoin) as is commonly used in wallets
+      //
+      //           Notes: we will only allow sending FROM 1 xpub at a time
+      //           *so the MAX spendable is the balance of highest balance xpub.*
+      //
+      //           blockbook has a wallet gap limit of 20
+      //      */
+      //   //use pubkey balances
+      //   let balanceTotal = 0;
+      //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      //   for (let i = 0; i < pubkeys.length; i++) {
+      //     const pubkey = pubkeys[i];
+      //     //console.log(tag, 'Get balance for xpub!');
+      //     //console.log(tag, 'pubkey: ', pubkey);
+      //     let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
+      //     //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
+      //     //console.log(
+      //     //   tag,
+      //     //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
+      //     //   pubkeyBalance[0].decimal,
+      //     // );
+      //     pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
+      //     //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
+      //     if (isNaN(pubkeyBalance)) {
+      //       pubkeyBalance = 0;
+      //     }
+      //     //TODO get string balance
+      //     pubkeys[i].balance = pubkeyBalance;
+      //     //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
+      //     //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
+      //     balanceTotal += parseFloat(pubkeyBalance);
+      //   }
+      //   //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
+      //   // balanceTotal = balanceTotal / 100000000;
+      //   let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
+      //   balanceValue.address = address;
+      //   balance = [balanceValue];
+      // }
       //if inputs add inputs
-
+      let balance = [];
       //if features (keepkey) add to object
       this.connectedChains[chain] = {
         address,
@@ -818,7 +824,8 @@ export class SwapKitCore<T = ''> {
         case Chain.Polygon: {
           const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
           console.log(
-            `${TAG} Estimating max sendable amount for EVM chain ${chain} with params:`,
+            tag,
+            ` Estimating max sendable amount for EVM chain ${chain} with params:`,
             params,
           );
           const result = await estimateMaxSendableAmount({

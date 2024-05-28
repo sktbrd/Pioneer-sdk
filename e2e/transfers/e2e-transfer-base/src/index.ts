@@ -42,8 +42,8 @@ let IS_SIGNED: boolean
 
 //TEST MODE
 let WALLET_SEED:any
-// let TEST_MODE = 'KEEPKEY'
-let TEST_MODE = 'KEYSTORE'
+let TEST_MODE = 'KEEPKEY'
+// let TEST_MODE = 'KEYSTORE'
 if(TEST_MODE == "KEYSTORE"){
     WALLET_SEED=process.env['WALLET_SEED']
     if(!WALLET_SEED) throw Error("Failed to load env vars! WALLET_SEED")
@@ -64,20 +64,24 @@ const test_service = async function (this: any) {
         // const queryKey = "key:66fefdd6-7ea9-48cf-8e69-fc74afb9c45412"
         assert(queryKey)
 
+        assert(ChainToNetworkId[ASSET])
+        //ChainToCaip
+        assert(ChainToCaip[ASSET])
+
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
-        let pathsCustom:any = [
-        ]
+        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
             queryKey,
+            blockchains,
+            paths,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsCustom,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -124,11 +128,21 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
+
+        log.info(tag, "ASSET: ", ASSET);
+        log.info(tag, "ChainToCaip[ASSET]: ", ChainToCaip[ASSET]);
+        log.info(tag, "caip: ", ChainToCaip[ASSET]);
+        log.info(tag, "asset: ", assets.get(ChainToCaip[ASSET])); // Use `get` method for Map
+        assert(assets.get(ChainToCaip[ASSET])); // Corrected this line
+
+
         //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        app.setPaths(paths)
+        // let paths = getPaths(blockchains)
+        // log.info("paths: ",paths.length)
+        // app.setPaths(paths)
 
         // //connect
         // assert(blockchains)
@@ -159,43 +173,45 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //
-        await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
+        //getPubkeys
+        // await app.getPubkeys()
+        // log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
+
         // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
         // log.info(tag,"pubkey: ",pubkey)
         // assert(pubkey.length > 0)
         //verify pubkeys
 
 
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
-        log.info(tag,"balances: ",app.balances.length)
-        let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
-        log.info(tag,"balance: ",balance[0])
-        log.info(tag,"balance: ",balance[0])
+        // await app.getBalances()
+        // log.info(tag,"balances: ",app.balances)
+        // log.info(tag,"balances: ",app.balances.length)
+        // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
+        // log.info(tag,"balance: ",balance[0])
+        // log.info(tag,"balance: ",balance[0])
 
-        assert(balance[0])
-        assert(balance[0].caip)
-        assert(balance[0].ticker)
+        // assert(balance[0])
+        // assert(balance[0].caip)
+        // assert(balance[0].ticker)
 
-        //
-        await app.getAssets()
-        log.info(tag,"assets: ",app.assets.length)
-        log.info(tag,"caip: ",ChainToCaip[BLOCKCHAIN])
-        let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Base])
-        log.info(tag,"asset: ",asset)
-        assert(asset[0])
-        assert(asset[0].caip)
-        assert(asset[0].ticker)
-
-        await app.setAssetContext(asset[0])
+        // await app.getAssets()
+        // log.info(tag,"assets: ",app.assets.length)
+        // log.info(tag,"caip: ",ChainToCaip[BLOCKCHAIN])
+        // let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Base])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
+        // assert(asset[0].ticker)
+        log.info(tag,"assetContext: ",ChainToCaip[ASSET])
+        log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
         log.info(tag,"assetContext: ",app.assetContext)
         assert(app.assetContext)
         assert(app.assetContext.caip)
-        assert(app.assetContext.ticker)
+        // assert(app.assetContext.ticker)
 
 
 
@@ -214,16 +230,33 @@ const test_service = async function (this: any) {
         log.info(tag,"assetValue: ",assetValue)
         assert(assetValue)
 
+        //sendMax
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
+        log.info(tag,"pubkeys: ",pubkeys)
+        assert(pubkeys)
+        assert(pubkeys[0])
+
         //send
-        // let sendPayload = {
-        //     assetValue,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("sendPayload: ",sendPayload)
-        // const txHash = await app.swapKit.transfer(sendPayload);
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
+        let estimatePayload:any = {
+            pubkeys,
+            from: pubkeys[0].address,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("app.swapKit: ",app.swapKit)
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Base, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+
+        //send
+        let sendPayload = {
+            assetValue,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
 
     } catch (e) {

@@ -64,7 +64,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         if (!walletInfo) {
           console.log(tag, "connectWallet needed!");
           await connectWallet('KEEPKEY');
-          setTimeout(onStart, 10000);
+          setTimeout(onStart, 200);
         } else {
           let pubkeys = await app.pubkeys;
           pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
