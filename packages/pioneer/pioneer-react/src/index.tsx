@@ -374,6 +374,14 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             localStorage.setItem('lastConnectedWallet', state.app.context);
 
             if (state && state.app) {
+              if (state.app.assetsMap) {
+                // @ts-ignore
+                dispatch({
+                  type: WalletActions.SET_ASSETS,
+                  payload: state.app.assetsMap,
+                });
+              }
+
               //get pubkeys
               if (state.app.pubkeys) {
                 console.log(TAG + ' connectWallet state.app.pubkeys: ', state.app.pubkeys);

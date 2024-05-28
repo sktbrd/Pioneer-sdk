@@ -332,7 +332,7 @@ export class SDK {
         }, []);
 
         this.balances = uniqueBalances;
-        this.events.emit('SET_BLOCKCHAINS', this.balances);
+        // this.events.emit('SET_BLOCKCHAINS', this.balances);
 
         // // Update balances in assets
         // // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -362,8 +362,8 @@ export class SDK {
         //this.setAssetContext(this.assetContext);
 
         // Emit updated assets and balances
-        this.events.emit('SET_ASSETS', this.assets);
-        this.events.emit('SET_BALANCES', this.balances);
+        // this.events.emit('SET_ASSETS', this.assetsMap);
+        // this.events.emit('SET_BALANCES', this.balances);
       } catch (e) {
         console.error('Failed to load balances! e: ', e);
       }
@@ -725,7 +725,7 @@ export class SDK {
           this.wallets[matchingWalletIndex].status = 'connected';
           this.setContext(context);
           // console.log('assets pre: ', this.assets.length);
-          await this.getAssets();
+          // await this.getAssets();
           // console.log('assets post: ', this.assets.length);
 
           await this.getPubkeys();
@@ -867,6 +867,7 @@ export class SDK {
           console.log('Processed Assets: ', allAssets.length);
           //filter assets for blockchain
           this.assetsMap = tokenMap; // Update the main map to include all enriched assets
+          this.events.emit('SET_ASSETS', this.assetsMap);
           //default
           if (!filterParams)
             filterParams = {

@@ -94,13 +94,14 @@ export const utxoWalletMethods = async ({
   // @ts-ignore
   const _getPubkeys = async (paths: any) => {
     try {
-      console.log('paths: ', paths);
       if (!paths || !paths.length) return [];
       console.time('getPubkeys Duration' + chain); // Starts the timer
       const pubkeys = await Promise.all(
-        paths.map(async (path) => {
+        paths.map(async (path: any) => {
           console.log('path: ', path);
           if (!path.addressNList) throw new Error('addressNList not found in path: FATAL');
+          if (path.type === 'address') return;
+          if (path.script_type === 'p2wpkh' && path.coin !== 'Bitcoin') return;
           // Marked as async to use await inside
           // Create the path query for public key retrieval
           const pathQuery = {

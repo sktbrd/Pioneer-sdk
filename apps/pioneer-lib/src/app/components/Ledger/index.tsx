@@ -15,7 +15,7 @@ import {
 import { ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 import React, { useState, useEffect } from 'react';
 
-import Blockchains from '../BlockchainsConfigure';
+import Blockchains from '../Blockchains';
 
 // import { usePioneer } from '@coinmasters/pioneer-react';
 

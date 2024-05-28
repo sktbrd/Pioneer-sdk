@@ -106,6 +106,7 @@ export function Classic({ usePioneer }: any) {
       let paths = getPaths(app.blockchains);
       console.log("paths", paths);
       await app.setPaths(paths);
+      await app.getAssets();
       await app.getPubkeys();
       await app.getBalances();
       console.log("assets", assets);
