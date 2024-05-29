@@ -19,6 +19,7 @@ import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icon
 import { AssetValue } from '@coinmasters/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { getWalletBadgeContent } from '../WalletIcon';
+//@ts-ignore
 import confetti from 'canvas-confetti'; // Make sure to install the confetti package
 
 export function Transfer({ usePioneer }: any): JSX.Element {
@@ -68,8 +69,14 @@ export function Transfer({ usePioneer }: any): JSX.Element {
           let pubkeys = await app.pubkeys;
           pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
           console.log("onStart Transfer pubkeys", pubkeys);
+
+          //get assetValue for the asset
+          await AssetValue.loadStaticAssets();
+          const assetValue = AssetValue.fromStringSync(assetContext.identifier, parseFloat('0'));
+          console.log(tag,"assetValue:", assetValue);
           let estimatePayload: any = {
             feeRate: 10,
+            assetValue,
             pubkeys,
             memo,
             recipient,

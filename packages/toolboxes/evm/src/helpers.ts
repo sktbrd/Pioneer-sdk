@@ -204,6 +204,8 @@ export const estimateMaxSendableAmount = async function ({
     }
     //TODO this makes no sense to me. If you are sending native token, its not a smart contract fee
     //and if you are sending a token the fee amount of the gass asset has nothing to do with the token max sendable amount
+
+    //TODO verify enough gasAsset for token transfer!
     // if ([abi, funcName, funcParams, contractAddress].some((param) => !param)) {
     //   throw new Error('Missing required parameters for smart contract estimateMaxSendableAmount');
     // }

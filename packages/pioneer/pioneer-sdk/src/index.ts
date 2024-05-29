@@ -1440,12 +1440,17 @@ export class SDK {
           return;
         }
         if (!asset.caip) throw Error('Invalid Asset! missing caip!');
-        let assetInfo = this.assetsMap.get(asset.caip);
+        let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
+        if (!assetInfo) throw Error('Invalid Asset! not found in assetsMap! caip: ' + asset.caip);
+        console.log(tag, 'assetInfo: ', assetInfo);
+
         //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
         priceData = priceData.data || {};
+        console.log(tag, 'priceData: ', priceData);
         if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
         if (priceData) assetInfo = { ...assetInfo, ...priceData };
+
         // const balances = this.balances.filter(
         //   (b: any) => b.caip.toLowerCase() === asset.caip.toLowerCase(),
         // );
@@ -1454,6 +1459,7 @@ export class SDK {
         // );
         // assetInfo.balances = balances;
         // assetInfo.pubkeys = pubkeys;
+
         this.events.emit('SET_ASSET_CONTEXT', assetInfo);
         this.assetContext = assetInfo;
         return { success: true };
@@ -1529,7 +1535,7 @@ export class SDK {
           return;
         }
         if (!asset.caip) throw Error('Invalid Asset! missing caip!');
-        let assetInfo = this.assetsMap.get(asset.caip);
+        let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
         //hydrate with price data
         let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });

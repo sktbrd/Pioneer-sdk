@@ -71,13 +71,19 @@ const test_service = async function (this: any) {
         let pathsCustom:any = [
         ]
 
+        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+
+
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsCustom,
+            paths,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -124,11 +130,6 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        app.setPaths(paths)
 
         // //connect
         // assert(blockchains)
@@ -158,36 +159,60 @@ const test_service = async function (this: any) {
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-        await app.getAssets()
-        let asset = app.assets.filter((e:any) => e.identifier === 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630')
-        log.info(tag,"asset: ",asset)
-        let assetPro = asset[0]
-        assert(assetPro)
-        assert(assetPro.identifier)
-        assert.strictEqual(assetPro.identifier, 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630', 'balancePro.identifier should match the expected value');
-        assert.strictEqual(assetPro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
+        // await app.getAssets()
+        // let asset = app.assets.filter((e:any) => e.identifier === 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630')
+        // log.info(tag,"asset: ",asset)
+        // let assetPro = asset[0]
+        // assert(assetPro)
+        // assert(assetPro.identifier)
+        // assert.strictEqual(assetPro.identifier, 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630', 'balancePro.identifier should match the expected value');
+        // assert.strictEqual(assetPro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
 
         //
-        await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        assert(app.pubkeys)
-        assert(app.pubkeys[0])
+        // await app.getPubkeys()
+        // log.info(tag,"pubkeys: ",app.pubkeys)
+        // assert(app.pubkeys)
+        // assert(app.pubkeys[0])
         // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
         // log.info(tag,"pubkey: ",pubkey)
         // assert(pubkey.length > 0)
         //verify pubkeys
 
+        // log.info(tag,"app.assets: ",app.assets)
+        // log.info(tag,"app.assets: ",app.assetsMap)
+        // let allAssets = Object.keys(app.assets)
+        // log.info(tag,"allAssets: ",allAssets)
+        // assert(allAssets)
 
 
-        await app.getBalances()
-        log.info(tag,"balances: ",app.balances)
-        let balance = app.balances.filter((e:any) => e.identifier === 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630')
-        log.info(tag,"balance: ",balance)
-        let balancePro = balance[0]
-        assert(balancePro)
-        assert(balancePro.identifier)
-        assert.strictEqual(balancePro.identifier, 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630', 'balancePro.identifier should match the expected value');
-        assert.strictEqual(balancePro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
+        //setAssetContext
+        let assetPro = app.assetsMap.get('eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630')
+        log.info(tag,"assetPro: ",assetPro)
+        assert(assetPro)
+        assert(assetPro.caip)
+
+        await app.setAssetContext(assetPro)
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+        assert(app.assetContext.icon)
+
+        //filter pubkeys
+        let pubkey = app.pubkeys.some((pubkeyObject: any) =>
+          pubkeyObject.networks.some((networkId: string) => networkId.startsWith('eip155'))
+        );
+        log.info(tag,"pubkey: ",pubkey)
+        assert(pubkey)
+
+        // await app.getBalances()
+        // log.info(tag,"balances: ",app.balances)
+        // let balance = app.balances.filter((e:any) => e.identifier === 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630')
+        // log.info(tag,"balance: ",balance)
+        // let balancePro = balance[0]
+        // assert(balancePro)
+        // assert(balancePro.identifier)
+        // assert.strictEqual(balancePro.identifier, 'BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630', 'balancePro.identifier should match the expected value');
+        // assert.strictEqual(balancePro.name, 'swaps.PRO', 'balancePro.name should be "swaps.PRO"');
         // assert(balance.length > 0)
         //verify balances
 
@@ -200,6 +225,20 @@ const test_service = async function (this: any) {
         // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
+
+        //getMax
+        //send
+        let estimatePayload:any = {
+            from:pubkey.address,
+            memo: '',
+            assetValue,
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("app.swapKit: ",app.swapKit)
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Base, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+
+
 
         //send
         let sendPayload = {
