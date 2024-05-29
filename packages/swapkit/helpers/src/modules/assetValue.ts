@@ -94,8 +94,9 @@ export class AssetValue extends BigIntArithmetics {
         : { decimal: params.decimal, value: params.value },
     );
 
+    console.log('identifier: ', identifier);
     const assetInfo = getAssetInfo(identifier);
-
+    console.log('assetInfo: ', assetInfo);
     this.type = getAssetType(assetInfo);
     this.chain = assetInfo.chain;
     this.ticker = assetInfo.ticker;

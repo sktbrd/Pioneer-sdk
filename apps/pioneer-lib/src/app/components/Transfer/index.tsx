@@ -136,10 +136,9 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         }, 3000);
       } else {
         setIsSubmitting(true);
-        const assetString = `${assetContext.chain}.${assetContext.symbol}`;
         await AssetValue.loadStaticAssets();
         //@ts-ignore
-        const assetValue = await AssetValue.fromIdentifier(assetString, parseFloat(inputAmount));
+        const assetValue = await AssetValue.fromIdentifier(assetContext.identifier, parseFloat(inputAmount));
 
         let sendPayload: any = {
           assetValue,
@@ -155,7 +154,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
               '_blank',
             );
-          }, 30000); // 30 seconds delay
+          }, 10000); // 30 seconds delay
         }
 
         confetti(); // Trigger confetti on successful transaction

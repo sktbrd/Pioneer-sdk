@@ -225,6 +225,8 @@ const test_service = async function (this: any) {
         // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
+        assert(assetValue)
+        assert(assetValue?.address)
 
         //getMax
         //send
