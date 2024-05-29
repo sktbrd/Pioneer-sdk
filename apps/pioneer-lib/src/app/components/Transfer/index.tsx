@@ -17,10 +17,9 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { AssetValue } from '@coinmasters/core';
-// @ts-ignore
-import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useCallback, useEffect, useState } from 'react';
 import { getWalletBadgeContent } from '../WalletIcon';
+import confetti from 'canvas-confetti'; // Make sure to install the confetti package
 
 export function Transfer({ usePioneer }: any): JSX.Element {
   const toast = useToast();
@@ -76,6 +75,8 @@ export function Transfer({ usePioneer }: any): JSX.Element {
             recipient,
           };
           let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
+          console.log("maxSpendableAmount", maxSpendableAmount);
+          console.log("maxSpendableAmount", maxSpendableAmount.getValue('string'));
           console.log("onStart Transfer pubkeys", pubkeys);
           setMaxSpendable(maxSpendableAmount.getValue('string'));
           setLoadingMaxSpendable(false);
@@ -140,12 +141,25 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         };
         if (isMax) sendPayload.isMax = true;
         const txHash = await app.swapKit.transfer(sendPayload);
+
         if (typeof window !== 'undefined') {
-          window.open(
-            `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
-            '_blank',
-          );
+          setTimeout(() => {
+            window.open(
+              `${app.swapKit.getExplorerTxUrl(assetContext.chain, txHash as string)}`,
+              '_blank',
+            );
+          }, 30000); // 30 seconds delay
         }
+
+        confetti(); // Trigger confetti on successful transaction
+
+        toast({
+          title: 'Transaction Successful',
+          description: `Transaction ID: ${txHash}`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
       }
     } catch (e: any) {
       console.error(e);
@@ -156,8 +170,10 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [assetContext, inputAmount, app, recipient, sendAmount, toast]);
+  }, [assetContext, inputAmount, app, recipient, sendAmount, toast, memo, isMax, connectWallet, setIntent]);
 
   const setMaxAmount = () => {
     setInputAmount(maxSpendable);

@@ -60,7 +60,7 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                 <VStack width="100%">
                   {app.pubkeys
                     .filter((pubkey: any) => {
-                      if (asset.networkId.startsWith('eip155')) {
+                      if (asset?.networkId?.startsWith('eip155')) {
                         return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
                       }
                       return pubkey.networks.includes(asset.networkId);

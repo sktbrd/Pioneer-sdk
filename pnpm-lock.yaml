@@ -128,6 +128,9 @@ importers:
       axios:
         specifier: ^1.6.7
         version: 1.6.8
+      canvas-confetti:
+        specifier: ^1.9.3
+        version: 1.9.3
       chart.js:
         specifier: ^4.4.1
         version: 4.4.2
@@ -13813,6 +13816,10 @@ packages:
 
   /caniuse-lite@1.0.30001600:
     resolution: {integrity: sha512-+2S9/2JFhYmYaDpZvo0lKkfvuKIglrx68MwOBqMGHhQsNkLjB5xtc/TGoEPs+MxjSyN/72qer2g97nzR641mOQ==}
+
+  /canvas-confetti@1.9.3:
+    resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
+    dev: false
 
   /case@1.6.3:
     resolution: {integrity: sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==}

@@ -405,11 +405,12 @@ const test_service = async function (this: any) {
         // }
         //
         //test AssetValue
-        // let assetValue = AssetValue.fromChainOrSignature(
-        //   Chain.Base,
-        //   "0.001",
-        // );
-        // console.log("assetValue: ",assetValue)
+        let assetValue = AssetValue.fromChainOrSignature(
+          Chain.Base,
+          "0.001",
+        );
+        console.log("assetValue: ",assetValue)
+        console.log("assetValue: ",assetValue.getValue('string'))
         // if(assetValue.ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
 
 
@@ -439,7 +440,7 @@ const test_service = async function (this: any) {
         // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("0.001"));
         // console.log("assetValue: ",assetValue)
 
-        let assetString = 'ARB.ETH'
+        // let assetString = 'ARB.ETH'
         // let assetString = 'ARB/ETH'
         // let assetString = 'MAYA.MAYA'
         // let assetString = 'ZEC.ZEC'
@@ -448,15 +449,15 @@ const test_service = async function (this: any) {
         // let assetString = 'ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7'
         // let assetString = 'ETH.FOX-0xc770eefad204b5180df6a14ee197d99d808ee52d'
 
-        await AssetValue.loadStaticAssets();
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat("500"));
-        console.log("assetValue: ",assetValue)
-        assert(assetValue)
-
-        console.log("assetValue: ",assetValue?.decimal)
-        console.log("assetValue: ",assetValue?.toString())
-        console.log("assetValue: ",assetValue?.getValue('string'))
-        //verify it set
+        // await AssetValue.loadStaticAssets();
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat("500"));
+        // console.log("assetValue: ",assetValue)
+        // assert(assetValue)
+        //
+        // console.log("assetValue: ",assetValue?.decimal)
+        // console.log("assetValue: ",assetValue?.toString())
+        // console.log("assetValue: ",assetValue?.getValue('string'))
+        // //verify it set
         
         //get all outputs available
         

@@ -176,15 +176,23 @@ export const estimateMaxSendableAmount = async function ({
     console.log(tag, 'checkpoint ');
     console.log(tag, 'from: ', from);
     if (!from) throw new Error('Missing from address');
-    const balance = (await toolbox.getBalance([{ address: from }])).find(({ symbol, chain }) =>
-      assetValue
-        ? symbol === assetValue.symbol
-        : symbol === AssetValue.fromChainOrSignature(chain)?.symbol,
-    );
+    const balanceData = await toolbox.getBalance([{ address: from }]);
+    console.log(tag, 'balanceData: ', balanceData);
+    console.log(tag, 'assetValue: ', assetValue);
+    const balance = balanceData.find(({ symbol, chain }) => {
+      if (assetValue) {
+        console.log(tag, 'assetValue.symbol: ', assetValue.symbol);
+        return symbol === assetValue.symbol;
+      } else {
+        console.log(tag, 'chain: ', chain);
+        const assetSymbol = AssetValue.fromChainOrSignature(chain)?.symbol;
+        return symbol === assetSymbol;
+      }
+    });
     console.log(tag, 'balance: ', balance);
 
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
-    //console.log(tag, 'fees: ', fees);
+    console.log(tag, 'fees: ', fees);
 
     if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
 
@@ -229,10 +237,11 @@ export const estimateMaxSendableAmount = async function ({
     //     ? fees.maxFeePerGas! + (fees.maxPriorityFeePerGas! || 1n)
     //     : fees.gasPrice!);
 
-    const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint'));
-    //console.log(tag, 'fee: ', fee);
-
-    return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
+    // const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue('bigint'));
+    // //console.log(tag, 'fee: ', fee);
+    //
+    // return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
+    return balance;
   } catch (e) {
     console.error(tag, 'e: ', e);
     throw e;
