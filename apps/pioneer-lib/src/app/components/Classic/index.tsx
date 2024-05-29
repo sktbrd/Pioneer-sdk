@@ -33,9 +33,10 @@ import {
 } from '@pioneer-platform/pioneer-caip';
 
 export function Classic({ usePioneer }: any) {
-  const { state } = usePioneer();
+  const { state, connectWallet } = usePioneer();
   const { app, assets } = state;
   const [assetContext, setAssetContext] = useState(app?.assetContext);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const {
     isOpen: isSettingsOpen,
@@ -50,19 +51,23 @@ export function Classic({ usePioneer }: any) {
 
   let onStart = async function () {
     try {
-      if (app && app.pairWallet && !app.swapKit) {
-        let walletType = WalletOption.KEEPKEY;
-        const cachedBlockchains = JSON.parse(localStorage.getItem(`cache:blockchains:${walletType}`) || '[]');
-        const blockchains = cachedBlockchains.length > 0
-          ? cachedBlockchains
-          : (prefurredChainsByWallet[walletType] || [])
-            .map((chain: any) => ChainToNetworkId[getChainEnumValue(chain)])
-            .filter((networkId: any) => networkId !== undefined);
+      if (app && app.pairWallet && !isConnecting) {
+        console.log('App loaded... connecting');
+        await connectWallet('KEEPKEY');
+        setIsConnecting(true);
 
-        console.log('onStart blockchains', blockchains);
-        const pairObject = { type: WalletOption.KEEPKEY, blockchains };
-        const resultInit = await app.pairWallet(pairObject);
-        console.log("resultInit: ", resultInit);
+        // let walletType = WalletOption.KEEPKEY;
+        // const cachedBlockchains = JSON.parse(localStorage.getItem(`cache:blockchains:${walletType}`) || '[]');
+        // const blockchains = cachedBlockchains.length > 0
+        //   ? cachedBlockchains
+        //   : (prefurredChainsByWallet[walletType] || [])
+        //     .map((chain: any) => ChainToNetworkId[getChainEnumValue(chain)])
+        //     .filter((networkId: any) => networkId !== undefined);
+        //
+        // console.log('onStart blockchains', blockchains);
+        // const pairObject = { type: WalletOption.KEEPKEY, blockchains };
+        // const resultInit = await app.pairWallet(pairObject);
+        // console.log("resultInit: ", resultInit);
       } else {
         console.log('App not loaded yet... can not connect');
       }
@@ -73,7 +78,7 @@ export function Classic({ usePioneer }: any) {
 
   useEffect(() => {
     onStart();
-  }, [app, app?.assetContext]);
+  }, [app, app?.assetContext, assets]);
 
   useEffect(() => {
     setAssetContext(app?.assetContext);
@@ -162,7 +167,12 @@ export function Classic({ usePioneer }: any) {
                         <Box ml={3}>
                           <Text fontWeight="bold">{asset.name}</Text>
                           {app.pubkeys
-                            .filter((pubkey: any) => pubkey.networks.includes(asset.networkId))
+                            .filter((pubkey: any) => {
+                              if (asset.networkId.startsWith('eip155')) {
+                                return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
+                              }
+                              return pubkey.networks.includes(asset.networkId);
+                            })
                             .map((pubkey: any, index: any) => (
                               <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
                             ))}

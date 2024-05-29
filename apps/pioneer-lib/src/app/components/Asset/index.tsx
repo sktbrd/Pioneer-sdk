@@ -59,7 +59,12 @@ export function Asset({ usePioneer, onClose, asset }: any) {
               <Flex align="center" justifyContent="space-between" mb={4} width="100%">
                 <VStack width="100%">
                   {app.pubkeys
-                    .filter((pubkey: any) => pubkey.networks.includes(asset.networkId))
+                    .filter((pubkey: any) => {
+                      if (asset.networkId.startsWith('eip155')) {
+                        return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
+                      }
+                      return pubkey.networks.includes(asset.networkId);
+                    })
                     .map((pubkey: any, index: any) => (
                       <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
                     ))}

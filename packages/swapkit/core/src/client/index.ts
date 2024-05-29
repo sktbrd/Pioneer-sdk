@@ -828,6 +828,9 @@ export class SwapKitCore<T = ''> {
             ` Estimating max sendable amount for EVM chain ${chain} with params:`,
             params,
           );
+          //set from address
+          if (!params.from) params.from = walletMethods.getAddress();
+          if (!params.from) throw new Error('From address not found for wallet: ' + chain);
           const result = await estimateMaxSendableAmount({
             ...params,
             toolbox: walletMethods as EVMToolbox,
