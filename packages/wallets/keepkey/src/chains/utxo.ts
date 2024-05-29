@@ -16,7 +16,10 @@ import { Chain, DerivationPath, FeeOption } from '@coinmasters/types';
 import { xpubConvert } from '@pioneer-platform/pioneer-coins';
 import { toCashAddress } from 'bchaddrjs';
 import type { Psbt } from 'bitcoinjs-lib';
-
+import {
+  ChainToNetworkId,
+  // @ts-ignore
+} from '@pioneer-platform/pioneer-caip';
 import { bip32ToAddressNList, ChainToKeepKeyName } from '../helpers/coins.ts';
 const TAG = ' | kk-utxo | ';
 type Params = {
@@ -96,7 +99,7 @@ export const utxoWalletMethods = async ({
     try {
       if (!paths || !paths.length) return [];
       console.time('getPubkeys Duration' + chain); // Starts the timer
-      const pubkeys = await Promise.all(
+      let pubkeys = await Promise.all(
         paths.map(async (path: any) => {
           console.log('path: ', path);
           if (!path.addressNList) throw new Error('addressNList not found in path: FATAL');
@@ -143,6 +146,7 @@ export const utxoWalletMethods = async ({
           };
         }),
       );
+      pubkeys = pubkeys.filter((pubkey: any) => pubkey !== null && pubkey !== undefined);
       console.timeEnd('getPubkeys Duration' + chain); // Ends the timer and logs the duration
 
       return pubkeys;
@@ -231,9 +235,16 @@ export const utxoWalletMethods = async ({
     try {
       // Select paths
       console.log(tag, 'pubkeys: ', pubkeys);
+      //filter by sending networkId
+      // let filterPubkeys = pubkeys.filter((pubkey:any) => pubkey.networks.filter === ChainToNetworkId[chain]);
+
+      // Filter the pubkeys by networkId
+      let filterPubkeys = pubkeys.filter((pubkey: any) =>
+        pubkey.networks.some((network: any) => network === ChainToNetworkId[chain])
+      );
       const { psbt, inputs: rawInputs } = await toolbox.buildTx({
         ...rest,
-        pubkeys,
+        pubkeys: filterPubkeys,
         // pubkeys: await getPubkeys(),
         memo,
         feeOptionKey,

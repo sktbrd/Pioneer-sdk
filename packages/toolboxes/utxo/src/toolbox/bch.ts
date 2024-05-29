@@ -176,10 +176,12 @@ const buildTx = async ({
     if (!validateAddress(recipientCashAddress)) throw new Error('Invalid address');
 
     let utxos = [];
-
+    console.log(tag, 'pubkeys: ', pubkeys);
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < pubkeys.length; i++) {
       const pubkey = pubkeys[i];
-
+      console.log(tag, 'pubkey: ', pubkey);
+      if (!pubkey.xpub) throw new Error('Invalid xpub');
       // Get UTXOs for the current pubkey
       //@ts-ignore
       let currentUtxos = await apiClient.listUnspent({
