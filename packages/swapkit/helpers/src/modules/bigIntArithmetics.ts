@@ -1,5 +1,4 @@
 import { BaseDecimal } from '@coinmasters/types';
-
 import type { SwapKitNumber } from './swapKitNumber.ts';
 
 type NumberPrimitivesType = {
@@ -25,15 +24,14 @@ const toMultiplier = (decimal: number): bigint => {
     return 10n ** 0n;
   }
 };
-// const toMultiplier = (decimal: number) => 10n ** BigInt(decimal);
 
-const decimalFromMultiplier = (multiplier: bigint) => Math.log10(parseFloat(multiplier.toString()));
+const decimalFromMultiplier = (multiplier: bigint): number => Math.log10(Number(multiplier));
 
 export function formatBigIntToSafeValue({
-  value,
-  bigIntDecimal = DEFAULT_DECIMAL,
-  decimal = DEFAULT_DECIMAL,
-}: {
+                                          value,
+                                          bigIntDecimal = DEFAULT_DECIMAL,
+                                          decimal = DEFAULT_DECIMAL,
+                                        }: {
   value: bigint;
   bigIntDecimal?: number;
   decimal?: number;
@@ -50,14 +48,11 @@ export function formatBigIntToSafeValue({
   const decimalIndex = valueString.length - decimal;
   let decimalString = valueString.slice(-decimal);
 
-  // Check if we need to round up
   if (parseInt(decimalString[bigIntDecimal]) >= 5) {
-    // Increment the last decimal place and slice off the rest
     decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(
       parseInt(decimalString[bigIntDecimal - 1]) + 1
     ).toString()}`;
   } else {
-    // Just slice off the extra digits
     decimalString = decimalString.substring(0, bigIntDecimal);
   }
 
@@ -80,10 +75,10 @@ export class BigIntArithmetics {
   }
 
   static shiftDecimals({
-    value,
-    from,
-    to,
-  }: {
+                         value,
+                         from,
+                         to,
+                       }: {
     value: InstanceType<typeof SwapKitNumber>;
     from: number;
     to: number;
@@ -114,52 +109,46 @@ export class BigIntArithmetics {
     console.log('BigInt Value:', this.bigIntValue);
   }
 
-  // constructor(params: SKBigIntParams) {
-  //   const value = getStringValue(params);
-  //   const isComplex = typeof params === 'object';
-  //   this.decimal = isComplex ? params.decimal : undefined;
-  //
-  //   // use the multiplier to keep track of decimal point - defaults to 8 if lower than 8
-  //   this.decimalMultiplier =
-  //     isComplex && 'decimalMultiplier' in params
-  //       ? params.decimalMultiplier
-  //       : toMultiplier(Math.max(getFloatDecimals(toSafeValue(value)), this.decimal || 0));
-  //   this.#setValue(value);
-  // }
-
   set(value: SKBigIntParams): this {
-    // @ts-expect-error False positive
     return new this.constructor({ decimal: this.decimal, value, identifier: this.toString() });
   }
+
   add(...args: InitialisationValueType[]) {
     return this.#arithmetics('add', ...args);
   }
+
   sub(...args: InitialisationValueType[]) {
     return this.#arithmetics('sub', ...args);
   }
+
   mul(...args: InitialisationValueType[]) {
     return this.#arithmetics('mul', ...args);
   }
+
   div(...args: InitialisationValueType[]) {
     return this.#arithmetics('div', ...args);
   }
+
   gt(value: InitialisationValueType) {
     return this.#comparison('gt', value);
   }
+
   gte(value: InitialisationValueType) {
     return this.#comparison('gte', value);
   }
+
   lt(value: InitialisationValueType) {
     return this.#comparison('lt', value);
   }
+
   lte(value: InitialisationValueType) {
     return this.#comparison('lte', value);
   }
+
   eqValue(value: InitialisationValueType) {
     return this.#comparison('eqValue', value);
   }
 
-  // @ts-expect-error False positive
   getValue<T extends AllowedNumberTypes>(type: T): NumberPrimitivesType[T] {
     const value = this.formatBigIntToSafeValue(
       this.bigIntValue,
@@ -177,7 +166,6 @@ export class BigIntArithmetics {
     }
   }
 
-  // @ts-expect-error
   getBaseValue<T extends AllowedNumberTypes>(type: T): NumberPrimitivesType[T] {
     const divisor = this.decimalMultiplier / toMultiplier(this.decimal || BaseDecimal.THOR);
     const baseValue = this.bigIntValue / divisor;
@@ -305,14 +293,11 @@ export class BigIntArithmetics {
     const decimalIndex = parsedValueString.length - decimalToUseForConversion;
     let decimalString = parsedValueString.slice(-decimalToUseForConversion);
 
-    // Check if we need to round up
     if (parseInt(decimalString[bigIntDecimal]) >= 5) {
-      // Increment the last decimal place and slice off the rest
       decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(
         parseInt(decimalString[bigIntDecimal - 1]) + 1
       ).toString()}`;
     } else {
-      // Just slice off the extra digits
       decimalString = decimalString.substring(0, bigIntDecimal);
     }
 
@@ -336,14 +321,6 @@ export class BigIntArithmetics {
             return acc + value;
           case 'sub':
             return acc - value;
-          /**
-           * Multiplication & division would end up with wrong result if we don't adjust the value
-           * 200000000n * 200000000n => 40000000000000000n
-           * 200000000n / 200000000n => 1n
-           * So we do the following:
-           * 200000000n * 200000000n = 40000000000000000n / 100000000n (decimals) => 400000000n
-           * (200000000n * 100000000n (decimals)) / 200000000n => 100000000n
-           */
           case 'mul':
             return (acc * value) / precisionDecimalMultiplier;
           case 'div': {
@@ -354,7 +331,6 @@ export class BigIntArithmetics {
             return acc;
         }
       },
-      //normalize is to precision multiplier base
       (this.bigIntValue * precisionDecimalMultiplier) / this.decimalMultiplier,
     );
 
@@ -364,7 +340,6 @@ export class BigIntArithmetics {
       value: result,
     });
 
-    // @ts-expect-error False positive
     return new this.constructor({
       decimalMultiplier: toMultiplier(decimal),
       decimal: this.decimal,
@@ -444,11 +419,6 @@ function getFloatDecimals(value: string): number {
   }
   return Math.max(decimals, DEFAULT_DECIMAL);
 }
-
-// function getFloatDecimals(value: string) {
-//   const decimals = value.split('.')[1]?.length || 0;
-//   return Math.max(decimals, DEFAULT_DECIMAL);
-// }
 
 function getStringValue(param: SKBigIntParams) {
   return typeof param === 'object'

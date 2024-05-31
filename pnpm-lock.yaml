@@ -3167,6 +3167,9 @@ importers:
 
   packages/swapkit/helpers:
     dependencies:
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
       ky:
         specifier: 1.1.3
         version: 1.1.3
@@ -3386,6 +3389,9 @@ importers:
       '@coinmasters/types':
         specifier: workspace:*
         version: link:../../swapkit/types
+      '@pioneer-platform/pioneer-caip':
+        specifier: ^9.2.26
+        version: 9.2.26
       ethers:
         specifier: ^6.9.0
         version: 6.9.0

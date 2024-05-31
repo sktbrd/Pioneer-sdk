@@ -1,5 +1,29 @@
 # @coinmasters/pioneer-sdk
 
+## 4.7.27
+
+### Patch Changes
+
+- bump
+
+## 4.7.26
+
+### Patch Changes
+
+- bump
+
+## 4.7.25
+
+### Patch Changes
+
+- bump
+
+## 4.7.24
+
+### Patch Changes
+
+- bump
+
 ## 4.7.23
 
 ### Patch Changes

@@ -60,6 +60,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
       console.log(tag, "assetContext: ", assetContext);
 
       const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      console.log(tag, "walletInfo: ", walletInfo);
       if (!walletInfo) {
         console.log(tag, "connectWallet needed!");
         await connectWallet('KEEPKEY');
@@ -70,12 +71,11 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         console.log("onStart Transfer pubkeys", pubkeys);
 
         //get assetValue for the asset
-        await AssetValue.loadStaticAssets();
-        const assetValue = AssetValue.fromStringSync(assetContext.identifier, parseFloat('0'));
-        console.log(tag,"assetValue:", assetValue);
+        // console.log(tag,"assetValue:", assetValue);
+        if(!assetContext.caip) throw Error('Invalid asset context. Missing caip.')
         let estimatePayload: any = {
           feeRate: 10,
-          assetValue,
+          caip: assetContext.caip,
           pubkeys,
           memo,
           recipient,

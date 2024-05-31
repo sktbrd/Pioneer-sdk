@@ -2,15 +2,16 @@
   "author": "swapkit-oss-team",
   "dependencies": {
     "@coinmasters/types": "workspace:*",
+    "@pioneer-platform/pioneer-caip": "^9.2.26",
     "ethers": "6.9.0"
   },
   "description": "THORSwap evm",
   "devDependencies": {
+    "@coinmasters/helpers": "workspace:*",
     "@internal/config": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "3.0.5",
-    "@nomicfoundation/hardhat-toolbox": "4.0.0",
     "@nomicfoundation/hardhat-network-helpers": "1.0.9",
-    "@coinmasters/helpers": "workspace:*",
+    "@nomicfoundation/hardhat-toolbox": "4.0.0",
     "@types/node": "20.10.0",
     "@vitest/coverage-istanbul": "0.34.6",
     "hardhat": "2.19.1",
@@ -54,5 +55,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "11.0.24"
+  "version": "11.0.28"
 }

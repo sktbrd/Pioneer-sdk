@@ -1,5 +1,45 @@
 # @coinmasters/wallet-evm-extensions
 
+## 11.0.28
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.28
+  - @coinmasters/toolbox-evm@11.0.28
+
+## 11.0.27
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.27
+  - @coinmasters/toolbox-evm@11.0.27
+
+## 11.0.26
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.26
+  - @coinmasters/toolbox-evm@11.0.26
+
+## 11.0.25
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.25
+  - @coinmasters/toolbox-evm@11.0.25
+
 ## 11.0.24
 
 ### Patch Changes

@@ -106,6 +106,7 @@ export type EVMToolbox = ReturnType<
 
 export type EVMMaxSendableAmountsParams = {
   from: string;
+  caip?: string;
   toolbox: EVMToolbox;
   assetValue: AssetValue;
   feeOptionKey?: FeeOption;

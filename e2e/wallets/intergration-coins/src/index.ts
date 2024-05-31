@@ -405,12 +405,21 @@ const test_service = async function (this: any) {
         // }
         //
         //test AssetValue
+
         let assetValue = AssetValue.fromChainOrSignature(
           Chain.Base,
-          "0.001",
+          0,
         );
         console.log("assetValue: ",assetValue)
         console.log("assetValue: ",assetValue.getValue('string'))
+
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Base,
+        //   "0.001",
+        // );
+        // console.log("assetValue: ",assetValue)
+        // console.log("assetValue: ",assetValue.getValue('string'))
+
         // if(assetValue.ticker !== 'ETH') throw Error("Invalid ticker for BASE!")
 
 

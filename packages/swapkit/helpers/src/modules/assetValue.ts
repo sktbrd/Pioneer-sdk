@@ -24,10 +24,22 @@ import type { SwapKitValueType } from './swapKitNumber.ts';
 
 type TokenTax = { buy: number; sell: number };
 
-const safeValue = (value: NumberPrimitives, decimal: number) =>
-  typeof value === 'bigint'
-    ? formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal })
-    : value;
+function safeValue(value: NumberPrimitives, decimal: number) {
+  try {
+    if (typeof value === 'bigint') {
+      return formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal });
+    }
+    return value;
+  } catch (error) {
+    console.error('Error in safeValue:', error);
+    return 0;
+  }
+}
+
+// const safeValue = (value: NumberPrimitives, decimal: number) =>
+//   typeof value === 'bigint'
+//     ? formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal })
+//     : value;
 
 type AssetValueParams = { decimal: number; value: SwapKitValueType; tax?: TokenTax } & (
   | { chain: Chain; symbol: string }
@@ -76,6 +88,7 @@ const createAssetValue = async (assetString: string, value: NumberPrimitives = 0
 
 export class AssetValue extends BigIntArithmetics {
   address?: string;
+  caip?: string;
   chain: Chain;
   isGasAsset = false;
   isSynthetic = false;
@@ -193,7 +206,9 @@ export class AssetValue extends BigIntArithmetics {
       identifier: tokenIdentifier,
     } = getStaticToken(assetString as unknown as TokenNames);
     console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
-    const parsedValue = value === 0 ? BigInt(0) : safeValue(value, decimal);
+    console.log('value: ', value);
+    console.log('decimal: ', decimal);
+    const parsedValue = safeValue(value, decimal);
     console.log('parsedValue: ', parsedValue);
     let asset: AssetValue | undefined;
 

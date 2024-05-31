@@ -1,4 +1,4 @@
-import { AssetValue, formatBigIntToSafeValue, SwapKitNumber } from '@coinmasters/helpers';
+import { AssetValue, formatBigIntToSafeValue } from '@coinmasters/helpers';
 import {
   BaseDecimal,
   Chain,
@@ -9,8 +9,10 @@ import {
   WalletOption,
 } from '@coinmasters/types';
 import type { BrowserProvider, Eip1193Provider, JsonRpcProvider } from 'ethers';
-
+//@ts-ignore
+import { evmCaips, ChainToCaip } from '@pioneer-platform/pioneer-caip';
 import type { CovalentApiType, EthplorerApiType, EVMMaxSendableAmountsParams } from './index.ts';
+
 import { AVAXToolbox, BSCToolbox, ETHToolbox } from './index.ts';
 const TAG = ' | EVM -helpers | ';
 
@@ -162,6 +164,7 @@ export const getWeb3WalletMethods = async ({
 export const estimateMaxSendableAmount = async function ({
   toolbox,
   from,
+  caip,
   memo = '',
   feeOptionKey = FeeOption.Fastest,
   assetValue,
@@ -175,10 +178,28 @@ export const estimateMaxSendableAmount = async function ({
   try {
     console.log(tag, 'checkpoint ');
     console.log(tag, 'from: ', from);
+    console.log(tag, 'caip: ', caip);
     if (!from) throw new Error('Missing from address');
     const balanceData = await toolbox.getBalance([{ address: from }]);
     console.log(tag, 'balanceData: ', balanceData);
     console.log(tag, 'assetValue: ', assetValue);
+
+    //caip is the chain address identifier protocol
+    console.log(tag, 'caip: ', caip);
+
+    //if token, then return token balance
+    function isNative(caip: string): boolean {
+      const evmValues = Object.values(evmCaips);
+      return evmValues.includes(caip);
+    }
+    let native = isNative(caip);
+    if(native){
+      const balance = balanceData.find
+    } else {
+
+    }
+    //if native asset then return gasToken balance
+
     const balance = balanceData.find(({ symbol, chain }) => {
       if (assetValue) {
         console.log(tag, 'assetValue.symbol: ', assetValue.symbol);
@@ -367,14 +388,13 @@ export const okxMobileEnabled = () => {
 export const isWeb3Detected = () => typeof window.ethereum !== 'undefined';
 export const toHexString = (value: bigint) => (value > 0n ? `0x${value.toString(16)}` : '0x0');
 
-
 export const getBalance = async ({
-                                   provider,
-                                   api,
-                                   address,
-                                   chain,
-                                   potentialScamFilter,
-                                 }: {
+  provider,
+  api,
+  address,
+  chain,
+  potentialScamFilter,
+}: {
   provider: JsonRpcProvider | BrowserProvider;
   api: CovalentApiType | EthplorerApiType;
   address: { address: string }[]; // Updated type for address
@@ -403,6 +423,7 @@ export const getBalance = async ({
     );
     gasTokenBalance.isGasAsset = true; // Marking it as gas asset
     console.log('gasTokenBalance: ', gasTokenBalance);
+    gasTokenBalance.caip = ChainToCaip[chain];
     let balances = [gasTokenBalance];
 
     await AssetValue.loadStaticAssets();
@@ -411,12 +432,12 @@ export const getBalance = async ({
       let tokenBalance = tokenBalances[i];
       if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
         try {
-          console.log("tokenBalance: ", tokenBalance);
+          console.log('tokenBalance: ', tokenBalance);
           let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`;
-          console.log("tokenString: ", tokenString);
-          console.log("tokenBalance.value: ", tokenBalance.value);
-          if(tokenString.includes("HTTPS://")) {
-            console.log("Spam detected: ", tokenString);
+          console.log('tokenString: ', tokenString);
+          console.log('tokenBalance.value: ', tokenBalance.value);
+          if (tokenString.includes('HTTPS://')) {
+            console.log('Spam detected: ', tokenString);
           } else {
             let formattedBalance = AssetValue.fromIdentifierSync(
               //@ts-ignore
@@ -424,7 +445,7 @@ export const getBalance = async ({
               tokenBalance.value,
             );
             if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
-              formattedBalance.address = address[0].address;
+              // formattedBalance.address = address[0].address;
               balances.push(formattedBalance);
             }
           }
@@ -447,7 +468,6 @@ export const getBalance = async ({
 const formatBigIntToSafeValue = ({ value, decimal }: { value: bigint; decimal: number }) => {
   return Number(value) / Math.pow(10, decimal);
 };
-
 
 // export const getBalance = async ({
 //   provider,

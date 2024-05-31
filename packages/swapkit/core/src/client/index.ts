@@ -32,6 +32,7 @@ import {
   TCBscDepositABI,
   TCEthereumVaultAbi,
 } from '@coinmasters/types';
+//@ts-ignore
 import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
 
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
@@ -831,6 +832,7 @@ export class SwapKitCore<T = ''> {
           //set from address
           if (!params.from) params.from = walletMethods.getAddress();
           if (!params.from) throw new Error('From address not found for wallet: ' + chain);
+          console.log(tag, 'params.from: ', params.from);
           const result = await estimateMaxSendableAmount({
             ...params,
             toolbox: walletMethods as EVMToolbox,
