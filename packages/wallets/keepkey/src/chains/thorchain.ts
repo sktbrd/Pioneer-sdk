@@ -124,9 +124,9 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         //console.log('URL: ', RPCUrl.THORChain);
         let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         return txid.txid;
-      } catch (e) {
-        console.error(e);
-        throw e;
+      } catch (error: any) {
+        console.error(error);
+        throw error;
       }
     };
 
@@ -139,7 +139,7 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       });
 
     return { ...toolbox, getAddress: () => fromAddress, transfer, deposit };
-  } catch (e) {
-    throw e;
+  } catch (error) {
+    throw error;
   }
 };

@@ -55,42 +55,38 @@ export function Transfer({ usePioneer }: any): JSX.Element {
 
   let onStart = async function () {
     let tag = " | onStart Transfer | ";
-    try {
-      if (app && app.swapKit && assetContext && assetContext.chain && app.swapKit.estimateMaxSendableAmount && assetContext.networkId) {
-        console.log("onStart Transfer page");
-        console.log(tag, "assetContext: ", assetContext);
+    if (app && app.swapKit && assetContext && assetContext.chain && app.swapKit.estimateMaxSendableAmount && assetContext.networkId) {
+      console.log("onStart Transfer page");
+      console.log(tag, "assetContext: ", assetContext);
 
-        const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
-        if (!walletInfo) {
-          console.log(tag, "connectWallet needed!");
-          await connectWallet('KEEPKEY');
-          setTimeout(onStart, 200);
-        } else {
-          let pubkeys = await app.pubkeys;
-          pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
-          console.log("onStart Transfer pubkeys", pubkeys);
+      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      if (!walletInfo) {
+        console.log(tag, "connectWallet needed!");
+        await connectWallet('KEEPKEY');
+        setTimeout(onStart, 200);
+      } else {
+        let pubkeys = await app.pubkeys;
+        pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
+        console.log("onStart Transfer pubkeys", pubkeys);
 
-          //get assetValue for the asset
-          await AssetValue.loadStaticAssets();
-          const assetValue = AssetValue.fromStringSync(assetContext.identifier, parseFloat('0'));
-          console.log(tag,"assetValue:", assetValue);
-          let estimatePayload: any = {
-            feeRate: 10,
-            assetValue,
-            pubkeys,
-            memo,
-            recipient,
-          };
-          let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
-          console.log("maxSpendableAmount", maxSpendableAmount);
-          console.log("maxSpendableAmount", maxSpendableAmount.getValue('string'));
-          console.log("onStart Transfer pubkeys", pubkeys);
-          setMaxSpendable(maxSpendableAmount.getValue('string'));
-          setLoadingMaxSpendable(false);
-        }
+        //get assetValue for the asset
+        await AssetValue.loadStaticAssets();
+        const assetValue = AssetValue.fromStringSync(assetContext.identifier, parseFloat('0'));
+        console.log(tag,"assetValue:", assetValue);
+        let estimatePayload: any = {
+          feeRate: 10,
+          assetValue,
+          pubkeys,
+          memo,
+          recipient,
+        };
+        let maxSpendableAmount = await app.swapKit.estimateMaxSendableAmount({ chain: assetContext.chain, params: estimatePayload });
+        console.log("maxSpendableAmount", maxSpendableAmount);
+        console.log("maxSpendableAmount", maxSpendableAmount.getValue('string'));
+        console.log("onStart Transfer pubkeys", pubkeys);
+        setMaxSpendable(maxSpendableAmount.getValue('string'));
+        setLoadingMaxSpendable(false);
       }
-    } catch (e) {
-      console.error('Failed to get Max Spendable', e);
     }
   };
 
@@ -167,11 +163,11 @@ export function Transfer({ usePioneer }: any): JSX.Element {
           isClosable: true,
         });
       }
-    } catch (e: any) {
-      console.error(e);
+    } catch (errorSend: any) {
+      console.error(errorSend);
       toast({
         title: 'Error',
-        description: e.toString(),
+        description: errorSend.toString(),
         status: 'error',
         duration: 5000,
         isClosable: true,

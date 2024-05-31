@@ -143,8 +143,8 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
     };
 
     return { ...toolbox, getAddress: () => fromAddress, transfer, ibcTransfer };
-  } catch (e) {
+  } catch (error: any) {
     //log.error(tag, e);
-    throw e;
+    throw error;
   }
 };

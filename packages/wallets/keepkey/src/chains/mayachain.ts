@@ -164,8 +164,8 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       });
 
     return { ...toolbox, getAddress: () => fromAddress, transfer, deposit };
-  } catch (e) {
-    console.error(' | mayachain | ', e);
-    throw e;
+  } catch (error: any) {
+    console.error(' | mayachain | ', error);
+    throw error;
   }
 };

@@ -150,8 +150,8 @@ export const utxoWalletMethods = async ({
       console.timeEnd('getPubkeys Duration' + chain); // Ends the timer and logs the duration
 
       return pubkeys;
-    } catch (e) {
-      console.error(e);
+    } catch (error: any) {
+      console.error(error);
       console.timeEnd('getPubkeys Duration' + chain); // Ensure the timer is ended in case of error
     }
   };
@@ -215,9 +215,9 @@ export const utxoWalletMethods = async ({
       const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
       console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
-    } catch (e) {
-      console.error(e);
-      throw e;
+    } catch (error: any) {
+      console.error(error);
+      throw error;
     }
   };
 
@@ -268,7 +268,7 @@ export const utxoWalletMethods = async ({
       const txHex = await signTransaction(psbt, inputs, memo);
       console.log(tag, 'txHex: ', txHex);
       return await toolbox.broadcastTx(txHex);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Transfer error:', error);
       throw new Error('Transfer transaction failed');
     }

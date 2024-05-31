@@ -1,5 +1,77 @@
 # @swapkit/api
 
+## 3.7.24
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.24
+
+## 3.7.23
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.23
+
+## 3.7.22
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.22
+
+## 3.7.21
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.21
+
+## 3.7.20
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.20
+
+## 3.7.19
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.19
+
+## 3.7.18
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.18
+
+## 3.7.17
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.17
+
 ## 3.7.16
 
 ### Patch Changes

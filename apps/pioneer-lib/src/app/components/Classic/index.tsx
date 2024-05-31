@@ -50,29 +50,12 @@ export function Classic({ usePioneer }: any) {
   } = useDisclosure();
 
   let onStart = async function () {
-    try {
-      if (app && app.pairWallet && !isConnecting) {
-        console.log('App loaded... connecting');
-        await connectWallet('KEEPKEY');
-        setIsConnecting(true);
-
-        // let walletType = WalletOption.KEEPKEY;
-        // const cachedBlockchains = JSON.parse(localStorage.getItem(`cache:blockchains:${walletType}`) || '[]');
-        // const blockchains = cachedBlockchains.length > 0
-        //   ? cachedBlockchains
-        //   : (prefurredChainsByWallet[walletType] || [])
-        //     .map((chain: any) => ChainToNetworkId[getChainEnumValue(chain)])
-        //     .filter((networkId: any) => networkId !== undefined);
-        //
-        // console.log('onStart blockchains', blockchains);
-        // const pairObject = { type: WalletOption.KEEPKEY, blockchains };
-        // const resultInit = await app.pairWallet(pairObject);
-        // console.log("resultInit: ", resultInit);
-      } else {
-        console.log('App not loaded yet... can not connect');
-      }
-    } catch (e) {
-      console.error("onStart error", e);
+    if (app && app.pairWallet && !isConnecting) {
+      console.log('App loaded... connecting');
+      await connectWallet('KEEPKEY');
+      setIsConnecting(true);
+    } else {
+      console.log('App not loaded yet... can not connect');
     }
   };
 
@@ -155,7 +138,7 @@ export function Classic({ usePioneer }: any) {
               {!assets || assets.size === 0 ? (
                 <Flex justifyContent="center" alignItems="center" height="100vh">
                   <Spinner size="xl" />
-                  blockchains{app?.blockchains.length}
+                  blockchains{app?.blockchains?.length}
                   Loading....
                 </Flex>
               ) : (

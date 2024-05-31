@@ -87,14 +87,23 @@ export class AssetValue extends BigIntArithmetics {
   constructor(params: AssetValueParams) {
     const identifier =
       'identifier' in params ? params.identifier : `${params.chain}.${params.symbol}`;
-
-    super(
-      params.value instanceof BigIntArithmetics
-        ? params.value
-        : { decimal: params.decimal, value: params.value },
-    );
-
     console.log('identifier: ', identifier);
+
+    let value;
+    if (params.value instanceof BigIntArithmetics) {
+      value = params.value;
+    } else {
+      value = { decimal: params.decimal, value: params.value };
+    }
+    console.log('value: ', value);
+    super(value);
+
+    // super(
+    //   params.value instanceof BigIntArithmetics
+    //     ? params.value
+    //     : { decimal: params.decimal, value: params.value },
+    // );
+
     const assetInfo = getAssetInfo(identifier);
     console.log('assetInfo: ', assetInfo);
     this.type = getAssetType(assetInfo);
@@ -130,6 +139,51 @@ export class AssetValue extends BigIntArithmetics {
     return createAssetValue(assetString, value);
   }
 
+  // static fromStringSync(assetString: string, value: NumberPrimitives = 0) {
+  //   const { isSynthetic, symbol, chain, isGasAsset, ticker, address } = getAssetInfo(assetString);
+  //   console.log('getAssetInfo: ', { isSynthetic, symbol, chain, isGasAsset, ticker, address });
+  //   const { tax, decimal, identifier: tokenIdentifier } = getStaticToken(assetString as unknown as TokenNames);
+  //   console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
+  //
+  //   // Convert value to a BigInt if necessary
+  //   let safeValue = (val: NumberPrimitives, decimal: number): BigInt => {
+  //     if (typeof val === 'bigint') {
+  //       return val;
+  //     } else if (typeof val === 'number') {
+  //       return BigInt(val * Math.pow(10, decimal));
+  //     } else {
+  //       return BigInt(0);
+  //     }
+  //   };
+  //
+  //   const parsedValue = safeValue(value, decimal);
+  //   console.log('parsedValue: ', parsedValue);
+  //
+  //   let asset: AssetValue | undefined;
+  //
+  //   if (tokenIdentifier) {
+  //     console.log('tokenIdentifier is truthy'); // Indicates tokenIdentifier has a value considered true in a boolean context
+  //     asset = new AssetValue({
+  //       tax,
+  //       decimal,
+  //       identifier: tokenIdentifier,
+  //       value: parsedValue,
+  //     });
+  //   } else if (isSynthetic) {
+  //     console.log('isSynthetic is true'); // Indicates the asset is synthetic
+  //     asset = new AssetValue({
+  //       tax,
+  //       decimal: 8, // Synthetic assets use a fixed decimal value
+  //       identifier: assetString,
+  //       value: parsedValue,
+  //     });
+  //   } else {
+  //     asset = undefined;
+  //   }
+  //
+  //   return asset;
+  // }
+
   static fromStringSync(assetString: string, value: NumberPrimitives = 0) {
     const { isSynthetic, symbol, chain, isGasAsset, ticker, address } = getAssetInfo(assetString);
     console.log('getAssetInfo: ', { isSynthetic, symbol, chain, isGasAsset, ticker, address });
@@ -139,7 +193,7 @@ export class AssetValue extends BigIntArithmetics {
       identifier: tokenIdentifier,
     } = getStaticToken(assetString as unknown as TokenNames);
     console.log('getStaticToken: ', { tax, decimal, tokenIdentifier });
-    const parsedValue = safeValue(value, decimal);
+    const parsedValue = value === 0 ? BigInt(0) : safeValue(value, decimal);
     console.log('parsedValue: ', parsedValue);
     let asset: AssetValue | undefined;
 

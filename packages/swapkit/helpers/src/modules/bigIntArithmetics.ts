@@ -14,7 +14,19 @@ type SKBigIntParams = InitialisationValueType | { decimal?: number; value: numbe
 type AllowedNumberTypes = 'bigint' | 'number' | 'string';
 
 const DEFAULT_DECIMAL = 8;
-const toMultiplier = (decimal: number) => 10n ** BigInt(decimal);
+const toMultiplier = (decimal: number): bigint => {
+  console.log('toMultiplier input decimal:', decimal);
+  try {
+    const result = 10n ** BigInt(decimal);
+    console.log('toMultiplier result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error in toMultiplier:', error);
+    return 10n ** 0n;
+  }
+};
+// const toMultiplier = (decimal: number) => 10n ** BigInt(decimal);
+
 const decimalFromMultiplier = (multiplier: bigint) => Math.log10(parseFloat(multiplier.toString()));
 
 export function formatBigIntToSafeValue({
@@ -83,17 +95,37 @@ export class BigIntArithmetics {
   }
 
   constructor(params: SKBigIntParams) {
+    console.log('Constructor Params:', params);
     const value = getStringValue(params);
+    console.log('String Value:', value);
     const isComplex = typeof params === 'object';
     this.decimal = isComplex ? params.decimal : undefined;
+    console.log('Decimal:', this.decimal);
 
-    // use the multiplier to keep track of decimal point - defaults to 8 if lower than 8
-    this.decimalMultiplier =
-      isComplex && 'decimalMultiplier' in params
-        ? params.decimalMultiplier
-        : toMultiplier(Math.max(getFloatDecimals(toSafeValue(value)), this.decimal || 0));
+    if (isComplex && 'decimalMultiplier' in params) {
+      this.decimalMultiplier = params.decimalMultiplier;
+    } else {
+      const maxDecimals = Math.max(getFloatDecimals(toSafeValue(value)), this.decimal || 0);
+      this.decimalMultiplier = toMultiplier(maxDecimals);
+    }
+    console.log('Decimal Multiplier:', this.decimalMultiplier);
+
     this.#setValue(value);
+    console.log('BigInt Value:', this.bigIntValue);
   }
+
+  // constructor(params: SKBigIntParams) {
+  //   const value = getStringValue(params);
+  //   const isComplex = typeof params === 'object';
+  //   this.decimal = isComplex ? params.decimal : undefined;
+  //
+  //   // use the multiplier to keep track of decimal point - defaults to 8 if lower than 8
+  //   this.decimalMultiplier =
+  //     isComplex && 'decimalMultiplier' in params
+  //       ? params.decimalMultiplier
+  //       : toMultiplier(Math.max(getFloatDecimals(toSafeValue(value)), this.decimal || 0));
+  //   this.#setValue(value);
+  // }
 
   set(value: SKBigIntParams): this {
     // @ts-expect-error False positive
@@ -404,10 +436,19 @@ function toSafeValue(value: InitialisationValueType) {
     : splitValue[0];
 }
 
-function getFloatDecimals(value: string) {
-  const decimals = value.split('.')[1]?.length || 0;
+function getFloatDecimals(value: string): number {
+  let decimals = 0;
+  const parts = value.split('.');
+  if (parts.length > 1 && parts[1].length > 0) {
+    decimals = parts[1].length;
+  }
   return Math.max(decimals, DEFAULT_DECIMAL);
 }
+
+// function getFloatDecimals(value: string) {
+//   const decimals = value.split('.')[1]?.length || 0;
+//   return Math.max(decimals, DEFAULT_DECIMAL);
+// }
 
 function getStringValue(param: SKBigIntParams) {
   return typeof param === 'object'

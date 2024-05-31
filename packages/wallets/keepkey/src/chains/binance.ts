@@ -67,8 +67,8 @@ export const binanceWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) =>
       });
 
     return { ...toolbox, getAddress: () => fromAddress, transfer };
-  } catch (e) {
-    console.error(e);
-    throw e;
+  } catch (error: any) {
+    console.error(error);
+    throw error;
   }
 };

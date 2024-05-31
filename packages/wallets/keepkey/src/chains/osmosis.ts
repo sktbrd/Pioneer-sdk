@@ -211,9 +211,9 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
         //console.log('resultBroadcast: ', resultBroadcast);
 
         return resultBroadcast.txid;
-      } catch (e) {
-        console.error(e);
-        throw e;
+      } catch (error: any) {
+        console.error(error);
+        throw error;
       }
     };
 
@@ -227,8 +227,8 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
       });
 
     return { ...toolbox, getAddress: () => fromAddress, transfer, sendSwapTx };
-  } catch (e) {
-    console.error(e);
-    throw e;
+  } catch (error: any) {
+    console.error(error);
+    throw error;
   }
 };
