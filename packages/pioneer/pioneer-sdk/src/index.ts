@@ -12,7 +12,7 @@
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 
-// import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
+import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
 
 // import { NativeList } from '@coinmasters/tokens';
 
@@ -243,7 +243,7 @@ export class SDK {
         if (this.blockchains.length > 0) this.setPaths(getPaths(this.blockchains));
 
         // init swapkit
-        // this.swapKit = new SwapKitCore();
+        this.swapKit = new SwapKitCore();
 
         await this.getAssets();
 
@@ -273,9 +273,9 @@ export class SDK {
           },
           wallets: walletArray,
         };
-        //console.log(tag, 'configKit: ', configKit);
-        // await this.swapKit.extend(configKit);
-        // this.events.emit('SET_STATUS', 'init');
+        console.log(tag, 'configKit: ', configKit);
+        await this.swapKit.extend(configKit);
+        this.events.emit('SET_STATUS', 'init');
 
         //@TODO load user
         // let user = await this.pioneer.User();
