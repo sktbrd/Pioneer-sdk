@@ -13,7 +13,7 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue } from '@pioneer-platform/helpers';
 // console.log(process.env['BLOCKCHAIR_API_KEY'])
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")

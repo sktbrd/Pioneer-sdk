@@ -34,7 +34,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@coinmasters/helpers": "workspace:*",
+    "@pioneer-platform/helpers": "latest",
     "@internal/config": "workspace:*"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"

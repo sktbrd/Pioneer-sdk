@@ -11,7 +11,7 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, getChainEnumValue } from '@coinmasters/types';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue } from '@pioneer-platform/helpers';
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')

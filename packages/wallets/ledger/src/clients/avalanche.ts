@@ -1,4 +1,4 @@
-import { derivationPathToString } from '@coinmasters/helpers';
+import { derivationPathToString } from '@pioneer-platform/helpers';
 import type { DerivationPathArray } from '@coinmasters/types';
 import { ChainId, NetworkDerivationPath } from '@coinmasters/types';
 import type { Provider } from 'ethers';

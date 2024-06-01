@@ -7,7 +7,6 @@
   "devDependencies": {
     "@internal/config": "workspace:*",
     "@keplr-wallet/types": "0.12.44",
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@vitest/coverage-istanbul": "0.34.6",
     "vite": "4.5.0",
@@ -33,7 +32,6 @@
   "module": "./dist/index.es.js",
   "name": "@coinmasters/wallet-keplr",
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*"
   },
   "publishConfig": {

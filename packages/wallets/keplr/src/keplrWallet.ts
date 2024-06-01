@@ -1,4 +1,4 @@
-import type { AssetValue } from '@coinmasters/helpers';
+import type { AssetValue } from '@pioneer-platform/helpers';
 import type { ConnectWalletParams, WalletTxParams } from '@coinmasters/types';
 import { Chain, ChainToChainId, RPCUrl, WalletOption } from '@coinmasters/types';
 import type { Keplr } from '@keplr-wallet/types';

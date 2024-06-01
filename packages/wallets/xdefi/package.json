@@ -7,7 +7,6 @@
   "devDependencies": {
     "@internal/config": "workspace:*",
     "@keplr-wallet/types": "0.12.44",
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
@@ -36,7 +35,6 @@
   "module": "./dist/index.es.js",
   "name": "@coinmasters/wallet-xdefi",
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",

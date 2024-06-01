@@ -1,4 +1,4 @@
-import type { AssetValue } from '@coinmasters/helpers';
+import type { AssetValue } from '@pioneer-platform/helpers';
 import type { FeeOption, UTXOChain } from '@coinmasters/types';
 
 import type { BlockchairApiType } from '../api/blockchairApi.ts';

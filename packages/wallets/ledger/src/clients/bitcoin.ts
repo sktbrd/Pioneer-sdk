@@ -1,4 +1,4 @@
-import { derivationPathToString } from '@coinmasters/helpers';
+import { derivationPathToString } from '@pioneer-platform/helpers';
 import { NetworkDerivationPath } from '@coinmasters/types';
 import { networks } from 'bitcoinjs-lib';
 

@@ -22,17 +22,18 @@
     "@coinmasters/types": "workspace:^",
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
-    "@pioneer-platform/loggerdog": "^8.1.31",
+    "@pioneer-platform/helpers": "latest",
+    "@pioneer-platform/loggerdog": "^8.3.1",
     "@pioneer-platform/pioneer-caip": "latest",
     "@pioneer-platform/pioneer-coins": "latest",
-    "@types/node": "^20.10.4",
+    "@types/node": "^20.13.0",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",
     "typescript": "5.2.2",
     "wait-promise": "^0.4.1"
   },
   "devDependencies": {
-    "@coinmasters/helpers": "workspace:*",
+    "@pioneer-platform/helpers": "latest",
     "@internal/config": "workspace:*"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"

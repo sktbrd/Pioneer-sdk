@@ -42,7 +42,6 @@ This repo contains packages around SwapKit sdk and its integrations with differe
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | [@coinmasters/api](https://www.npmjs.com/package/@coinmasters/api)                                                  | SwapKit API wrapper                                    |
 | [@coinmasters/core](https://www.npmjs.com/package/@coinmasters/core)                                                | Core package for SwapKit                               |
-| [@coinmasters/helpers](https://www.npmjs.com/package/@coinmasters/helpers)                                          | Helpers for Assets & BigInt handle                     |
 | [@coinmasters/sdk](https://www.npmjs.com/package/@coinmasters/sdk)                                                  | All-in-one package for SwapKit                         |
 | [@coinmasters/tokens](https://www.npmjs.com/package/@coinmasters/tokens)                                            | Static tokens lists with decimals & contract addresses |
 | [@coinmasters/types](https://www.npmjs.com/package/@coinmasters/types)                                              | Types & enums for SwapKit                              |

@@ -1,4 +1,4 @@
-import type { AssetValue, SwapKitNumber } from '@coinmasters/helpers';
+import type { AssetValue, SwapKitNumber } from '@pioneer-platform/helpers';
 import type { Asset, ChainId } from '@coinmasters/types';
 import type { MultisigThresholdPubkey, Pubkey, Secp256k1HdWallet } from '@cosmjs/amino';
 import type { OfflineDirectSigner, Registry } from '@cosmjs/proto-signing';

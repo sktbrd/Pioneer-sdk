@@ -12,8 +12,10 @@
 // import * as LoggerModule from "@pioneer-platform/loggerdog";
 // const log = LoggerModule.default();
 
-import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
+// import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
+
 // import { NativeList } from '@coinmasters/tokens';
+
 import {
   //   CoinGeckoList,
   //   MayaList,
@@ -30,7 +32,7 @@ import {
   //   UniswapList,
   //   WoofiList,
 } from '@coinmasters/tokens';
-import type { Chain } from '@coinmasters/types';
+import type { Chain, WalletOption } from '@coinmasters/types';
 import { NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
 import {
@@ -113,7 +115,7 @@ export class SDK {
   // @ts-ignore
   public outboundPubkeyContext: any;
 
-  public swapKit: SwapKitCore | null;
+  public swapKit: any | null;
 
   public pioneer: any;
 
@@ -241,7 +243,7 @@ export class SDK {
         if (this.blockchains.length > 0) this.setPaths(getPaths(this.blockchains));
 
         // init swapkit
-        this.swapKit = new SwapKitCore();
+        // this.swapKit = new SwapKitCore();
 
         await this.getAssets();
 
@@ -272,8 +274,8 @@ export class SDK {
           wallets: walletArray,
         };
         //console.log(tag, 'configKit: ', configKit);
-        await this.swapKit.extend(configKit);
-        this.events.emit('SET_STATUS', 'init');
+        // await this.swapKit.extend(configKit);
+        // this.events.emit('SET_STATUS', 'init');
 
         //@TODO load user
         // let user = await this.pioneer.User();

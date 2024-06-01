@@ -14,7 +14,7 @@ const TAG  = " | integration-test | "
 //@ts-ignore
 import { getPaths } from '@pioneer-platform/pioneer-coins';
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue } from '@pioneer-platform/helpers';
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')

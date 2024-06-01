@@ -1,4 +1,4 @@
-import { derivationPathToString } from '@coinmasters/helpers';
+import { derivationPathToString } from '@pioneer-platform/helpers';
 import type { DerivationPathArray } from '@coinmasters/types';
 import { ErrorCode, NetworkDerivationPath } from '@coinmasters/types';
 

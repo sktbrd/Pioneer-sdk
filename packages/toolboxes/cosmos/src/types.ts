@@ -1,4 +1,4 @@
-import type { AssetValue } from '@coinmasters/helpers';
+import type { AssetValue } from '@pioneer-platform/helpers';
 import type { ChainId, FeeOption } from '@coinmasters/types';
 import type { StdFee } from '@cosmjs/amino';
 import type { OfflineDirectSigner } from '@cosmjs/proto-signing';

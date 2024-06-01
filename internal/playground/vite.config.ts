@@ -19,7 +19,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@coinmasters/core': resolve('../../packages/swapkit/core/src'),
-      '@coinmasters/helpers': resolve('../../packages/swapkit/helpers/src'),
       '@coinmasters/tokens': resolve('../../packages/swapkit/tokens/src'),
       '@coinmasters/toolbox-cosmos': resolve('../../packages/toolboxes/cosmos/src'),
       '@coinmasters/toolbox-evm': resolve('../../packages/toolboxes/evm/src'),

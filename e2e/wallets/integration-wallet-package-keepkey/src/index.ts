@@ -2,7 +2,7 @@
     E2E testing
  */
 
-import { AssetValue } from '@coinmasters/helpers';
+import { AssetValue } from '@pioneer-platform/helpers';
 
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});

@@ -16,7 +16,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue } from '@pioneer-platform/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { getWalletBadgeContent } from '../WalletIcon';
 //@ts-ignore

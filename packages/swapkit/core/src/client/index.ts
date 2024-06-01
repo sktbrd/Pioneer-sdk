@@ -3,18 +3,9 @@
 
 
  */
-import type { Keys, ThornameRegisterParam } from '@coinmasters/helpers';
-import {
-  AssetValue,
-  gasFeeMultiplier,
-  getMemoFor,
-  getMinAmountByChain,
-  SwapKitError,
-  SwapKitNumber,
-} from '@coinmasters/helpers';
 import type { CosmosLikeToolbox } from '@coinmasters/toolbox-cosmos';
 import type { AVAXToolbox, BSCToolbox, ETHToolbox, EVMToolbox } from '@coinmasters/toolbox-evm';
-import type { UTXOToolbox } from '@coinmasters/toolbox-utxo';
+// import type { UTXOToolbox } from '@coinmasters/toolbox-utxo';
 import type {
   AddChainWalletParams,
   EVMChain,
@@ -32,6 +23,15 @@ import {
   TCBscDepositABI,
   TCEthereumVaultAbi,
 } from '@coinmasters/types';
+import type { Keys, ThornameRegisterParam } from '@pioneer-platform/helpers';
+import {
+  AssetValue,
+  gasFeeMultiplier,
+  getMemoFor,
+  getMinAmountByChain,
+  SwapKitError,
+  SwapKitNumber,
+} from '@pioneer-platform/helpers';
 //@ts-ignore
 import { NetworkIdToChain } from '@pioneer-platform/pioneer-caip';
 

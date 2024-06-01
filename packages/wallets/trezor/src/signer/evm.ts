@@ -1,4 +1,4 @@
-import { derivationPathToString, SwapKitNumber } from '@coinmasters/helpers';
+import { derivationPathToString, SwapKitNumber } from '@pioneer-platform/helpers';
 import type { Chain, DerivationPathArray } from '@coinmasters/types';
 import { ChainToChainId } from '@coinmasters/types';
 import TrezorConnect from '@trezor/connect-web';

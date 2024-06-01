@@ -6,7 +6,6 @@
   "description": "SwapKit Lib okx",
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
@@ -36,7 +35,6 @@
   "module": "./dist/index.es.js",
   "name": "@coinmasters/wallet-okx",
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",

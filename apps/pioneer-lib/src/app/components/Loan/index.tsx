@@ -17,7 +17,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { AssetValue } from '@coinmasters/core';
+import { AssetValue } from '@pioneer-platform/helpers';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 // import { Chain } from '@pioneer-platform/types';

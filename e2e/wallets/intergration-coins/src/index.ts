@@ -11,7 +11,10 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, getChainEnumValue, Chain } from '@coinmasters/types';
-import { AssetValue } from '@coinmasters/core';
+//@ts-ignore
+import { AssetValue } from '@pioneer-platform/helpers';
+import type { AssetValue as AssetValueType } from '@pioneer-platform/helpers';
+// import { AssetValue as AssetValueType } from '@coinmasters/core';
 
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
@@ -406,7 +409,7 @@ const test_service = async function (this: any) {
         //
         //test AssetValue
 
-        let assetValue = AssetValue.fromChainOrSignature(
+        let assetValue: AssetValueType = AssetValue.fromChainOrSignature(
           Chain.Base,
           0,
         );

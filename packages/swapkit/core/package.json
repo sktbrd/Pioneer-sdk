@@ -1,8 +1,8 @@
 {
   "author": "swapkit-oss-team",
   "dependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/types": "workspace:*",
+    "@pioneer-platform/helpers": "^4.0.2",
     "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "^9.2.23"
   },
@@ -23,7 +23,6 @@
   },
   "peerDependencies": {
     "@coinmasters/api": "workspace:*",
-    "@coinmasters/tokens": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*"

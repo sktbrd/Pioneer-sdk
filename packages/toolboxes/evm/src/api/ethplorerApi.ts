@@ -1,4 +1,4 @@
-import { formatBigIntToSafeValue, RequestClient } from '@coinmasters/helpers';
+import { formatBigIntToSafeValue, RequestClient } from '@pioneer-platform/helpers';
 import { Chain } from '@coinmasters/types';
 
 import type { AddressInfo } from '../types/ethplorer-api-types.ts';

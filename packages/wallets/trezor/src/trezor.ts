@@ -1,4 +1,4 @@
-import { derivationPathToString } from '@coinmasters/helpers';
+import { derivationPathToString } from '@pioneer-platform/helpers';
 import type { UTXOTransferParams, UTXOType } from '@coinmasters/toolbox-utxo';
 import type { ConnectWalletParams, DerivationPathArray } from '@coinmasters/types';
 import { Chain, FeeOption, WalletOption } from '@coinmasters/types';

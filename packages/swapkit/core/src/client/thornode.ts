@@ -1,6 +1,6 @@
-import { RequestClient } from '@coinmasters/helpers';
 import type { Chain } from '@coinmasters/types';
 import { ApiUrl } from '@coinmasters/types';
+import { RequestClient } from '@pioneer-platform/helpers';
 
 type InboundAddressData = {
   address: string;

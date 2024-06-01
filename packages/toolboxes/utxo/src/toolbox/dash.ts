@@ -1,5 +1,6 @@
-import { RequestClient } from '@coinmasters/helpers';
 import { Chain, RPCUrl } from '@coinmasters/types';
+//@ts-ignore
+import { RequestClient } from '@pioneer-platform/helpers';
 
 import type { BlockchairApiType } from '../api/blockchairApi.ts';
 import { blockchairApi } from '../api/blockchairApi.ts';

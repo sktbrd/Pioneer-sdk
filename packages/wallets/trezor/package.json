@@ -7,7 +7,6 @@
   "description": "SwapKit Lib trezor",
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
     "@trezor/connect": "9.1.5",
@@ -39,7 +38,6 @@
   "module": "./dist/index.es.js",
   "name": "@coinmasters/wallet-trezor",
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",
     "bitcoinjs-lib": "5.2.0"

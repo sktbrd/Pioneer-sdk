@@ -22,7 +22,6 @@
   "description": "SwapKit Lib toolbox ripple",
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@coinmasters/helpers": "workspace:*",
     "@types/bn.js": "5.1.1",
     "@types/crypto-js": "4.1.2",
     "@types/elliptic": "6.4.14",
@@ -34,7 +33,7 @@
     "vitest": "0.34.4"
   },
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*"
+    "@pioneer-platform/helpers": "latest"
   },
   "eslintConfig": {
     "extends": "../../../internal/eslint-config"

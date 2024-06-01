@@ -1,4 +1,4 @@
-import { RequestClient } from '@coinmasters/helpers';
+import { RequestClient } from '@pioneer-platform/helpers';
 
 import { uniqid } from '../index.ts';
 

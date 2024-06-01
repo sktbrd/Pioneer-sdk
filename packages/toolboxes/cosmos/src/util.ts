@@ -1,4 +1,4 @@
-import { AssetValue } from '@coinmasters/helpers';
+import { AssetValue } from '@pioneer-platform/helpers';
 import { ChainId, FeeOption, RPCUrl } from '@coinmasters/types';
 import type { OfflineSigner } from '@cosmjs/proto-signing';
 import type { SigningStargateClientOptions } from '@cosmjs/stargate';

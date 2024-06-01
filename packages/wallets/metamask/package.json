@@ -10,7 +10,6 @@
   },
   "description": "THORSwap Lib metamask",
   "devDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
     "@coinmasters/toolbox-utxo": "workspace:*",

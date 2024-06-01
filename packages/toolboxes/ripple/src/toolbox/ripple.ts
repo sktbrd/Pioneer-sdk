@@ -1,4 +1,4 @@
-import { AssetValue, RequestClient } from '@coinmasters/helpers';
+import { AssetValue, RequestClient } from '@pioneer-platform/helpers';
 import { Chain, RPCUrl } from '@coinmasters/types';
 
 const PIONEER_API_URI = 'https://pioneers.dev';

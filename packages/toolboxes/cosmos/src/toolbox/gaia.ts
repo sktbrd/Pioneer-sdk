@@ -1,4 +1,4 @@
-import { type AssetValue, SwapKitNumber } from '@coinmasters/helpers';
+import { type AssetValue, SwapKitNumber } from '@pioneer-platform/helpers';
 import { ApiUrl, BaseDecimal, ChainId, DerivationPath } from '@coinmasters/types';
 import type { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import type { Account } from '@cosmjs/stargate';

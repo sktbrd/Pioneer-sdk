@@ -8,14 +8,15 @@
     "@coinmasters/toolbox-utxo": "workspace:*",
     "@coinmasters/types": "workspace:*",
     "@coinmasters/wallet-evm-extensions": "workspace:*",
+    "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keplr": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
-    "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-ledger": "workspace:*",
     "@coinmasters/wallet-okx": "workspace:*",
     "@coinmasters/wallet-trezor": "workspace:*",
     "@coinmasters/wallet-wc": "workspace:*",
-    "@coinmasters/wallet-xdefi": "workspace:*"
+    "@coinmasters/wallet-xdefi": "workspace:*",
+    "@pioneer-platform/helpers": "^4.0.2"
   },
   "description": "SwapKit Lib swapkit-sdk",
   "devDependencies": {

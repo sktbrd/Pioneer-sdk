@@ -30,7 +30,6 @@
   "devDependencies": {
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
-    "@coinmasters/helpers": "workspace:*",
     "@coinmasters/pioneer-react": "workspace:*",
     "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/tokens": "workspace:*",

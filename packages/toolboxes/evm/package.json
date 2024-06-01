@@ -7,7 +7,6 @@
   },
   "description": "THORSwap evm",
   "devDependencies": {
-    "@coinmasters/helpers": "workspace:*",
     "@internal/config": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "3.0.5",
     "@nomicfoundation/hardhat-network-helpers": "1.0.9",
@@ -22,7 +21,7 @@
     "extends": "../../../internal/eslint-config"
   },
   "peerDependencies": {
-    "@coinmasters/helpers": "workspace:*"
+    "@pioneer-platform/helpers": "latest"
   },
   "exports": {
     ".": {

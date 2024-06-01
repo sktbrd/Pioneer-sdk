@@ -76,6 +76,7 @@
     "version-bump-forced": "pnpm changeset add --empty && dotenv -- pnpm changeset version"
   },
   "dependencies": {
+    "@pioneer-platform/helpers": "^4.0.2",
     "pioneer": "link:/Users/highlander/WebstormProjects/SwapKit/packages/pioneer"
   }
 }

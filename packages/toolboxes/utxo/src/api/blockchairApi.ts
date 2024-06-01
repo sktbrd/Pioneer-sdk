@@ -1,4 +1,4 @@
-import { RequestClient } from '@coinmasters/helpers';
+import { RequestClient } from '@pioneer-platform/helpers';
 import { Chain, type UTXOChain } from '@coinmasters/types';
 
 import type {
