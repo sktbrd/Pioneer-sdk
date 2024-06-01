@@ -49,5 +49,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.7.28"
+  "version": "3.7.29"
 }

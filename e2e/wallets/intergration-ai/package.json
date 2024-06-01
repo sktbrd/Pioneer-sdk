@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-ai",
-  "version": "1.7.28",
+  "version": "1.7.29",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -34,8 +34,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@pioneer-platform/helpers": "latest",
-    "@internal/config": "workspace:*"
+    "@internal/config": "workspace:*",
+    "@pioneer-platform/helpers": "^4.0.3"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

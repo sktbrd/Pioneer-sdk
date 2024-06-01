@@ -408,7 +408,7 @@ const test_service = async function (this: any) {
         // }
         //
         //test AssetValue
-
+        await AssetValue.loadStaticAssets();
         let assetValue: AssetValueType = AssetValue.fromChainOrSignature(
           Chain.Base,
           0,

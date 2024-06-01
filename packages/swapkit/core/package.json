@@ -2,7 +2,7 @@
   "author": "swapkit-oss-team",
   "dependencies": {
     "@coinmasters/types": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.2",
+    "@pioneer-platform/helpers": "^4.0.3",
     "@pioneer-platform/loggerdog": "^8.1.31",
     "@pioneer-platform/pioneer-caip": "^9.2.23"
   },
@@ -61,5 +61,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "11.0.28"
+  "version": "11.0.29"
 }

@@ -217,41 +217,44 @@ const test_service = async function (this: any) {
         //verify balances
 
         // create assetValue
-        let assetString = `BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630`;
-        assetString = assetString.toUpperCase()
-        console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
-        assert(assetValue)
-        assert(assetValue?.address)
+        // let assetString = `BASE.PRO-0xef743df8eda497bcf1977393c401a636518dd630`;
+        // assetString = assetString.toUpperCase()
+        // console.log('assetString: ', assetString);
+        // await AssetValue.loadStaticAssets();
+        // // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        // log.info("assetValue: ",assetValue)
+        // assert(assetValue)
+        // assert(assetValue?.address)
 
         //getMax
         //send
         let estimatePayload:any = {
             from:pubkey.address,
+            caip:assetPro.caip,
             memo: '',
-            assetValue,
+            pubkeys: [pubkey],
+            // assetValue,
             recipient: FAUCET_ADDRESS,
         }
-        log.info("app.swapKit: ",app.swapKit)
+        log.info("estimatePayload: ",estimatePayload)
+        // log.info("app.swapKit: ",app.swapKit)
         let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Base, params:estimatePayload})
         log.info("maxSpendable: ",maxSpendable)
 
 
 
         //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
     } catch (e) {

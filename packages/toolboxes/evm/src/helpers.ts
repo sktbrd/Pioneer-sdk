@@ -1,4 +1,3 @@
-import { AssetValue, formatBigIntToSafeValue } from '@pioneer-platform/helpers';
 import {
   BaseDecimal,
   Chain,
@@ -8,11 +7,12 @@ import {
   FeeOption,
   WalletOption,
 } from '@coinmasters/types';
-import type { BrowserProvider, Eip1193Provider, JsonRpcProvider } from 'ethers';
+import { AssetValue, formatBigIntToSafeValue } from '@pioneer-platform/helpers';
 //@ts-ignore
-import { evmCaips, ChainToCaip } from '@pioneer-platform/pioneer-caip';
-import type { CovalentApiType, EthplorerApiType, EVMMaxSendableAmountsParams } from './index.ts';
+import { ChainToCaip, evmCaips } from '@pioneer-platform/pioneer-caip';
+import type { BrowserProvider, Eip1193Provider, JsonRpcProvider } from 'ethers';
 
+import type { CovalentApiType, EthplorerApiType, EVMMaxSendableAmountsParams } from './index.ts';
 import { AVAXToolbox, BSCToolbox, ETHToolbox } from './index.ts';
 const TAG = ' | EVM -helpers | ';
 
@@ -180,7 +180,9 @@ export const estimateMaxSendableAmount = async function ({
     console.log(tag, 'from: ', from);
     console.log(tag, 'caip: ', caip);
     if (!from) throw new Error('Missing from address');
+    if (!caip) throw new Error('Missing caip');
     const balanceData = await toolbox.getBalance([{ address: from }]);
+    if (!balanceData) return 0;
     console.log(tag, 'balanceData: ', balanceData);
     console.log(tag, 'assetValue: ', assetValue);
 
@@ -188,15 +190,16 @@ export const estimateMaxSendableAmount = async function ({
     console.log(tag, 'caip: ', caip);
 
     //if token, then return token balance
-    function isNative(caip: string): boolean {
+    let isNative = function (caip: string): boolean {
       const evmValues = Object.values(evmCaips);
       return evmValues.includes(caip);
-    }
+    };
     let native = isNative(caip);
-    if(native){
-      const balance = balanceData.find
+    if (native) {
+      // const balance = balanceData.find
+      console.log(tag, 'Native detected!');
     } else {
-
+      console.log(tag, 'Token detected!');
     }
     //if native asset then return gasToken balance
 

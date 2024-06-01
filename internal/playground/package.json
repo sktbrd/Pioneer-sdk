@@ -19,7 +19,6 @@
   "devDependencies": {
     "@coinmasters/api": "workspace:*",
     "@coinmasters/core": "workspace:*",
-    "@pioneer-platform/helpers": "latest",
     "@coinmasters/tokens": "workspace:*",
     "@coinmasters/toolbox-cosmos": "workspace:*",
     "@coinmasters/toolbox-evm": "workspace:*",
@@ -35,6 +34,7 @@
     "@coinmasters/wallet-trezor": "workspace:*",
     "@coinmasters/wallet-wc": "workspace:*",
     "@coinmasters/wallet-xdefi": "workspace:*",
+    "@pioneer-platform/helpers": "^4.0.3",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@vitejs/plugin-react": "4.0.4",

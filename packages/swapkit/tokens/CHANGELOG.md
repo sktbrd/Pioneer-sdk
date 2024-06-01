@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 3.7.29
+
+### Patch Changes
+
+- bump
+
 ## 3.7.28
 
 ### Patch Changes
