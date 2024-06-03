@@ -15,6 +15,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  Badge,
   useDisclosure,
 } from '@chakra-ui/react';
 import {
@@ -106,6 +107,13 @@ export function Classic({ usePioneer }: any) {
     onAddAssetOpen();
   };
 
+  const formatBalance = (balance: string) => {
+    const [integer, decimal] = balance.split('.');
+    const largePart = decimal?.slice(0, 4);
+    const smallPart = decimal?.slice(4, 8);
+    return { integer, largePart, smallPart };
+  };
+
   return (
     <Flex direction="column" height="100vh">
       <Flex alignItems="center" p={4} borderBottom="1px solid #ccc">
@@ -122,7 +130,7 @@ export function Classic({ usePioneer }: any) {
             onClick={onSettingsOpen}
           />
         )}
-        <Text ml={4} fontWeight="bold">Assets</Text>
+
         <IconButton
           icon={<RepeatIcon />}
           aria-label="Refresh"
@@ -150,21 +158,19 @@ export function Classic({ usePioneer }: any) {
                         <Avatar size='xl' src={asset.icon} />
                         <Box ml={3}>
                           <Text fontWeight="bold">{asset.name}</Text>
-                          {app.pubkeys
-                            .filter((pubkey: any) => {
-                              if (asset.networkId.startsWith('eip155')) {
-                                return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
-                              }
-                              return pubkey.networks.includes(asset.networkId);
-                            })
-                            .map((pubkey: any, index: any) => (
-                              <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                            ))}
                           {app.balances
                             .filter((balance: any) => balance.caip === asset.caip)
-                            .map((balance: any, index: any) => (
-                              <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                            ))}
+                            .map((balance: any, index: any) => {
+                              const { integer, largePart, smallPart } = formatBalance(balance.balance);
+                              return (
+                                <Text key={index}>
+                                  {integer}.
+                                  <Text as="span" fontSize="lg">{largePart}</Text>
+                                  {/*<Text as="span" fontSize="xs">{smallPart}</Text>*/}
+                                  <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
+                                </Text>
+                              );
+                            })}
                         </Box>
                         <Button ml="auto" onClick={() => onSelect(asset)}>
                           Select
@@ -172,6 +178,7 @@ export function Classic({ usePioneer }: any) {
                       </Flex>
                     </Box>
                   ))}
+
                 </>
               )}
             </>

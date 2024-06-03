@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { getWalletBadgeContent } from '../WalletIcon';
+import { Pubkey } from '../Pubkey';
 
 export function Receive({ usePioneer, onClose }: any) {
   const { state } = usePioneer();
@@ -72,16 +73,20 @@ export function Receive({ usePioneer, onClose }: any) {
           <Tr>
             <Td>Address</Td>
             <Td>
-              <Select value={selectedAddress} onChange={handleAddressChange}>
-                {assetContext?.pubkeys?.map((pubkey: any, index: number) => (
-                  <option key={index} value={pubkey.address || pubkey.master}>
-                    <Flex align="center">
-                      <Avatar size="sm" src={avatarUrl} mr={2} />
-                      <Text>{pubkey.address || pubkey.master}</Text>
-                    </Flex>
-                  </option>
+              {app.pubkeys
+                .filter((pubkey: any) => {
+                  if (assetContext?.networkId?.startsWith('eip155')) {
+                    return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
+                  }
+                  return pubkey.networks.includes(assetContext.networkId);
+                })
+                .map((pubkey: any, index: any) => (
+                  <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
                 ))}
-              </Select>
+
+              {/*<Select value={selectedAddress} onChange={handleAddressChange}>*/}
+
+              {/*</Select>*/}
             </Td>
           </Tr>
         </Tbody>

@@ -36,7 +36,7 @@ const DB = require('@coinmaster' +
 console.log("DB: ",DB)
 
 //ai
-let ai = require('@pioneer-platform/pioneer-ollama')
+// let ai = require('@pioneer-platform/pioneer-ollama')
 
 let txid:string
 let IS_SIGNED: boolean
@@ -44,7 +44,7 @@ let IS_SIGNED: boolean
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
-        await ai.init()
+        // await ai.init()
         // await ai.init('dolphin-mixtral:latest')
 
         /*
@@ -67,13 +67,22 @@ const test_service = async function (this: any) {
         let pathsAdd:any = [
         ]
 
+        let blockchains = [BLOCKCHAIN_IN, ChainToNetworkId['ETH']]
+        log.info(tag,"blockchains: ",blockchains)
+
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+
+
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -110,45 +119,41 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         // log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, ChainToNetworkId['ETH']]
-        log.info(tag,"blockchains: ",blockchains)
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
 
         // @ts-ignore
         //HACK only use 1 path per chain
         //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
         }
         resultInit = await app.pairWallet(pairObject)
-        // log.info(tag,"resultInit: ",resultInit)
+        log.info(tag,"resultInit: ",resultInit)
         assert(app.keepkeyApiKey)
         if(!process.env.KEEPKEY_API_KEY || process.env.KEEPKEY_API_KEY !== app.keepkeyApiKey){
             log.alert("SET THIS IN YOUR ENV AS KEEPKEY_API_KEY: ",app.keepkeyApiKey)
         }
 
+        let assets = app.assetsMap
+        log.info(tag,"assets: ",assets)
+        assert(assets)
+        assert(assets[0])
+
+        //default filter noTokens
+        let assetsGet = await app.getAssets()
+        log.info(tag,"assetsGet: ",assetsGet)
+        assert(assetsGet)
+        assert(assetsGet[0])
+
         //check pairing
         // //context should match first account
-        let context = await app.context
-        log.info(tag,"context: ",context)
-        assert(context)
+        // let context = await app.context
+        // log.info(tag,"context: ",context)
+        // assert(context)
 
 
         await app.getPubkeys()
-        // await app.getBalances()
+        await app.getBalances()
 
 
 
@@ -166,65 +171,65 @@ const test_service = async function (this: any) {
         log.info("app: ",JSON.stringify(appView))
 
         //
-        type ScriptResponse = {
-            summary: string;
-            success: boolean;
-            result?: string;
-            isComplete?: boolean;
-        };
-
-        const ScriptResponseSchema = z.object({
-            summary: z.string(),
-            success: z.boolean().optional(),
-            result: z.string().optional(),
-            isComplete: z.boolean().optional(),
-        });
-
-        const preSystem = "You are a pioneer wallet inspection tool. You interpret and review user questions and attempt to filter relevant data and if possible answer.";
-        const prompt = `${preSystem} Generate responses in strict JSON format. Include a 'summary', 'result', 'success' boolean, 'isComplete' boolean. Ensure all string values are enclosed in double quotes, no trailing commas, and no comments.`;
-
-        const userRequestContent = "what is my eth address?";
-
-        const messages = [
-            { role: "system", content: prompt },
-            { role: "user", content: userRequestContent },
-            // Ensure to serialize appView properly before appending to the message
-            { role: "user", content: `here is my pioneer info: ${JSON.stringify(appView)}` }
-        ];
-
-        let handleResponse = async function(messages: any[]) {
-            try {
-                let response = await ai.respond(messages); // Assuming ai.respond is a function returning a promise
-                console.log("Raw response:", response);
-
-                const parsedResponse = JSON.parse(response); // Ensure response is JSON
-                console.log("Parsed response:", parsedResponse);
-
-                // Validate the response using Zod schema
-                ScriptResponseSchema.parse(parsedResponse);
-                console.log("Validated response:", parsedResponse);
-
-                // If you need to log additional details
-                console.log("Content type:", typeof parsedResponse);
-                console.log("Content keys:", Object.keys(parsedResponse));
-
-            } catch (e) {
-                if (e instanceof SyntaxError) {
-                    log.error("SyntaxError in JSON parsing:", e.message);
-                } else if (e instanceof z.ZodError) {
-                    log.error("Zod validation error:", e.errors);
-                } else {
-                    log.error("Unexpected error:", e);
-                }
-                throw e; // Rethrow the error if you need to handle it upstream
-            }
-        }
-
-        handleResponse(messages).then(() => {
-            console.log("Processing completed successfully.");
-        }).catch(error => {
-            console.error("Error during processing:", error);
-        });
+        // type ScriptResponse = {
+        //     summary: string;
+        //     success: boolean;
+        //     result?: string;
+        //     isComplete?: boolean;
+        // };
+        //
+        // const ScriptResponseSchema = z.object({
+        //     summary: z.string(),
+        //     success: z.boolean().optional(),
+        //     result: z.string().optional(),
+        //     isComplete: z.boolean().optional(),
+        // });
+        //
+        // const preSystem = "You are a pioneer wallet inspection tool. You interpret and review user questions and attempt to filter relevant data and if possible answer.";
+        // const prompt = `${preSystem} Generate responses in strict JSON format. Include a 'summary', 'result', 'success' boolean, 'isComplete' boolean. Ensure all string values are enclosed in double quotes, no trailing commas, and no comments.`;
+        //
+        // const userRequestContent = "what is my eth address?";
+        //
+        // const messages = [
+        //     { role: "system", content: prompt },
+        //     { role: "user", content: userRequestContent },
+        //     // Ensure to serialize appView properly before appending to the message
+        //     { role: "user", content: `here is my pioneer info: ${JSON.stringify(appView)}` }
+        // ];
+        //
+        // let handleResponse = async function(messages: any[]) {
+        //     try {
+        //         let response = await ai.respond(messages); // Assuming ai.respond is a function returning a promise
+        //         console.log("Raw response:", response);
+        //
+        //         const parsedResponse = JSON.parse(response); // Ensure response is JSON
+        //         console.log("Parsed response:", parsedResponse);
+        //
+        //         // Validate the response using Zod schema
+        //         ScriptResponseSchema.parse(parsedResponse);
+        //         console.log("Validated response:", parsedResponse);
+        //
+        //         // If you need to log additional details
+        //         console.log("Content type:", typeof parsedResponse);
+        //         console.log("Content keys:", Object.keys(parsedResponse));
+        //
+        //     } catch (e) {
+        //         if (e instanceof SyntaxError) {
+        //             log.error("SyntaxError in JSON parsing:", e.message);
+        //         } else if (e instanceof z.ZodError) {
+        //             log.error("Zod validation error:", e.errors);
+        //         } else {
+        //             log.error("Unexpected error:", e);
+        //         }
+        //         throw e; // Rethrow the error if you need to handle it upstream
+        //     }
+        // }
+        //
+        // handleResponse(messages).then(() => {
+        //     console.log("Processing completed successfully.");
+        // }).catch(error => {
+        //     console.error("Error during processing:", error);
+        // });
 
 
 

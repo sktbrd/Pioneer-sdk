@@ -44,6 +44,10 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const headingColor = useColorModeValue('teal.500', 'teal.300');
 
   useEffect(() => {
+    if(assetContext.icon)setAvatarUrl(assetContext.icon);
+  }, [app, app?.swapKit, assetContext]);
+
+  useEffect(() => {
     if (context) {
       setWalletType(context.split(':')[0]);
     }
@@ -213,7 +217,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
           <Flex align="center" direction={{ base: 'column', md: 'row' }} gap={20}>
             <Box>
               <Avatar size="xxl" src={avatarUrl}>
-                {getWalletBadgeContent(walletType, '8em')}
+                {getWalletBadgeContent(walletType, '4em')}
               </Avatar>
             </Box>
             <Box>
@@ -248,15 +252,18 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               />
             </FormControl>
           </Grid>
-          <Flex justify="space-between" align="center" mt="4">
-            <Button
-              variant="ghost"
-              rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              onClick={() => setShowAdvanced(!showAdvanced)}
-            >
-              Advanced
-            </Button>
-          </Flex>
+          {!assetContext.networkId.includes('eip155') && (
+            <Flex justify="space-between" align="center" mt="4">
+              <Button
+                variant="ghost"
+                rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                onClick={() => setShowAdvanced(!showAdvanced)}
+              >
+                Advanced
+              </Button>
+            </Flex>
+          )}
+
           {showAdvanced && (
             <FormControl>
               <FormLabel color={textColor}>

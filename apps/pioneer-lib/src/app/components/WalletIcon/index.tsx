@@ -29,7 +29,7 @@ export const getWalletContent = (walletType: string) => {
 export const getWalletBadgeContent = (walletType: string, size?: string) => {
   const icon = walletType ? icons[walletType.toLowerCase()] : undefined;
 
-  if (!size) size = '1.25em';
+  if (!size) size = '0.25em';
   if (icon) {
     return (
       <AvatarBadge boxSize={size}>

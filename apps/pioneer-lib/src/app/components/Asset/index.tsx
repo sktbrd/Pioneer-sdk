@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, useColorModeValue
+  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, useColorModeValue, Badge,
 } from '@chakra-ui/react';
 import { Pubkey } from '../Pubkey';
 import { Balance } from '../Balance';
@@ -43,6 +43,13 @@ export function Asset({ usePioneer, onClose, asset }: any) {
     }
   }, [asset]);
 
+  const formatBalance = (balance: string) => {
+    const [integer, decimal] = balance.split('.');
+    const largePart = decimal?.slice(0, 4);
+    const smallPart = decimal?.slice(4, 8);
+    return { integer, largePart, smallPart };
+  };
+
   return (
     <Stack spacing={4} width="100%">
       <Card>
@@ -55,6 +62,24 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   <Text fontSize="lg" fontWeight="bold">{asset.name}</Text>
                   <Text fontSize="md" color="gray.500">{asset.symbol}</Text>
                 </Box>
+                <Box>
+
+                  {app.balances
+                    .filter((balance: any) => balance.caip === asset.caip)
+                    .map((balance: any, index: any) => {
+                      const { integer, largePart, smallPart } = formatBalance(balance.balance);
+                      return (
+                        <Text key={index}>
+                          <Text as="span" fontSize="lg">{integer}.{largePart}</Text>
+                          <Text as="span" fontSize="xs">{smallPart}</Text>
+                          <Box ml={3} flex="1">
+                            <Badge ml={2} colorScheme="teal">({asset.symbol})</Badge>
+                          </Box>
+                        </Text>
+                      );
+                    })}
+                </Box>
+
               </Flex>
               <Flex align="center" justifyContent="space-between" mb={4} width="100%">
                 <VStack width="100%">
@@ -72,11 +97,11 @@ export function Asset({ usePioneer, onClose, asset }: any) {
               </Flex>
               <Flex align="center" justifyContent="space-between" mb={4} width="100%">
                 <VStack width="100%">
-                  {app.balances
-                    .filter((balance: any) => balance.caip === asset.caip)
-                    .map((balance: any, index: any) => (
-                      <Balance key={index} usePioneer={usePioneer} balance={balance} />
-                    ))}
+                  {/*{app.balances*/}
+                  {/*  .filter((balance: any) => balance.caip === asset.caip)*/}
+                  {/*  .map((balance: any, index: any) => (*/}
+                  {/*    <Balance key={index} usePioneer={usePioneer} balance={balance} />*/}
+                  {/*  ))}*/}
                 </VStack>
               </Flex>
               <VStack spacing={2}>
