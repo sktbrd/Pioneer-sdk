@@ -35,7 +35,7 @@ import {
 
 export function Classic({ usePioneer }: any) {
   const { state, connectWallet } = usePioneer();
-  const { app, assets } = state;
+  const { app, assets, blockchains } = state;
   const [assetContext, setAssetContext] = useState(app?.assetContext);
   const [isConnecting, setIsConnecting] = useState(false);
 
