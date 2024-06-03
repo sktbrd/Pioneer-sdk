@@ -1,11 +1,14 @@
-import { AssetValue } from '@pioneer-platform/helpers';
 import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl } from '@coinmasters/types';
+import { AssetValue, formatBigIntToSafeValue } from '@pioneer-platform/helpers';
+//@ts-ignore
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
 import type { BrowserProvider, JsonRpcProvider, Signer } from 'ethers';
 
 // import type { CovalentApiType } from '../api/covalentApi.ts';
 // import { covalentApi } from '../api/covalentApi.ts';
 // import { getBalance } from '../index.ts';
 import { BaseEVMToolbox } from './BaseEVMToolbox.ts';
+const TAG = ' | evm/base.ts | ';
 
 export const getNetworkParams = () => ({
   chainId: ChainId.Base,
@@ -33,25 +36,33 @@ export const BASEToolbox = ({
     ...baseToolbox,
     getNetworkParams,
     async getBalance(address: any) {
+      let tag = TAG + ' | getBalance | ';
       try {
-        console.log('address: ', address);
+        console.log(tag, 'address: ', address);
         // const tokenBalances = await api.getBalance(address[0].address);
         // console.log('tokenBalances: ', tokenBalances);
-
         const evmGasTokenBalance = await provider.getBalance(address[0].address);
-        //console.log('tokenBalances: ', tokenBalances);
-        console.log('evmGasTokenBalance: ', evmGasTokenBalance);
-        await AssetValue.loadStaticAssets();
-        let assetStringGas = 'BASE.ETH';
-        let gasTokenBalance = AssetValue.fromStringSync(assetStringGas, evmGasTokenBalance);
-        gasTokenBalance.address = address[0].address;
-        console.log('gasTokenBalance: ', gasTokenBalance);
+        console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance);
+        let safeValue = formatBigIntToSafeValue({
+          value: evmGasTokenBalance,
+          decimal: BaseDecimal['BASE'] || 18,
+        });
 
+        //console.log('tokenBalances: ', tokenBalances);
+        console.log(tag, 'evmGasTokenBalance safeValue: ', safeValue);
+        //safe
+
+        await AssetValue.loadStaticAssets();
+        //@ts-ignore
+        let gasTokenBalance = AssetValue.fromChainOrSignature(Chain.Base, safeValue);
+        gasTokenBalance.caip = ChainToCaip['BASE'];
+        console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
+        console.log(tag, 'gasTokenBalance: ', gasTokenBalance.getValue('string'));
         //pro token balances
+
         // The token's contract address
         const tokenAddress = '0xef743df8eda497bcf1977393c401a636518dd630';
         const userAddress = address[0].address;
-        // The ERC-20 token ABI
         // The ERC-20 token ABI
         const ERC20_ABI = [
           {
@@ -70,25 +81,28 @@ export const BASEToolbox = ({
         const contract = new Contract(tokenAddress, ERC20_ABI, provider);
 
         // const contract = await baseToolbox.createContract(tokenAddress, ERC20_ABI, provider);
-        console.log('contract: ', contract);
+        console.log(tag, 'contract: ', contract);
         if (!contract) throw new Error('Failed to create contract instance');
 
         // Replace 'address[0].address' with the actual wallet address you're querying
         const tokenBalanceBigNumber = await contract.balanceOf(userAddress);
-        console.log('Token Balance (raw Big Number): ', tokenBalanceBigNumber.toString());
+        console.log(tag, 'Token Balance (raw Big Number): ', tokenBalanceBigNumber.toString());
 
         // Process the token balance
         const assetStringToken = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630';
         let tokenAssetValue = AssetValue.fromStringSync(assetStringToken, tokenBalanceBigNumber);
-        tokenAssetValue.address = userAddress;
-        console.log('Token Asset Value: ', tokenAssetValue);
+        tokenAssetValue.address = '0xef743df8eda497bcf1977393c401a636518dd630';
+        tokenAssetValue.caip = 'eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630';
+        console.log(tag, 'Token Asset Value: ', tokenAssetValue);
 
         //TODO get tokens from covalent
 
         let balances = [gasTokenBalance, tokenAssetValue];
+        console.log(tag, 'balances: ', balances);
         return balances;
       } catch (e) {
         console.log('getBalance error: ', e);
+        throw e;
       }
     },
     // getBalance: (address: any, potentialScamFilter?: boolean) =>

@@ -33,12 +33,14 @@ export class DB {
   public clearAllTransactions: () => Promise<void>;
   public openIndexedDB: () => Promise<IDBDatabase>;
   public createPubkey: (pubkey: any) => Promise<any>;
-  public getPubkeys: (filters: { networkIds?: string[] }) => Promise<any[]>;
+  public getPubkeys: (filters?: { walletIds?: string[]; blockchains?: string[] }) => Promise<any[]>;
   public createBalance: (balance: any) => Promise<any>;
   public getBalances: (filters?: {
     walletIds?: string[];
     blockchains?: string[];
   }) => Promise<any[]>;
+  private createObjectStores: (db: IDBDatabase) => void;
+  private checkObjectStores: (db: IDBDatabase) => boolean;
 
   constructor(config: any) {
     this.status = 'preInit';
@@ -214,7 +216,7 @@ export class DB {
       }
     };
 
-    this.getTransaction = async function (txid: string): Promise<Transaction | undefined> {
+    this.getTransaction = async function (txid: string): Promise<unknown> {
       if (typeof window !== 'undefined') {
         // Browser environment: IndexedDB logic
         const db = await this.openIndexedDB();
@@ -240,7 +242,7 @@ export class DB {
       }
     };
 
-    this.updateTransaction = async (txid: string, newState: TransactionState): Promise<void> => {
+    this.updateTransaction = async (txid: string, newState: TransactionState): Promise<unknown> => {
       if (typeof window !== 'undefined') {
         // Browser environment: IndexedDB logic
         const db = await this.openIndexedDB();
@@ -276,7 +278,7 @@ export class DB {
       }
     };
 
-    this.getAllTransactions = async function (): Promise<Transaction[]> {
+    this.getAllTransactions = async function (): Promise<unknown> {
       if (typeof window !== 'undefined') {
         // Browser environment: IndexedDB logic
         const db = await this.openIndexedDB();
@@ -297,7 +299,7 @@ export class DB {
       }
     };
 
-    this.clearAllTransactions = async function (): Promise<void> {
+    this.clearAllTransactions = async function (): Promise<unknown> {
       if (typeof window !== 'undefined') {
         // Browser environment: IndexedDB logic
         const db = await this.openIndexedDB();
@@ -553,24 +555,84 @@ export class DB {
       }
     };
 
-    this.openIndexedDB = async function (): Promise<IDBDatabase> {
+    this.openIndexedDB = async (): Promise<unknown> => {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open(this.dbName, 1);
         request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
           const db = (event.target as IDBOpenDBRequest).result;
-          if (!db.objectStoreNames.contains(this.storeName)) {
-            const store = db.createObjectStore(this.storeName, {
-              keyPath: 'id',
-              autoIncrement: true,
-            });
-            store.createIndex('txid', 'txid', { unique: true });
-            store.createIndex('state', 'state', { unique: false });
+          this.createObjectStores(db);
+        };
+        request.onsuccess = (event) => {
+          const db = (event.target as IDBOpenDBRequest).result;
+          // Check if all necessary stores are present
+          if (!this.checkObjectStores(db)) {
+            db.close();
+            indexedDB.deleteDatabase(this.dbName);
+            // Retry opening the database after deletion
+            const retryRequest = indexedDB.open(this.dbName, 1);
+            retryRequest.onupgradeneeded = (retryEvent: IDBVersionChangeEvent) => {
+              const retryDb = (retryEvent.target as IDBOpenDBRequest).result;
+              this.createObjectStores(retryDb);
+            };
+            retryRequest.onsuccess = () => resolve(retryRequest.result);
+            retryRequest.onerror = () => reject(retryRequest.error);
+          } else {
+            resolve(db);
           }
         };
-        request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
     };
+
+    this.createObjectStores = (db: IDBDatabase) => {
+      if (!db.objectStoreNames.contains(this.storeName)) {
+        const store = db.createObjectStore(this.storeName, {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        store.createIndex('txid', 'txid', { unique: true });
+        store.createIndex('state', 'state', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('pubkeys')) {
+        const pubkeyStore = db.createObjectStore('pubkeys', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        pubkeyStore.createIndex('pubkey', 'pubkey', { unique: true });
+      }
+      if (!db.objectStoreNames.contains('balances')) {
+        const balanceStore = db.createObjectStore('balances', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        balanceStore.createIndex('ref', 'ref', { unique: true });
+      }
+    };
+
+    this.checkObjectStores = (db: IDBDatabase): boolean => {
+      const requiredStores = [this.storeName, 'pubkeys', 'balances'];
+      return requiredStores.every((store) => db.objectStoreNames.contains(store));
+    };
+
+
+    // this.openIndexedDB = async function (): Promise<IDBDatabase> {
+    //   return new Promise((resolve, reject) => {
+    //     const request = indexedDB.open(this.dbName, 1);
+    //     request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+    //       const db = (event.target as IDBOpenDBRequest).result;
+    //       if (!db.objectStoreNames.contains(this.storeName)) {
+    //         const store = db.createObjectStore(this.storeName, {
+    //           keyPath: 'id',
+    //           autoIncrement: true,
+    //         });
+    //         store.createIndex('txid', 'txid', { unique: true });
+    //         store.createIndex('state', 'state', { unique: false });
+    //       }
+    //     };
+    //     request.onsuccess = () => resolve(request.result);
+    //     request.onerror = () => reject(request.error);
+    //   });
+    // };
   }
 }
 

@@ -8,6 +8,7 @@ import {
   Spinner,
   IconButton,
   Stack,
+  VStack,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -189,10 +190,36 @@ export function Classic({ usePioneer }: any) {
       <Modal isOpen={isSettingsOpen} onClose={onSettingsClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Settings</ModalHeader>
+          <ModalHeader>
+            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+            Settings For Your KeepKey
+          </Text>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-
+            <VStack spacing={4}>
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Change Label*/}
+              {/*</Button>*/}
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Change PIN*/}
+              {/*</Button>*/}
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Wipe Device*/}
+              {/*</Button>*/}
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Contact Support*/}
+              {/*</Button>*/}
+              <Button variant="ghost" w="100%">
+                About KeepKey
+              </Button>
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Acknowledgements*/}
+              {/*</Button>*/}
+              {/*<Button variant="ghost" w="100%">*/}
+              {/*  Log in to ShapeShift*/}
+              {/*</Button>*/}
+            </VStack>
           </ModalBody>
         </ModalContent>
       </Modal>

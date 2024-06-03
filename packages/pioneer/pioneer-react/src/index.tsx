@@ -291,6 +291,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
   const connectWallet = useCallback(
     async function (wallet: string, chain?: any) {
+      let tag = TAG + ' | connectWallet | ';
       try {
         if (state && state?.app) {
           console.log('connectWallet: ', wallet);
@@ -395,7 +396,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               }
               //get balances
               if (state.app.balances) {
-                console.log('balances: ', state.app.balances);
+                console.log(tag, 'balances: ', state.app.balances);
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < state.app.balances.length; i++) {
                   const balance = state.app.balances[i];

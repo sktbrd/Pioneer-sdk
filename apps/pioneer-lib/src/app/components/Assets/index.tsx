@@ -41,7 +41,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
   }, [app, searchQuery, hasPubkey, onlyOwned, noTokens, memoless, integrations]);
 
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
-  const currentPageAssets = filteredAssets.slice(
+  const currentPageAssets = filteredAssets?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -94,12 +94,6 @@ export function Assets({ usePioneer, onSelect, onClose, filters }:any) {
                   <Text fontSize="sm">Type: {asset.type}</Text>
                   <Text fontSize="sm">memoless: {asset.memoless?.toString()}</Text>
                   <Text fontSize="sm">intergrations: {asset.integrations?.join(', ')}</Text>
-                  {asset.address && (
-                    <Text fontSize="sm">Address: {asset.address}</Text>
-                  )}
-                  {asset.balance && asset.valueUsd > 0 && (
-                    <Text fontSize="sm">Balance: {asset.balance} ({parseFloat(asset.valueUsd).toFixed(2)} USD)</Text>
-                  )}
                 </Box>
                 <Button ml="auto" onClick={() => onSelect(asset)}>
                   Select

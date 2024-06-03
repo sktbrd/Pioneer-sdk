@@ -13,6 +13,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
+import React from 'react';
 import { useEffect, useState } from "react";
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';

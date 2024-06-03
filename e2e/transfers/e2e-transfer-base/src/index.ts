@@ -71,7 +71,7 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let blockchains = [BLOCKCHAIN]
         let paths = getPaths(blockchains)
 
         let config:any = {
@@ -184,9 +184,12 @@ const test_service = async function (this: any) {
         // assert(pubkey.length > 0)
         //verify pubkeys
 
-
-        // await app.getBalances()
-        // log.info(tag,"balances: ",app.balances)
+        await app.getBalances()
+        log.info(tag,"balances: ",app.balances)
+        assert(app.balances)
+        assert(app.balances[0])
+        log.info(tag,"balances: ",app.balances[0])
+        throw 'done'
         // log.info(tag,"balances: ",app.balances.length)
         // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
         // log.info(tag,"balance: ",balance[0])
@@ -204,6 +207,7 @@ const test_service = async function (this: any) {
         // assert(asset[0])
         // assert(asset[0].caip)
         // assert(asset[0].ticker)
+
         log.info(tag,"assetContext: ",ChainToCaip[ASSET])
         log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
         assert(assets.get(ChainToCaip[ASSET]))
@@ -240,6 +244,7 @@ const test_service = async function (this: any) {
         let estimatePayload:any = {
             pubkeys,
             from: pubkeys[0].address,
+            caip:app.assetContext.caip,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

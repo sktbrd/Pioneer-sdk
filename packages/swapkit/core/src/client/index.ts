@@ -351,85 +351,110 @@ export class SwapKitCore<T = ''> {
     }
   };
 
-  getWalletByChain = async (chain: Chain, potentialScamFilter?: boolean) => {
+  getWalletByChain = async (chain: Chain) => {
     let tag = TAG + ' | getWalletByChain | ';
     try {
       //console.log(tag, 'start');
       const address = this.getAddress(chain);
-      //console.log(tag, 'address: ', address);
-      if (!address) return null;
+      console.log(tag, 'address: ', address);
+      if (!address) {
+        console.error('Failed to get address for chain! chain: ' + chain);
+      }
       //console.log(tag, 'chain: ', chain);
       //console.log(tag, 'address: ', address);
       let pubkeys = [];
       if (this.getWallet(chain)?.getPubkeys) {
         pubkeys = await this.getWallet(chain)?.getPubkeys();
         //
-        //console.log('pubkeys: ', pubkeys);
+        console.log(tag, 'pubkeys: ', pubkeys);
       }
+
       // let balance = [];
-      //console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
-      //for each pubkey iterate and sum the balance
-      // let balance: AssetValue[] = [];
-      // if (pubkeys.length === 0) {
-      //   //get inputs
-      //   //console.log(tag, 'Get balance for Address! address: ' + address);
-      //   //console.log(tag, 'Get balance for Address! chain: ' + chain);
-      //   //use address balance
-      //   balance = await this.getWallet(chain)?.getBalance([{ address }]);
-      //   //console.log(tag, 'balance: ' + balance);
-      //
-      //   //console.log('Get balance for Address! chain: ' + chain);
-      //
-      //   // for (let i = 0; i < balance.length; i++) {
-      //   //   balance[i].address = address;
-      //   // }
-      // } else {
-      //   //console.log(tag, chain + ' pubkeys: ', pubkeys.length);
-      //   /*
-      //         Logic assumptions
-      //           * Every pubkey will be a UTXO
-      //           * every UXTO has only 1 asset balance (fungable)
-      //           * we sum ALL balances of all pubkeys and return as 1 balance
-      //             (aka you have x amount bitcoin) as is commonly used in wallets
-      //
-      //           Notes: we will only allow sending FROM 1 xpub at a time
-      //           *so the MAX spendable is the balance of highest balance xpub.*
-      //
-      //           blockbook has a wallet gap limit of 20
-      //      */
-      //   //use pubkey balances
-      //   let balanceTotal = 0;
-      //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      //   for (let i = 0; i < pubkeys.length; i++) {
-      //     const pubkey = pubkeys[i];
-      //     //console.log(tag, 'Get balance for xpub!');
-      //     //console.log(tag, 'pubkey: ', pubkey);
-      //     let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-      //     //console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
-      //     //console.log(
-      //     //   tag,
-      //     //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
-      //     //   pubkeyBalance[0].decimal,
-      //     // );
-      //     pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
-      //     //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
-      //     if (isNaN(pubkeyBalance)) {
-      //       pubkeyBalance = 0;
-      //     }
-      //     //TODO get string balance
-      //     pubkeys[i].balance = pubkeyBalance;
-      //     //console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
-      //     //console.log(tag, 'pubkeyBalance: ', parseFloat(pubkeyBalance));
-      //     balanceTotal += parseFloat(pubkeyBalance);
-      //   }
-      //   //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
-      //   // balanceTotal = balanceTotal / 100000000;
-      //   let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
-      //   balanceValue.address = address;
-      //   balance = [balanceValue];
-      // }
+      console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
+      // for each pubkey iterate and sum the balance
+      let balance: AssetValue[] = [];
+      if (pubkeys.length === 0) {
+        //get inputs
+        console.log(tag, 'Get balance for Address! address: ' + address);
+        //console.log(tag, 'Get balance for Address! chain: ' + chain);
+        //console.log(tag, 'Get balance for Address! chain: ' + chain);
+        //use address balance
+        let balanceResp: AssetValue[] = await this.getWallet(chain)?.getBalance([{ address }]);
+        console.log(tag, 'balanceResp: ', balanceResp);
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < balanceResp.length; i++) {
+          let balanceAssetValue = balanceResp[i];
+          console.log(tag, 'balanceAssetValue: ', balanceAssetValue);
+          console.log(tag, 'balanceAssetValue: ', balanceAssetValue.getValue('string'));
+          balance.push(balanceAssetValue);
+        }
+
+        // balance = balanceResp;
+        // console.log(tag, 'balanceResp: ', typeof balanceResp);
+        // console.log(tag, 'balanceResp: ', JSON.stringify(balanceResp));
+        // console.log(tag, 'balanceResp: ', balanceResp.valueOf());
+
+        //console.log('Get balance for Address! chain: ' + chain);
+
+        // for (let i = 0; i < balance.length; i++) {
+        //   balance[i].address = address;
+        // }
+        // let balanceValue = AssetValue.fromChainOrSignature(chain, balanceResp);
+        // balance = [balanceValue];
+        // console.log(tag, 'balance: ' + balance);
+      } else {
+        console.log(tag, chain + ' pubkeys: ', pubkeys.length);
+        /*
+              Logic assumptions
+                * Every pubkey will be a UTXO
+                * every UXTO has only 1 asset balance (fungable)
+                * we sum ALL balances of all pubkeys and return as 1 balance
+                  (aka you have x amount bitcoin) as is commonly used in wallets
+
+                Notes: we will only allow sending FROM 1 xpub at a time
+                *so the MAX spendable is the balance of highest balance xpub.*
+
+                blockbook has a wallet gap limit of 20
+           */
+        //use pubkey balances
+        let balanceTotal = 0;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < pubkeys.length; i++) {
+          const pubkey = pubkeys[i];
+          //console.log(tag, 'Get balance for xpub!');
+          //console.log(tag, 'pubkey: ', pubkey);
+          let pubkeyBalance: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
+          console.log(tag, 'NEW pubkeyBalance pre: ', pubkeyBalance);
+          //console.log(
+          //   tag,
+          //   'NEW pubkeyBalance pubkeyBalance[0].decimal: ',
+          //   pubkeyBalance[0].decimal,
+          // );
+          //@ts-ignore
+          pubkeyBalance = pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal);
+          //console.log(tag, 'NEW pubkeyBalance post: ', pubkeyBalance);
+          //@ts-ignore
+          if (isNaN(pubkeyBalance)) {
+            //@ts-ignore
+            pubkeyBalance = 0;
+          }
+          //TODO get string balance
+          pubkeys[i].balance = pubkeyBalance;
+          console.log(tag, 'pubkeyBalance: ', pubkeyBalance);
+
+          //@ts-ignore
+          balanceTotal += parseFloat(pubkeyBalance);
+        }
+        //console.log(tag, 'NEW balanceTotal: ', balanceTotal);
+        // balanceTotal = balanceTotal / 100000000;
+        //@ts-ignore
+        let balanceValue = AssetValue.fromChainOrSignature(chain, balanceTotal);
+        balance = [balanceValue];
+      }
+
       //if inputs add inputs
-      let balance = [];
+      // let balance = [];
+
       //if features (keepkey) add to object
       this.connectedChains[chain] = {
         address,
@@ -464,6 +489,7 @@ export class SwapKitCore<T = ''> {
       console.log(tag, 'CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
+      //@ts-ignore
       throw new SwapKitError('core_transfer_transaction_error', error);
     }
   };
@@ -851,7 +877,7 @@ export class SwapKitCore<T = ''> {
             `${TAG} Estimating max sendable amount for UTXO chain ${chain} with params:`,
             params,
           );
-          if(!walletMethods) throw new Error('Wallet methods not found');
+          if (!walletMethods) throw new Error('Wallet methods not found');
           console.log(tag, 'walletMethods', walletMethods);
           const result = (walletMethods as any).estimateMaxSendableAmount(params);
           console.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);

@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 11.0.30
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.30
+
 ## 11.0.29
 
 ### Patch Changes

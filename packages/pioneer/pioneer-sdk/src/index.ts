@@ -13,9 +13,7 @@
 // const log = LoggerModule.default();
 
 import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
-
 // import { NativeList } from '@coinmasters/tokens';
-
 import {
   //   CoinGeckoList,
   //   MayaList,
@@ -32,13 +30,12 @@ import {
   //   UniswapList,
   //   WoofiList,
 } from '@coinmasters/tokens';
-import type { Chain, WalletOption } from '@coinmasters/types';
-import { NetworkIdToChain } from '@coinmasters/types';
+import type { Chain } from '@coinmasters/types';
+import { ChainToNetworkId, NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
 import {
   caipToNetworkId,
   caipToThorchain,
-  ChainToNetworkId,
   shortListSymbolToCaip,
   tokenToCaip,
 } from '@pioneer-platform/pioneer-caip';
@@ -273,7 +270,7 @@ export class SDK {
           },
           wallets: walletArray,
         };
-        console.log(tag, 'configKit: ', configKit);
+        // console.log(tag, 'configKit: ', configKit);
         await this.swapKit.extend(configKit);
         this.events.emit('SET_STATUS', 'init');
 
@@ -1225,17 +1222,27 @@ export class SDK {
         console.log(tag, 'this.blockchains: ', this.blockchains);
         let balances = [];
 
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        //TODO why cant I do this? batch arch!
+        // for (let i = 0; i < this.blockchains.length; i++) {
+        //   const blockchain = this.blockchains[i];
+        //   let chain: Chain = NetworkIdToChain[blockchain];
+        //   //get balances for each pubkey
+        //   console.log('chain: ', chain);
+        //   //get balances for chain
+        //   let balancesForChain = await this.swapKit?.getBalances(chain);
+        //   console.log('balancesForChain: ', balancesForChain);
+        // }
+
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
-          console.log('getWalletByChain: ', chain);
+          console.log(tag, 'getWalletByChain: ', chain);
           let walletForChain = await this.swapKit?.getWalletByChain(chain);
-          console.log(chain + ' walletForChain: ', walletForChain);
+          console.log(tag, chain + ' walletForChain: ', walletForChain);
           if (walletForChain && walletForChain.balance) {
             // @ts-ignore
-            //console.log('walletForChain.balance: ', walletForChain.balance);
+            console.log('walletForChain.balance: ', walletForChain.balance);
             for (let j = 0; j < walletForChain.balance.length; j++) {
               // @ts-ignore
               let balance: AssetValue = walletForChain?.balance[j];
@@ -1259,7 +1266,7 @@ export class SDK {
                     balance.type !== 'Native'
                       ? `${ChainToNetworkId[balance.chain]}/erc20:${balance.symbol.split('-')[1]}`
                       : shortListSymbolToCaip[balance.chain];
-                  console.log('balanceToCaip: result: caip: ', caip);
+                  console.log(tag, 'balanceToCaip: result: caip: ', caip);
                   if (caip) {
                     //log.info("balance: ",balance)
                     //Assuming these properties already exist in each balance
@@ -1274,40 +1281,14 @@ export class SDK {
                     balanceString.ticker = balance.ticker;
                     // balanceString.address = balance.address;
                     balanceString.type = balance.type;
-                    if (balance.toFixed) {
-                      balanceString.balance = balance.toFixed(balance.decimal).toString();
-                    } else {
-                      console.error("invalid balance! doesn't have toFixed: ", balance);
-                      throw Error('Invalid balance!');
-                    }
-                    //update asset
-                    // Update the asset in the assetsMap
-                    // let assetInMap = this.assetsMap.get(caip.toLowerCase());
-                    // if (assetInMap) {
-                    //   if (!assetInMap.balances) {
-                    //     assetInMap.balances = [];
-                    //   }
-                    //   assetInMap.balances.push(balanceString);
-                    //   this.assetsMap.set(caip.toLowerCase(), assetInMap);
+                    console.log(tag, 'value: ', balance.getValue('string'));
+                    balanceString.balance = balance.getValue('string');
+                    // if (balance.toFixed) {
+                    //   balanceString.balance = balance.toFixed(balance.decimal).toString();
+                    // } else {
+                    //   console.error("invalid balance! doesn't have toFixed: ", balance);
+                    //   throw Error('Invalid balance!');
                     // }
-
-                    // Update the asset in the assets array
-                    // const assetIndex = this.assets.findIndex(
-                    //   (asset: any) => asset.caip.toLowerCase() === caip.toLowerCase(),
-                    // );
-                    // if (assetIndex !== -1) {
-                    //   if (!this.assets[assetIndex].balances) {
-                    //     this.assets[assetIndex].balances = [];
-                    //   }
-                    //   this.assets[assetIndex].balances.push(balanceString);
-                    // }
-                    //console.log('assetInfo: ', assetInfo);
-                    // let assetInfo = this.assets.filter(
-                    //   (e: any) => e.caip.toLowerCase() === caip.toLowerCase(),
-                    // );
-                    // assetInfo = assetInfo[0];
-                    // console.log('assetInfo: ', assetInfo);
-                    // balances.push({ ...assetInfo, ...balanceString });
                     balances.push(balanceString);
                   } else {
                     console.error('Failed to get caip for balance: ', balance);
@@ -1320,8 +1301,9 @@ export class SDK {
             }
           }
         }
-        console.log('balances: ', balances);
+        console.log(tag, 'balances: ', balances);
         if (balances && balances.length > 0) this.setBalances(balances);
+
         // balances = balances.filter(
         //   (balance, index, self) => index === self.findIndex((b) => b.ref === balance.ref),
         // );

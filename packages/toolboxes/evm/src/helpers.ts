@@ -396,16 +396,15 @@ export const getBalance = async ({
   api,
   address,
   chain,
-  potentialScamFilter,
 }: {
   provider: JsonRpcProvider | BrowserProvider;
   api: CovalentApiType | EthplorerApiType;
   address: { address: string }[]; // Updated type for address
   chain: EVMChain;
-  potentialScamFilter?: boolean;
 }) => {
+  let tag = TAG + ' | getBalance | ';
   try {
-    console.log('EVM toolbox getBalance: ', address[0].address);
+    console.log(tag, 'EVM toolbox getBalance: ', address[0].address);
 
     const tokenBalances = await api.getBalance(address[0].address).catch((e) => {
       console.error(`Error fetching token balances for address ${address[0].address}:`, e);
@@ -417,28 +416,31 @@ export const getBalance = async ({
       return BigInt(0); // Return 0 on failure
     });
 
-    console.log('tokenBalances: ', tokenBalances);
-    console.log('evmGasTokenBalance: ', evmGasTokenBalance.toString());
-
-    let gasTokenBalance = AssetValue.fromChainOrSignature(
-      chain,
-      formatBigIntToSafeValue({ value: evmGasTokenBalance, decimal: BaseDecimal[chain] }),
-    );
+    console.log(tag, 'chain: ', chain);
+    console.log(tag, 'tokenBalances: ', tokenBalances);
+    console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance.toString());
+    let safeValue = formatBigIntToSafeValue({
+      value: evmGasTokenBalance,
+      decimal: BaseDecimal[chain] || 18,
+    });
+    console.log('safeValue: ', safeValue);
+    //@ts-ignore
+    let gasTokenBalance = AssetValue.fromChainOrSignature(chain, safeValue);
     gasTokenBalance.isGasAsset = true; // Marking it as gas asset
-    console.log('gasTokenBalance: ', gasTokenBalance);
     gasTokenBalance.caip = ChainToCaip[chain];
-    let balances = [gasTokenBalance];
+    console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
+    let balances: any = [];
+    balances.push(gasTokenBalance);
 
-    await AssetValue.loadStaticAssets();
-
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < tokenBalances.length; i++) {
       let tokenBalance = tokenBalances[i];
       if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
         try {
-          console.log('tokenBalance: ', tokenBalance);
+          console.log(tag, 'tokenBalance: ', tokenBalance);
           let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`;
-          console.log('tokenString: ', tokenString);
-          console.log('tokenBalance.value: ', tokenBalance.value);
+          console.log(tag, 'tokenString: ', tokenString);
+          console.log(tag, 'tokenBalance.value: ', tokenBalance.value);
           if (tokenString.includes('HTTPS://')) {
             console.log('Spam detected: ', tokenString);
           } else {
@@ -450,6 +452,8 @@ export const getBalance = async ({
             if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
               // formattedBalance.address = address[0].address;
               balances.push(formattedBalance);
+            } else {
+              console.error('Missing ticker for:', tokenBalance);
             }
           }
         } catch (error) {
@@ -460,85 +464,10 @@ export const getBalance = async ({
       }
     }
 
+    console.log(tag, ' final: balances: ', balances);
     return balances;
   } catch (error) {
     console.error('Unexpected error in getBalance:', error);
     throw error;
   }
 };
-
-// Utility function to format BigInt values
-const formatBigIntToSafeValue = ({ value, decimal }: { value: bigint; decimal: number }) => {
-  return Number(value) / Math.pow(10, decimal);
-};
-
-// export const getBalance = async ({
-//   provider,
-//   api,
-//   address,
-//   chain,
-//   potentialScamFilter,
-// }: {
-//   provider: JsonRpcProvider | BrowserProvider;
-//   api: CovalentApiType | EthplorerApiType;
-//   address: any; // Consider using a more specific type if possible
-//   chain: EVMChain;
-//   potentialScamFilter?: boolean;
-// }) => {
-//   try {
-//     //console.log('EVM toolbox getBalance: ', address[0].address);
-//     const tokenBalances = await api.getBalance(address[0].address).catch((e) => {
-//       console.error(`Error fetching token balances for address ${address[0].address}:`, e);
-//       return []; // Return an empty array on failure to allow processing to continue
-//     });
-//     const evmGasTokenBalance = await provider.getBalance(address[0].address).catch((e) => {
-//       console.error(`Error fetching gas token balance for address ${address[0].address}:`, e);
-//       return BigInt(0); // Return 0 on failure
-//     });
-//     //console.log('tokenBalances: ', tokenBalances);
-//     //console.log('evmGasTokenBalance: ', evmGasTokenBalance.toString());
-//
-//     let gasTokenBalance = AssetValue.fromChainOrSignature(
-//       chain,
-//       formatBigIntToSafeValue({ value: evmGasTokenBalance, decimal: BaseDecimal[chain] }),
-//     );
-//     gasTokenBalance.address = address[0].address;
-//     let balances = [gasTokenBalance];
-//
-//     await AssetValue.loadStaticAssets();
-//
-//     // eslint-disable-next-line @typescript-eslint/prefer-for-of
-//     for (let i = 0; i < tokenBalances.length; i++) {
-//       let tokenBalance = tokenBalances[i];
-//       if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
-//         try {
-//           console.log("tokenBalance: ", tokenBalance);
-//           let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`
-//           console.log("tokenString: ", tokenString);
-//           console.log("tokenBalance.value: ", tokenBalance.value);
-//           let formattedBalance = AssetValue.fromIdentifierSync(
-//             //@ts-ignore
-//             tokenString,
-//             tokenBalance.value,
-//           );
-//           //console.log('formattedBalance: ', formattedBalance);
-//           //this hack removes all the tokens that are not in assetBalance token list package
-//           if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
-//             // formattedBalance.address = address[0].address;
-//             balances.push(formattedBalance);
-//           }
-//         } catch (error) {
-//           console.error(`Error formatting balance for token ${tokenBalance.symbol}:`, error);
-//         }
-//       } else {
-//         //console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
-//       }
-//     }
-//
-//     return balances;
-//   } catch (error) {
-//     console.error('Unexpected error in getBalance:', error);
-//     // Decide how to handle unexpected errors - rethrow, return empty array, etc.
-//     throw error;
-//   }
-// };

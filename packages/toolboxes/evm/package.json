@@ -21,7 +21,7 @@
     "extends": "../../../internal/eslint-config"
   },
   "peerDependencies": {
-    "@pioneer-platform/helpers": "latest"
+    "@pioneer-platform/helpers": "^4.0.6"
   },
   "exports": {
     ".": {
@@ -54,5 +54,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "11.0.29"
+  "version": "11.0.30"
 }

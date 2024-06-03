@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-dash",
-  "version": "1.7.29",
+  "version": "1.7.30",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.3"
+    "@pioneer-platform/helpers": "^4.0.6"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

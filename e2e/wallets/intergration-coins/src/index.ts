@@ -408,13 +408,13 @@ const test_service = async function (this: any) {
         // }
         //
         //test AssetValue
-        await AssetValue.loadStaticAssets();
-        let assetValue: AssetValueType = AssetValue.fromChainOrSignature(
-          Chain.Base,
-          0,
-        );
-        console.log("assetValue: ",assetValue)
-        console.log("assetValue: ",assetValue.getValue('string'))
+        // await AssetValue.loadStaticAssets();
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Base,
+        //   0,
+        // );
+        // console.log("assetValue: ",assetValue)
+        // console.log("assetValue: ",assetValue.getValue('string'))
 
         // let assetValue = AssetValue.fromChainOrSignature(
         //   Chain.Base,
