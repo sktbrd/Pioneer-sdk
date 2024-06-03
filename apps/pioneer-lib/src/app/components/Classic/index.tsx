@@ -130,7 +130,6 @@ export function Classic({ usePioneer }: any) {
             onClick={onSettingsOpen}
           />
         )}
-
         <IconButton
           icon={<RepeatIcon />}
           aria-label="Refresh"
@@ -153,10 +152,10 @@ export function Classic({ usePioneer }: any) {
               ) : (
                 <>
                   {[...assets.values()].map((asset: any, index: any) => (
-                    <Box key={index} p={4} mb={2} borderRadius="md">
+                    <Box key={index} p={5} mb={3} borderRadius="md" >
                       <Flex>
                         <Avatar size='xl' src={asset.icon} />
-                        <Box ml={3}>
+                        <Box ml={3} width='100%' minWidth="300px" >
                           <Text fontWeight="bold">{asset.name}</Text>
                           {app.balances
                             .filter((balance: any) => balance.caip === asset.caip)
@@ -172,7 +171,7 @@ export function Classic({ usePioneer }: any) {
                               );
                             })}
                         </Box>
-                        <Button ml="auto" onClick={() => onSelect(asset)}>
+                        <Button ml="auto" onClick={() => onSelect(asset)} size='md'>
                           Select
                         </Button>
                       </Flex>
