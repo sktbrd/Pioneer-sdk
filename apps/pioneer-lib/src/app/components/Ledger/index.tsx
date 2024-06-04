@@ -36,7 +36,7 @@ export default function Ledger({usePioneer}: any) {
     try {
       const parts = intent.split(':');
       //console.log('Setting Intent Blockchain: ', parts[2]);
-      const walletInfo = await app.swapKit.getWalletByChain(getChainEnumValue(parts[2]));
+      const walletInfo = await app.swapKit.syncWalletByChain(getChainEnumValue(parts[2]));
       //console.log('walletInfo: ', walletInfo);
       if (walletInfo) {
         //close

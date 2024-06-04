@@ -21,7 +21,8 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+//@ts-ignore
+let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['BTC']
@@ -59,11 +60,13 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
         let blockchains = [BLOCKCHAIN]
 
         //get paths for wallet
         let paths = getPaths(blockchains)
+        // paths = [paths[1]]
+        log.info("paths: ",paths.length)
+        log.info("paths: ",paths)
         // let paths = []
 
         // paths.push({
@@ -100,6 +103,7 @@ const test_service = async function (this: any) {
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
             paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -156,22 +160,27 @@ const test_service = async function (this: any) {
 
         log.info(tag,"app.assets: ",app.assets)
         log.info(tag,"app.pubkeys: ",app.pubkeys)
-        let asset = app.assets.filter((b:any) => b.networkId === ChainToNetworkId[Chain.Bitcoin])
-        log.info(tag,"asset: ",asset)
-        assert(asset[0])
-        assert(asset[0].caip)
-        assert(asset[0].pubkeys)
-        assert(asset[0].pubkeys[0])
+        // let asset = app.assets.filter((b:any) => b.networkId === ChainToNetworkId[Chain.Bitcoin])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
+        // assert(asset[0].pubkeys)
+        // assert(asset[0].pubkeys[0])
         //verify pubkey
 
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
 
         //assets
-        await app.setAssetContext(asset[0])
+        let assetInfo = assets.get(ChainToCaip[ASSET])
+        await app.setAssetContext(assetInfo)
         log.info(tag,"assetContext: ",app.assetContext)
         assert(app.assetContext.name)
         assert(app.assetContext.chain)
         assert(app.assetContext.caip)
         assert(app.assetContext.icon)
+        assert(app.assetContext.identifier)
 
         //check pairing
         // //context should match first account
@@ -185,27 +194,59 @@ const test_service = async function (this: any) {
         assert(app.pubkeys[0])
         log.info(tag,"balances: ",app.balances)
         log.info(tag,"balances: ",app.balances.length)
+
         // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
         // log.info(tag,"*** balance: ",balance[0])
         // assert(balance[0])
         // assert(balance[0].caip)
 
         //get wallet for chain
-        // let walletSwapkit = await app.swapKit.getWalletByChain('BTC')
+        // let walletSwapkit = await app.swapKit.syncWalletByChain('BTC')
         // log.info("walletSwapkit: ",walletSwapkit)
 
-        let assets = app.assets
-        log.info(tag,"assets: ",assets)
-        log.info(tag,"assets[0].pubkeys[0]: ",assets[0].pubkeys[0])
-        assert(assets)
-        assert(assets[0])
-        assert(assets[0].caip)
-        assert(assets[0].pubkeys)
-        assert(assets[0].pubkeys[0])
+        //sendMax
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(BLOCKCHAIN));
+        log.info("pubkeys[0]: ",pubkeys[0])
+        log.info("pubkeys[1]: ",pubkeys[1])
+        log.info("pubkeys[0].master: ",pubkeys[0].master)
+        log.info("pubkeys[1].master: ",pubkeys[1].master)
+        if(pubkeys[0].master == pubkeys[1].master)throw Error("error, wrong masters")
+        assert(pubkeys)
+        assert(pubkeys[0])
+        assert(pubkeys[0].pubkey)
+        assert(pubkeys[0].master)
+        assert(pubkeys[1])
+        assert(pubkeys[1].pubkey)
+        assert(pubkeys[1].master)
+
+        //verify balance
+        await app.getBalances()
+        log.info(tag,"balances: ",app.balances)
+        log.info(tag,"balances: ",app.balances.length)
+        assert(app.balances)
+        let balances = app.balances.filter((e: any) => e.caip == ChainToCaip[ASSET]);
+        log.info(tag,"balances: ",balances)
+        assert(balances)
+        assert(balances[0])
+        assert(balances[0].caip)
+        assert(balances[0].balance)
+        log.info(tag,"balance: ",balances[0].balance)
+
+        //get total spendable balance
+        let totalSpend = 0
+        for(let i = 0; i < balances.length; i++){
+            totalSpend += parseFloat(balances[i].balance)
+        }
+        log.info(tag,"totalSpend: ",totalSpend)
+        if(totalSpend <= 0) throw Error("error, no spendable balance. you are broke!")
+
+
+
 
         //TODO view inputs for pubkeys
 
         //TODO verify inputs
+
 
 
         // create assetValue
@@ -220,19 +261,19 @@ const test_service = async function (this: any) {
 
 
         //send
-        // let estimatePayload:any = {
-        //     feeRate: 10,
-        //     pubkeys,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("estimatePayload: ",estimatePayload)
-        // //verify amount is < max spendable
-        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
-        // log.info("maxSpendable: ",maxSpendable)
-        // log.info("maxSpendable: ",maxSpendable.getValue('string'))
+        let estimatePayload:any = {
+            feeRate: 10,
+            pubkeys,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
+        log.info("maxSpendable: ",maxSpendable.getValue('string'))
 
-        //send
+        // send
         // let sendPayload = {
         //     // assetValue,
         //     assetValue:maxSpendable,

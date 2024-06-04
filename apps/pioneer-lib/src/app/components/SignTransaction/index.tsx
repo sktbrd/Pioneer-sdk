@@ -127,7 +127,7 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
     try{
       if(!app) throw new Error("app still loading...")
       //
-      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
       if (!walletInfo) {
         console.log('Wallet not found, must pair first.');
         setIsPairing(true);

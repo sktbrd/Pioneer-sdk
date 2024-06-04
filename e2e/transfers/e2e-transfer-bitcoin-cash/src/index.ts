@@ -57,12 +57,20 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
+        let blockchains = [BLOCKCHAIN]
+
+        //get paths for wallet
+        let paths = getPaths(blockchains)
+        log.info("paths: ",paths.length)
+
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -99,39 +107,9 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN]
 
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        // let optimized:any = [];
-        // blockchains.forEach((network: any) => {
-        //     const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-        //     if (pathForNetwork) {
-        //         optimized.push(pathForNetwork);
-        //     }
-        // });
-        // log.info("optimized: ", optimized.length);
 
-        paths.push({
-            note:"Bitcoin Cash account 1 Default path",
-            type:"xpub",
-            script_type:"p2pkh",
-            available_scripts_types:['p2pkh'],
-            addressNList: [0x80000000 + 44, 0x80000000 + 145, 0x80000000 + 1],
-            addressNListMaster: [0x80000000 + 44, 0x80000000 + 145, 0x80000000 + 1, 0, 0],
-            curve: 'secp256k1',
-            showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-            blockchain: 'bitcoincash',
-            symbol: 'BCH',
-            symbolSwapKit: 'BCH',
-            network: 'bip122:000000000000000000651ef99cb9fcbe',
-        })
 
-        app.setPaths(paths)
 
         let pairObject = {
             type:WalletOption.KEEPKEY,
@@ -203,9 +181,9 @@ const test_service = async function (this: any) {
 
         //send
         let sendPayload = {
-            assetValue,
-            // assetValue:maxSpendable,
-            // isMax: true,
+            // assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

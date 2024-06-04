@@ -36,6 +36,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+
   const [maxSpendable, setMaxSpendable] = useState('');
   const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(true);
 
@@ -63,7 +64,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
       console.log("onStart Transfer page");
       console.log(tag, "assetContext: ", assetContext);
 
-      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
       console.log(tag, "walletInfo: ", walletInfo);
       if (!walletInfo) {
         console.log(tag, "connectWallet needed!");
@@ -99,6 +100,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   }, [app, app?.swapKit, assetContext]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setisMax(false);
     setInputAmount(event.target.value);
   };
 
@@ -126,7 +128,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         ':' +
         recipient,
       );
-      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
 
       if (!walletInfo) {
         let walletType = app.context.split(':')[0];
@@ -182,6 +184,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   }, [assetContext, inputAmount, app, recipient, sendAmount, toast, memo, isMax, connectWallet, setIntent]);
 
   const setMaxAmount = () => {
+    setisMax(true);
     setInputAmount(maxSpendable);
   };
 

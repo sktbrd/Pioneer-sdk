@@ -108,6 +108,7 @@ export function Classic({ usePioneer }: any) {
   };
 
   const formatBalance = (balance: string) => {
+    console.log("balance: ", balance);
     const [integer, decimal] = balance.split('.');
     const largePart = decimal?.slice(0, 4);
     const smallPart = decimal?.slice(4, 8);
@@ -115,7 +116,7 @@ export function Classic({ usePioneer }: any) {
   };
 
   return (
-    <Flex direction="column" height="100vh">
+    <Flex direction="column" >
       <Flex alignItems="center" p={4} borderBottom="1px solid #ccc">
         {assetContext ? (
           <IconButton
@@ -155,7 +156,7 @@ export function Classic({ usePioneer }: any) {
                     <Box key={index} p={5} mb={3} borderRadius="md" >
                       <Flex>
                         <Avatar size='xl' src={asset.icon} />
-                        <Box ml={3} width='100%' minWidth="300px" >
+                        <Box ml={3} width='100%' minWidth="360px" >
                           <Text fontWeight="bold">{asset.name}</Text>
                           {app.balances
                             .filter((balance: any) => balance.caip === asset.caip)
@@ -165,7 +166,9 @@ export function Classic({ usePioneer }: any) {
                                 <Text key={index}>
                                   {integer}.
                                   <Text as="span" fontSize="lg">{largePart}</Text>
-                                  {/*<Text as="span" fontSize="xs">{smallPart}</Text>*/}
+                                  {largePart === '0000' && (
+                                    <Text as="span" fontSize="xs">{smallPart}</Text>
+                                  )}
                                   <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
                                 </Text>
                               );

@@ -89,15 +89,15 @@ export const BASEToolbox = ({
         console.log(tag, 'Token Balance (raw Big Number): ', tokenBalanceBigNumber.toString());
 
         // Process the token balance
-        const assetStringToken = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630';
-        let tokenAssetValue = AssetValue.fromStringSync(assetStringToken, tokenBalanceBigNumber);
-        tokenAssetValue.address = '0xef743df8eda497bcf1977393c401a636518dd630';
-        tokenAssetValue.caip = 'eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630';
-        console.log(tag, 'Token Asset Value: ', tokenAssetValue);
+        // const assetStringToken = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630';
+        // let tokenAssetValue = AssetValue.fromStringSync(assetStringToken, tokenBalanceBigNumber);
+        // tokenAssetValue.address = '0xef743df8eda497bcf1977393c401a636518dd630';
+        // tokenAssetValue.caip = 'eip155:8453/erc20:0xef743df8eda497bcf1977393c401a636518dd630';
+        // console.log(tag, 'Token Asset Value: ', tokenAssetValue);
 
         //TODO get tokens from covalent
-
-        let balances = [gasTokenBalance, tokenAssetValue];
+        let balances = [gasTokenBalance];
+        // let balances = [gasTokenBalance, tokenAssetValue];
         console.log(tag, 'balances: ', balances);
         return balances;
       } catch (e) {

@@ -87,7 +87,7 @@ const Loan = ({ usePioneer, openModal }: any) => {
       if (!recipient) alert('You MUST input a recipient to send to!');
       // @TODO Validate Address!
 
-      const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+      const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
 
       if (!walletInfo) {
         pairWallet();

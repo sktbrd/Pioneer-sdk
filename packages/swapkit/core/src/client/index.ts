@@ -89,20 +89,33 @@ export class SwapKitCore<T = ''> {
   constructor({ stagenet }: { stagenet?: boolean } | undefined = {}) {
     this.stagenet = !!stagenet;
   }
-
-  getAddress = (chain: Chain) => {
+  getAddress = (chain: Chain, addressInfo?: any) => {
     const address = this.connectedChains[chain]?.address;
     if (!address) {
       throw new Error(`Not connected to chain: ${chain}`);
     }
     return address;
   };
+  getAddressAsync = async (chain: any, addressInfo?: any) => {
+    let tag = TAG + ' | getAddressAsync | ';
+    try {
+      console.log(tag, 'chain: ', chain);
+      console.log(tag, 'addressInfo: ', addressInfo);
+      const wallet = await this.getWallet(chain);
+      if (!wallet) throw Error('chain not connected! ' + chain);
+      let address = await wallet?.getAddress(addressInfo);
+      console.log(tag, 'address: ', address);
+      return address;
+    } catch (e) {
+      console.error(e);
+    }
+  };
   getExplorerTxUrl = (chain: Chain, txHash: string) => getExplorerTxUrl({ chain, txHash });
   getWallet = (chain: Chain) => this.connectedWallets[chain] as WalletMethods[Chain];
   getExplorerAddressUrl = (chain: Chain, address: string) =>
     getExplorerAddressUrl({ chain, address });
   getBalance = async (chain: Chain, potentialScamFilter?: boolean) => {
-    const wallet = await this.getWalletByChain(chain, potentialScamFilter);
+    const wallet = await this.syncWalletByChain(chain, potentialScamFilter);
 
     return wallet?.balance || [];
   };
@@ -351,8 +364,8 @@ export class SwapKitCore<T = ''> {
     }
   };
 
-  getWalletByChain = async (chain: Chain) => {
-    let tag = TAG + ' | getWalletByChain | ';
+  syncWalletByChain = async (chain: Chain) => {
+    let tag = TAG + ' | syncWalletByChain | ';
     try {
       //console.log(tag, 'start');
       const address = this.getAddress(chain);
@@ -370,7 +383,7 @@ export class SwapKitCore<T = ''> {
       }
 
       // let balance = [];
-      console.log(' getWalletByChain ' + chain + ': pubkeys: ', pubkeys);
+      console.log(tag, ' syncWalletByChain ' + chain + ': pubkeys: ', pubkeys);
       // for each pubkey iterate and sum the balance
       let balance: AssetValue[] = [];
       if (pubkeys.length === 0) {
@@ -879,7 +892,7 @@ export class SwapKitCore<T = ''> {
           );
           if (!walletMethods) throw new Error('Wallet methods not found');
           console.log(tag, 'walletMethods', walletMethods);
-          const result = (walletMethods as any).estimateMaxSendableAmount(params);
+          const result = await (walletMethods as any).estimateMaxSendableAmount(params);
           console.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);
           return result;
         }

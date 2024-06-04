@@ -16,7 +16,7 @@ import { EVMChainList, SwapKitCore, WalletOption } from '@coinmasters/core';
 // import { NativeList } from '@coinmasters/tokens';
 import {
   //   CoinGeckoList,
-  //   MayaList,
+  MayaList,
   NativeList,
   //   OneInchList,
   //   PancakeswapETHList,
@@ -42,6 +42,7 @@ import {
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
+  COIN_MAP_KEEPKEY_LONG,
   getPaths,
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
@@ -237,7 +238,9 @@ export class SDK {
         }
         // log.info("wallets",this.wallets)
         console.log(tag, 'this.paths: ', this.paths);
-        if (this.blockchains.length > 0) this.setPaths(getPaths(this.blockchains));
+        //force paths if not set
+        if (this.blockchains.length > 0 && this.paths.length === 0)
+          this.setPaths(getPaths(this.blockchains));
 
         // init swapkit
         this.swapKit = new SwapKitCore();
@@ -813,7 +816,7 @@ export class SDK {
           // Add tokens from various lists with their source
           [
             NativeList,
-            // MayaList,
+            MayaList,
             // CoinGeckoList,
             // OneInchList,
             // PancakeswapETHList,
@@ -909,15 +912,23 @@ export class SDK {
           // Get address for all paths for this blockchain
           for (let path of filteredPaths) {
             let chain: Chain = NetworkIdToChain[blockchain];
-            console.log('chain: ', chain);
+            console.log(tag, 'chain: ', chain);
 
             if (!chain) throw new Error('missing chain for blockchain!');
 
             let pubkey: any = {};
             pubkey.type = path.type;
-            console.log('path: ', path);
+            console.log(tag, 'path: ', path);
 
-            let address = await this.swapKit?.getAddress(chain);
+            let addressInfo = {
+              address_n: path.addressNListMaster,
+              coin: COIN_MAP_KEEPKEY_LONG[chain],
+              script_type: path.script_type,
+              showDisplay: false,
+            };
+
+            console.log(tag, 'addressInfo: ', addressInfo);
+            let address = await this.swapKit?.getAddressAsync(chain, addressInfo);
             if (!address) throw new Error(`Failed to get address for ${chain}`);
             if (address && address.indexOf('bitcoincash:') > -1)
               address = address.replace('bitcoincash:', '');
@@ -930,13 +941,22 @@ export class SDK {
             } else if (path.type === 'xpub' || path.type === 'zpub') {
               let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys([path]);
               if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
-              console.log(tag, ' pubkeys: ', pubkeys);
-              let pubkeyForPath = pubkeys[0];
-              // let pubkeyForPath = pubkeys.find(
-              //   (p: any) => p.addressNList.toString() === path.addressNList.toString(),
-              // );
-              // if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
+              console.log(tag, ' [path]: ', [path]);
+              console.log(tag, '[path]  pubkeys: ', pubkeys);
+
+              // let pubkeyForPath = pubkeys[0];
+              // console.log(tag, ' pubkeyForPath: ', pubkeyForPath);
+
+              let pubkeyForPath = pubkeys.find(
+                (p: any) =>
+                  p.addressNList.toString() + p.script_type ===
+                  path.addressNList.toString() + path.script_type,
+              );
+
+              if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
+
               if (pubkeyForPath) pubkey.pubkey = pubkeyForPath.xpub || pubkeyForPath.zpub;
+              if (!pubkeyForPath) throw new Error(`Failed to get pubkey for path in ${chain}`);
             }
 
             pubkey.context = this.context;
@@ -1012,8 +1032,8 @@ export class SDK {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
-          console.log(tag, 'getWalletByChain: ', chain);
-          let walletForChain = await this.swapKit?.getWalletByChain(chain);
+          console.log(tag, 'syncWalletByChain: ', chain);
+          let walletForChain = await this.swapKit?.syncWalletByChain(chain);
           console.log(tag, chain + ' walletForChain: ', walletForChain);
           if (walletForChain && walletForChain.balance) {
             // @ts-ignore

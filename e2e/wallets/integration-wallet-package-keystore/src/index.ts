@@ -15,7 +15,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 import { WalletOption, availableChainsByWallet, NetworkIdToChain, Chain } from '@coinmasters/types';
 
-const getWalletByChain = async (keepkey:any, chain:any) => {
+const syncWalletByChain = async (keepkey:any, chain:any) => {
     if (!keepkey[chain]) return null;
 
     const walletMethods = keepkey[chain].walletMethods;
@@ -299,7 +299,7 @@ const test_service = async function (this: any) {
         //got balances
         for(let i = 0; i < chains.length; i++) {
             let chain = chains[i]
-            let walletData:any = await getWalletByChain(keepkey, chain);
+            let walletData:any = await syncWalletByChain(keepkey, chain);
             log.info(chain+ " walletData: ",walletData)
             // keepkey[chain].wallet.address = walletData.address
             keepkey[chain].wallet.pubkeys = walletData.pubkeys
