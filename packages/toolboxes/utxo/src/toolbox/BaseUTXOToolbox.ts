@@ -115,28 +115,29 @@ const transfer = async ({
   return broadcastTx(signedPsbt.extractTransaction().toHex());
 };
 
-const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: BlockchairApiType) {
+const getPubkeyBalance = async function (
+  pubkey: string,
+  type: string,
+  apiClient: BlockchairApiType,
+) {
+  let tag = TAG + ' | getPubkeyBalance | ';
   try {
-    console.log('getPubkeyBalance pubkey: ', pubkey);
-    console.log('getPubkeyBalance type: ', type);
+    console.log(tag, 'getPubkeyBalance pubkey: ', pubkey);
+    console.log(tag, 'getPubkeyBalance type: ', type);
     switch (type) {
-      case 'pubkey':
       case 'zpub':
       case 'xpub':
-        console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
-        console.log('pubkey.pubkey.xpub: ', pubkey.pubkey.xpub);
         // eslint-disable-next-line no-case-declarations
-        const xpubBalance = await apiClient.getBalanceXpub(
-          pubkey.pubkey.xpub || pubkey.xpub || pubkey.pubkey,
-        );
-        //console.log(' | getPubkeyBalance | xpubBalance: ', xpubBalance);
+        const xpubBalance = await apiClient.getBalanceXpub(pubkey);
+        console.log(tag, ' xpubBalance: ', xpubBalance);
         return xpubBalance;
       case 'address':
         // eslint-disable-next-line no-case-declarations
-        const address = pubkey[type];
+        const address = pubkey.address;
         //console.log('getPubkeyBalance address: ', address);
         // eslint-disable-next-line no-case-declarations
         const addressBalance = await apiClient.getBalance(address);
+        console.log(tag, ' addressBalance: ', addressBalance);
         //console.log('getPubkeyBalance: addressBalance: ', addressBalance);
         return addressBalance;
       default:
@@ -147,36 +148,95 @@ const getPubkeyBalance = async function (pubkey: any, type: string, apiClient: B
   }
 };
 
-const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
-  console.log('getBalance pubkeys: ', pubkeys);
-  //legacy support
-  if (typeof pubkeys === 'string') {
-    pubkeys = [{ address: pubkeys }];
+const getBalance = async ({ pubkey, chain, apiClient }: any) => {
+  const tag = TAG + ' getBalance';
+  try {
+    console.log(tag, 'chain: ', chain);
+    console.log(tag, 'pubkey: ', pubkey);
+    let balance = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
+    console.log(tag, 'balance: ', balance);
+
+    return balance;
+  } catch (error) {
+    console.error(tag, 'Error in getBalance: ', error);
+    throw error; // re-throw the error after logging it
   }
-  let totalBalance = 0;
-  // eslint-disable-next-line @typescript-eslint/prefer-for-of
-  for (let i = 0; i < pubkeys.length; i++) {
-    let pubkey = pubkeys[i];
-    let type = '';
-    if (pubkey.pubkey) {
-      type = 'pubkey';
-      //console.log('pubkey: ', pubkey.pubkey);
-    } else {
-      type = 'address';
-    }
-    //console.log('type: ', type);
-    let balance = await getPubkeyBalance(pubkey, type, apiClient);
-    console.log('PRE BaseUTXO getPubkeyBalance balance: ', balance);
-    if (typeof balance === 'object') balance = 0;
-    console.log('POST BaseUTXO getPubkeyBalance balance: ', balance);
-    totalBalance = totalBalance + balance;
-  }
-  totalBalance = totalBalance / 100000000;
-  console.log(`BaseUTXO totalBalance:`, totalBalance);
-  const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
-  console.log('BaseUTXO asset: ', asset);
-  return [asset];
 };
+
+// const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
+//   const tag = TAG + ' getBalance';
+//   try {
+//     console.log(tag, 'pubkeys: ', pubkeys);
+//
+//     // Legacy support
+//     if (typeof pubkeys === 'string') {
+//       pubkeys = [{ address: pubkeys }];
+//     }
+//
+//     let totalBalance = 0;
+//
+//     // eslint-disable-next-line @typescript-eslint/prefer-for-of
+//     for (let i = 0; i < pubkeys.length; i++) {
+//       let pubkey = pubkeys[i];
+//       let type = '';
+//       if (pubkey.pubkey) {
+//         type = 'pubkey';
+//       } else {
+//         type = 'address';
+//       }
+//
+//       let balance = await getPubkeyBalance(pubkey, type, apiClient);
+//       console.log(tag, 'PRE BaseUTXO getPubkeyBalance balance: ', balance);
+//
+//       if (typeof balance === 'object') balance = 0;
+//       console.log(tag, 'POST BaseUTXO getPubkeyBalance balance: ', balance);
+//
+//       totalBalance += balance;
+//     }
+//
+//     totalBalance = totalBalance / 100000000;
+//     console.log(tag, `BaseUTXO totalBalance:`, totalBalance);
+//
+//     const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
+//     console.log(tag, 'BaseUTXO asset: ', asset);
+//
+//     return [asset];
+//   } catch (error) {
+//     console.error(tag, 'Error in getBalance: ', error);
+//     throw error; // re-throw the error after logging it
+//   }
+// };
+
+// const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
+//   console.log('getBalance pubkeys: ', pubkeys);
+//   //legacy support
+//   if (typeof pubkeys === 'string') {
+//     pubkeys = [{ address: pubkeys }];
+//   }
+//   let totalBalance = 0;
+//   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+//   for (let i = 0; i < pubkeys.length; i++) {
+//     let pubkey = pubkeys[i];
+//     let type = '';
+//     if (pubkey.pubkey) {
+//       type = 'pubkey';
+//       //console.log('pubkey: ', pubkey.pubkey);
+//     } else {
+//       type = 'address';
+//     }
+//     //console.log('type: ', type);
+//     let balance = await getPubkeyBalance(pubkey, type, apiClient);
+//     console.log('PRE BaseUTXO getPubkeyBalance balance: ', balance);
+//     if (typeof balance === 'object') balance = 0;
+//     console.log('POST BaseUTXO getPubkeyBalance balance: ', balance);
+//     totalBalance = totalBalance + balance;
+//   }
+//   totalBalance = totalBalance / 100000000;
+//   console.log(`BaseUTXO totalBalance:`, totalBalance);
+//   const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
+//   console.log('BaseUTXO asset: ', asset);
+//   return [asset];
+// };
 
 const getDefaultTxFeeByChain = (chain: Chain) => {
   switch (chain) {
@@ -720,7 +780,7 @@ export const BaseUTXOToolbox = (
     derivationPath: string;
   }) => (await createKeysForPath({ phrase, derivationPath, ...baseToolboxParams })).toWIF(),
 
-  getBalance: (pubkeys: any[]) => getBalance({ pubkeys, ...baseToolboxParams }),
+  getBalance: (pubkey: any) => getBalance({ pubkey, ...baseToolboxParams }),
 
   getFeeRates: () => getFeeRates(baseToolboxParams.apiClient),
 

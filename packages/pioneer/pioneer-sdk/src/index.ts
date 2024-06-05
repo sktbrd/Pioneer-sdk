@@ -31,14 +31,9 @@ import {
   //   WoofiList,
 } from '@coinmasters/tokens';
 import type { Chain } from '@coinmasters/types';
-import { ChainToNetworkId, NetworkIdToChain } from '@coinmasters/types';
+import { NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import {
-  caipToNetworkId,
-  caipToThorchain,
-  shortListSymbolToCaip,
-  tokenToCaip,
-} from '@pioneer-platform/pioneer-caip';
+import { tokenToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
@@ -886,7 +881,7 @@ export class SDK {
         // For each enabled blockchain
         for (let i = 0; i < this.blockchains.length; i++) {
           let blockchain = this.blockchains[i];
-          console.log('blockchain: ', blockchain);
+          console.log(tag, 'blockchain: ', blockchain);
 
           let filteredPaths = this.paths.filter((path) => {
             // Ensure path.networks is defined
@@ -904,7 +899,7 @@ export class SDK {
             return path.networks.includes(blockchain);
           });
 
-          console.log('filteredPaths: ', filteredPaths);
+          console.log(tag, 'filteredPaths: ', filteredPaths);
 
           if (!filteredPaths || filteredPaths.length === 0)
             throw new Error('Unable to get pubkey for blockchain: ' + blockchain);
@@ -1018,86 +1013,105 @@ export class SDK {
         let balances = [];
 
         //TODO why cant I do this? batch arch!
-        // for (let i = 0; i < this.blockchains.length; i++) {
-        //   const blockchain = this.blockchains[i];
-        //   let chain: Chain = NetworkIdToChain[blockchain];
-        //   //get balances for each pubkey
-        //   console.log('chain: ', chain);
-        //   //get balances for chain
-        //   let balancesForChain = await this.swapKit?.getBalances(chain);
-        //   console.log('balancesForChain: ', balancesForChain);
-        // }
-
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
           //get balances for each pubkey
-          console.log(tag, 'syncWalletByChain: ', chain);
-          let walletForChain = await this.swapKit?.syncWalletByChain(chain);
-          console.log(tag, chain + ' walletForChain: ', walletForChain);
-          if (walletForChain && walletForChain.balance) {
-            // @ts-ignore
-            console.log('walletForChain.balance: ', walletForChain.balance);
-            for (let j = 0; j < walletForChain.balance.length; j++) {
-              // @ts-ignore
-              let balance: AssetValue = walletForChain?.balance[j];
-              console.log(tag, 'balance: ', balance);
-
-              //log.debug('balance: ', balance);
-              let balanceString: any = {};
-              if (!balance.chain || !balance.type) {
-                console.error('chain: ', balance);
-                // console.error('chain: ', balance[0]);
-                // console.error('chain: ', balance[0].chain);
-                // console.error('symbol: ', balance[0].symbol);
-                // console.error('ticker: ', balance[0].ticker);
-                // console.error('type: ', balance[0].type);
-                console.error('Missing required properties for balance: ', balance);
-              } else {
-                //caip
-                try {
-                  // Construct CAIP identifier for ERC20 or native tokens based on balance type and chain.
-                  let caip =
-                    balance.type !== 'Native'
-                      ? `${ChainToNetworkId[balance.chain]}/erc20:${balance.symbol.split('-')[1]}`
-                      : shortListSymbolToCaip[balance.chain];
-                  console.log(tag, 'balanceToCaip: result: caip: ', caip);
-                  if (caip) {
-                    //log.info("balance: ",balance)
-                    //Assuming these properties already exist in each balance
-                    balanceString.context = this.context;
-                    balanceString.contextType = this.context.split(':')[0];
-                    balanceString.caip = caip;
-                    balanceString.ref = balanceString.context + caip;
-                    balanceString.identifier = caipToThorchain(caip, balance.ticker);
-                    balanceString.networkId = caipToNetworkId(caip);
-                    balanceString.symbol = balance.symbol;
-                    balanceString.chain = balance.chain;
-                    balanceString.ticker = balance.ticker;
-                    // balanceString.address = balance.address;
-                    balanceString.type = balance.type;
-                    console.log(tag, 'value: ', balance.getValue('string'));
-                    balanceString.balance = balance.getValue('string');
-                    // if (balance.toFixed) {
-                    //   balanceString.balance = balance.toFixed(balance.decimal).toString();
-                    // } else {
-                    //   console.error("invalid balance! doesn't have toFixed: ", balance);
-                    //   throw Error('Invalid balance!');
-                    // }
-                    balances.push(balanceString);
-                  } else {
-                    console.error('Failed to get caip for balance: ', balance);
-                  }
-                } catch (e) {
-                  console.error('e: ', e);
-                  console.error('Invalid balance!: ', balance);
-                }
-              }
-            }
+          console.log('chain: ', chain);
+          //get balances for chain
+          let pubkeys = this.pubkeys.filter((pubkey: any) => pubkey.networks.includes(blockchain));
+          console.log('pubkeys: ', pubkeys);
+          if (pubkeys && pubkeys.length > 0) {
+            let balancesForChain = await this.swapKit?.getBalances(chain, pubkeys);
+            console.log('balancesForChain: ', balancesForChain);
+          } else {
+            console.log('no pubkeys for chain: ', chain);
           }
         }
-        console.log(tag, 'balances: ', balances);
-        if (balances && balances.length > 0) this.setBalances(balances);
+
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        // for (let i = 0; i < this.blockchains.length; i++) {
+        //   const blockchain = this.blockchains[i];
+        //   let chain: Chain = NetworkIdToChain[blockchain];
+        //   //get balances for each pubkey
+        //   console.log(tag, 'syncWalletByChain: ', chain);
+        //   let walletForChain = await this.swapKit?.syncWalletByChain(chain);
+        //   console.log(tag, chain + ' walletForChain: ', walletForChain);
+        // }
+        // console.log(tag, 'balances: ', balances);
+        // if (balances && balances.length > 0) this.setBalances(balances);
+
+        // for (let i = 0; i < this.blockchains.length; i++) {
+        //   const blockchain = this.blockchains[i];
+        //   let chain: Chain = NetworkIdToChain[blockchain];
+        //   //get balances for each pubkey
+        //   console.log(tag, 'syncWalletByChain: ', chain);
+        //   let walletForChain = await this.swapKit?.syncWalletByChain(chain);
+        //   console.log(tag, chain + ' walletForChain: ', walletForChain);
+        //   if (walletForChain && walletForChain.balance) {
+        //     // @ts-ignore
+        //     console.log('walletForChain.balance: ', walletForChain.balance);
+        //     for (let j = 0; j < walletForChain.balance.length; j++) {
+        //       // @ts-ignore
+        //       let balance: AssetValue = walletForChain?.balance[j];
+        //       console.log(tag, 'balance: ', balance);
+        //
+        //       //log.debug('balance: ', balance);
+        //       let balanceString: any = {};
+        //       if (!balance.chain || !balance.type) {
+        //         console.error('chain: ', balance);
+        //         // console.error('chain: ', balance[0]);
+        //         // console.error('chain: ', balance[0].chain);
+        //         // console.error('symbol: ', balance[0].symbol);
+        //         // console.error('ticker: ', balance[0].ticker);
+        //         // console.error('type: ', balance[0].type);
+        //         console.error('Missing required properties for balance: ', balance);
+        //       } else {
+        //         //caip
+        //         try {
+        //           // Construct CAIP identifier for ERC20 or native tokens based on balance type and chain.
+        //           let caip =
+        //             balance.type !== 'Native'
+        //               ? `${ChainToNetworkId[balance.chain]}/erc20:${balance.symbol.split('-')[1]}`
+        //               : shortListSymbolToCaip[balance.chain];
+        //           console.log(tag, 'balanceToCaip: result: caip: ', caip);
+        //           if (caip) {
+        //             //log.info("balance: ",balance)
+        //             //Assuming these properties already exist in each balance
+        //             balanceString.context = this.context;
+        //             balanceString.contextType = this.context.split(':')[0];
+        //             balanceString.caip = caip;
+        //             balanceString.ref = balanceString.context + caip;
+        //             balanceString.identifier = caipToThorchain(caip, balance.ticker);
+        //             balanceString.networkId = caipToNetworkId(caip);
+        //             balanceString.symbol = balance.symbol;
+        //             balanceString.chain = balance.chain;
+        //             balanceString.ticker = balance.ticker;
+        //             // balanceString.address = balance.address;
+        //             balanceString.type = balance.type;
+        //             console.log(tag, 'value: ', balance.getValue('string'));
+        //             balanceString.balance = balance.getValue('string');
+        //             // if (balance.toFixed) {
+        //             //   balanceString.balance = balance.toFixed(balance.decimal).toString();
+        //             // } else {
+        //             //   console.error("invalid balance! doesn't have toFixed: ", balance);
+        //             //   throw Error('Invalid balance!');
+        //             // }
+        //             balances.push(balanceString);
+        //           } else {
+        //             console.error('Failed to get caip for balance: ', balance);
+        //           }
+        //         } catch (e) {
+        //           console.error('e: ', e);
+        //           console.error('Invalid balance!: ', balance);
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+        // console.log(tag, 'balances: ', balances);
+        // if (balances && balances.length > 0) this.setBalances(balances);
 
         // balances = balances.filter(
         //   (balance, index, self) => index === self.findIndex((b) => b.ref === balance.ref),
