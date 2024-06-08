@@ -10,6 +10,7 @@ import type { UTXOChain } from '@coinmasters/types';
 import { Chain, FeeOption } from '@coinmasters/types';
 //@ts-ignore
 import { AssetValue, SwapKitNumber } from '@pioneer-platform/helpers';
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
 import { HDKey } from '@scure/bip32';
 import { payments, Psbt } from 'bitcoinjs-lib';
 import * as coinSelect from 'coinselect';
@@ -151,12 +152,25 @@ const getPubkeyBalance = async function (
 const getBalance = async ({ pubkey, chain, apiClient }: any) => {
   const tag = TAG + ' getBalance';
   try {
+    let pubkey;
+    if (Array.isArray(pubkey)) {
+      pubkey = pubkey[0];
+    } else {
+      pubkey = pubkey;
+    }
+
     console.log(tag, 'chain: ', chain);
     console.log(tag, 'pubkey: ', pubkey);
-    let balance = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
-    console.log(tag, 'balance: ', balance);
+    let balanceRaw = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
+    console.log(tag, 'balanceRaw: ', balanceRaw);
 
-    return balance;
+    const asset = await AssetValue.fromChainOrSignature(chain, BigInt(balanceRaw));
+    asset.caip = ChainToCaip[chain];
+    if (!asset.caip) throw new Error('Invalid chain! missing caip! ');
+    console.log('BaseUTXO asset: ', asset);
+    asset.pubkey = pubkey.pubkey;
+
+    return asset;
   } catch (error) {
     console.error(tag, 'Error in getBalance: ', error);
     throw error; // re-throw the error after logging it

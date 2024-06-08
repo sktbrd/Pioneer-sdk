@@ -1,15 +1,19 @@
 import type { ChainId } from '@coinmasters/types';
 import type { StdFee } from '@cosmjs/amino';
+import { AssetValue, formatBigIntToSafeValue } from '@pioneer-platform/helpers';
+//@ts-ignore
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
 import { base64 } from '@scure/base';
 
 import type { CosmosSDKClientParams, TransferParams } from './types.ts';
 import {
   createSigningStargateClient,
-  createStargateClient,
   DEFAULT_COSMOS_FEE_MAINNET,
   getDenom,
   getRPC,
 } from './util.ts';
+const PIONEER_API_URI = 'https://pioneers.dev';
+const TAG = ' | CosmosClient | ';
 
 export class CosmosClient {
   server: string;
@@ -49,14 +53,32 @@ export class CosmosClient {
   };
 
   getBalance = async (address: string) => {
+    let tag = TAG + ' | getBalance | ';
     try {
-      const client = await createStargateClient(this.rpcUrl);
-      const allBalances = await client.getAllBalances(address);
+      console.log(tag, 'getBalance: ', address);
 
-      return allBalances.map((balance: { denom: string }) => ({
-        ...balance,
-        denom: balance.denom.includes('/') ? balance.denom.toUpperCase() : balance.denom,
-      }));
+      const response = await fetch(`${this.rpcUrl}/api/v1/account/${address}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch balances: ${response.statusText}`);
+      }
+      const balancesCosmos = await response.json();
+      console.log(tag, 'balancesCosmos: ', balancesCosmos);
+      console.log(tag, 'balancesCosmos: ', balancesCosmos.balance);
+
+      //to SafeValue
+      let value = formatBigIntToSafeValue({
+        value: balancesCosmos.balance,
+        decimal: 6,
+      });
+
+      await AssetValue.loadStaticAssets();
+      let identifier = 'GAIA.ATOM';
+      let balanceCosmos = AssetValue.fromStringSync(identifier, value);
+      balanceCosmos.caip = ChainToCaip['GAIA'];
+      balanceCosmos.identifier = identifier;
+      console.log(tag, 'balanceCosmos: ', balanceCosmos);
+
+      return balanceCosmos;
     } catch (error) {
       console.error('Failed on node: ', this.rpcUrl);
       console.error('An error occurred:', error);
@@ -65,8 +87,51 @@ export class CosmosClient {
   };
 
   getAccount = async (address: string) => {
-    const client = await createStargateClient(this.rpcUrl);
-    return client.getAccount(address);
+    let tag = TAG + ' | getAccount | ';
+    try {
+      const response = await fetch(`${this.rpcUrl}/api/v1/account/${address}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch balances: ${response.statusText}`);
+      }
+      const cosmosInfo = await response.json();
+      return cosmosInfo;
+    } catch (e) {
+      console.error(tag, e);
+      throw e;
+    }
+  };
+
+  broadcast = async (tx: string) => {
+    const tag = `${TAG} | broadcast | `;
+    try {
+      console.log('tx: ', tx);
+      const body = { rawTx: tx };
+      console.log('body: ', body);
+      let broadcast = {
+        network: 'cosmos',
+        serialized: tx,
+        invocationId: 'pioneer-sdk:',
+        noBroadcast: false,
+      };
+      const response = await fetch(`${PIONEER_API_URI}/api/v1/broadcast`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(broadcast),
+      });
+      console.log(tag, 'response: ', response);
+      if (!response.ok) {
+        throw new Error(`Failed to broadcast transaction: ${response.statusText}`);
+      }
+
+      const cosmosInfo = await response.json();
+      console.log(tag, 'cosmosInfo: ', cosmosInfo);
+      return cosmosInfo.txid;
+    } catch (e) {
+      console.error(tag, e);
+      throw e;
+    }
   };
 
   transfer = async ({

@@ -1,71 +1,81 @@
-import { AssetValue, RequestClient } from '@pioneer-platform/helpers';
 import { RPCUrl } from '@coinmasters/types';
-
-const TAG = ' | thorchain-toolbox | ';
-//https://pioneers.dev/api/v1/getAccountInfo/osmosis/
+import { AssetValue } from '@pioneer-platform/helpers';
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
+const TAG = ' | thorchain-PIONEER | ';
 const PIONEER_API_URI = 'https://pioneers.dev';
 // const PIONEER_API_URI = 'http://localhost:9001';
 
-const getAccount = (address: string): Promise<any> => {
-  // Construct the URL
+const getAccount = async (address: string): Promise<any> => {
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/thorchain/${address}`;
-
-  // Log the URL
-  //console.log(`Requesting URL: ${url}`);
-
-  // Make the request
-  return RequestClient.get<any>(url);
-};
-
-const getBalance = async (address: any[]) => {
-  //console.log(address)
   try {
-    //console.log('address: ', address[0].address);
-    //console.log(
-    //   'URL: ',
-    //   `${PIONEER_API_URI}/api/v1/getPubkeyBalance/thorchain/${address[0].address}`,
-    // );
-    const balancesNative: any = await RequestClient.get(
-      `${PIONEER_API_URI}/api/v1/getPubkeyBalance/thorchain/${address[0].address}`,
-    );
-    //console.log('balancesNative: ', balancesNative);
-
-    await AssetValue.loadStaticAssets();
-    let identifier = 'THOR.RUNE';
-    const assetValueNativeNative = AssetValue.fromStringSync(identifier, balancesNative);
-    //console.log('assetValueNativeNative: ', assetValueNativeNative);
-
-    return [assetValueNativeNative];
-  } catch (e) {
-    return [];
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching account info: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`${TAG} getAccount error: `, error);
+    throw error;
   }
 };
 
-const sendRawTransaction = async (tx, sync = true) => {
+const getBalance = async (pubkey: any, chain: string) => {
+  let tag = TAG + ' | getBalance | ';
+  try {
+    console.log(tag, 'pubkey: ', pubkey);
+    let address;
+    if (Array.isArray(pubkey)) {
+      address = pubkey[0].address;
+    } else {
+      address = pubkey.address;
+    }
+    console.log(tag, 'address: ', address);
+
+    const url = `${PIONEER_API_URI}/api/v1/getPubkeyBalance/thorchain/${address}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching balance: ${response.statusText}`);
+    }
+    const balancesNative = await response.json();
+
+    await AssetValue.loadStaticAssets();
+    let identifier = 'THOR.RUNE';
+    const assetValueNativeNative: any = AssetValue.fromStringSync(identifier, balancesNative);
+    assetValueNativeNative.identifier = identifier;
+    assetValueNativeNative.caip = ChainToCaip['THOR'];
+
+    return assetValueNativeNative;
+  } catch (error) {
+    console.error(`${tag} getBalance error: `, error);
+    throw error;
+  }
+};
+
+const sendRawTransaction = async (tx: any, sync = true) => {
   let tag = TAG + ' | sendRawTransaction | ';
   try {
     let output: any = {};
-    // Construct payload
     let payload = {
       tx_bytes: tx,
       mode: sync ? 'BROADCAST_MODE_SYNC' : 'BROADCAST_MODE_ASYNC',
     };
 
-    // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.THORChain}/cosmos/tx/v1beta1/txs`;
-    //console.log(tag, 'urlRemote: ', urlRemote);
-
-    // Sending the transaction using RequestClient
-    let result = await RequestClient.post(urlRemote, {
+    const response = await fetch(urlRemote, {
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        'content-type': 'application/json', // Assuming JSON content type is required
+        'content-type': 'application/json',
       },
     });
-    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
-    // Handle the response
-    if (result.tx_response.txhash) {
+    if (!response.ok) {
+      throw new Error(`Error broadcasting transaction: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (result.tx_response && result.tx_response.txhash) {
       output.txid = result.tx_response.txhash;
       output.success = true;
     } else {
@@ -73,18 +83,16 @@ const sendRawTransaction = async (tx, sync = true) => {
       output.error = 'No txhash found in response';
     }
     return output;
-  } catch (e) {
-    //console.log(e);
-    throw e;
+  } catch (error) {
+    console.error(`${tag} sendRawTransaction error: `, error);
+    throw error;
   }
 };
 
 export const ThorchainToolboxPioneer = (): any => {
   return {
-    // transfer: (params: TransferParams) => transfer(params),
     getAccount,
     getBalance,
-    // getFees,
     sendRawTransaction,
   };
 };

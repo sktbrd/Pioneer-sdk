@@ -89,12 +89,26 @@ export class SwapKitCore<T = ''> {
   constructor({ stagenet }: { stagenet?: boolean } | undefined = {}) {
     this.stagenet = !!stagenet;
   }
-  getAddress = (chain: Chain, addressInfo?: any) => {
-    const address = this.connectedChains[chain]?.address;
-    if (!address) {
-      throw new Error(`Not connected to chain: ${chain}`);
+  // getAddress = (chain: Chain, addressInfo?: any) => {
+  //   const address = this.connectedChains[chain]?.address;
+  //   if (!address) {
+  //     throw new Error(`Not connected to chain: ${chain}`);
+  //   }
+  //   return address;
+  // };
+  getAddress = async (chain: any, addressInfo?: any) => {
+    let tag = TAG + ' | getAddress | ';
+    try {
+      console.log(tag,'chain: ',chain)
+      if(!this.connectedChains[chain]) throw Error('chain not connected! ' + chain)
+      const address = this.connectedChains[chain]?.address;
+      if (!address) {
+        throw new Error(`Failed to get address from connected wallet ${chain}`);
+      }
+      return address;
+    } catch (e) {
+      console.error(e);
     }
-    return address;
   };
   getAddressAsync = async (chain: any, addressInfo?: any) => {
     let tag = TAG + ' | getAddressAsync | ';
@@ -122,37 +136,28 @@ export class SwapKitCore<T = ''> {
   getBalances = async (chain: Chain, pubkeys: any) => {
     let tag = TAG + ' | getBalances | ';
     try {
+      console.log(tag, '****** CHECKPOINT *******: ', chain);
       console.log(tag, 'chain: ', chain);
       console.log(tag, 'pubkeys: ', pubkeys);
       let balances: any = [];
-      //for each blockchain
+
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < pubkeys.length; i++) {
         let pubkey = pubkeys[i];
-        console.log(tag, 'pubkey: ', pubkey);
-        //get balance of pubkey
-        let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance(pubkey);
-        console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
+        console.log(tag, '****** pubkey: ', pubkey);
+        console.log(tag, 'this.getWallet(chain): ', this.getWallet(chain));
 
-
-        // if (pubkey.type === 'address') {
-        //   let address = pubkey.address;
-        //   console.log(tag, 'address: ', address);
-        //   if (!address) throw Error('invalid pubkey missing address!');
-        //   let balance = await this.getWallet(chain)?.getBalance([{ address }]);
-        //   console.log(tag, 'balance: ', balance);
-        // } else if (pubkey.type === 'xpub' || pubkey.type === 'zpub') {
-        //   let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance([{ pubkey }]);
-        //   console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
-        // }
+        // Get balance of pubkey
+        let pubkeyBalance: any = await this.getWallet(chain)?.getBalance([pubkey]);
+        console.log(tag, 'pubkeyBalances: ', pubkeyBalance);
+        balances.push(pubkeyBalance);
       }
-      //if pubkey is for blockchain
 
-      //get balance of pubkey
-
+      console.log(tag, 'final balances: ', balances);
       return balances;
     } catch (e) {
-      console.error(e);
+      console.error(tag, 'Error: ', e);
+      throw e;
     }
   };
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
@@ -422,18 +427,20 @@ export class SwapKitCore<T = ''> {
       for (let i = 0; i < pubkeys.length; i++) {
         let pubkey = pubkeys[i];
         console.log(tag, 'pubkey: ', pubkey);
+        console.log(tag, 'pubkey networks: ', pubkey.networks);
         //if eip155 in network name
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let j = 0; j < pubkey.networks.length; j++) {
           let networkId = pubkey.networks[j];
           console.log(tag, 'networkId: ', networkId);
-          if (networkId.includes('eip155')) {
-            console.log(tag, 'network includes eip155');
+          if (networkId.includes('eip155') || pubkey.type === 'address') {
+            console.log(tag, 'network includes eip155 or is marked address');
             //get balance
             let balance = await this.getWallet(chain)?.getBalance([{ address }]);
             console.log(tag, 'balance: ', balance);
             balance.push(balance);
           } else {
+            console.log(tag, 'Scan Xpub or other public key type');
             //
             let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance([
               { pubkey },
@@ -445,6 +452,34 @@ export class SwapKitCore<T = ''> {
           }
         }
       }
+
+
+      // for (let i = 0; i < pubkeys.length; i++) {
+      //   let pubkey = pubkeys[i];
+      //   console.log(tag, 'pubkey: ', pubkey);
+      //   //if eip155 in network name
+      //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      //   for (let j = 0; j < pubkey.networks.length; j++) {
+      //     let networkId = pubkey.networks[j];
+      //     console.log(tag, 'networkId: ', networkId);
+      //     if (networkId.includes('eip155')) {
+      //       console.log(tag, 'network includes eip155');
+      //       //get balance
+      //       let balance = await this.getWallet(chain)?.getBalance([{ address }]);
+      //       console.log(tag, 'balance: ', balance);
+      //       balance.push(balance);
+      //     } else {
+      //       //
+      //       let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance([
+      //         { pubkey },
+      //       ]);
+      //       console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
+      //       pubkeyBalances.forEach((pubkeyBalance) => {
+      //         balance.push(pubkeyBalance);
+      //       });
+      //     }
+      //   }
+      // }
 
       // // let balance = [];
       // console.log(tag, ' syncWalletByChain ' + chain + ': pubkeys: ', pubkeys);
@@ -1036,6 +1071,7 @@ export class SwapKitCore<T = ''> {
   }) => {
     const tag = TAG + ' | EstimateMaxSendableAmount | ';
     try {
+      console.log(tag, 'Estimating max sendable amount for chain: ', chain);
       const walletMethods = this.getWallet<typeof chain>(chain);
       if (!walletMethods) throw Error('Failed to getWallet for chain: ' + chain);
       switch (chain) {
@@ -1084,6 +1120,7 @@ export class SwapKitCore<T = ''> {
         case Chain.Binance:
         case Chain.Mayachain:
         case Chain.THORChain:
+        case Chain.Osmosis:
         case Chain.Cosmos: {
           const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-cosmos');
           console.log(
@@ -1174,7 +1211,7 @@ export class SwapKitCore<T = ''> {
   connectKeystore = async (_chains: Chain[], _phrase: string): Promise<void> => {
     throw new SwapKitError('core_wallet_keystore_not_installed');
   };
-  connectKeepkey = async (_chains: Chain[], paths: any): Promise<string> => {
+  connectKeepkey = async (_chains: Chain[], paths: any): Promise<any> => {
     throw new SwapKitError('core_wallet_keepkey_not_installed');
   };
   connectLedger = async (_chains: Chain, _derivationPath: number[]): Promise<void> => {

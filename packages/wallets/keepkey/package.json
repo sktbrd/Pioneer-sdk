@@ -10,9 +10,9 @@
     "@cosmjs/math": "^0.32.2",
     "@cosmjs/stargate": "0.31.1",
     "@keepkey/keepkey-sdk": "^0.2.55",
-    "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.2.26",
-    "@pioneer-platform/pioneer-coins": "latest",
+    "@pioneer-platform/loggerdog": "^8.3.1",
+    "@pioneer-platform/pioneer-caip": "^9.2.27",
+    "@pioneer-platform/pioneer-coins": "^9.2.23",
     "@types/bchaddrjs": "0.4.0",
     "bchaddrjs": "0.5.2",
     "bitcoinjs-lib": "5.2.0",
@@ -67,5 +67,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "13.0.31"
+  "version": "13.0.33"
 }

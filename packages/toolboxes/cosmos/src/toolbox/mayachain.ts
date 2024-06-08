@@ -1,72 +1,96 @@
-import { AssetValue, RequestClient, SwapKitNumber } from '@pioneer-platform/helpers';
 import { BaseDecimal, FeeOption } from '@coinmasters/types';
+import { AssetValue, SwapKitNumber } from '@pioneer-platform/helpers';
+import { Chain, ChainToCaip } from '@pioneer-platform/pioneer-caip/lib';
 
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 const PIONEER_API_URI = 'https://pioneers.dev';
 // const PIONEER_API_URI = 'http://localhost:9001';
 const TAG = ' | mayachain-toolbox | ';
-const getAccount = (address: string): Promise<any> => {
-  // Construct the URL
+
+const getAccount = async (address: string): Promise<any> => {
   const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/mayachain/${address}`;
-
-  // Log the URL
-  //console.log(`Requesting URL: ${url}`);
-
-  // Make the request
-  return RequestClient.get<any>(url);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error(`${TAG} Error in getAccount:`, error);
+    throw error;
+  }
 };
 
-const getBalance = async (address: any) => {
+const getBalance = async (pubkey: any) => {
+  let tag = TAG + ' | getBalance | ';
   try {
-    //console.log('Fetching balances for address:', address);
-    //console.log('Fetching balances for address:', address[0].address);
-    const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address[0].address}`;
-    console.log('URL:', balancesEndpoint);
+    let address;
+    if (Array.isArray(pubkey)) {
+      address = pubkey[0].address;
+    } else {
+      address = pubkey.address;
+    }
 
-    // Fetch the balances for maya and cacao
-    const balances: any = await RequestClient.get(balancesEndpoint);
-    console.log('Balances:', balances);
+    const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address}`;
+    console.log(tag, 'URL:', balancesEndpoint);
+
+    const response = await fetch(balancesEndpoint);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const balances = await response.json();
+    console.log(tag, 'Balances raw:', balances);
 
     await AssetValue.loadStaticAssets();
+    for (let i = 0; i < balances.length; i++) {
+      const balance = balances[i];
+      if (balance.denom.toUpperCase() === 'CACAO') {
+        const identifier = `MAYA.${balance.denom.toUpperCase()}`;
+        const assetValue = AssetValue.fromStringSync(identifier, balance.amount.toString());
+        assetValue.caip = ChainToCaip[Chain.Mayachain];
+        balances[i] = assetValue;
+      }
+    }
 
-    // Process each balance using AssetValue
-    return balances.map((balance: any) => {
-      const identifier = `MAYA.${balance.denom.toUpperCase()}`;
-      const assetValue = AssetValue.fromStringSync(identifier, balance.amount.toString());
-      //console.log(`Asset value for ${identifier}:`, assetValue);
-      return assetValue;
-    });
+    // return balances.map((balance: any) => {
+    //   const identifier = `MAYA.${balance.denom.toUpperCase()}`;
+    //   const assetValue = AssetValue.fromStringSync(identifier, balance.amount.toString());
+    //   return assetValue;
+    // });
+
+    console.log(tag, 'Balances final:', balances);
+    return balances[0];
   } catch (e) {
     console.error('Error fetching balances:', e);
     return [];
   }
 };
 
-const sendRawTransaction = async (tx, sync = true) => {
+const sendRawTransaction = async (tx: any, sync: boolean = true) => {
   let tag = TAG + ' | sendRawTransaction | ';
   try {
     let output: any = {};
-    // Construct payload
-    let payload = {
+    const payload = {
       tx_bytes: tx,
       mode: sync ? 'BROADCAST_MODE_SYNC' : 'BROADCAST_MODE_ASYNC',
     };
 
-    // Define the URL for broadcasting transactions
-    //let urlRemote = `${RPCUrl.Mayachain}/cosmos/tx/v1beta1/txs`;
-    let urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
-    //console.log(tag, 'urlRemote: ', urlRemote);
+    const urlRemote = `https://mayanode.mayachain.info/cosmos/tx/v1beta1/txs`;
 
-    // Sending the transaction using RequestClient
-    let result = await RequestClient.post(urlRemote, {
-      body: JSON.stringify(payload),
+    const response = await fetch(urlRemote, {
+      method: 'POST',
       headers: {
-        'content-type': 'application/json', // Assuming JSON content type is required
+        'content-type': 'application/json',
       },
+      body: JSON.stringify(payload),
     });
-    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
-    // Handle the response
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
     if (result.tx_response.txhash) {
       output.txid = result.tx_response.txhash;
       output.success = true;
@@ -76,38 +100,27 @@ const sendRawTransaction = async (tx, sync = true) => {
     }
     return output;
   } catch (e) {
-    //console.log(e);
+    console.error(tag + 'Error in sendRawTransaction:', e);
     throw e;
   }
 };
 
-const getFees = async function () {
+const getFees = async () => {
   let tag = TAG + ' | getFees | ';
   try {
     let fee: SwapKitNumber;
     let isThorchain = false;
-    //console.log(tag, 'checkpoint');
     fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal['MAYA'] });
 
     return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
   } catch (e) {
-    console.error(e);
+    console.error(tag + 'Error in getFees:', e);
     throw e;
   }
 };
 
-// const getFees = async () => {
-//   let fee: SwapKitNumber;
-//   let isThorchain = false;
-//
-//   fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal['MAYA'] });
-//
-//   return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
-// };
-
 export const MayachainToolbox = (): any => {
   return {
-    // transfer: (params: TransferParams) => transfer(params),
     getAccount,
     getBalance,
     getFees,

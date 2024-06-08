@@ -14,6 +14,7 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { AssetValue } from '@pioneer-platform/helpers';
+import { caipToNetworkId } from '@pioneer-platform/pioneer-caip/lib';
 // console.log(process.env['BLOCKCHAIR_API_KEY'])
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
@@ -21,7 +22,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['OSMO']
@@ -59,8 +60,8 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
@@ -68,7 +69,8 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -105,9 +107,8 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
-        let paths = getPaths(blockchains)
-        app.setPaths(paths)
+
+
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
@@ -125,70 +126,74 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get osmo paths
-        // let paths = app.paths
-        // assert(paths)
-        // assert(paths[0])
-        // let osmoPath = paths.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"osmoPath: ",osmoPath)
-        // assert(osmoPath)
 
-        //
-        await app.getPubkeys()
-        log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
-        let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"pubkey: ",pubkey)
-        assert(pubkey.length > 0)
-        //verify pubkeys
 
+        //verify state
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
+
+        log.info(tag, "ASSET: ", ASSET);
+        log.info(tag, "ChainToCaip[ASSET]: ", ChainToCaip[ASSET]);
+        log.info(tag, "caip: ", ChainToCaip[ASSET]);
+        log.info(tag, "asset: ", assets.get(ChainToCaip[ASSET])); // Use `get` method for Map
+        assert(assets.get(ChainToCaip[ASSET])); // Corrected this line
 
         await app.getBalances()
-        //log.info(tag,"balances: ",app.balances)
-        //filter by OSMO caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
+        log.info(tag,"balances: ",app.balances)
+        assert(app.balances)
+        assert(app.balances[0])
+        log.info(tag,"balances: ",app.balances[0])
+
+        log.info(tag,"assetContext: ",ChainToCaip[ASSET])
+        log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+        // assert(app.assetContext.ticker)
+
 
         //verify balances
-        let balanceAsset = balance[0].balance
-        if(balanceAsset < TEST_AMOUNT) {
-            log.error("NO MONIES! NEED TO FUND ACCOUNT! balanceAsset: ",balance[0])
-            throw Error("NO MONIES! NEED TO FUND ACCOUNT!")
-        }
-        // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
         await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
+        const assetStringToken = 'OSMO.OSMO';
+        let assetValue = AssetValue.fromStringSync(assetStringToken, TEST_AMOUNT);
+        log.info(tag,"assetValue: ",assetValue)
+        assert(assetValue)
+        log.info(tag,"networkId: ",caipToNetworkId(app.assetContext.caip))
 
+        //sendMax
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(caipToNetworkId(app.assetContext.caip)));
+        log.info(tag,"pubkeys: ",pubkeys)
+        assert(pubkeys)
+        assert(pubkeys[0])
+        assert(pubkeys[0].address)
+
+        log.info(tag,"pubkeys[0].address: ",pubkeys[0].address)
         //send
-        // let estimatePayload:any = {
-        //     feeRate: 10,
-        //     pubkeys,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("estimatePayload: ",estimatePayload)
-        // //verify amount is < max spendable
-        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Osmosis, params:estimatePayload})
-        // log.info("maxSpendable: ",maxSpendable)
-
+        let estimatePayload:any = {
+            pubkeys,
+            caip:app.assetContext.caip,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Osmosis, params:estimatePayload})
+        log.info("maxSpendable: ",maxSpendable)
 
         // //send
-        // let sendPayload = {
-        //     assetValue,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("sendPayload: ",sendPayload)
-        // const txHash = await app.swapKit.transfer(sendPayload);
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
+        let sendPayload = {
+            assetValue:maxSpendable,
+            isMax: true,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

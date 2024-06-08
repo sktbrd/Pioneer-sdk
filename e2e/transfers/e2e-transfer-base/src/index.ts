@@ -189,7 +189,6 @@ const test_service = async function (this: any) {
         assert(app.balances)
         assert(app.balances[0])
         log.info(tag,"balances: ",app.balances[0])
-        throw 'done'
         // log.info(tag,"balances: ",app.balances.length)
         // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
         // log.info(tag,"balance: ",balance[0])
@@ -254,7 +253,8 @@ const test_service = async function (this: any) {
 
         //send
         let sendPayload = {
-            assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
             memo: '',
             recipient: FAUCET_ADDRESS,
         }

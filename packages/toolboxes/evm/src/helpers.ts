@@ -181,10 +181,9 @@ export const estimateMaxSendableAmount = async function ({
     console.log(tag, 'caip: ', caip);
     if (!from) throw new Error('Missing from address');
     if (!caip) throw new Error('Missing caip');
-    const balanceData = await toolbox.getBalance([{ address: from }]);
+    const balanceData = await toolbox.getBalance({ address: from });
     if (!balanceData) return 0;
     console.log(tag, 'balanceData: ', balanceData);
-    console.log(tag, 'assetValue: ', assetValue);
 
     //caip is the chain address identifier protocol
     console.log(tag, 'caip: ', caip);
@@ -203,29 +202,10 @@ export const estimateMaxSendableAmount = async function ({
     }
     //if native asset then return gasToken balance
 
-    const balance = balanceData.find(({ symbol, chain }) => {
-      if (assetValue) {
-        console.log(tag, 'assetValue.symbol: ', assetValue.symbol);
-        return symbol === assetValue.symbol;
-      } else {
-        console.log(tag, 'chain: ', chain);
-        const assetSymbol = AssetValue.fromChainOrSignature(chain)?.symbol;
-        return symbol === assetSymbol;
-      }
-    });
-    console.log(tag, 'balance: ', balance);
-
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
     console.log(tag, 'fees: ', fees);
 
-    if (!balance) return AssetValue.fromChainOrSignature(assetValue.chain, 0);
 
-    if (
-      assetValue &&
-      (balance.chain !== assetValue.chain || balance.symbol !== assetValue?.symbol)
-    ) {
-      return balance;
-    }
     //TODO this makes no sense to me. If you are sending native token, its not a smart contract fee
     //and if you are sending a token the fee amount of the gass asset has nothing to do with the token max sendable amount
 
@@ -267,7 +247,7 @@ export const estimateMaxSendableAmount = async function ({
     // //console.log(tag, 'fee: ', fee);
     //
     // return AssetValue.fromChainOrSignature(balance.chain, maxSendableAmount.getValue('string'));
-    return balance;
+    return balanceData;
   } catch (e) {
     console.error(tag, 'e: ', e);
     throw e;
@@ -394,7 +374,7 @@ export const toHexString = (value: bigint) => (value > 0n ? `0x${value.toString(
 export const getBalance = async ({
   provider,
   api,
-  address,
+  pubkey,
   chain,
 }: {
   provider: JsonRpcProvider | BrowserProvider;
@@ -404,20 +384,19 @@ export const getBalance = async ({
 }) => {
   let tag = TAG + ' | getBalance | ';
   try {
-    console.log(tag, 'EVM toolbox getBalance: ', address[0].address);
+    console.log(tag, 'EVM toolbox getBalance: ', pubkey.address);
 
-    const tokenBalances = await api.getBalance(address[0].address).catch((e) => {
-      console.error(`Error fetching token balances for address ${address[0].address}:`, e);
-      return []; // Return an empty array on failure to allow processing to continue
-    });
+    // const tokenBalances = await api.getBalance(pubkey.address).catch((e) => {
+    //   console.error(`Error fetching token balances for address ${pubkey.address}:`, e);
+    //   return []; // Return an empty array on failure to allow processing to continue
+    // });
 
-    const evmGasTokenBalance = await provider.getBalance(address[0].address).catch((e) => {
-      console.error(`Error fetching gas token balance for address ${address[0].address}:`, e);
+    const evmGasTokenBalance = await provider.getBalance(pubkey.address).catch((e) => {
+      console.error(`Error fetching gas token balance for address ${pubkey.address}:`, e);
       return BigInt(0); // Return 0 on failure
     });
 
     console.log(tag, 'chain: ', chain);
-    console.log(tag, 'tokenBalances: ', tokenBalances);
     console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance.toString());
     let safeValue = formatBigIntToSafeValue({
       value: evmGasTokenBalance,
@@ -429,43 +408,46 @@ export const getBalance = async ({
     gasTokenBalance.isGasAsset = true; // Marking it as gas asset
     gasTokenBalance.caip = ChainToCaip[chain];
     console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
-    let balances: any = [];
-    balances.push(gasTokenBalance);
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < tokenBalances.length; i++) {
-      let tokenBalance = tokenBalances[i];
-      if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
-        try {
-          console.log(tag, 'tokenBalance: ', tokenBalance);
-          let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`;
-          console.log(tag, 'tokenString: ', tokenString);
-          console.log(tag, 'tokenBalance.value: ', tokenBalance.value);
-          if (tokenString.includes('HTTPS://')) {
-            console.log('Spam detected: ', tokenString);
-          } else {
-            let formattedBalance = AssetValue.fromIdentifierSync(
-              //@ts-ignore
-              tokenString,
-              tokenBalance.value,
-            );
-            if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
-              // formattedBalance.address = address[0].address;
-              balances.push(formattedBalance);
-            } else {
-              console.error('Missing ticker for:', tokenBalance);
-            }
-          }
-        } catch (error) {
-          console.error(`Error formatting balance for token ${tokenBalance.symbol}:`, error);
-        }
-      } else {
-        console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
-      }
-    }
+    // let balances: any = [];
+    // balances.push(gasTokenBalance);
 
-    console.log(tag, ' final: balances: ', balances);
-    return balances;
+    //
+    // // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    // for (let i = 0; i < tokenBalances.length; i++) {
+    //   let tokenBalance = tokenBalances[i];
+    //   if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
+    //     try {
+    //       console.log(tag, 'tokenBalance: ', tokenBalance);
+    //       let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`;
+    //       console.log(tag, 'tokenString: ', tokenString);
+    //       console.log(tag, 'tokenBalance.value: ', tokenBalance.value);
+    //       if (tokenString.includes('HTTPS://')) {
+    //         console.log('Spam detected: ', tokenString);
+    //       } else {
+    //         let formattedBalance = AssetValue.fromIdentifierSync(
+    //           //@ts-ignore
+    //           tokenString,
+    //           tokenBalance.value,
+    //         );
+    //         if (formattedBalance.ticker && formattedBalance.ticker !== 'undefined') {
+    //           // formattedBalance.address = address[0].address;
+    //           balances.push(formattedBalance);
+    //         } else {
+    //           console.error('Missing ticker for:', tokenBalance);
+    //         }
+    //       }
+    //     } catch (error) {
+    //       console.error(`Error formatting balance for token ${tokenBalance.symbol}:`, error);
+    //     }
+    //   } else {
+    //     console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
+    //   }
+    // }
+    //
+    // console.log(tag, ' final: balances: ', balances);
+
+    return gasTokenBalance;
   } catch (error) {
     console.error('Unexpected error in getBalance:', error);
     throw error;

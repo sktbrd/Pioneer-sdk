@@ -226,7 +226,9 @@ export const osmosisWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk;
         memo,
       });
 
-    return { ...toolbox, getAddress: () => fromAddress, transfer, sendSwapTx };
+    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
+
+    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, sendSwapTx };
   } catch (error: any) {
     console.error(error);
     throw error;

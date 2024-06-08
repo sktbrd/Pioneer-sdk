@@ -16,14 +16,15 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip, caipToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
-let BLOCKCHAIN = ChainToNetworkId['THOR']
+let ASSET = 'THOR'
+let BLOCKCHAIN = ChainToNetworkId[ASSET]
 console.log("BLOCKCHAIN: ",BLOCKCHAIN)
 let MIN_BALANCE = process.env['MIN_BALANCE_RUNE'] || "0.004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
-let spec = process.env['PIONEER_URL_SPEC'] || 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 //http://127.0.0.1:9001/spec/swagger.json
 
 let wss = process.env['VITE_URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
@@ -61,8 +62,10 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        let blockchains = [BLOCKCHAIN]
+
+        //get paths for wallet
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
@@ -70,7 +73,8 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -107,12 +111,6 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN]
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        app.setPaths(paths)
 
         // //connect
         // assert(blockchains)
@@ -130,6 +128,12 @@ const test_service = async function (this: any) {
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
+
+
+        //verify state
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets)
 
         //get paths
         // let paths = app.paths
@@ -152,10 +156,37 @@ const test_service = async function (this: any) {
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         //filter by caip
-        let balance = app.balances.filter((e:any) => e.networkId === BLOCKCHAIN)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
+
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+
+
+        //sendMax
+        log.info(tag, "app.pubkeys: ", app.pubkeys);
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(caipToNetworkId(app.assetContext.caip)));
+        log.info(tag,"pubkeys: ",pubkeys)
+        assert(pubkeys)
+        assert(pubkeys[0])
+        assert(pubkeys[0].address)
+
+
         //verify balances
+        //send
+        let estimatePayload:any = {
+            // from:fromAddress,
+            pubkeys,
+            // assetValue,
+            // feeRate: 10,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info(tag,"estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.THORChain, params:estimatePayload})
+        log.info(tag,"maxSpendable: ",maxSpendable)
 
         // create assetValue
         // const assetString = `${ASSET}.${ASSET}`;
@@ -168,6 +199,7 @@ const test_service = async function (this: any) {
         //   TEST_AMOUNT,
         // );
         // log.info("assetValue: ",assetValue)
+
         let assetString = 'THOR.RUNE'
         await AssetValue.loadStaticAssets();
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));

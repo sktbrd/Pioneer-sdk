@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-pro",
-  "version": "1.7.31",
+  "version": "1.7.33",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -23,9 +23,9 @@
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
     "@keepkey/device-protocol": "^7.12.2",
-    "@pioneer-platform/loggerdog": "^8.1.31",
-    "@pioneer-platform/pioneer-caip": "^9.2.23",
-    "@pioneer-platform/pioneer-coins": "^9.2.21",
+    "@pioneer-platform/loggerdog": "^8.3.1",
+    "@pioneer-platform/pioneer-caip": "^9.2.27",
+    "@pioneer-platform/pioneer-coins": "^9.2.23",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",
     "dotenv": "^6.2.0",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.6"
+    "@pioneer-platform/helpers": "^4.0.8"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

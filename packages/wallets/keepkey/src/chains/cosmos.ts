@@ -58,14 +58,14 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
 
     // Function to broadcast the transaction
     const broadcastTransaction = async (serializedTx: string) => {
-      const decodedBytes = atob(serializedTx);
-      const uint8Array = new Uint8Array(decodedBytes.length);
-      for (let i = 0; i < decodedBytes.length; i++) {
-        uint8Array[i] = decodedBytes.charCodeAt(i);
-      }
-      const client = await StargateClient.connect(RPCUrl.Cosmos);
-      const response = await client.broadcastTx(uint8Array);
-      return response.transactionHash;
+      // const decodedBytes = atob(serializedTx);
+      // const uint8Array = new Uint8Array(decodedBytes.length);
+      // for (let i = 0; i < decodedBytes.length; i++) {
+      //   uint8Array[i] = decodedBytes.charCodeAt(i);
+      // }
+      console.log(tag, 'serializedTx: ', serializedTx);
+      const response = await toolbox.broadcast(serializedTx);
+      return response;
     };
 
     // Transfer function
@@ -75,7 +75,7 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         signDoc: {
           fee: DEFAULT_COSMOS_FEE_MAINNET,
           memo: memo || '',
-          sequence: accountInfo?.sequence.toString() ?? '',
+          sequence: (accountInfo?.sequence).toString() ?? '',
           chain_id: ChainId.Cosmos,
           account_number: accountInfo?.accountNumber.toString() ?? '',
           msgs: [
@@ -141,8 +141,8 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         throw e;
       }
     };
-
-    return { ...toolbox, getAddress: () => fromAddress, transfer, ibcTransfer };
+    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
+    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, ibcTransfer };
   } catch (error: any) {
     //log.error(tag, e);
     throw error;

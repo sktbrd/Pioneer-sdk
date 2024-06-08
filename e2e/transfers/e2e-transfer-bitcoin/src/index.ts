@@ -65,6 +65,7 @@ const test_service = async function (this: any) {
         //get paths for wallet
         let paths = getPaths(blockchains)
         // paths = [paths[1]]
+
         log.info("paths: ",paths.length)
         log.info("paths: ",paths)
         // let paths = []

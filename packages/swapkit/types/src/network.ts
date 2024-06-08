@@ -94,7 +94,7 @@ export const ChainToNetworkId: Record<Chain, string> = {
   [Chain.Optimism]: 'eip155:10',
   [Chain.Osmosis]: 'cosmos:osmosis-1',
   [Chain.Polygon]: 'eip155:137',
-  [Chain.Ripple]: 'ripple:4109C6F2045FC7EFF4CDE8F9905D19C2',
+  [Chain.Ripple]: 'ripple:4109c6f2045fc7eff4cde8f9905d19c2',
   [Chain.THORChain]: 'cosmos:thorchain-mainnet-v1',
   [Chain.Zcash]: 'bip122:0000000000196a45',
 };
@@ -301,7 +301,8 @@ export enum RPCUrl {
   Base = 'https://developer-access-mainnet.base.org',
   Bitcoin = 'https://node-router.thorswap.net/bitcoin',
   BitcoinCash = 'https://node-router.thorswap.net/bitcoin-cash',
-  Cosmos = 'https://node-router.thorswap.net/cosmos/rpc',
+  Cosmos = 'https://api.cosmos.shapeshift.com',
+  // Cosmos = 'https://node-router.thorswap.net/cosmos/rpc',
   Kujira = 'https://rpc-kujira.synergynodes.com/',
   Dash = 'https://dash.nownodes.io',
   Dogecoin = 'https://node-router.thorswap.net/dogecoin',

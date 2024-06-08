@@ -335,7 +335,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           //fitler by chain
           addedChains = addedChains.filter((chain: any) => blockchains.includes(chain.network));
 
-          console.log('onConnaddedChainsect paths: ', addedChains);
+          // console.log(tag,'onConnaddedChainsect paths: ', addedChains);
           // At this point, both paths and addedChains are guaranteed to be arrays
           // You can now safely concatenate them using the spread operator
           paths = paths.concat(addedChains);
@@ -385,7 +385,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
               //get pubkeys
               if (state.app.pubkeys) {
-                console.log(TAG + ' connectWallet state.app.pubkeys: ', state.app.pubkeys);
+                console.log(tag, + ' connectWallet state.app.pubkeys: ', state.app.pubkeys);
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < state.app.pubkeys.length; i++) {
                   const pubkey = state.app.pubkeys[i];

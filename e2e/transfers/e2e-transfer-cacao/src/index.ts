@@ -3,6 +3,8 @@
 
  */
 
+import { caipToNetworkId } from '@pioneer-platform/pioneer-caip/lib';
+
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -19,7 +21,8 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+//@ts-ignore
+let {ChainToNetworkId, ChainToCaip, caipToNetworkId} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['MAYA']
@@ -65,8 +68,10 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        let blockchains = [BLOCKCHAIN]
+
+        //get paths for wallet
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
@@ -74,7 +79,8 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -111,23 +117,6 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
 
         // //connect
         // assert(blockchains)
@@ -146,50 +135,39 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
-        //get paths
-        // let paths = app.paths
-        // assert(paths)
-        // assert(paths[0])
-        // let AssetPath = paths.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"AssetPath: ",AssetPath)
-        // assert(AssetPath)
+        //verify state
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
 
         await app.getPubkeys()
-        // log.info(tag,"pubkeys: ",app.pubkeys)
-        // assert(app.pubkeys)
-        // assert(app.pubkeys[0])
-        // let pubkey = app.pubkeys.filter((e:any) => e.symbol === ASSET)
-        // log.info(tag,"pubkey: ",pubkey)
-        // assert(pubkey.length > 0)
-        //verify pubkeys
-
-
         await app.getBalances()
+
         //log.info(tag,"balances: ",app.balances)
         //filter by caip
-        let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        log.info(tag,"balance: ",balance)
-        assert(balance.length > 0)
+
         //verify balances
 
-        // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Mayachain,
-          TEST_AMOUNT,
-        );
-        log.info("assetValue: ",assetValue)
+        log.info(tag,"assetContext: ",ChainToCaip['MAYA'])
+        log.info(tag,"asset: ",assets.get(ChainToCaip['MAYA']))
+        assert(assets.get(ChainToCaip['MAYA']))
+        await app.setAssetContext(assets.get(ChainToCaip['MAYA']))
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
 
-        let fromAddress = await app.swapKit.getAddress(Chain.Mayachain)
-        assert(fromAddress)
-        log.info("fromAddress: ",fromAddress)
+
+        //sendMax
+        log.info(tag, "app.pubkeys: ", app.pubkeys);
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(caipToNetworkId(app.assetContext.caip)));
+        log.info(tag,"pubkeys: ",pubkeys)
+        assert(pubkeys)
+        assert(pubkeys[0])
+        assert(pubkeys[0].address)
+
         //send
         let estimatePayload:any = {
-            from:fromAddress,
+            // from:fromAddress,
+            pubkeys,
             // assetValue,
             // feeRate: 10,
             memo: '',

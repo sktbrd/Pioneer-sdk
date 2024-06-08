@@ -25,7 +25,7 @@ import {
 } from '../util.ts';
 
 import { BaseCosmosToolbox } from './BaseCosmosToolbox.ts';
-
+const TAG = ' | ThorchainToolbox | ';
 type ToolboxParams = {
   chain: Chain.THORChain | Chain.Maya;
   stagenet?: boolean;
@@ -200,13 +200,15 @@ export const BaseThorchainToolbox = ({ chain, stagenet }: ToolboxParams): Thorch
     validateAddress: (address: string) => Promise<boolean>;
     getAddressFromMnemonic: (phrase: string) => Promise<string>;
     getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
-    getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
+    getBalance: (pubkey: any, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
     getSigner: (phrase: string) => Promise<OfflineDirectSigner>;
     getSignerFromPrivateKey: (privateKey: Uint8Array) => Promise<OfflineDirectSigner>;
   } = BaseCosmosToolbox({ client, derivationPath, decimal: BaseDecimal[chain] });
 
-  const loadAddressBalances = async (address: string) => {
+  const loadAddressBalances = async (pubkey: any) => {
+    let tag = TAG + ' | loadAddressBalances | ';
     try {
+      console.log(tag, 'pubkey: ', pubkey);
       const balances: AssetValue[] = await baseToolbox.getBalance(address);
 
       return balances;

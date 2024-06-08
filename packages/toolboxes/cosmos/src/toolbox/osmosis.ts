@@ -1,19 +1,26 @@
-import { AssetValue, RequestClient } from '@pioneer-platform/helpers';
 import { RPCUrl } from '@coinmasters/types';
+import { AssetValue, RequestClient } from '@pioneer-platform/helpers';
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
 import { ec as EC } from 'elliptic';
 //https://pioneers.dev/api/v1/getAccountInfo/osmosis/
 const PIONEER_API_URI = 'https://pioneers.dev';
 // const PIONEER_API_URI = 'http://localhost:9001';
 const TAG = ' | osmosis-toolbox | ';
-const getAccount = (address: string): Promise<any> => {
-  // Construct the URL
-  const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
 
-  // Log the URL
-  //console.log(`Requesting URL: ${url}`);
-
-  // Make the request
-  return RequestClient.get<any>(url);
+const getAccount = async (address: string): Promise<any> => {
+  let tag = TAG + ' | getAccount | ';
+  try {
+    console.log(tag, 'address: ', address);
+    const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch account info: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching account info for address ${address}: `, error);
+    throw error;
+  }
 };
 
 // const getTransferFee = async () => {
@@ -25,38 +32,84 @@ const getAccount = (address: string): Promise<any> => {
 //   return transferFee;
 // };
 
-const getBalance = async (address: any[]) => {
-  //console.log(address)
+const getBalance = async (pubkey: any) => {
+  let tag = TAG + ' | getBalance | ';
   try {
-    //console.log('address: ', address[0].address);
+    console.log(tag, 'pubkey: ', pubkey);
+    let address;
+    if (Array.isArray(pubkey)) {
+      address = pubkey[0].address;
+    } else {
+      address = pubkey.address;
+    }
     //console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
-    const balancesOsmo: any = await RequestClient.get(
-      `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`,
-    );
+    //BROKE? why?
+    // const balancesOsmo: any = await RequestClient.get(
+    //   `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${pubkey.address}`,
+    // );
 
-    //console.log('balanceOsmo: ', balancesOsmo);
-    let balances: any = [];
+    const response = await fetch(
+      `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch balances: ${response.statusText}`);
+    }
+
+    const balancesOsmo = await response.json();
+    console.log('balancesOsmo: ', balancesOsmo);
+    let balanceOsmo: any;
     await AssetValue.loadStaticAssets();
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < balancesOsmo.length; i++) {
       let balance = balancesOsmo[i];
-      //console.log('balance: ', balance);
-      let identifier = 'OSMO.' + balance.asset;
-      const assetValueNativeOsmo = AssetValue.fromStringSync(identifier, balance.balance);
-
-      if (assetValueNativeOsmo) {
-        //console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
-        balances.push(assetValueNativeOsmo);
-        //console.log('balances: ', balances);
-      } else {
-        console.error('Failed to get assetValueNative: ' + identifier);
+      if (balance.asset === 'OSMO') {
+        let identifier = 'OSMO.' + balance.asset;
+        balanceOsmo = AssetValue.fromStringSync(identifier, balance.balance);
+        balanceOsmo.caip = ChainToCaip['OSMO'];
       }
     }
 
-    return balances;
+    return balanceOsmo;
   } catch (e) {
-    return [];
+    console.error(tag, 'Error: ', e);
+    throw e;
   }
 };
+
+// const getBalances = async (pubkey: any) => {
+//   let tag = TAG + ' | getBalance | ';
+//   try {
+//     console.log(tag, 'pubkey: ', pubkey);
+//     console.log('address: ', pubkey.address);
+//     //console.log('URL: ', `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${address[0].address}`);
+//     const balancesOsmo: any = await RequestClient.get(
+//       `${PIONEER_API_URI}/api/v1/ibc/balances/osmosis/${pubkey.address}`,
+//     );
+//
+//     console.log('balanceOsmo: ', balancesOsmo);
+//     let balances: any = [];
+//     await AssetValue.loadStaticAssets();
+//     for (let i = 0; i < balancesOsmo.length; i++) {
+//       let balance = balancesOsmo[i];
+//       //console.log('balance: ', balance);
+//       let identifier = 'OSMO.' + balance.asset;
+//       const assetValueNativeOsmo = AssetValue.fromStringSync(identifier, balance.balance);
+//
+//       if (assetValueNativeOsmo) {
+//         //console.log('assetValueNativeOsmo: ', assetValueNativeOsmo);
+//         balances.push(assetValueNativeOsmo);
+//         //console.log('balances: ', balances);
+//       } else {
+//         console.error('Failed to get assetValueNative: ' + identifier);
+//       }
+//     }
+//
+//     return null;
+//   } catch (e) {
+//     console.error(tag, 'Error: ', e);
+//     throw e;
+//   }
+// };
 
 // const getFees = async () => {
 //   let singleTxFee: SwapKitNumber | undefined = undefined;
@@ -85,6 +138,13 @@ const getBalance = async (address: any[]) => {
 //   };
 // };
 
+export const getFees = async () => {
+  return String(
+    //@ts-ignore
+    '3500',
+  );
+};
+
 // const getFeeRateFromThorchain = async () => {
 //   const respData = await getRequest(`${ApiUrl.ThornodeMainnet}/thorchain/inbound_addresses`);
 //   if (!Array.isArray(respData)) throw new Error('bad response from Thornode API');
@@ -109,16 +169,23 @@ const sendRawTransaction = async (tx, sync = true) => {
 
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
-    //console.log(tag, 'urlRemote: ', urlRemote);
+    console.log(tag, 'urlRemote: ', urlRemote);
 
-    // Sending the transaction using RequestClient
-    let result = await RequestClient.post(urlRemote, {
+    // Sending the transaction using fetch
+    let response = await fetch(urlRemote, {
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        'content-type': 'application/json', // Assuming JSON content type is required
+        'Content-Type': 'application/json',
       },
     });
-    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+
+    if (!response.ok) {
+      throw new Error(`Failed to broadcast transaction: ${response.statusText}`);
+    }
+
+    let result = await response.json();
+    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     // Handle the response
     if (result.tx_response.txhash) {
@@ -136,6 +203,47 @@ const sendRawTransaction = async (tx, sync = true) => {
 
   return output;
 };
+
+// const sendRawTransaction = async (tx, sync = true) => {
+//   let tag = TAG + ' | sendRawTransaction | ';
+//   let output = {};
+//
+//   try {
+//     // Construct payload
+//     let payload = {
+//       tx_bytes: tx,
+//       mode: sync ? 'BROADCAST_MODE_SYNC' : 'BROADCAST_MODE_ASYNC',
+//     };
+//
+//     // Define the URL for broadcasting transactions
+//     let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
+//     //console.log(tag, 'urlRemote: ', urlRemote);
+//
+//     // Sending the transaction using RequestClient
+//     let result = await RequestClient.post(urlRemote, {
+//       body: JSON.stringify(payload),
+//       headers: {
+//         'content-type': 'application/json', // Assuming JSON content type is required
+//       },
+//     });
+//     //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+//
+//     // Handle the response
+//     if (result.tx_response.txhash) {
+//       output.txid = result.tx_response.txhash;
+//       output.success = true;
+//     } else {
+//       output.success = false;
+//       output.error = 'No txhash found in response';
+//     }
+//   } catch (error) {
+//     console.error(tag, 'Error in broadcasting transaction: ', error);
+//     output.success = false;
+//     output.error = error.toString();
+//   }
+//
+//   return output;
+// };
 
 // const prepareTransaction = async (
 //   msg: any,

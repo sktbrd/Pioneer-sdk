@@ -35,13 +35,21 @@ export const BASEToolbox = ({
   return {
     ...baseToolbox,
     getNetworkParams,
-    async getBalance(address: any) {
+    async getBalance(pubkey: any) {
       let tag = TAG + ' | getBalance | ';
       try {
+        let address;
+        if (Array.isArray(pubkey)) {
+          address = pubkey[0].address;
+        } else {
+          address = pubkey.address;
+        }
         console.log(tag, 'address: ', address);
+
+
         // const tokenBalances = await api.getBalance(address[0].address);
         // console.log('tokenBalances: ', tokenBalances);
-        const evmGasTokenBalance = await provider.getBalance(address[0].address);
+        const evmGasTokenBalance = await provider.getBalance(address);
         console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance);
         let safeValue = formatBigIntToSafeValue({
           value: evmGasTokenBalance,
@@ -61,32 +69,32 @@ export const BASEToolbox = ({
         //pro token balances
 
         // The token's contract address
-        const tokenAddress = '0xef743df8eda497bcf1977393c401a636518dd630';
-        const userAddress = address[0].address;
-        // The ERC-20 token ABI
-        const ERC20_ABI = [
-          {
-            constant: true,
-            inputs: [{ name: 'owner', type: 'address' }],
-            name: 'balanceOf',
-            outputs: [{ name: '', type: 'uint256' }],
-            payable: false,
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ];
-        const { Contract } = await import('ethers');
-        // Assuming `provider` is correctly initialized earlier in your code
-        // Create an instance of a contract connected to the ERC-20 token
-        const contract = new Contract(tokenAddress, ERC20_ABI, provider);
-
-        // const contract = await baseToolbox.createContract(tokenAddress, ERC20_ABI, provider);
-        console.log(tag, 'contract: ', contract);
-        if (!contract) throw new Error('Failed to create contract instance');
-
-        // Replace 'address[0].address' with the actual wallet address you're querying
-        const tokenBalanceBigNumber = await contract.balanceOf(userAddress);
-        console.log(tag, 'Token Balance (raw Big Number): ', tokenBalanceBigNumber.toString());
+        // const tokenAddress = '0xef743df8eda497bcf1977393c401a636518dd630';
+        // const userAddress = pubkey.address;
+        // // The ERC-20 token ABI
+        // const ERC20_ABI = [
+        //   {
+        //     constant: true,
+        //     inputs: [{ name: 'owner', type: 'address' }],
+        //     name: 'balanceOf',
+        //     outputs: [{ name: '', type: 'uint256' }],
+        //     payable: false,
+        //     stateMutability: 'view',
+        //     type: 'function',
+        //   },
+        // ];
+        // const { Contract } = await import('ethers');
+        // // Assuming `provider` is correctly initialized earlier in your code
+        // // Create an instance of a contract connected to the ERC-20 token
+        // const contract = new Contract(tokenAddress, ERC20_ABI, provider);
+        //
+        // // const contract = await baseToolbox.createContract(tokenAddress, ERC20_ABI, provider);
+        // console.log(tag, 'contract: ', contract);
+        // if (!contract) throw new Error('Failed to create contract instance');
+        //
+        // // Replace 'address[0].address' with the actual wallet address you're querying
+        // const tokenBalanceBigNumber = await contract.balanceOf(userAddress);
+        // console.log(tag, 'Token Balance (raw Big Number): ', tokenBalanceBigNumber.toString());
 
         // Process the token balance
         // const assetStringToken = 'BASE.PRO-0XEF743DF8EDA497BCF1977393C401A636518DD630';
@@ -96,10 +104,9 @@ export const BASEToolbox = ({
         // console.log(tag, 'Token Asset Value: ', tokenAssetValue);
 
         //TODO get tokens from covalent
-        let balances = [gasTokenBalance];
-        // let balances = [gasTokenBalance, tokenAssetValue];
-        console.log(tag, 'balances: ', balances);
-        return balances;
+        //TODO move tokens to getBalances*
+
+        return gasTokenBalance;
       } catch (e) {
         console.log('getBalance error: ', e);
         throw e;

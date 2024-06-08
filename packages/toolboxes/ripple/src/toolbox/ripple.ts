@@ -1,33 +1,57 @@
 import { Chain, RPCUrl } from '@coinmasters/types';
-import { AssetValue, RequestClient } from '@pioneer-platform/helpers';
+import { AssetValue } from '@pioneer-platform/helpers';
+//@ts-ignore
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ChainToCaip } from '@pioneer-platform/pioneer-caip';
 
 const PIONEER_API_URI = 'https://pioneers.dev';
 // const PIONEER_API_URI = 'http://127.0.0.1:9001';
 
-const getAccount = (address: string): Promise<any> =>
-  RequestClient.get<any>(`${PIONEER_API_URI}/api/v1/getAccountInfo/ripple/${address}`);
-
-const getBalance = async (address: any[]) => {
-  //console.log(address);
-
-  let balanceBase = await RequestClient.get(
-    `${PIONEER_API_URI}/api/v1/getPubkeyBalance/ripple/${address[0].address}`,
-  );
-  //console.log('balance: ', balanceBase);
-  //console.log('balance: ', typeof balanceBase);
-  if (balanceBase && balanceBase.error) balanceBase = '0';
-  await AssetValue.loadStaticAssets();
-  const assetValueNative = AssetValue.fromChainOrSignature(Chain.Ripple, balanceBase);
-  assetValueNative.address = address[0].address;
-  assetValueNative.type = 'Native';
-  //console.log('assetValueNative: ', assetValueNative);
-  let balances = [assetValueNative];
-  //console.log('balances: ', balances);
-
-  return balances;
+const getAccount = async (address: string): Promise<any> => {
+  const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/ripple/${address}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching account info: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`getAccount error: `, error);
+    throw error;
+  }
 };
 
-const sendRawTransaction = async (tx, sync = true) => {
+const getBalance = async (pubkeys: any) => {
+  try {
+    let address;
+    if (Array.isArray(pubkeys)) {
+      address = pubkeys[0].address;
+    } else {
+      address = pubkeys.address;
+    }
+
+    const url = `${PIONEER_API_URI}/api/v1/getPubkeyBalance/ripple/${address}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching balance: ${address}`);
+    }
+    let balanceBase = await response.json();
+
+    if (balanceBase && balanceBase.error) balanceBase = '0';
+    await AssetValue.loadStaticAssets();
+    const assetValueNative = AssetValue.fromChainOrSignature(Chain.Ripple, balanceBase);
+    assetValueNative.pubkey = address;
+    assetValueNative.type = 'Native';
+    assetValueNative.caip = ChainToCaip['XRP'];
+
+    return assetValueNative;
+  } catch (error) {
+    console.error(`getBalance error: `, error);
+    throw error;
+  }
+};
+
+const sendRawTransaction = async (tx: any, sync = true) => {
   let tag = ' | sendRawTransaction | ';
   let output = {};
   try {
@@ -46,19 +70,24 @@ const sendRawTransaction = async (tx, sync = true) => {
         },
       ],
     };
-    //console.log(tag, 'RPCUrl.Ripple: ', RPCUrl.Ripple);
+
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Ripple}/`;
-    //console.log(tag, 'urlRemote: ', urlRemote);
 
-    // Sending the transaction using RequestClient
-    let result = await RequestClient.post(urlRemote, {
+    // Sending the transaction using fetch
+    const response = await fetch(urlRemote, {
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        'content-type': 'application/json', // Assuming JSON content type is required
+        'content-type': 'application/json',
       },
     });
-    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+
+    if (!response.ok) {
+      throw new Error(`Error broadcasting transaction: ${response.statusText}`);
+    }
+
+    const result = await response.json();
 
     return result;
   } catch (error) {
@@ -72,10 +101,8 @@ const sendRawTransaction = async (tx, sync = true) => {
 
 export const RippleToolbox = (): any => {
   return {
-    // transfer: (params: TransferParams) => transfer(params),
     getAccount,
     getBalance,
-    // // getFees,
     sendRawTransaction,
   };
 };

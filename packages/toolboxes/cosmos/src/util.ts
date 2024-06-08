@@ -1,10 +1,10 @@
-import { AssetValue } from '@pioneer-platform/helpers';
 import { ChainId, FeeOption, RPCUrl } from '@coinmasters/types';
 import type { OfflineSigner } from '@cosmjs/proto-signing';
 import type { SigningStargateClientOptions } from '@cosmjs/stargate';
+import type { AssetValue } from '@pioneer-platform/helpers';
 
 import type { CosmosMaxSendableAmountParams } from './types.ts';
-
+const TAG = ' | COSMOS | UTILS | ';
 const headers =
   typeof window !== 'undefined'
     ? ({} as { [key: string]: string })
@@ -66,46 +66,39 @@ export const getRPC = (chainId: ChainId, stagenet?: boolean) => {
 };
 
 export const estimateMaxSendableAmount = async ({
+  pubkeys,
   from,
   toolbox,
   asset,
   feeOptionKey = FeeOption.Fast,
 }: CosmosMaxSendableAmountParams): Promise<AssetValue> => {
-  let tag = ' | estimateMaxSendableAmount | ';
+  let tag = TAG + ' | estimateMaxSendableAmount | ';
   try {
-    if (!from) throw Error('Unable to estimate max sendable amount without a valid from address');
-    // Determine if asset is a string and convert to AssetValue, otherwise use it directly
-    const assetEntity: AssetValue | undefined =
-      typeof asset === 'string' ? await AssetValue.fromString(asset) : asset;
-    //console.log(tag, 'assetEntity: ', assetEntity);
-    //console.log(tag, 'from: ', from);
+    console.log(tag, 'pubkeys: ', pubkeys);
+    if (!pubkeys || pubkeys.length === 0) throw new Error('No pubkeys provided');
+
+    // console.log(tag, 'assetEntity: ', assetEntity);
+    console.log(tag, 'from: ', from);
     // Retrieve balances for the account
-    const balances = await toolbox.getBalance([{ address: from }]);
-    //console.log(tag, 'balances: ', balances);
-    if (balances.length === 0) throw Error('No balances found for the specified address');
-    // Find the balance for the specified asset
-    const balance = balances.find(({ symbol, chain }) =>
-      asset
-        ? symbol === assetEntity?.symbol
-        : symbol === AssetValue.fromChainOrSignature(chain).symbol,
-    );
-    if (!balance) throw Error('No balances found for the specified symbol or chain  ');
-    // Retrieve fees
-    const fees = await toolbox.getFees();
-    //console.log(tag, 'fees: ', fees);
+    const balance: any = await toolbox.getBalance(pubkeys[0]);
+    console.log(tag, 'balance: ', balance);
 
-    // If no balance for the asset, return zero amount of the asset
-    if (!balance)
-      return AssetValue.fromChainOrSignature(assetEntity?.chain || balances[0]?.chain, 0);
+    //TODO  Retrieve fees
+    // const fees = await toolbox.getFees();
+    // console.log(tag, 'fees: ', fees);
+    //
+    // //max send
+    // let newAmount = balance.balance - fees[feeOptionKey];
+    // await AssetValue.loadStaticAssets();
+    // let outputBalance = AssetValue.fromStringSync(balance.identifier, newAmount);
 
-    // Subtract fees from the balance and return the result
-    return balance.sub(fees[feeOptionKey]);
+    return balance;
   } catch (e) {
     console.error(tag, 'estimateMaxSendableAmount; error: ', e);
-    // Ensure a valid AssetValue is returned in case of an error to avoid runtime errors
-    return AssetValue.fromChainOrSignature('MAYA', 0); // Adjust with a valid chain or handle appropriately
+    throw e;
   }
 };
+
 // export const estimateMaxSendableAmount = async ({
 //   from,
 //   toolbox,

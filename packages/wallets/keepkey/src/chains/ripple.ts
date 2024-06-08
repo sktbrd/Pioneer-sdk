@@ -112,8 +112,8 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         amount: assetValue.getBaseValue('string'),
         memo,
       });
-
-    return { ...toolbox, transfer, getAddress: () => fromAddress };
+    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
+    return { ...toolbox, transfer, getAddress: () => fromAddress, getPubkeys };
   } catch (error) {
     console.error(error);
     throw error;

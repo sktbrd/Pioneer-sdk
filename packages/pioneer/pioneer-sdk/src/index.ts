@@ -33,7 +33,7 @@ import {
 import type { Chain } from '@coinmasters/types';
 import { NetworkIdToChain } from '@coinmasters/types';
 // @ts-ignore
-import { tokenToCaip } from '@pioneer-platform/pioneer-caip';
+import { caipToNetworkId, caipToThorchain, tokenToCaip } from '@pioneer-platform/pioneer-caip';
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
@@ -607,11 +607,17 @@ export class SDK {
         console.log(tag, 'type: ', walletSelected.type);
         switch (walletSelected.type) {
           case 'KEEPKEY':
-            this.keepkeyApiKey =
+            console.log(tag, 'AllChainsSupported: ', AllChainsSupported);
+            console.log(tag, 'this.paths: ', this.paths);
+            let { keepkeyApiKey, info } =
               (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
                 AllChainsSupported,
                 this.paths,
               )) || '';
+            this.keepkeyApiKey = keepkeyApiKey;
+            this.context = 'keepkey:' + info.label + '.json';
+            console.log(tag, 'info: ', info);
+            console.log(tag, 'this.context: ', this.context);
             console.log(tag, 'this.keepkeyApiKey: ', this.keepkeyApiKey);
             resultPair = 'success';
             break;
@@ -781,7 +787,8 @@ export class SDK {
               if (expandedInfo.caip) {
                 expandedInfo.sourceList = sourceList;
                 let assetInfoKey = expandedInfo.caip.toLowerCase();
-                let assetInfo = assetData[assetInfoKey];
+                let assetInfo =
+                  assetData[expandedInfo.caip] || assetData[expandedInfo.caip.toLowerCase()];
                 if (assetInfo) {
                   let combinedInfo = { ...expandedInfo, ...assetInfo, integrations: [] }; // Prepare integration array
                   if (this.blockchains.includes(combinedInfo.networkId)) {
@@ -799,7 +806,7 @@ export class SDK {
                     // console.error('***  Not in supported blockchains: ', this.blockchains);
                   }
                 } else {
-                  // console.error('Missing assetInfo for: ', token);
+                  console.error('Missing assetData(PIONEER DATA) for: ', token);
                 }
               } else {
                 console.error('***  expandedInfo: ', expandedInfo);
@@ -1007,30 +1014,103 @@ export class SDK {
       try {
         if (filter) console.log('filter: ', filter);
         if (!this.assets || this.assets.length === 0) await this.getAssets();
+        if (!this.context) throw Error('No Wallet Paried! no context!');
         //verify context
         //log.debug('getBalances this.blockchains: ', this.blockchains);
         console.log(tag, 'this.blockchains: ', this.blockchains);
         let balances = [];
 
-        //TODO why cant I do this? batch arch!
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           const blockchain = this.blockchains[i];
           let chain: Chain = NetworkIdToChain[blockchain];
-          //get balances for each pubkey
-          console.log('chain: ', chain);
-          //get balances for chain
-          let pubkeys = this.pubkeys.filter((pubkey: any) => pubkey.networks.includes(blockchain));
-          console.log('pubkeys: ', pubkeys);
+          console.log(tag, 'chain: ', chain);
+          // Get balances for chain
+          let pubkeys = this.pubkeys.filter((pubkey: any) => {
+            if (blockchain.includes('eip155')) {
+              return pubkey.networks.includes(`eip155:*`);
+            }
+            return pubkey.networks.includes(blockchain);
+          });
+          console.log(tag, 'pubkeys: ', pubkeys);
           if (pubkeys && pubkeys.length > 0) {
             let balancesForChain = await this.swapKit?.getBalances(chain, pubkeys);
-            console.log('balancesForChain: ', balancesForChain);
+            console.log(tag, '**** balancesForChain: ', balancesForChain);
+            console.log(tag, '**** balancesForChain: ', balancesForChain.length);
+
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            for (let j = 0; j < balancesForChain.length; j++) {
+              // @ts-ignore
+              let balance = balancesForChain[j];
+              if (balance.caip) {
+                console.log(tag, 'balance: ', balance);
+                if (!balance.ticker) throw Error('invalid balance! ticker required!');
+                console.log(tag, 'caip: ', balance.caip);
+                console.log(tag, 'ticker: ', balance.ticker);
+                let balanceString: any = {};
+                // Balance formatted
+                balanceString.context = this.context;
+                balanceString.contextType = this.context.split(':')[0];
+                balanceString.caip = balance.caip;
+                balanceString.pubkey = balance.pubkey;
+                balanceString.ref = balance.context + balance.caip;
+                balanceString.identifier = caipToThorchain(balance.caip, balance.ticker);
+                balanceString.networkId = caipToNetworkId(balance.caip);
+                balanceString.symbol = balance.symbol;
+                balanceString.chain = balance.chain;
+                balanceString.ticker = balance.ticker;
+                balanceString.type = balance.type;
+                balanceString.balance = balance.getValue('string');
+
+                balances.push(balanceString);
+              } else {
+                console.error(tag, 'Failed to get caip for balance: ', balance);
+              }
+            }
           } else {
-            console.log('no pubkeys for chain: ', chain);
+            console.error(tag, 'no pubkeys for chain: ', chain);
           }
         }
 
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        // for (let i = 0; i < this.blockchains.length; i++) {
+        //   const blockchain = this.blockchains[i];
+        //   let chain: Chain = NetworkIdToChain[blockchain];
+        //   //get balances for each pubkey
+        //   console.log('chain: ', chain);
+        //   //get balances for chain
+        //   let pubkeys = this.pubkeys.filter((pubkey: any) => pubkey.networks.includes(blockchain));
+        //   console.log('pubkeys: ', pubkeys);
+        //   if (pubkeys && pubkeys.length > 0) {
+        //     let balancesForChain = await this.swapKit?.getBalances(chain, pubkeys);
+        //     console.log(tag, 'balancesForChain: ', balancesForChain);
+        //
+        //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        //     for (let j = 0; j < balancesForChain.length; j++) {
+        //       //@ts-ignore
+        //       let balance = balancesForChain[j];
+        //       let balanceString: any = {};
+        //       //balanceFormated
+        //       balanceString.context = this.context;
+        //       balanceString.contextType = this.context.split(':')[0];
+        //       balanceString.caip = balancesForChain.caip;
+        //       balanceString.ref = balanceString.context + balancesForChain.caip;
+        //       balanceString.identifier = caipToThorchain(balancesForChain.caip, balance.ticker);
+        //       balanceString.networkId = caipToNetworkId(balancesForChain.caip);
+        //       balanceString.symbol = balance.symbol;
+        //       balanceString.chain = balance.chain;
+        //       balanceString.ticker = balance.ticker;
+        //       balanceString.type = balance.type;
+        //       balanceString.balance = balance.getValue('string');
+        //       balances.push(balanceString);
+        //     }
+        //   } else {
+        //     console.log('no pubkeys for chain: ', chain);
+        //   }
+        // }
+
+        console.log(tag, 'final balances: ', balances);
+        if (balances && balances.length > 0) this.setBalances(balances);
+
         // for (let i = 0; i < this.blockchains.length; i++) {
         //   const blockchain = this.blockchains[i];
         //   let chain: Chain = NetworkIdToChain[blockchain];
@@ -1238,7 +1318,7 @@ export class SDK {
         console.log(tag, 'assetInfo: ', assetInfo);
 
         //hydrate with price data
-        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip.toLowerCase() });
         priceData = priceData.data || {};
         console.log(tag, 'priceData: ', priceData);
         if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
@@ -1331,7 +1411,7 @@ export class SDK {
         let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
         //hydrate with price data
-        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip });
+        let priceData = await this.pioneer.MarketInfo({ caip: asset.caip.toLowerCase() });
         priceData = priceData.data || {};
         if (!priceData) console.error('Unable to get price data for asset: ', asset.caip);
         if (priceData) assetInfo = { ...assetInfo, ...priceData };

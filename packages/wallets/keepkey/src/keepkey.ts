@@ -72,11 +72,14 @@ const getEVMWalletMethods = async ({
   const address = await signer.getAddress();
   const evmParams = { api, signer, provider };
 
+  const getPubkeys = () => ({ type: 'address', pubkey: address });
+
   switch (chain) {
     case Chain.Ethereum:
       return {
         ...ETHToolbox({ ...evmParams, ethplorerApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -84,6 +87,7 @@ const getEVMWalletMethods = async ({
       return {
         ...BSCToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -91,6 +95,7 @@ const getEVMWalletMethods = async ({
       return {
         ...ARBToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -98,6 +103,7 @@ const getEVMWalletMethods = async ({
       return {
         ...OPToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -105,6 +111,7 @@ const getEVMWalletMethods = async ({
       return {
         ...MATICToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -112,6 +119,7 @@ const getEVMWalletMethods = async ({
       return {
         ...AVAXToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -119,6 +127,7 @@ const getEVMWalletMethods = async ({
       return {
         ...BASEToolbox({ ...evmParams, covalentApiKey }),
         getAddress: () => address,
+        getPubkeys,
         signMessage: signer.signMessage,
         signTypedData: signer.signTypedData,
       };
@@ -293,7 +302,7 @@ const connectKeepkey =
     // Wait for all the promises to resolve
     await Promise.all(chainPromises);
 
-    return keepkeyConfig.apiKey;
+    return { keepkeyApiKey: keepkeyConfig.apiKey, info: features };
   };
 
 export const keepkeyWallet = {

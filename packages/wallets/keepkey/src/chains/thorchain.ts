@@ -138,7 +138,8 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         from: fromAddress,
       });
 
-    return { ...toolbox, getAddress: () => fromAddress, transfer, deposit };
+    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
+    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, deposit };
   } catch (error) {
     throw error;
   }

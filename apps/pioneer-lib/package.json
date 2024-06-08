@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/pioneer-lib",
-  "version": "0.1.42",
+  "version": "0.1.44",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -11,8 +11,8 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
-    "@pioneer-platform/pioneer-caip": "^9.2.26",
-    "@pioneer-platform/pioneer-coins": "^9.2.21",
+    "@pioneer-platform/pioneer-caip": "^9.2.27",
+    "@pioneer-platform/pioneer-coins": "^9.2.23",
     "axios": "^1.6.7",
     "canvas-confetti": "^1.9.3",
     "chart.js": "^4.4.1",

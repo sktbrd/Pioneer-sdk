@@ -70,8 +70,10 @@ export function Classic({ usePioneer }: any) {
   }, [app, app?.assetContext]);
 
   useEffect(() => {
-    if (assets) console.log("assets", assets);
-  }, [app, assets]);
+    if (assets) {
+      console.log("state change: assets", assets);
+    }
+  }, [app, app?.assetsMap, assets]);
 
   const onSelect = (asset: any) => {
     console.log("onSelect", asset);
@@ -99,7 +101,8 @@ export function Classic({ usePioneer }: any) {
       await app.getAssets();
       await app.getPubkeys();
       await app.getBalances();
-      console.log("assets", assets);
+      console.log('assetsMap: ', app.assetsMap)
+      console.log("assets: ", assets);
     }
   };
 

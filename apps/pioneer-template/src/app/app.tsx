@@ -168,6 +168,7 @@ export default function App() {
       console.log('walletsVerbose: ', walletsVerbose);
       onStart(walletsVerbose, pioneerSetup);
     }catch(e){
+      console.error(e)
       console.error("Failed to start app!")
     }
   }

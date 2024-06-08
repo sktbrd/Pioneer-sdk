@@ -1,16 +1,17 @@
 {
   "author": "swapkit-oss-team",
   "dependencies": {
+    "@coinmasters/api": "workspace:*",
+    "@coinmasters/types": "workspace:*",
     "@cosmjs/amino": "0.32.0",
     "@cosmjs/crypto": "0.32.0",
     "@cosmjs/encoding": "0.32.0",
     "@cosmjs/math": "0.32.0",
     "@cosmjs/proto-signing": "0.32.0",
     "@cosmjs/stargate": "0.32.0",
+    "@pioneer-platform/pioneer-caip": "^9.2.27",
     "@scure/base": "1.1.3",
     "@scure/bip32": "1.3.2",
-    "@coinmasters/api": "workspace:*",
-    "@coinmasters/types": "workspace:*",
     "bn.js": "5.2.1",
     "cosmjs-types": "0.9.0",
     "crypto-js": "4.2.0",
@@ -69,5 +70,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "11.0.31"
+  "version": "11.0.33"
 }
