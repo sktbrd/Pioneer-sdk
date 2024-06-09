@@ -205,7 +205,6 @@ export const estimateMaxSendableAmount = async function ({
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
     console.log(tag, 'fees: ', fees);
 
-
     //TODO this makes no sense to me. If you are sending native token, its not a smart contract fee
     //and if you are sending a token the fee amount of the gass asset has nothing to do with the token max sendable amount
 
@@ -384,15 +383,24 @@ export const getBalance = async ({
 }) => {
   let tag = TAG + ' | getBalance | ';
   try {
-    console.log(tag, 'EVM toolbox getBalance: ', pubkey.address);
+    console.log(tag, 'pubkey: ', pubkey);
+
+    let address;
+    if (Array.isArray(pubkey)) {
+      address = pubkey[0].address;
+    } else {
+      address = pubkey.address;
+    }
+
+    console.log(tag, 'EVM toolbox getBalance: ', address);
 
     // const tokenBalances = await api.getBalance(pubkey.address).catch((e) => {
     //   console.error(`Error fetching token balances for address ${pubkey.address}:`, e);
     //   return []; // Return an empty array on failure to allow processing to continue
     // });
 
-    const evmGasTokenBalance = await provider.getBalance(pubkey.address).catch((e) => {
-      console.error(`Error fetching gas token balance for address ${pubkey.address}:`, e);
+    const evmGasTokenBalance = await provider.getBalance(address).catch((e) => {
+      console.error(`Error fetching gas token balance for address ${address}:`, e);
       return BigInt(0); // Return 0 on failure
     });
 

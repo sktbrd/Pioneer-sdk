@@ -13,8 +13,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
-import React from 'react';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { getWalletBadgeContent } from '../WalletIcon';
@@ -26,6 +25,7 @@ export function Receive({ usePioneer, onClose }: any) {
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [pubkeys, setPubkeys] = useState([]);
   const { hasCopied, onCopy } = useClipboard(selectedAddress);
 
   useEffect(() => {
@@ -43,9 +43,25 @@ export function Receive({ usePioneer, onClose }: any) {
 
   useEffect(() => {
     if (assetContext?.pubkeys?.length > 0) {
-      setSelectedAddress(assetContext.pubkeys[0].address || assetContext.pubkeys[0].master);
+      const initialAddress = assetContext.pubkeys[0].address || assetContext.pubkeys[0].master;
+      setSelectedAddress(initialAddress);
     }
   }, [assetContext]);
+
+  useEffect(() => {
+    if (app.pubkeys) {
+      const filteredPubkeys = app.pubkeys.filter((pubkey: any) => {
+        if (assetContext?.networkId?.startsWith('eip155')) {
+          return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
+        }
+        return pubkey.networks.includes(assetContext?.networkId);
+      });
+      setPubkeys(filteredPubkeys);
+      if (filteredPubkeys.length > 0) {
+        setSelectedAddress(filteredPubkeys[0].address || filteredPubkeys[0].master);
+      }
+    }
+  }, [app.pubkeys, assetContext]);
 
   const handleAddressChange = (event: any) => {
     setSelectedAddress(event.target.value);
@@ -73,20 +89,16 @@ export function Receive({ usePioneer, onClose }: any) {
           <Tr>
             <Td>Address</Td>
             <Td>
-              {app.pubkeys
-                .filter((pubkey: any) => {
-                  if (assetContext?.networkId?.startsWith('eip155')) {
-                    return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
-                  }
-                  return pubkey.networks.includes(assetContext.networkId);
-                })
-                .map((pubkey: any, index: any) => (
-                  <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+              {pubkeys.map((pubkey: any, index: any) => (
+                <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
+              ))}
+              <Select value={selectedAddress} onChange={handleAddressChange}>
+                {pubkeys.map((pubkey: any, index: any) => (
+                  <option key={index} value={pubkey.address || pubkey.master}>
+                    {pubkey.address || pubkey.master}
+                  </option>
                 ))}
-
-              {/*<Select value={selectedAddress} onChange={handleAddressChange}>*/}
-
-              {/*</Select>*/}
+              </Select>
             </Td>
           </Tr>
         </Tbody>

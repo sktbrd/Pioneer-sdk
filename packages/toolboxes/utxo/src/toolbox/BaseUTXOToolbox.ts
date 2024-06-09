@@ -152,11 +152,8 @@ const getPubkeyBalance = async function (
 const getBalance = async ({ pubkey, chain, apiClient }: any) => {
   const tag = TAG + ' getBalance';
   try {
-    let pubkey;
     if (Array.isArray(pubkey)) {
       pubkey = pubkey[0];
-    } else {
-      pubkey = pubkey;
     }
 
     console.log(tag, 'chain: ', chain);

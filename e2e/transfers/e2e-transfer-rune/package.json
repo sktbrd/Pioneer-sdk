@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-rune",
-  "version": "1.7.33",
+  "version": "1.7.34",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

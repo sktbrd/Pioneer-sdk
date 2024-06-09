@@ -99,7 +99,7 @@ export class SwapKitCore<T = ''> {
   getAddress = async (chain: any, addressInfo?: any) => {
     let tag = TAG + ' | getAddress | ';
     try {
-      console.log(tag,'chain: ',chain)
+      console.log(tag, 'chain: ', chain);
       if(!this.connectedChains[chain]) throw Error('chain not connected! ' + chain)
       const address = this.connectedChains[chain]?.address;
       if (!address) {
@@ -427,6 +427,7 @@ export class SwapKitCore<T = ''> {
       for (let i = 0; i < pubkeys.length; i++) {
         let pubkey = pubkeys[i];
         console.log(tag, 'pubkey: ', pubkey);
+        if (!pubkey || !pubkey.networks) continue;
         console.log(tag, 'pubkey networks: ', pubkey.networks);
         //if eip155 in network name
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -436,12 +437,14 @@ export class SwapKitCore<T = ''> {
           if (networkId.includes('eip155') || pubkey.type === 'address') {
             console.log(tag, 'network includes eip155 or is marked address');
             //get balance
+            console.log(tag, 'address: ', [{ address }]);
             let balance = await this.getWallet(chain)?.getBalance([{ address }]);
             console.log(tag, 'balance: ', balance);
             balance.push(balance);
           } else {
             console.log(tag, 'Scan Xpub or other public key type');
             //
+            console.log(tag, 'address: ', [{ pubkey }]);
             let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance([
               { pubkey },
             ]);

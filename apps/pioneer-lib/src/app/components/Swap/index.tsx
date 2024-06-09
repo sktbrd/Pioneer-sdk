@@ -78,6 +78,17 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [showGoBack, setShowGoBack] = useState(false);
   const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
 
+  useEffect(() => {
+    if (app && app.balances.length > 0) {
+      for(let i = 0; i < app.balances.length; i++) {
+        let balance = app.balances[i];
+        console.log('balance: ', balance);
+        console.log('balance: ', balance.balance);
+        //TODO first highest value is input
+        //second highest value is output
+      }
+    }
+  }, [app, app.assetsMap, app.balances]);
 
   useEffect(() => {
     if (app && step === 0) {
@@ -335,7 +346,7 @@ export function Swap({usePioneer}:any): JSX.Element {
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
               <div>
-                <Assets usePioneer={usePioneer} filters={{onlyOwned: !memoless, hasPubkey: !memoless, noTokens: false, memoless, integrations}} onClose={onClose} onSelect={onSelectOutput} />
+                <Assets usePioneer={usePioneer} filters={{onlyOwned: false, hasPubkey: false, noTokens: false, memoless, integrations}} onClose={onClose} onSelect={onSelectOutput} />
               </div>
             )}
             {modalType === MODAL_STRINGS.addDestination && (

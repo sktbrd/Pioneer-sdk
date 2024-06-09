@@ -1,4 +1,9 @@
-import { ChevronLeftIcon, RepeatIcon, AddIcon, SettingsIcon } from '@chakra-ui/icons';
+import {
+  ChevronLeftIcon,
+  RepeatIcon,
+  AddIcon,
+  SettingsIcon,
+} from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -18,21 +23,17 @@ import {
   Badge,
   useDisclosure,
 } from '@chakra-ui/react';
-import {
-  getPaths,
-  // @ts-ignore
-} from '@pioneer-platform/pioneer-coins';
+import { getPaths } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 import { Blockchains } from '../Blockchains';
 import { Asset } from '../Asset';
-import { Pubkey } from '../Pubkey';
-import { Balance } from '../Balance';
-import { WalletOption, prefurredChainsByWallet } from '@coinmasters/types';
-import {
-  ChainToNetworkId,
-  getChainEnumValue,
-  //@ts-ignore
-} from '@pioneer-platform/pioneer-caip';
+// import { Pubkey } from '../Pubkey';
+// import { Balance } from '../Balance';
+// import { WalletOption, prefurredChainsByWallet } from '@coinmasters/types';
+// import {
+//   ChainToNetworkId,
+//   getChainEnumValue,
+// } from '@pioneer-platform/pioneer-caip';
 
 export function Classic({ usePioneer }: any) {
   const { state, connectWallet } = usePioneer();
@@ -101,7 +102,7 @@ export function Classic({ usePioneer }: any) {
       await app.getAssets();
       await app.getPubkeys();
       await app.getBalances();
-      console.log('assetsMap: ', app.assetsMap)
+      console.log('assetsMap: ', app.assetsMap);
       console.log("assets: ", assets);
     }
   };
@@ -118,8 +119,32 @@ export function Classic({ usePioneer }: any) {
     return { integer, largePart, smallPart };
   };
 
+  // Sorting function to sort assets by balance.valueUsd
+  const sortedAssets = [...assets.values()].sort((a: any, b: any) => {
+    const balanceA = app.balances.find((balance: any) => balance.caip === a.caip);
+    const balanceB = app.balances.find((balance: any) => balance.caip === b.caip);
+
+    const valueUsdA = balanceA?.valueUsd || 0;
+    const valueUsdB = balanceB?.valueUsd || 0;
+
+    if (valueUsdA === 0) return 1;
+    if (valueUsdB === 0) return -1;
+    return valueUsdB - valueUsdA;
+  });
+
+  const formatUsd = (valueUsd:any) => {
+    if (valueUsd == null) return null;
+    return valueUsd.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
+
   return (
-    <Flex direction="column" >
+    <Flex direction="column">
       <Flex alignItems="center" p={4} borderBottom="1px solid #ccc">
         {assetContext ? (
           <IconButton
@@ -155,11 +180,11 @@ export function Classic({ usePioneer }: any) {
                 </Flex>
               ) : (
                 <>
-                  {[...assets.values()].map((asset: any, index: any) => (
-                    <Box key={index} p={5} mb={3} borderRadius="md" >
+                  {sortedAssets.map((asset: any, index: any) => (
+                    <Box key={index} p={5} mb={3} borderRadius="md">
                       <Flex>
                         <Avatar size='xl' src={asset.icon} />
-                        <Box ml={3} width='100%' minWidth="360px" >
+                        <Box ml={3} width='100%' minWidth="360px">
                           <Text fontWeight="bold">{asset.name}</Text>
                           {app.balances
                             .filter((balance: any) => balance.caip === asset.caip)
@@ -173,6 +198,8 @@ export function Classic({ usePioneer }: any) {
                                     <Text as="span" fontSize="xs">{smallPart}</Text>
                                   )}
                                   <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
+                                  <br/>
+                                  <Badge colorScheme="green">USD {formatUsd(balance.valueUsd)}</Badge>
                                 </Text>
                               );
                             })}
@@ -183,7 +210,6 @@ export function Classic({ usePioneer }: any) {
                       </Flex>
                     </Box>
                   ))}
-
                 </>
               )}
             </>
@@ -204,33 +230,15 @@ export function Classic({ usePioneer }: any) {
         <ModalContent>
           <ModalHeader>
             <Text fontSize="lg" fontWeight="bold" textAlign="center">
-            Settings For Your KeepKey
-          </Text>
+              Settings For Your KeepKey
+            </Text>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Change Label*/}
-              {/*</Button>*/}
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Change PIN*/}
-              {/*</Button>*/}
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Wipe Device*/}
-              {/*</Button>*/}
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Contact Support*/}
-              {/*</Button>*/}
               <Button variant="ghost" w="100%">
                 About KeepKey
               </Button>
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Acknowledgements*/}
-              {/*</Button>*/}
-              {/*<Button variant="ghost" w="100%">*/}
-              {/*  Log in to ShapeShift*/}
-              {/*</Button>*/}
             </VStack>
           </ModalBody>
         </ModalContent>

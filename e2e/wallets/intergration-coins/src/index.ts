@@ -43,69 +43,82 @@ const test_service = async function (this: any) {
         console.time('start2broadcast');
         console.time('start2end');
 
-        // // if force new user
-        // const queryKey = "sdk:pair-keepkey:"+Math.random();
-        // log.info(tag,"queryKey: ",queryKey)
-        // assert(queryKey)
-        //
-        // const username = "user:"+Math.random()
-        // assert(username)
-        //
-        // //add custom path
-        // let pathsAdd:any = [
-        // ]
-        //
-        // let config:any = {
-        //     username,
-        //     queryKey,
-        //     spec,
-        //     keepkeyApiKey:process.env.KEEPKEY_API_KEY,
-        //     paths:pathsAdd,
-        //     // @ts-ignore
-        //     ethplorerApiKey:
-        //     // @ts-ignore
-        //       process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7',
-        //     // @ts-ignore
-        //     covalentApiKey:
-        //     // @ts-ignore
-        //       process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
-        //     // @ts-ignore
-        //     utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
-        //     // @ts-ignore
-        //     walletConnectProjectId:
-        //     // @ts-ignore
-        //       process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
-        // };
-        //
-        // //console.log(tag,' CHECKPOINT 2');
-        // //console.log(tag,' config: ',config);
-        // let app = new SDK.SDK(spec,config)
-        //
-        // let assets = await app.getAssets()
-        // log.info(tag,"assets: TOTAL: ",assets.length)
-        // assert(assets)
-        // if(assets.length > 0) throw Error("Assets should filter on pubkeys, no pubkeys no assets!")
-        //
-        // const walletsVerbose: any = [];
-        // const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-        // log.info(tag,"walletKeepKey: ",keepkeyWallet)
-        // const walletKeepKey = {
-        //     type: WalletOption.KEEPKEY,
-        //     icon: "https://pioneers.dev/coins/keepkey.png",
-        //     chains: availableChainsByWallet[WalletOption.KEEPKEY],
-        //     wallet: keepkeyWallet,
-        //     status: "offline",
-        //     isConnected: false,
-        // };
-        // walletsVerbose.push(walletKeepKey);
-        // // console.time('start2init');
-        // let resultInit = await app.init(walletsVerbose, {})
-        // log.info(tag,"resultInit: ",resultInit)
-        //
-        // //lets test marketInfo on top assets
+        // if force new user
+        const queryKey = "sdk:pair-keepkey:"+Math.random();
+        log.info(tag,"queryKey: ",queryKey)
+        assert(queryKey)
+
+        const username = "user:"+Math.random()
+        assert(username)
+
+        const AllChainsSupported = [Chain.Base];
+        // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
+        let blockchains = AllChainsSupported.map(
+          // @ts-ignore
+          (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
+        );
+        log.info(tag,"blockchains: ",blockchains)
+        //add custom path
+        // let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
+        log.info(tag,"paths: ",paths)
+        assert(paths)
+
+        let config:any = {
+            username,
+            queryKey,
+            spec,
+            keepkeyApiKey:process.env.KEEPKEY_API_KEY,
+            paths,
+            blockchains,
+            // @ts-ignore
+            ethplorerApiKey:
+            // @ts-ignore
+              process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7',
+            // @ts-ignore
+            covalentApiKey:
+            // @ts-ignore
+              process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
+            // @ts-ignore
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
+            // @ts-ignore
+            walletConnectProjectId:
+            // @ts-ignore
+              process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16',
+        };
+
+        //console.log(tag,' CHECKPOINT 2');
+        //console.log(tag,' config: ',config);
+        let app = new SDK.SDK(spec,config)
+
+
+        const walletsVerbose: any = [];
+        const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+        log.info(tag,"walletKeepKey: ",keepkeyWallet)
+        const walletKeepKey = {
+            type: WalletOption.KEEPKEY,
+            icon: "https://pioneers.dev/coins/keepkey.png",
+            chains: availableChainsByWallet[WalletOption.KEEPKEY],
+            wallet: keepkeyWallet,
+            status: "offline",
+            isConnected: false,
+        };
+        walletsVerbose.push(walletKeepKey);
+        // console.time('start2init');
+        let resultInit = await app.init(walletsVerbose, {})
+        log.info(tag,"resultInit: ",resultInit)
+
+        let assets = await app.assetsMap
+        log.info(tag,"assets: START: ",assets)
+        assert(assets)
+
+
+        //lets test marketInfo on top assets
         // let topList = Object.keys(shortListNameToCaip)
         // log.info(tag,"topList: ",topList)
-        // //topList creata a list of assets
+
+        //TODO this is failing! bad market data!
+        //topList creata a list of assets
         // for(let i =0; i<topList.length; i++){
         //     let caip = shortListNameToCaip[topList[i]]
         //     log.info(tag,"caip: ",caip)
@@ -117,61 +130,62 @@ const test_service = async function (this: any) {
         // }
 
 
-        // //const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
-        // let blockchains = AllChainsSupported.map(
-        //   // @ts-ignore
-        //   (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
-        // );
-        //
-        // //get paths for wallet
-        // let paths = getPaths(blockchains)
-        // log.info("paths: ",paths.length)
-        // // @ts-ignore
-        // //HACK only use 1 path per chain
-        // //TODO get user input (performance or find all funds)
-        // let optimized:any = [];
-        // blockchains.forEach((network: any) => {
-        //     const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-        //     if (pathForNetwork) {
-        //         optimized.push(pathForNetwork);
-        //     }
-        // });
-        // log.info("optimized: ", optimized.length);
-        // app.setPaths(optimized)
-        // // //connect
-        // // assert(blockchains)
-        // // assert(blockchains[0])
-        // log.info(tag,"blockchains: ",blockchains.length)
         // console.time('start2paired');
-        // let pairObject = {
-        //     type:WalletOption.KEEPKEY,
-        //     blockchains
-        // }
-        // let resultPair = await app.pairWallet(pairObject)
-        // log.info(tag,"resultPair: ",resultPair)
-        //
-        // // let assets2 = await app.assets
-        // // log.info(tag,"assets2: TOTAL: ",assets2.length)
-        // // assert(assets)
-        //
-        // //get all assets
-        // let assets2 = await app.getAssets()
-        // log.info(tag,"assets2: TOTAL: ",assets2)
-        // assert(assets)
-        //
-        // let balances = await app.getBalances()
-        // log.info(tag,"balances: TOTAL: ",balances.length)
-        // assert(balances)
-        //
-        // for(let i = 0; i < balances.length; i++){
-        //     let balance = balances[i]
-        //     log.info(tag,"balance: ",balance)
-        //     assert(balance)
-        //     assert(balance.caip)
-        // }
+        let pairObject = {
+            type:WalletOption.KEEPKEY,
+            blockchains
+        }
+        let resultPair = await app.pairWallet(pairObject)
+        log.info(tag,"resultPair: ",resultPair)
 
-        // //filter by memoless
+        let assets2 = await app.assetsMap
+        assert(assets2)
+        log.info(tag,"assets2: ",assets2)
+
+        let balances = await app.getBalances()
+        log.info(tag,"balances: TOTAL: ",balances.length)
+        assert(balances)
+        assert(balances[0])
+        assert(app.balances)
+        assert(app.balances[0])
+        log.info(tag,"balances: ",app.balances)
+
+        for(let i = 0; i < balances.length; i++){
+            let balance = balances[i]
+            log.info(tag,"balance: ",balance)
+            assert(balance)
+            assert(balance.caip)
+        }
+
+        //ok on swap in select assets, we want onlyOwned
+        // let filterForMemoless = {
+        //     hasPubkey: true,
+        //     onlyOwned: true,
+        //     noTokens: false,
+        //     // searchQuery:"",
+        //     // memoless: true,
+        //     // integrations: [],
+        // }
+        // let assetsFiltered = await app.getAssets(filterForMemoless)
+        // log.info(tag,"assetsFiltered: (swapin)",assetsFiltered.length)
+        // log.info(tag,"assetsFiltered: (swapin)",assetsFiltered)
+
+        //swap out we want everything including tokens, BUT filter by memoless AND trading pairs.
+        //if no trading pairs, then smart route with a pivot asset
+        let filterForOutput = {
+            hasPubkey: false,
+            onlyOwned: false,
+            noTokens: false,
+            // searchQuery:"",
+            memoless: true,
+            integrations: ['changelly', 'rango', 'uniswap'],
+        }
+        let assetsFiltered = await app.getAssets(filterForOutput)
+        log.info(tag,"assetsFiltered: (swapin)",assetsFiltered.length)
+        log.info(tag,"assetsFiltered: (swapin)",assetsFiltered)
+
+
+        //filter by memoless
         // let filterForMemoless = {
         //     hasPubkey: false,
         //     onlyOwned:false,
@@ -182,8 +196,7 @@ const test_service = async function (this: any) {
         // }
         // let assetsFiltered = await app.getAssets(filterForMemoless)
         // log.info(tag,"assetsFiltered: (memoless)",assetsFiltered.length)
-        //
-        // //filter by no tokens BROKE**** @TODO too low
+
         // let filterForNoTokens = {
         //     hasPubkey: false,
         //     onlyOwned:false,
@@ -194,8 +207,8 @@ const test_service = async function (this: any) {
         // }
         // let assetsFiltered2 = await app.getAssets(filterForNoTokens)
         // log.info(tag,"assetsFiltered: (no tokens)",assetsFiltered2.length)
-        //
-        //
+
+
         // let filterForBitcoin = {
         //     hasPubkey: false,
         //     onlyOwned:false,

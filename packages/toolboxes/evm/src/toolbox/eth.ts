@@ -23,7 +23,7 @@ export const ETHToolbox = ({
 
   return {
     ...baseToolbox,
-    getBalance: (address: any, potentialScamFilter?: boolean) =>
-      getBalance({ provider, api: ethApi, address, chain: Chain.Ethereum, potentialScamFilter }),
+    getBalance: (pubkey: any, potentialScamFilter?: boolean) =>
+      getBalance({ provider, api: ethApi, pubkey, chain: Chain.Ethereum, potentialScamFilter }),
   };
 };

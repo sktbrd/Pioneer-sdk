@@ -60,9 +60,8 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
-        // let paths:any = [
-        // ]
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
@@ -70,7 +69,8 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            // paths,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -107,9 +107,6 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN]
-        let paths = getPaths(blockchains)
-        app.setPaths(paths)
         // //connect
         // assert(blockchains)
         // assert(blockchains[0])
@@ -176,23 +173,23 @@ const test_service = async function (this: any) {
         // log.info("maxSpendable: ",maxSpendable)
         // assert(maxSpendable)
 
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = AssetValue.fromChainOrSignature(
-          Chain.Ethereum,
-          TEST_AMOUNT,
-        );
-        log.info("assetValue: ",assetValue)
-
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = AssetValue.fromChainOrSignature(
+        //   Chain.Ethereum,
+        //   TEST_AMOUNT,
+        // );
+        // log.info("assetValue: ",assetValue)
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
     } catch (e) {

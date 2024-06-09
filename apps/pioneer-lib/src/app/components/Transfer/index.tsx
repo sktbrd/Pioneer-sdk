@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Flex,
@@ -40,12 +41,12 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const [maxSpendable, setMaxSpendable] = useState('');
   const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(true);
 
-  const textColor = useColorModeValue('gray.600', 'gray.200');
+  // const textColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'gray.700');
   const headingColor = useColorModeValue('teal.500', 'teal.300');
 
   useEffect(() => {
-    if(assetContext.icon)setAvatarUrl(assetContext.icon);
+    if(assetContext && assetContext.icon)setAvatarUrl(assetContext.icon);
   }, [app, app?.swapKit, assetContext]);
 
   useEffect(() => {
@@ -188,6 +189,11 @@ export function Transfer({ usePioneer }: any): JSX.Element {
     setInputAmount(maxSpendable);
   };
 
+  const formatNumber = (number) => {
+    return number
+  };
+
+
   if (loadingMaxSpendable) {
     return (
       <Flex align="center" justify="center" height="100vh">
@@ -202,9 +208,9 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   }
 
   return (
-    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} boxShadow="lg" width={{ base: '100%', md: '75%', lg: '50%' }} margin="0 auto">
+    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor}  margin="0 auto">
       <Heading as="h1" mb={4} size="lg" color={headingColor}>
-        Send Crypto!
+        Send Crypto!asd
       </Heading>
 
       {isPairing ? (
@@ -224,11 +230,11 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               </Avatar>
             </Box>
             <Box>
-              <Text mb={2} color={textColor}>Asset: {assetContext?.name || 'N/A'}</Text>
-              <Text mb={2} color={textColor}>Chain: {assetContext?.chain || 'N/A'}</Text>
-              <Text mb={4} color={textColor}>Symbol: {assetContext?.symbol || 'N/A'}</Text>
-              <Text mb={4} color={textColor}>
-                Max Spendable: {maxSpendable} {assetContext?.symbol}
+              <Text mb={2} >Asset: <Badge colorScheme="green">{assetContext?.name || 'N/A'}</Badge></Text>
+              <Text mb={2} >Chain: <Badge colorScheme="green">{assetContext?.chain || 'N/A'}</Badge></Text>
+              <Text mb={4} >Symbol: <Badge colorScheme="green">{assetContext?.symbol || 'N/A'}</Badge></Text>
+              <Text mb={4} >
+                Max Spendable: {formatNumber(maxSpendable)} {assetContext?.symbol}
               </Text>
             </Box>
           </Flex>
@@ -239,7 +245,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
             w="full"
           >
             <FormControl>
-              <FormLabel color={textColor}>Recipient:</FormLabel>
+              <FormLabel >Recipient:</FormLabel>
               <Input
                 onChange={handleRecipientChange}
                 placeholder="Address"
@@ -247,7 +253,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               />
             </FormControl>
             <FormControl>
-              <FormLabel color={textColor}>Input Amount:</FormLabel>
+              <FormLabel >Input Amount:</FormLabel>
               <Input
                 onChange={handleInputChange}
                 placeholder="0.0"
@@ -255,7 +261,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               />
             </FormControl>
           </Grid>
-          {!assetContext.networkId.includes('eip155') && (
+          {!assetContext?.networkId.includes('eip155') && (
             <Flex justify="space-between" align="center" mt="4">
               <Button
                 variant="ghost"
@@ -269,7 +275,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
 
           {showAdvanced && (
             <FormControl>
-              <FormLabel color={textColor}>
+              <FormLabel >
                 Memo:
                 <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
                   <InfoOutlineIcon ml="2" />
