@@ -8,6 +8,7 @@ import {
   Avatar,
   Select,
   useToast,
+  Badge
 } from '@chakra-ui/react';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
@@ -98,9 +99,12 @@ export function Blockchains({usePioneer, onSelect}: any) {
     <Flex alignItems="center" justifyContent="space-between" p={2} borderBottomWidth="1px" borderColor="gray.200">
       <Flex alignItems="center">
         <Avatar size="sm" src={`https://pioneers.dev/coins/${COIN_MAP_LONG[NetworkIdToChain[chain] as keyof typeof COIN_MAP_LONG]}.png`} mr={4} />
-        <Text fontWeight="bold">{chain}</Text>
+        <Text fontWeight="bold">{COIN_MAP_LONG[NetworkIdToChain[chain]]}</Text>
       </Flex>
-      <Switch isChecked={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
+      <Flex alignItems="center">
+        <Badge mr={4}>{chain}</Badge>
+        <Switch isChecked={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
+      </Flex>
     </Flex>
   );
 
@@ -114,17 +118,15 @@ export function Blockchains({usePioneer, onSelect}: any) {
 
   return (
     <Box>
-      {/*<Flex justifyContent="space-between" mb={4}>*/}
-      {/*  <Select placeholder="Select wallet" onChange={handleWalletChange}>*/}
-      {/*    {walletOptions.map(option => (*/}
-      {/*      <option key={option} value={option}>{option}</option>*/}
-      {/*    ))}*/}
-      {/*  </Select>*/}
-      {/*  <Button colorScheme="green" onClick={selectAllChains}>Select All</Button>*/}
-      {/*  <Button colorScheme="red" onClick={unselectAllChains}>Unselect All</Button>*/}
-      {/*</Flex>*/}
-      {/*{context && <Text fontSize="xl" my={4}>Current Context: {context}</Text>}*/}
-      {/*{contextType && <Text fontSize="xl" my={4}>Context Type: {contextType}</Text>}*/}
+      <Flex justifyContent="space-between" mb={4}>
+        <Button size="sm" variant="outline" colorScheme="green" onClick={selectAllChains}>
+          Select All
+        </Button>
+        <Button size="sm" variant="outline" colorScheme="red" onClick={unselectAllChains}>
+          Unselect All
+        </Button>
+      </Flex>
+
       {UTXO.length > 0 && (
         <>
           <Text fontSize="xl" mb={4}>UTXO Chains</Text>

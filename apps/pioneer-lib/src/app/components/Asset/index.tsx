@@ -1,33 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, useColorModeValue, Badge,
+  VStack, Avatar, Box, Stack, Flex, Text, Button, Spinner, Collapse, useColorModeValue, Badge, Card, CardBody, Heading,
 } from '@chakra-ui/react';
-import { Pubkey } from '../Pubkey';
-import { Balance } from '../Balance';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+
 import { Transfer } from '../Transfer';
 import { Receive } from '../Receive';
 
-const Card = ({ children }: any) => (
-  <Box
-    border="1px solid"
-    borderColor={useColorModeValue('gray.200', 'gray.700')}
-    borderRadius="lg"
-    overflow="hidden"
-    bg={useColorModeValue('white', 'gray.800')}
-    width="100%"
-  >
-    {children}
-  </Box>
-);
-
-const CardBody = ({ children }: any) => (
-  <Box p={4}>
-    {children}
-  </Box>
-);
-
 export function Asset({ usePioneer, onClose, asset }: any) {
   const [activeTab, setActiveTab] = useState<'send' | 'receive' | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const { state } = usePioneer();
   const { app } = state;
@@ -40,6 +22,8 @@ export function Asset({ usePioneer, onClose, asset }: any) {
   useEffect(() => {
     if (asset) {
       console.log('asset:', asset);
+      console.log('pubkeys:', app.pubkeys);
+      console.log('pubkeys:', app.paths);
     }
   }, [asset]);
 
@@ -50,12 +34,19 @@ export function Asset({ usePioneer, onClose, asset }: any) {
     return { integer, largePart, smallPart };
   };
 
+  const openUrl = (url: string) => {
+    window.open(url, '_blank');
+  };
+
   return (
     <Stack spacing={4} width="100%">
       <Card>
         <CardBody>
           {activeTab === null && asset ? (
             <>
+              <Box textAlign="center">
+                <Badge>caip: {asset.caip}</Badge>
+              </Box>
               <Flex align="center" justifyContent="space-between" mb={4}>
                 <Avatar size='xl' src={asset.icon} />
                 <Box ml={3} flex="1">
@@ -63,7 +54,6 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   <Text fontSize="md" color="gray.500">{asset.symbol}</Text>
                 </Box>
                 <Box>
-
                   {app.balances
                     .filter((balance: any) => balance.caip === asset.caip)
                     .map((balance: any, index: any) => {
@@ -79,39 +69,75 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                       );
                     })}
                 </Box>
-
               </Flex>
-              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
-                <VStack width="100%">
-                  {app.pubkeys
-                    .filter((pubkey: any) => {
-                      if (asset?.networkId?.startsWith('eip155')) {
-                        return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
-                      }
-                      return pubkey.networks.includes(asset.networkId);
-                    })
-                    .map((pubkey: any, index: any) => (
-                      <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-                    ))}
-                </VStack>
-              </Flex>
-              <Flex align="center" justifyContent="space-between" mb={4} width="100%">
-                <VStack width="100%">
-                  {/*{app.balances*/}
-                  {/*  .filter((balance: any) => balance.caip === asset.caip)*/}
-                  {/*  .map((balance: any, index: any) => (*/}
-                  {/*    <Balance key={index} usePioneer={usePioneer} balance={balance} />*/}
-                  {/*  ))}*/}
-                </VStack>
-              </Flex>
-              <VStack spacing={2}>
-                <Button size="sm" onClick={() => setActiveTab('send')}>
+              <Flex direction="column" align="center" mb={4}>
+                <Button my={2} size="md" onClick={() => setActiveTab('send')}>
                   Send {asset.name}
                 </Button>
-
-                <Button size="sm" onClick={() => setActiveTab('receive')}>
+                <Button my={2} size="md" onClick={() => setActiveTab('receive')}>
                   Receive {asset.name}
                 </Button>
+              </Flex>
+              <Heading as="h3" size="md" mb={4}>Accounts</Heading>
+
+              <VStack spacing={4} width="100%" align="center">
+                {app.pubkeys
+                  .filter((pubkey: any) => {
+                    if (asset?.networkId?.startsWith('eip155')) {
+                      return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
+                    }
+                    return pubkey.networks.includes(asset.networkId);
+                  })
+                  .map((pubkey: any, index: any) => (
+                    <Card key={index} width="100%" maxWidth="600px" borderWidth="1px" borderRadius="lg" boxShadow="md">
+                      <CardBody>
+                        <Text fontWeight="bold" mb={2}>{pubkey.note}</Text>
+                        <Text mb={2}>Path: <Badge>{pubkey.pathMaster}</Badge></Text>
+                        <Text fontWeight="bold" mb={2}>Address: {pubkey.master || pubkey.address}</Text>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openUrl(pubkey.type === 'address' ? asset.explorerAddressLink + '/' + pubkey.address : asset.explorerXpubLink + '/' + pubkey.pubkey)}
+                        >
+                          View Transaction History
+                        </Button>
+
+                        {pubkey.type !== 'address' && (
+                          <>
+                            <Box mt={2} width="100%">
+                              <Flex justify="flex-end">
+                                <Text
+                                  fontSize="sm"
+                                  color="blue.500"
+                                  cursor="pointer"
+                                  onClick={() => setShowAdvanced(!showAdvanced)}
+                                >
+                                  Advanced {showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                                </Text>
+                              </Flex>
+                              <Collapse in={showAdvanced} animateOpacity>
+                                <Box mt={2}>
+                                  <Text mb={2}>Path: {pubkey.path}</Text>
+                                  <Box
+                                    as="textarea"
+                                    readOnly
+                                    value={pubkey.pubkey}
+                                    width="100%"
+                                    height="100px"
+                                    p={2}
+                                    borderWidth="1px"
+                                    borderRadius="md"
+                                    overflow="auto"
+                                    whiteSpace="pre-wrap"
+                                  />
+                                </Box>
+                              </Collapse>
+                            </Box>
+                          </>
+                        )}
+                      </CardBody>
+                    </Card>
+                  ))}
               </VStack>
             </>
           ) : activeTab === 'send' ? (

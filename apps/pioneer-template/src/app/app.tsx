@@ -43,135 +43,17 @@ import {
 //   //@ts-ignore
 // } from '@coinmasters/pioneer-lib';
 import Image from 'next/image';
-
+import { useOnStartApp } from "../utils/onStart";
 
 export default function App() {
-  const { onStart, state } = usePioneer();
+  const onStartApp = useOnStartApp();
+  const { state } = usePioneer();
   const { api, app, assets, context } = state;
   const [intent, setIntent] = useState('classic');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
 
-  let onStartApp = async function(){
-    try{
-      console.log("onStartApp")
-      let walletsVerbose = []
-      const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-      //console.log('keepkeyWallet: ', keepkeyWallet);
-
-      const pioneerSetup: any = {
-        appName: "Pioneer Template",
-        appIcon: "https://pioneers.dev/coins/pioneerMan.png",
-      };
-      const walletKeepKey = {
-        type: WalletOption.KEEPKEY,
-        icon: "https://pioneers.dev/coins/keepkey.png",
-        chains: availableChainsByWallet[WalletOption.KEEPKEY],
-        wallet: keepkeyWallet,
-        status: "offline",
-        isConnected: false,
-      };
-      //console.log('walletKeepKey: ', walletKeepKey);
-      walletsVerbose.push(walletKeepKey);
-
-      //ShapeShift metamask wallet
-      // const { metamaskWallet } = await import("@coinmasters/wallet-metamask");
-      // const walletMetaMask = {
-      //   type: WalletOption.METAMASK,
-      //   icon: "https://pioneers.dev/coins/metamask.png",
-      //   chains: availableChainsByWallet[WalletOption.METAMASK],
-      //   wallet: metamaskWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletMetaMask);
-
-      const { evmWallet } = await import("@coinmasters/wallet-evm-extensions");
-      const walletMetamask = {
-        type: "METAMASK", // TODO
-        icon: "https://pioneers.dev/coins/evm.png",
-        chains: availableChainsByWallet[WalletOption.METAMASK], // TODO
-        wallet: evmWallet,
-        status: "offline",
-        isConnected: false,
-      };
-      walletsVerbose.push(walletMetamask);
-
-      // const walletKeplr = {
-      //   type: WalletOption.KEPLR,
-      //   icon: "https://pioneers.dev/coins/keplr.png",
-      //   chains: availableChainsByWallet[WalletOption.KEPLR],
-      //   wallet: keplrWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletKeplr);
-      // const walletKeystore = {
-      //   type: WalletOption.KEYSTORE,
-      //   icon: "https://pioneers.dev/coins/keystore.png",
-      //   chains: availableChainsByWallet[WalletOption.KEYSTORE],
-      //   wallet: keystoreWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletKeystore);
-      // const walletLedger = {
-      //   type: WalletOption.LEDGER,
-      //   icon: "https://pioneers.dev/coins/ledger.png",
-      //   chains: availableChainsByWallet[WalletOption.LEDGER],
-      //   wallet: ledgerWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletLedger);
-      // const walletOKX = {
-      //   type: WalletOption.OKX,
-      //   icon: "https://pioneers.dev/coins/okx.png",
-      //   chains: availableChainsByWallet[WalletOption.OKX],
-      //   wallet: okxWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletOKX);
-      // const walletTrezor = {
-      //   type: WalletOption.TREZOR,
-      //   icon: "https://pioneers.dev/coins/trezor.png",
-      //   chains: availableChainsByWallet[WalletOption.TREZOR],
-      //   wallet: trezorWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletTrezor);
-
-      const { walletconnectWallet } = await import("@coinmasters/wallet-wc");
-      const walletWalletConnect = {
-        type: WalletOption.WALLETCONNECT,
-        icon: "https://pioneers.dev/coins/walletconnect.png",
-        chains: availableChainsByWallet[WalletOption.WALLETCONNECT],
-        wallet: walletconnectWallet,
-        status: "offline",
-        isConnected: false,
-      };
-      walletsVerbose.push(walletWalletConnect);
-
-      // const walletXDefi = {
-      //   type: WalletOption.XDEFI,
-      //   icon: "https://pioneers.dev/coins/xdefi.png",
-      //   chains: availableChainsByWallet[WalletOption.XDEFI],
-      //   wallet: xdefiWallet,
-      //   status: "offline",
-      //   isConnected: false,
-      // };
-      // walletsVerbose.push(walletXDefi);
-
-      console.log('walletsVerbose: ', walletsVerbose);
-      onStart(walletsVerbose, pioneerSetup);
-    }catch(e){
-      console.error(e)
-      console.error("Failed to start app!")
-    }
-  }
   useEffect(() => {
     onStartApp();
   }, []);

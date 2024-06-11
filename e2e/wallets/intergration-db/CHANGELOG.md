@@ -1,5 +1,16 @@
 # @coinmasters/integration-coins
 
+## 1.7.35
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-db@4.7.34
+  - @coinmasters/types@4.7.35
+  - @coinmasters/core@11.0.35
+
 ## 1.7.34
 
 ### Patch Changes

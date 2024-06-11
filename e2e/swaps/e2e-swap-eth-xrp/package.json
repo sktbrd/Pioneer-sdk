@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-swap-eth-xrp",
-  "version": "1.7.34",
+  "version": "1.7.35",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

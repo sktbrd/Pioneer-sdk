@@ -421,6 +421,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
               });
               // @ts-ignore
               dispatch({
+                type: WalletActions.SET_OUTBOUND_ASSET_CONTEXT,
+                payload: state.app.assetContext,
+              });
+              // @ts-ignore
+              dispatch({
                 type: WalletActions.SET_ASSET_CONTEXT,
                 payload: state.app.assetContext,
               });
@@ -453,6 +458,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log(tag, 'setup:', setup);
       if (!wallets) throw Error('wallets is required! onStart');
       if (!setup) throw Error('setup is required! onStart');
+      if (!setup.appName) throw Error('setup appName is required! onStart');
+      if (!setup.appIcon) throw Error('setup appIcon is required! onStart');
 
       await db.init({});
       console.log(tag, 'Database initialized');
@@ -516,8 +523,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
       const configPioneer: any = {
-        appName: setup?.appName,
-        appIcon: setup?.appIcon,
+        appName: setup.appName,
+        appIcon: setup.appIcon,
         blockchains,
         username,
         queryKey,

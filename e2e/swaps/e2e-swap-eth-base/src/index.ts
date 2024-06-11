@@ -42,8 +42,9 @@ console.log("wss: ",wss)
 let txid:string
 let IS_SIGNED: boolean
 
+let INVOCATION_ID:any
 //de231ea5-0598-41a7-a43f-d8a50648f425
-let INVOCATION_ID = 'de231ea5-0598-41a7-a43f-d8a50648f425'
+// let INVOCATION_ID = 'de231ea5-0598-41a7-a43f-d8a50648f425'
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
@@ -62,8 +63,10 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT]
+        let paths = getPaths(blockchains)
+        log.info(tag,"paths: ",paths)
+        assert(paths)
 
         let config:any = {
             username,
@@ -71,7 +74,7 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -108,25 +111,6 @@ const test_service = async function (this: any) {
         log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN_IN, BLOCKCHAIN_OUT, ChainToNetworkId['ETH']]
-        log.info(tag,"blockchains: ",blockchains)
-
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
@@ -139,11 +123,10 @@ const test_service = async function (this: any) {
         }
 
         //check pairing
-        // //context should match first account
+        //context should match first account
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
-
 
         await app.getPubkeys()
         await app.getBalances()
@@ -162,36 +145,33 @@ const test_service = async function (this: any) {
         assert(balance.length > 0)
         //verify balances
         assert(balanceOut[0])
-
-
+        log.info(tag,"balanceOut[0]: ",balanceOut[0])
         await app.setOutboundAssetContext(balanceOut[0]);
 
         //get outbound asset
-        let outboundAssetContext = await app.outboundAssetContext
+        log.info(tag,"app: ",app)
+        assert(app.outboundAssetContext)
+        log.info(tag,"app.outboundAssetContext: ",app.outboundAssetContext)
+        let outboundAssetContext = app.outboundAssetContext
         log.info(tag,"outboundAssetContext: ",outboundAssetContext)
         assert(outboundAssetContext)
         if(outboundAssetContext.chain !== OUTPUT_ASSET) throw Error("Wrong output!")
 
         assert(app.assetContext)
-        assert(app.assetContext.address)
-        assert(app.assetContext.address)
+        let pubkeysIn = app.pubkeys.filter((e: any) => e.networks.includes(BLOCKCHAIN_IN));
+        let pubkeysOut = app.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
+        assert(pubkeysIn)
+        assert(pubkeysOut)
+        assert(pubkeysIn[0])
+        assert(pubkeysOut[0])
+        assert(pubkeysIn[0].address)
+        assert(pubkeysOut[0].address)
 
         //get sender context
-        const senderAddress = app.assetContext.address;
+        const senderAddress = pubkeysIn[0].address;
         assert(senderAddress)
 
-        const recipientAddress =
-          app.outboundAssetContext.address || app.swapKit.getAddress(app.outboundAssetContext.chain);
-        assert(recipientAddress)
-
-        let buyAsset;
-        if (app.outboundAssetContext.contract) {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}-${app.outboundAssetContext.contract}`;
-        } else {
-            buyAsset = `${app.outboundAssetContext.chain}.${app.outboundAssetContext.symbol}`;
-        }
-        assert(buyAsset)
-
+        const recipientAddress = pubkeysOut[0].address
 
         //get receiver context
         const entry = {
@@ -221,16 +201,13 @@ const test_service = async function (this: any) {
 
             const outputChain = app.outboundAssetContext?.chain;
 
-            const address = app?.swapKit.getAddress(outputChain);
-            log.info("address: ", address);
-
 
             log.info("selected: ", selected);
 
             //send
             const txHash = await app?.swapKit.swap({
                 route:selected,
-                recipient: address,
+                recipient: recipientAddress,
                 feeOptionKey: FeeOption.Fast,
             });
             log.info("txHash: ",txHash)

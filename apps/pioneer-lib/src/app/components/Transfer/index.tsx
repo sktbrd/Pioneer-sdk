@@ -189,7 +189,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
     setInputAmount(maxSpendable);
   };
 
-  const formatNumber = (number) => {
+  const formatNumber = (number:any) => {
     return number
   };
 
@@ -210,12 +210,12 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   return (
     <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor}  margin="0 auto">
       <Heading as="h1" mb={4} size="lg" color={headingColor}>
-        Send Crypto!asd
+        Send Crypto!
       </Heading>
 
       {isPairing ? (
         <Box>
-          <Text mb={2} color={textColor}>
+          <Text mb={2}>
             Connecting to {context}...
             <Spinner size="xl" />
             Please check your wallet to approve the connection.

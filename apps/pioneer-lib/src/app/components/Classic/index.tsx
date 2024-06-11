@@ -5,7 +5,9 @@ import {
   SettingsIcon,
 } from '@chakra-ui/icons';
 import {
+  Image,
   Avatar,
+  Card,
   Box,
   Button,
   Flex,
@@ -21,9 +23,11 @@ import {
   ModalCloseButton,
   ModalBody,
   Badge,
+  Link,
   useDisclosure,
 } from '@chakra-ui/react';
 import { getPaths } from '@pioneer-platform/pioneer-coins';
+//
 import React, { useEffect, useState } from 'react';
 import { Blockchains } from '../Blockchains';
 import { Asset } from '../Asset';
@@ -181,9 +185,9 @@ export function Classic({ usePioneer }: any) {
               ) : (
                 <>
                   {sortedAssets.map((asset: any, index: any) => (
-                    <Box key={index} p={5} mb={3} borderRadius="md">
-                      <Flex>
-                        <Avatar size='xl' src={asset.icon} />
+                    <Card key={index} borderRadius="md" p={1} mb={1}>
+                      <Flex align="center">
+                        <Avatar src={asset.icon} />
                         <Box ml={3} width='100%' minWidth="360px">
                           <Text fontWeight="bold">{asset.name}</Text>
                           {app.balances
@@ -208,7 +212,7 @@ export function Classic({ usePioneer }: any) {
                           Select
                         </Button>
                       </Flex>
-                    </Box>
+                    </Card>
                   ))}
                 </>
               )}
@@ -236,9 +240,12 @@ export function Classic({ usePioneer }: any) {
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
-              <Button variant="ghost" w="100%">
-                About KeepKey
-              </Button>
+              <Link href="https://www.keepkey.com" isExternal w="100%">
+                <Button variant="ghost" w="100%">
+                  About KeepKey
+                </Button>
+              </Link>
+              <Image src={'https://i.ibb.co/jR8WcJM/kk.gif'} alt="KeepKey" />
             </VStack>
           </ModalBody>
         </ModalContent>
