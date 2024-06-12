@@ -490,6 +490,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // Define constants
       const walletType = WalletOption.KEEPKEY;
       const localStorageKey = `cache:blockchains:${walletType}`;
+      //availableChainsByWallet USE ALL CHAINS @TODO - get from wallet
+      // const preferredChains = availableChainsByWallet[walletType] || [];
       const preferredChains = prefurredChainsByWallet[walletType] || [];
 
       // Function to get NetworkId from chain string

@@ -19,6 +19,7 @@ import {
   Swap,
   Track,
   SignTransaction,
+  Paths,
   Pubkeys,
   Wallets,
   Blockchains,
@@ -42,6 +43,7 @@ import {
 //   SignTransaction
 //   //@ts-ignore
 // } from '@coinmasters/pioneer-lib';
+
 import Image from 'next/image';
 import { useOnStartApp } from "../utils/onStart";
 
@@ -105,8 +107,11 @@ export default function App() {
       case 'amount':
         return <Amount usePioneer={usePioneer} onClose={onClose} asset={selectedAsset} setInputAmount={setInputAmount}/>;
         break;
+      case 'assetsOut':
+        return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false, memoless:true, integrations:  ['changelly', 'rango', 'uniswap']}}/>;
+        break;
       case 'assets':
-        return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false }}/>;
+        return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false, memoless:true }}/>;
         break;
       case 'wallets':
         return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
@@ -125,6 +130,9 @@ export default function App() {
         break;
       case 'pubkeys':
         return <Pubkeys usePioneer={usePioneer}/>;
+        break;
+      case 'paths':
+        return <Paths usePioneer={usePioneer} networkId={'eip155:1'}/>;
         break;
       // case 'quote':
       //   return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
@@ -164,6 +172,8 @@ export default function App() {
             <option value="blockchains">Blockchains</option>
             <option value="quote">Quote</option>
             <option value="asset">Asset</option>
+            <option value="assets">Assets</option>
+            <option value="assetsOut">Assets Output</option>
             <option value="amount">amount</option>
             <option value="sign">sign</option>
             <option value="wallets">Wallets</option>

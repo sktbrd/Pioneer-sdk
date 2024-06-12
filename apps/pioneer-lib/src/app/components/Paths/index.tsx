@@ -13,9 +13,6 @@ import {
   Flex,
   IconButton,
   Card,
-  FormControl,
-  FormLabel,
-  Input,
   useClipboard,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
@@ -26,7 +23,7 @@ import PathWizard from '../../components/PathWizard';
 //@ts-ignore
 import { addressNListToBIP32, getPaths } from '@pioneer-platform/pioneer-coins';
 
-export default function Paths({usePioneer}: any) {
+export function Paths({ usePioneer, networkId }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
@@ -40,17 +37,12 @@ export default function Paths({usePioneer}: any) {
     try {
       // Ensure this code runs only in a browser environment
       if (typeof window === 'undefined') return;
-
+      console.log('networkId:', networkId);
       // If app.paths is not empty, update the paths state directly
-      if (app?.paths?.length > 0) {
-        //console.log('app.paths: ', app.paths);
-        //console.log('app.blockchains: ', app.blockchains);
-        setPaths(app.paths);
-        return; // Exit the function early
-      }
-
-      // Log when loading paths for the last connected wallet
-      //console.log("Load paths for last connected wallet");
+      // if (app?.paths?.length > 0) {
+      //   setPaths(app.paths);
+      //   return;
+      // }
 
       // Get the last paired wallet from localStorage
       const lastPairedWallet = window.localStorage.getItem('lastPairedWallet');
@@ -59,16 +51,21 @@ export default function Paths({usePioneer}: any) {
       const customPathsForWallet = JSON.parse(window.localStorage.getItem(`${lastPairedWallet}:paths:add`) || '[]');
       const disabledPathsForWallet = JSON.parse(window.localStorage.getItem(`${lastPairedWallet}:paths:removed`) || '[]');
 
-      // Get default paths based on app.blockchains
-      const defaultPaths = getPaths(app?.blockchains);
-      //console.log("defaultPaths: ", defaultPaths);
-
-      // Combine default paths with custom paths, ensuring unique values
-      const combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
+      // Get default paths based on app.blockchains or provided networkId
+      let defaultPaths;
+      let combinedPaths;
+      if (networkId) {
+        console.log("networkId:", networkId);
+        defaultPaths = getPaths([networkId]);
+        const filteredCustomPaths = customPathsForWallet.filter((path: any) => path.network === networkId);
+        combinedPaths = Array.from(new Set([...defaultPaths, ...filteredCustomPaths]));
+      } else {
+        defaultPaths = getPaths(app?.blockchains);
+        combinedPaths = Array.from(new Set([...defaultPaths, ...customPathsForWallet]));
+      }
 
       // Filter out disabled paths
-      const pathsView = combinedPaths.filter(path => !disabledPathsForWallet.includes(path));
-      //console.log("pathsView: ", pathsView);
+      const pathsView = combinedPaths.filter((path: any) => !disabledPathsForWallet.includes(path));
 
       // Update the paths state
       setPaths(pathsView);
@@ -94,10 +91,8 @@ export default function Paths({usePioneer}: any) {
   };
 
   const onAddPath = () => {
-    //open modal
-    //console.log('Add Path');
-    setIsEditMode(true)
-    onOpen()
+    setIsEditMode(true);
+    onOpen();
   };
 
   return (
@@ -108,7 +103,7 @@ export default function Paths({usePioneer}: any) {
             <Text fontWeight="bold">{key.network}</Text>
           </Box>
           <Box>
-            <Text fontWeight="bold">{key.symbol}: {key.type}</Text>
+            {/*<Text fontWeight="bold">{key.symbol}: {key.type}</Text>*/}
           </Box>
           <Box>
             <Text fontWeight="bold">{key.note}</Text>
@@ -117,13 +112,13 @@ export default function Paths({usePioneer}: any) {
             <Text fontWeight="bold">{addressNListToBIP32(key.addressNList || [])}</Text>
           </Box>
           <Flex alignItems="center">
-            <IconButton
-              icon={copiedAddress === key.address ? <CheckIcon /> : <CopyIcon />}
-              onClick={() => handleCopy(key.address)}
-              aria-label="Copy address"
-              mr={2}
-            />
-            <Button onClick={() => handlePathClick(key)}>view</Button>
+            {/*<IconButton*/}
+            {/*  icon={copiedAddress === key.address ? <CheckIcon /> : <CopyIcon />}*/}
+            {/*  onClick={() => handleCopy(key.address)}*/}
+            {/*  aria-label="Copy address"*/}
+            {/*  mr={2}*/}
+            {/*/>*/}
+
           </Flex>
         </Card>
       ))}
@@ -136,15 +131,15 @@ export default function Paths({usePioneer}: any) {
           <ModalHeader>{isEditMode ? 'Path Details' : 'Add Custom Path'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {isEditMode ? (<div>
+            {isEditMode ? (
               <PathWizard />
-            </div>) : (<div>
+            ) : (
               <Path path={selectedPath} />
-            </div>)}
-
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
     </div>
   );
 }
+export default Paths;

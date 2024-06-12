@@ -22,9 +22,9 @@ import { caipToNetworkId, caipToThorchain, tokenToCaip } from '@pioneer-platform
 // @ts-ignore
 import Pioneer from '@pioneer-platform/pioneer-client';
 import {
+  addressNListToBIP32,
   COIN_MAP_KEEPKEY_LONG,
   getPaths,
-  addressNListToBIP32,
   // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 // @ts-ignore
@@ -1152,60 +1152,65 @@ export class SDK {
           });
           console.log(tag, 'pubkeys: ', pubkeys);
           if (pubkeys && pubkeys.length > 0) {
-            let balancesForChain = await this.swapKit?.getBalances(chain, pubkeys);
-            console.log(tag, '**** balancesForChain: ', balancesForChain);
-            console.log(tag, '**** balancesForChain: ', balancesForChain.length);
+            try {
+              let balancesForChain = await this.swapKit?.getBalances(chain, pubkeys);
+              console.log(tag, '**** balancesForChain: ', balancesForChain);
+              console.log(tag, '**** balancesForChain: ', balancesForChain.length);
 
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let j = 0; j < balancesForChain.length; j++) {
-              // @ts-ignore
-              let balance = balancesForChain[j];
-              if (balance.caip) {
-                console.log(tag, 'balance: ', balance);
-                if (!balance.ticker) throw Error('invalid balance! ticker required!');
-                console.log(tag, 'caip: ', balance.caip);
-                console.log(tag, 'ticker: ', balance.ticker);
-                let balanceString: any = {};
-                // Balance formatted
-                balanceString.context = this.context;
-                balanceString.contextType = this.context.split(':')[0];
-                balanceString.caip = balance.caip;
-                balanceString.pubkey = balance.pubkey;
-                balanceString.ref = balance.context + balance.caip;
-                balanceString.identifier = caipToThorchain(balance.caip, balance.ticker);
-                balanceString.networkId = caipToNetworkId(balance.caip);
-                balanceString.symbol = balance.symbol;
-                balanceString.chain = balance.chain;
-                balanceString.ticker = balance.ticker;
-                balanceString.type = balance.type;
-                balanceString.balance = balance.getValue('string');
+              // eslint-disable-next-line @typescript-eslint/prefer-for-of
+              for (let j = 0; j < balancesForChain.length; j++) {
+                // @ts-ignore
+                let balance = balancesForChain[j];
+                if (balance.caip) {
+                  console.log(tag, 'balance: ', balance);
+                  if (!balance.ticker) throw Error('invalid balance! ticker required!');
+                  console.log(tag, 'caip: ', balance.caip);
+                  console.log(tag, 'ticker: ', balance.ticker);
+                  let balanceString: any = {};
+                  // Balance formatted
+                  balanceString.context = this.context;
+                  balanceString.contextType = this.context.split(':')[0];
+                  balanceString.caip = balance.caip;
+                  balanceString.pubkey = balance.pubkey;
+                  balanceString.ref = balance.context + balance.caip;
+                  balanceString.identifier = caipToThorchain(balance.caip, balance.ticker);
+                  balanceString.networkId = caipToNetworkId(balance.caip);
+                  balanceString.symbol = balance.symbol;
+                  balanceString.chain = balance.chain;
+                  balanceString.ticker = balance.ticker;
+                  balanceString.type = balance.type;
+                  balanceString.balance = balance.getValue('string');
 
-                let priceData = await this.pioneer.MarketInfo({
-                  caip: balanceString.caip.toLowerCase(),
-                });
-                priceData = priceData.data || {};
-                console.log(tag, 'priceData: ', priceData);
-                if (!priceData)
-                  console.error('Unable to get price data for asset: ', balanceString.caip);
-                if (priceData)
-                  this.assetsMap[balanceString.caip] = {
-                    ...this.assetsMap[balanceString.caip],
-                    ...priceData,
-                  };
-                balanceString.priceUsd = priceData.priceUsd || 0;
-                balanceString.valueUsd = balanceString.balance * balanceString.priceUsd;
-                balances.push(balanceString);
-              } else {
-                console.error(tag, 'Failed to get caip for balance: ', balance);
+                  let priceData = await this.pioneer.MarketInfo({
+                    caip: balanceString.caip.toLowerCase(),
+                  });
+                  priceData = priceData.data || {};
+                  console.log(tag, 'priceData: ', priceData);
+                  if (!priceData)
+                    console.error('Unable to get price data for asset: ', balanceString.caip);
+                  if (priceData)
+                    this.assetsMap[balanceString.caip] = {
+                      ...this.assetsMap[balanceString.caip],
+                      ...priceData,
+                    };
+                  balanceString.priceUsd = priceData.priceUsd || 0;
+                  balanceString.valueUsd = balanceString.balance * balanceString.priceUsd;
+                  balances.push(balanceString);
+                  console.log(tag, 'final balances: ', balances);
+                  if (balances && balances.length > 0) this.setBalances(balances);
+                } else {
+                  console.error(tag, 'Failed to get caip for balance: ', balance);
+                }
               }
+            } catch (e) {
+              console.error(tag, 'failed to get balance for chain: ', chain);
             }
           } else {
             console.error(tag, 'no pubkeys for chain: ', chain);
           }
         }
 
-        console.log(tag, 'final balances: ', balances);
-        if (balances && balances.length > 0) this.setBalances(balances);
+
 
         return balances;
       } catch (e) {
@@ -1281,7 +1286,6 @@ export class SDK {
         let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (!assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
         console.log(tag, 'assetInfo: ', assetInfo);
-
 
         this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', assetInfo);
         this.outboundAssetContext = assetInfo;

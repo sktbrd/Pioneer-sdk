@@ -78,17 +78,31 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [showGoBack, setShowGoBack] = useState(false);
   const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
 
-  useEffect(() => {
-    if (app && app.balances.length > 0) {
-      for(let i = 0; i < app.balances.length; i++) {
-        let balance = app.balances[i];
-        console.log('balance: ', balance);
-        console.log('balance: ', balance.balance);
-        //TODO first highest value is input
-        //second highest value is output
+  const setHighestValues = async () => {
+    if (app && app.balances.length > 0 &&  app?.assetsMap) {
+      // Sort balances by valueUsd in descending order
+      const sortedBalances = [...app.balances].sort((a, b) => b.valueUsd - a.valueUsd);
+
+      if (sortedBalances.length > 0) {
+        const highestValueAsset = sortedBalances[0];
+        console.log('Highest value asset: ', highestValueAsset);
+        await app.setAssetContext(app.assetsMap.get(highestValueAsset.caip));
+      }
+
+      if (sortedBalances.length > 1) {
+        const secondHighestValueAsset = sortedBalances[1];
+        console.log('Second highest value balance: ', app.assetsMap);
+        console.log('Second highest value balance: ', secondHighestValueAsset);
+        console.log('Second highest value asset caip: ', secondHighestValueAsset.caip);
+        console.log('Second highest value asset from map: ', app.assetsMap.get(secondHighestValueAsset.caip));
+        await app.setOutboundAssetContext(app.assetsMap.get(secondHighestValueAsset.caip));
       }
     }
-  }, [app, app.assetsMap, app.balances]);
+  };
+
+  useEffect(() => {
+    setHighestValues();
+  }, [app, app?.balances, app?.assetsMap]);
 
   useEffect(() => {
     if (app && step === 0) {

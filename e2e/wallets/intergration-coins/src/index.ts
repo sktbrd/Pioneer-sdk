@@ -51,7 +51,11 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        const AllChainsSupported = [Chain.Base];
+        const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        assert(AllChainsSupported)
+        log.info(tag,"AllChainsSupported: ",AllChainsSupported)
+
+        // const AllChainsSupported = [Chain.Base];
         // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
         let blockchains = AllChainsSupported.map(
           // @ts-ignore
@@ -111,6 +115,8 @@ const test_service = async function (this: any) {
         let assets = await app.assetsMap
         log.info(tag,"assets: START: ",assets)
         assert(assets)
+
+        //verify 1 asset per chain
 
 
         //lets test marketInfo on top assets
@@ -178,7 +184,7 @@ const test_service = async function (this: any) {
             noTokens: false,
             // searchQuery:"",
             memoless: true,
-            integrations: ['changelly', 'rango', 'uniswap'],
+            integrations: ['rango', 'uniswap'],
         }
         let assetsFiltered = await app.getAssets(filterForOutput)
         log.info(tag,"assetsFiltered: (swapin)",assetsFiltered.length)
