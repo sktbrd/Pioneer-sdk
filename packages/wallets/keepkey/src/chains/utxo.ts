@@ -13,10 +13,6 @@ import {
 } from '@coinmasters/toolbox-utxo';
 import type { UTXOChain } from '@coinmasters/types';
 import { Chain, DerivationPath, FeeOption } from '@coinmasters/types';
-import {
-  ChainToNetworkId,
-  // @ts-ignore
-} from '@pioneer-platform/pioneer-caip';
 import { xpubConvert } from '@pioneer-platform/pioneer-coins';
 import { toCashAddress } from 'bchaddrjs';
 import type { Psbt } from 'bitcoinjs-lib';
@@ -150,12 +146,22 @@ export const utxoWalletMethods = async ({
           // Get the master address
           console.log(tag, 'addressInfo: ', addressInfo);
           const addressMaster = await sdk.address.utxoGetAddress(addressInfo);
-
+          /*
+               NOTE: formatting xpub to ypub or zpub is required because Blockbook assumes paths based on encoding.
+               paths 44/48/84
+           */
           if (path.script_type === 'p2wpkh') {
             //convert xpub to zpub
             pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'zpub');
             if (!pubkeyResponse.xpub) throw Error('Failed to format xpub to zpub: FATAL');
-            console.log(tag, 'converted from zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
+            console.log(tag, 'converted to zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
+          }
+
+          if (path.script_type === 'p2sh-p2wpkh') {
+            //convert xpub to ypub
+            pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'ypub');
+            if (!pubkeyResponse.xpub) throw Error('Failed to format xpub to ypub: FATAL');
+            console.log(tag, 'converted to ypub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
           }
 
           // Combine the original path object with the xpub and master from the responses
@@ -255,20 +261,9 @@ export const utxoWalletMethods = async ({
     if (!recipient) throw new Error('Recipient address must be provided');
     const tag = TAG + ' | transfer | ';
     try {
-      // Select paths
-      console.log(tag, 'pubkeys: ', pubkeys);
-      //filter by sending networkId
-      // let filterPubkeys = pubkeys.filter((pubkey:any) => pubkey.networks.filter === ChainToNetworkId[chain]);
-
-      // Filter the pubkeys by networkId
-      let filterPubkeys = pubkeys.filter((pubkey: any) =>
-        pubkey.networks.some((network: any) => network === ChainToNetworkId[chain]),
-      );
-      console.log(tag, 'filterPubkeys: ', filterPubkeys);
       const { psbt, inputs: rawInputs } = await toolbox.buildTx({
         ...rest,
-        pubkeys: filterPubkeys,
-        // pubkeys: await getPubkeys(),
+        pubkeys: await getPubkeys(paths),
         memo,
         feeOptionKey,
         recipient,
@@ -278,7 +273,20 @@ export const utxoWalletMethods = async ({
       });
 
       console.log(tag, 'rawInputs: ', rawInputs);
-      const inputs = rawInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
+
+      // Create a Set to track unique txid and index pairs
+      const uniqueInputSet = new Set();
+      const uniqueInputs = rawInputs.filter(({ hash, index }) => {
+        const key = `${hash}:${index}`;
+        if (uniqueInputSet.has(key)) {
+          return false;
+        } else {
+          uniqueInputSet.add(key);
+          return true;
+        }
+      });
+
+      const inputs = uniqueInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
         addressNList: bip32ToAddressNList(path),
         scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType || 'p2pkh',
         amount: value.toString(),
@@ -296,6 +304,49 @@ export const utxoWalletMethods = async ({
       throw new Error('Transfer transaction failed');
     }
   };
+
+  // const transfer = async ({
+  //   from,
+  //   recipient,
+  //   feeOptionKey,
+  //   feeRate,
+  //   memo,
+  //   ...rest
+  // }: UTXOTransferParams) => {
+  //   if (!from) throw new Error('From address must be provided');
+  //   if (!recipient) throw new Error('Recipient address must be provided');
+  //   const tag = TAG + ' | transfer | ';
+  //   try {
+  //     const { psbt, inputs: rawInputs } = await toolbox.buildTx({
+  //       ...rest,
+  //       pubkeys: await getPubkeys(paths),
+  //       memo,
+  //       feeOptionKey,
+  //       recipient,
+  //       feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
+  //       sender: from,
+  //       fetchTxHex: chain,
+  //     });
+  //
+  //     console.log(tag, 'rawInputs: ', rawInputs);
+  //     const inputs = rawInputs.map(({ value, index, hash, txHex, path, scriptType }) => ({
+  //       addressNList: bip32ToAddressNList(path),
+  //       scriptType: scriptType === 'p2sh' ? 'p2wpkh' : scriptType || 'p2pkh',
+  //       amount: value.toString(),
+  //       vout: index,
+  //       txid: hash,
+  //       hex: txHex || '',
+  //     }));
+  //
+  //     console.log(tag, 'transfer inputs: ', inputs);
+  //     const txHex = await signTransaction(psbt, inputs, memo);
+  //     console.log(tag, 'txHex: ', txHex);
+  //     return await toolbox.broadcastTx(txHex);
+  //   } catch (error: any) {
+  //     console.error('Transfer error:', error);
+  //     throw new Error('Transfer transaction failed');
+  //   }
+  // };
 
   // const transfer = async ({
   //   from,

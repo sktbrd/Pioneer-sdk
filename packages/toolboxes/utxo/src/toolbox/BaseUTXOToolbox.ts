@@ -150,22 +150,30 @@ const getPubkeyBalance = async function (
 };
 
 const getBalance = async ({ pubkey, chain, apiClient }: any) => {
-  const tag = TAG + ' getBalance';
+  const tag = TAG + ' | getBalance | ';
   try {
-    if (Array.isArray(pubkey)) {
-      pubkey = pubkey[0];
+    if (!Array.isArray(pubkey)) {
+      throw new Error('pubkey must be an array');
     }
 
     console.log(tag, 'chain: ', chain);
-    console.log(tag, 'pubkey: ', pubkey);
-    let balanceRaw = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
-    console.log(tag, 'balanceRaw: ', balanceRaw);
+    console.log(tag, 'pubkeys: ', pubkey);
 
-    const asset = await AssetValue.fromChainOrSignature(chain, BigInt(balanceRaw));
+    let totalBalanceRaw = BigInt(0);
+
+    for (const key of pubkey) {
+      const balanceRaw = await getPubkeyBalance(key.pubkey, key.type, apiClient);
+      console.log(tag, `(${key.note}: (${key.path}) balance for ${key.pubkey}: `, balanceRaw);
+      totalBalanceRaw += BigInt(balanceRaw);
+    }
+    console.log(tag, 'totalBalanceRaw: ', totalBalanceRaw);
+
+    const asset = await AssetValue.fromChainOrSignature(chain, totalBalanceRaw);
     asset.caip = ChainToCaip[chain];
     if (!asset.caip) throw new Error('Invalid chain! missing caip! ');
     console.log('BaseUTXO asset: ', asset);
-    asset.pubkey = pubkey.pubkey;
+
+    asset.pubkeys = pubkey.map((key) => key.pubkey).join(','); // combining all pubkeys for reference
 
     return asset;
   } catch (error) {
@@ -173,6 +181,31 @@ const getBalance = async ({ pubkey, chain, apiClient }: any) => {
     throw error; // re-throw the error after logging it
   }
 };
+
+// const getBalance = async ({ pubkey, chain, apiClient }: any) => {
+//   const tag = TAG + ' getBalance';
+//   try {
+//     if (Array.isArray(pubkey)) {
+//       pubkey = pubkey[0];
+//     }
+//
+//     console.log(tag, 'chain: ', chain);
+//     console.log(tag, 'pubkey: ', pubkey);
+//     let balanceRaw = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
+//     console.log(tag, 'balanceRaw: ', balanceRaw);
+//
+//     const asset = await AssetValue.fromChainOrSignature(chain, BigInt(balanceRaw));
+//     asset.caip = ChainToCaip[chain];
+//     if (!asset.caip) throw new Error('Invalid chain! missing caip! ');
+//     console.log('BaseUTXO asset: ', asset);
+//     asset.pubkey = pubkey.pubkey;
+//
+//     return asset;
+//   } catch (error) {
+//     console.error(tag, 'Error in getBalance: ', error);
+//     throw error; // re-throw the error after logging it
+//   }
+// };
 
 // const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
 //   const tag = TAG + ' getBalance';
@@ -508,10 +541,11 @@ const buildTx = async ({
 
   if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
 
+  let inputMap = new Map();
   inputs.forEach((utxo: UTXOType) => {
     const inputOptions: any = {
-      hash: utxo.hash,
-      index: utxo.index,
+      hash: utxo.txid,
+      index: utxo.vout,
     };
 
     // Explicitly set Dogecoin transactions as non-SegWit.
@@ -529,12 +563,50 @@ const buildTx = async ({
         inputOptions.nonWitnessUtxo = Buffer.from(utxo.txHex, 'hex');
       }
     }
+
     console.log('buildTx Checkpoint 1.5:');
     console.log('inputOptions: ', inputOptions);
     console.log('inputOptions: ', JSON.stringify(inputOptions));
-    psbt.addInput(inputOptions);
-    console.log(' buildTx Checkpoint 2:');
+
+    // Check for uniqueness in inputMap before adding
+    if (inputOptions.hash && inputOptions.index) {
+      const inputKey = `${inputOptions.hash}:${inputOptions.index}`;
+      if (!inputMap.has(inputKey)) {
+        psbt.addInput(inputOptions);
+        inputMap.set(inputKey, true);
+      }
+
+      console.log('buildTx Checkpoint 2:');
+    }
   });
+
+  // inputs.forEach((utxo: UTXOType) => {
+  //   const inputOptions: any = {
+  //     hash: utxo.hash,
+  //     index: utxo.index,
+  //   };
+  //
+  //   // Explicitly set Dogecoin transactions as non-SegWit.
+  //   let isSegwit = false;
+  //   if (chain === Chain.Bitcoin) isSegwit = true;
+  //
+  //   if (isSegwit) {
+  //     console.log('isSegwit: ', isSegwit);
+  //     inputOptions.witnessUtxo = utxo.witnessUtxo;
+  //   } else {
+  //     console.log('not segwit: ', utxo);
+  //     // For Dogecoin and non-SegWit transactions of other chains, use nonWitnessUtxo if available.
+  //     if (utxo.txHex) {
+  //       console.log('not txHex: ', utxo.txHex);
+  //       inputOptions.nonWitnessUtxo = Buffer.from(utxo.txHex, 'hex');
+  //     }
+  //   }
+  //   console.log('buildTx Checkpoint 1.5:');
+  //   console.log('inputOptions: ', inputOptions);
+  //   console.log('inputOptions: ', JSON.stringify(inputOptions));
+  //   psbt.addInput(inputOptions);
+  //   console.log(' buildTx Checkpoint 2:');
+  // });
 
   // inputs.forEach((utxo: UTXOType) =>
   //   psbt.addInput({

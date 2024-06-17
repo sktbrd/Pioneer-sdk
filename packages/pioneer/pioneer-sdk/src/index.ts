@@ -1271,10 +1271,6 @@ export class SDK {
 
         console.log(tag, 'balances: ', balances);
         this.balances = balances;
-        //TODO this broke?
-        // this.balances = [
-        //   ...new Map([...this.balances, ...balances].map((item) => [item.id, item])).values(),
-        // ];
         console.log(tag, 'this.balances: ', this.balances);
         this.events.emit('SET_BALANCES', this.balances);
         return balances;
@@ -1283,6 +1279,16 @@ export class SDK {
         throw e;
       }
     };
+    /*
+        Charts
+
+        * get enabled charts
+        * get avaailable charts by networkId
+        * add chart
+        * remove chart
+        * update chart
+
+    */
     // @ts-ignore
     this.refresh = async function () {
       const tag = `${TAG} | refresh | `;

@@ -197,7 +197,7 @@ const test_service = async function (this: any) {
         log.info("paths: ",paths)
         //get default paths
         let pubkeys:any = [] //pubkey cache
-        let kkApikey = await connectFunction(chains, paths, pubkeys);
+        let kkApikey = await connectFunction(chains, paths);
         log.info("kkApikey: ", kkApikey);
         log.info("keepkey: ",keepkey)
 

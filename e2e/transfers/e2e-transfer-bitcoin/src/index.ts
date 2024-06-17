@@ -3,8 +3,7 @@
 
  */
 //@ts-ignore
-import { getPaths } from '@pioneer-platform/pioneer-coins';
-
+import { getPaths, addressNListToBIP32, bip32ToAddressNList } from '@pioneer-platform/pioneer-coins';
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -66,19 +65,19 @@ const test_service = async function (this: any) {
         let paths = getPaths(blockchains)
         // paths = [paths[1]]
 
-        log.info("paths: ",paths.length)
-        log.info("paths: ",paths)
+        // log.info("paths: ",paths.length)
+        // log.info("paths: ",paths)
         // let paths = []
 
         //add account 0 p2sh segwit
         paths.push({
-            note:"Bitcoin account 0",
+            note:"Bitcoin account 0 segwit (p2sh)",
             networks: ['bip122:000000000019d6689c085ae165831e93'],
-            script_type:"p2sh",
+            script_type:"p2sh-p2wpkh",
             available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
             type:"xpub",
-            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0],
-            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+            addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
+            addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
             curve: 'secp256k1',
             showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
         })
@@ -86,7 +85,7 @@ const test_service = async function (this: any) {
         //add account1
 
         paths.push({
-            note:"Bitcoin account 1 Native Segwit (Bech32)",
+            note:"Bitcoin account 0 Native Segwit (Bech32)",
             blockchain: 'bitcoin',
             symbol: 'BTC',
             symbolSwapKit: 'BTC',
@@ -112,7 +111,7 @@ const test_service = async function (this: any) {
             showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
         })
 
-        //add account2
+        //add account1
         paths.push({
             note:"Bitcoin account 1 Native Segwit (Bech32)",
             blockchain: 'bitcoin',
@@ -122,8 +121,8 @@ const test_service = async function (this: any) {
             script_type:"p2wpkh", //bech32
             available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
             type:"zpub",
-            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2],
-            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2, 0, 0],
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
             curve: 'secp256k1',
             showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
         })
@@ -146,18 +145,18 @@ const test_service = async function (this: any) {
             blockchain: 'bitcoin',
             symbol: 'BTC',
             symbolSwapKit: 'BTC',
-            network: 'bip122:000000000019d6689c085ae165831e93',
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
             script_type:"p2wpkh", //bech32
             available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
             type:"zpub",
-            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 3],
-            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 3, 0, 0],
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
             curve: 'secp256k1',
             showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
         })
 
         paths.push({
-            note:"Bitcoin account 1 legacy",
+            note:"Bitcoin account 3 legacy",
             networks: ['bip122:000000000019d6689c085ae165831e93'],
             script_type:"p2pkh",
             available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
@@ -248,6 +247,40 @@ const test_service = async function (this: any) {
                 assert(pubkey.pubkey)
             }
         }
+
+        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(BLOCKCHAIN));
+        log.info("pubkeys: ",pubkeys)
+        log.info("pubkeys[0]: ",pubkeys[0])
+        log.info("pubkeys[1]: ",pubkeys[1])
+        log.info("pubkeys[0].master: ",pubkeys[0].master)
+        log.info("pubkeys[1].master: ",pubkeys[1].master)
+        if(pubkeys[0].master == pubkeys[1].master)throw Error("error, wrong masters")
+        assert(pubkeys)
+        assert(pubkeys[0])
+        assert(pubkeys[0].pubkey)
+        assert(pubkeys[0].master)
+        assert(pubkeys[1])
+        assert(pubkeys[1].pubkey)
+        assert(pubkeys[1].master)
+
+        //very path should have a pubkey
+        for(let i = 0; i < app.paths.length; i++){
+            let path = app.paths[i]
+            log.info(tag,"path: ",path)
+            assert(path)
+            //convert path to addressNList
+            log.info(tag,'*** path: ',path.addressNList)
+            log.info(tag,'path: ',addressNListToBIP32(path.addressNList))
+            //get pubkey for path
+            let pubkey = await app.pubkeys.filter((b:any) => b.path === addressNListToBIP32(path.addressNList))
+            log.info(tag,'*** pubkey: ',pubkey)
+            assert(pubkey)
+            assert(pubkey[0])
+            //find path for pubkey
+        }
+        log.info("pubkeys: ",pubkeys)
+
+
         log.info("app.balances.length: ",app.balances.length)
         if(!app.balances || app.balances.length === 0){
             log.info(tag,"No balances found, recalculating...")
@@ -315,50 +348,38 @@ const test_service = async function (this: any) {
         // log.info("walletSwapkit: ",walletSwapkit)
 
         //sendMax
-        let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(BLOCKCHAIN));
-        log.info("pubkeys[0]: ",pubkeys[0])
-        log.info("pubkeys[1]: ",pubkeys[1])
-        log.info("pubkeys[0].master: ",pubkeys[0].master)
-        log.info("pubkeys[1].master: ",pubkeys[1].master)
-        if(pubkeys[0].master == pubkeys[1].master)throw Error("error, wrong masters")
-        assert(pubkeys)
-        assert(pubkeys[0])
-        assert(pubkeys[0].pubkey)
-        assert(pubkeys[0].master)
-        assert(pubkeys[1])
-        assert(pubkeys[1].pubkey)
-        assert(pubkeys[1].master)
+
 
         //verify balance
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
-        log.info(tag,"balances: ",app.balances.length)
-        assert(app.balances)
-        let balances = app.balances.filter((e: any) => e.caip == ChainToCaip[ASSET]);
-        log.info(tag,"balances: ",balances)
-        assert(balances)
-        assert(balances[0])
-        assert(balances[0].caip)
-        assert(balances[0].balance)
-        log.info(tag,"balance: ",balances[0].balance)
-
-        //get total spendable balance
-        let totalSpend = 0
-        for(let i = 0; i < balances.length; i++){
-            totalSpend += parseFloat(balances[i].balance)
-        }
-        log.info(tag,"totalSpend: ",totalSpend)
-        if(totalSpend <= 0) throw Error("error, no spendable balance. you are broke!")
-
-
-        //get total balances value in USD
-        let totalValueUsd = 0
-        for (let i = 0; i < app.balances.length; i++) {
-            let balance = app.balances[i]
-            log.info(tag, "balance: ", balance)
-            totalValueUsd += balance.valueUsd
-        }
-        log.info(tag, "totalValueUsd: ", totalValueUsd)
+        // log.info(tag,"balances: ",app.balances.length)
+        // assert(app.balances)
+        // let balances = app.balances.filter((e: any) => e.caip == ChainToCaip[ASSET]);
+        // log.info(tag,"balances: ",balances)
+        // assert(balances)
+        // assert(balances[0])
+        // assert(balances[0].caip)
+        // assert(balances[0].balance)
+        // log.info(tag,"balance: ",balances[0].balance)
+        //
+        // //get total spendable balance
+        // let totalSpend = 0
+        // for(let i = 0; i < balances.length; i++){
+        //     totalSpend += parseFloat(balances[i].balance)
+        // }
+        // log.info(tag,"totalSpend: ",totalSpend)
+        // if(totalSpend <= 0) throw Error("error, no spendable balance. you are broke!")
+        //
+        //
+        // //get total balances value in USD
+        // let totalValueUsd = 0
+        // for (let i = 0; i < app.balances.length; i++) {
+        //     let balance = app.balances[i]
+        //     log.info(tag, "balance: ", balance)
+        //     totalValueUsd += balance.valueUsd
+        // }
+        // log.info(tag, "totalValueUsd: ", totalValueUsd)
 
         //TODO view inputs for pubkeys
 
@@ -367,42 +388,42 @@ const test_service = async function (this: any) {
 
 
         // create assetValue
-        // const assetString = `${ASSET}.${ASSET}`;
-        // console.log('assetString: ', assetString);
-        // await AssetValue.loadStaticAssets();
-        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        // log.info("assetValue: ",assetValue)
-        // assert(assetValue)
-        //
-        //
-        // //send
-        // let estimatePayload:any = {
-        //     feeRate: 10,
-        //     pubkeys,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        // }
-        // log.info("estimatePayload: ",estimatePayload)
-        // //verify amount is < max spendable
-        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
-        // log.info("maxSpendable: ",maxSpendable)
-        // log.info("maxSpendable: ",maxSpendable.getValue('string'))
+        const assetString = `${ASSET}.${ASSET}`;
+        log.info(tag,'assetString: ', assetString);
+        await AssetValue.loadStaticAssets();
+        log.info(tag,"TEST_AMOUNT: ",TEST_AMOUNT);
+        log.info(tag,"TEST_AMOUNT: ",typeof(TEST_AMOUNT));
+        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        log.info(tag,"assetValue: ",assetValue)
+        assert(assetValue)
 
-        // send
-        // let sendPayload = {
-        //     // assetValue,
-        //     assetValue:maxSpendable,
-        //     isMax: true,
-        //     memo: '',
-        //     recipient: FAUCET_ADDRESS,
-        //     noBroadcast: true,
-        // }
-        // log.info("sendPayload: ",sendPayload)
-        // const txHash = await app.swapKit.transfer(sendPayload);
-        // log.info("txHash: ",txHash)
-        // assert(txHash)
+
+        //send
+        let estimatePayload:any = {
+            feeRate: 10,
+            pubkeys,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+        }
+        log.info(tag,"estimatePayload: ",estimatePayload)
+        //verify amount is < max spendable
+        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
+        log.info(tag,"maxSpendable: ",maxSpendable)
+        log.info(tag,"maxSpendable: ",maxSpendable.getValue('string'))
+
+        //send
+        let sendPayload = {
+            // assetValue,
+            assetValue:maxSpendable,
+            isMax: true,
+            memo: '',
+            recipient: FAUCET_ADDRESS,
+            noBroadcast: true,
+        }
+        log.info("sendPayload: ",sendPayload)
+        const txHash = await app.swapKit.transfer(sendPayload);
+        log.info("txHash: ",txHash)
+        assert(txHash)
 
         console.log("************************* TEST PASS *************************")
         console.timeEnd('start2end');

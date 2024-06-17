@@ -1,5 +1,18 @@
 # @coinmasters/e2e-swap-osmosis-cosmos
 
+## 1.7.37
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.37
+  - @coinmasters/wallet-keystore@11.0.37
+  - @coinmasters/wallet-keepkey@13.0.37
+  - @coinmasters/types@4.7.37
+  - @coinmasters/core@11.0.37
+
 ## 1.7.36
 
 ### Patch Changes

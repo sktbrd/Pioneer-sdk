@@ -1,5 +1,16 @@
 # @coinmasters/wallet-trezor
 
+## 11.0.37
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-utxo@11.0.37
+  - @coinmasters/types@4.7.37
+  - @coinmasters/toolbox-evm@11.0.37
+
 ## 11.0.36
 
 ### Patch Changes

@@ -249,7 +249,7 @@ const connectKeepkey =
   }) =>
   async (chains, paths) => {
     if (!keepkeyConfig) throw new Error('KeepKey config not found');
-    console.log('pubkeys: ', pubkeys.length);
+    // console.log('pubkeys: ', pubkeys.length);
 
     console.time('Total connectKeepkey time');
 
@@ -307,68 +307,6 @@ const connectKeepkey =
 
     return { keepkeyApiKey: keepkeyConfig.apiKey, info: features };
   };
-
-// const connectKeepkey =
-//   ({
-//     apis,
-//     rpcUrls,
-//     addChain,
-//     config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
-//   }) =>
-//   async (chains, paths, pubkeys) => {
-//     if (!keepkeyConfig) throw new Error('KeepKey config not found');
-//     console.log('pubkeys: ', pubkeys.length);
-//     //console.log('paths: ', paths);
-//     //console.log('apis: ', apis);
-//     //console.log('rpcUrls: ', rpcUrls);
-//     //console.log('addChain: ', addChain);
-//     //console.log('config: ', { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey });
-//
-//     //console.log('connectKeepkey chains: ', chains);
-//     await checkAndLaunch();
-//
-//     if (!paths) paths = [];
-//     // console.log('keepkey: paths: ', paths);
-//     // Only build this once for all assets
-//     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-//     // console.log('keepKeySdk: ', keepKeySdk);
-//     // console.log('keepkeyConfig.apiKey: ', keepkeyConfig.apiKey);
-//     let features: any = {};
-//     // let features = await keepKeySdk.system.info.getFeatures();
-//     // console.log('features: ', features);
-//
-//     const chainPromises = chains.map(async (chain) => {
-//       if (!chain) return;
-//
-//       const chainLogLabel = `Chain ${chain} processing time`;
-//
-//       const { address, walletMethods } = await getToolbox({
-//         sdk: keepKeySdk,
-//         apiClient: apis[chain],
-//         rpcUrl: rpcUrls[chain],
-//         chain,
-//         covalentApiKey,
-//         ethplorerApiKey,
-//         utxoApiKey,
-//         paths,
-//       });
-//
-//       addChain({
-//         chain,
-//         info: features,
-//         walletMethods,
-//         wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-//         keepkeySdk: keepKeySdk,
-//       });
-//
-//       console.timeEnd(chainLogLabel);
-//     });
-//
-//     // Wait for all the promises to resolve
-//     await Promise.all(chainPromises);
-//
-//     return { keepkeyApiKey: keepkeyConfig.apiKey, info: features };
-//   };
 
 export const keepkeyWallet = {
   connectMethodName: 'connectKeepkey' as const,
