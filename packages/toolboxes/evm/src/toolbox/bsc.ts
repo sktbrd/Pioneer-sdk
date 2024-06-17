@@ -97,11 +97,11 @@ export const BSCToolbox = ({
     ...baseToolbox,
     call: (params: CallParams) => call(provider, { signer, ...params }),
     getNetworkParams,
-    getBalance: (address: any, potentialScamFilter?: boolean) =>
+    getBalance: (pubkey: any, potentialScamFilter?: boolean) =>
       getBalance({
         provider,
         api: bscApi,
-        address,
+        pubkey,
         chain: Chain.BinanceSmartChain,
         potentialScamFilter,
       }),

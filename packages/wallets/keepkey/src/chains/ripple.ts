@@ -14,23 +14,19 @@ export type SignTransactionTransferParams = {
 
 export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; api: string }) => {
   try {
-    const { address: fromAddress } = (await sdk.address.xrpGetAddress({
-      address_n: bip32ToAddressNList(DerivationPath[Chain.Ripple]),
-    })) as { address: string };
-
     const toolbox = RippleToolbox();
 
     const signTransactionTransfer = async ({
-      amount,
-      to,
-      from,
-      memo,
-    }: SignTransactionTransferParams) => {
+                                             amount,
+                                             to,
+                                             from,
+                                             memo,
+                                           }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
         const sequence = accountInfo.Sequence.toString();
         const ledgerIndexCurrent = accountInfo.ledger_index_current;
-        let fromAddress = from;
+        const fromAddress = from;
         let desttag = memo;
         if (!desttag) desttag = '0';
         let tx = {
@@ -80,22 +76,13 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
           },
         };
         //push tx to api
-        //console.log('unsignedTx: ', JSON.stringify(unsignedTx));
         let responseSign = await sdk.xrp.xrpSignTransaction(unsignedTx);
         responseSign = JSON.parse(responseSign);
-        //console.log('responseSign: ', responseSign);
-        //console.log('responseSign: ', typeof responseSign);
-        //console.log('responseSign.value: ', responseSign.value);
-        //console.log('responseSign.value: ', responseSign.value.signatures[0]);
-        //console.log(
-        //   'responseSign.value.signatures[0].serializedTx: ',
-        //   responseSign.value.signatures[0].serializedTx,
-        // );
+
         //broadcast
         const resultBroadcast = await toolbox.sendRawTransaction(
           responseSign.value.signatures[0].serializedTx,
         );
-        //console.log('resultBroadcast: ', resultBroadcast);
 
         return resultBroadcast?.result?.tx_json?.hash;
       } catch (e) {
@@ -104,16 +91,27 @@ export const rippleWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
       }
     };
 
-    const transfer = ({ assetValue, recipient, memo }: any) =>
-      signTransactionTransfer({
+    const transfer = async ({ assetValue, recipient, memo }: any) => {
+      const fromAddress = await getAddress();
+      return signTransactionTransfer({
         from: fromAddress,
         to: recipient,
         asset: 'xrp',
         amount: assetValue.getBaseValue('string'),
         memo,
       });
-    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
-    return { ...toolbox, transfer, getAddress: () => fromAddress, getPubkeys };
+    };
+
+    const getAddress = async () => {
+      const { address } = (await sdk.address.xrpGetAddress({
+        address_n: bip32ToAddressNList(DerivationPath[Chain.Ripple]),
+      })) as { address: string };
+      return address;
+    };
+
+    const getPubkeys = async () => ({ type: 'address', pubkey: await getAddress() });
+
+    return { ...toolbox, transfer, getAddress, getPubkeys };
   } catch (error) {
     console.error(error);
     throw error;

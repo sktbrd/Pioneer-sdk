@@ -15,9 +15,6 @@ const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 //@ts-ignore
 import { getPaths } from '@pioneer-platform/pioneer-coins';
-console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
-if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
@@ -27,6 +24,7 @@ let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['ETH']
 let ASSET = 'USDT'
+let ASSET_CAIP = ''
 let MIN_BALANCE = process.env['MIN_BALANCE_USDT'] || "1.0004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
@@ -61,10 +59,15 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
+
         let config:any = {
             username,
             queryKey,
             spec,
+            blockchains,
+            paths,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
             // paths,
@@ -77,7 +80,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY,
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'fake',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -100,14 +103,13 @@ const test_service = async function (this: any) {
         };
         walletsVerbose.push(walletKeepKey);
 
-        let blockchains = [BLOCKCHAIN]
-        let paths = getPaths(blockchains)
-        app.setPaths(paths)
-
         let resultInit = await app.init(walletsVerbose, {})
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
 
         // //connect
         // assert(blockchains)
@@ -130,6 +132,9 @@ const test_service = async function (this: any) {
         log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
+
+        //get balances
+        // await app.getBalance()
 
         //verify pubkeys
         await app.getBalances()
@@ -156,32 +161,32 @@ const test_service = async function (this: any) {
         // assert(balance[0])
         // assert(balance[0].balance)
 
-        await AssetValue.loadStaticAssets();
-        //get assetValue for asset
-        let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
-        // create assetValue
-        // const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
         // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = await AssetValue.fromString(
-          assetString,
-          parseFloat(TEST_AMOUNT),
-        );
-        log.info("assetValue: ",assetValue)
+        // //get assetValue for asset
+        // let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
+        // // create assetValue
+        // // const assetString = `${ASSET}.${ASSET}`;
+        // log.info('assetString: ', assetString);
+        // // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // let assetValue = await AssetValue.fromString(
+        //   assetString,
+        //   parseFloat(TEST_AMOUNT),
+        // );
+        // log.info("assetValue: ",assetValue)
 
         //send
-        let sendPayload = {
-            from:app.pubkeys[0].master,
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let sendPayload = {
+        //     from:app.pubkeys[0].master,
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
 

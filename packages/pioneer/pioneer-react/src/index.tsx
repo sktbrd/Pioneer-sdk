@@ -20,12 +20,7 @@
 import DB from '@coinmasters/pioneer-db';
 // @ts-ignore
 import { SDK } from '@coinmasters/pioneer-sdk';
-import {
-  availableChainsByWallet,
-  getChainEnumValue,
-  prefurredChainsByWallet,
-  WalletOption,
-} from '@coinmasters/types';
+import { availableChainsByWallet, getChainEnumValue, WalletOption } from '@coinmasters/types';
 import {
   ChainToNetworkId,
   // @ts-ignore
@@ -299,53 +294,82 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
           // let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
 
-          const cacheKey = `cache:blockchains:${wallet}`;
-          const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
-
-          const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
-            const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
-            return ChainToNetworkId[chainEnum];
-          };
-
-          let blockchains =
-            cachedBlockchains.length > 0
-              ? cachedBlockchains
-              : state.app.blockchains.length > 0
-                ? state.app.blockchains
-                : availableChainsByWallet[wallet]
-                    .map(getNetworkIdFromChainStr)
-                    .filter((networkId: any): networkId is string => networkId !== undefined);
-
-          console.log('Selected blockchains: ', blockchains);
-
-          // Correctly ensuring addedChains is an array before spreading
-          // Ensure paths is an array to spread into
-          let paths = getPaths(blockchains) || [];
-          console.log('wallet: ', wallet);
-          // Attempt to retrieve and parse the added chains from localStorage
-          let addedChainsStr = localStorage.getItem(wallet.toLowerCase() + ':paths:add');
-          let addedChains;
-
-          // Safely parse addedChainsStr, ensuring it's not null before parsing
-          if (addedChainsStr) {
-            addedChains = JSON.parse(addedChainsStr);
-          } else {
-            addedChains = [];
-          }
-          //fitler by chain
-          addedChains = addedChains.filter((chain: any) => blockchains.includes(chain.network));
-
-          // console.log(tag,'onConnaddedChainsect paths: ', addedChains);
-          // At this point, both paths and addedChains are guaranteed to be arrays
-          // You can now safely concatenate them using the spread operator
-          paths = paths.concat(addedChains);
-          console.log('onConnect paths: ', paths);
+          // const cacheKey = `cache:blockchains:${wallet}`;
+          // const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+          //
+          // const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
+          //   const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
+          //   return ChainToNetworkId[chainEnum];
+          // };
+          // /*
+          //
+          //   The following madness determines the `blockchains` variable based on several conditions:
+          //
+          //   1. if `cachedBlockchains` array is not empty:
+          //       - If true, use `cachedBlockchains`.
+          //   2. If `cachedBlockchains` is empty, check if `state.app.blockchains` array is not empty:
+          //       - If true, use `state.app.blockchains`.
+          //   3. If both `cachedBlockchains` and `state.app.blockchains` are empty, use `availableChainsByWallet[wallet]`:
+          //
+          //  */
+          //
+          // let allSupported = availableChainsByWallet[wallet]
+          //   .map(getNetworkIdFromChainStr)
+          //   .filter((networkId: any): networkId is string => networkId !== undefined);
+          //
+          // let blockchains =
+          //   cachedBlockchains.length > 0
+          //     ? cachedBlockchains
+          //     : state.app.blockchains.length > 0
+          //       ? state.app.blockchains
+          //       : allSupported;
+          //
+          // console.log('Selected blockchains: ', blockchains);
+          //
+          // // Correctly ensuring addedChains is an array before spreading
+          // // Ensure paths is an array to spread into
+          // let paths = getPaths(blockchains) || [];
+          // console.log('wallet: ', wallet);
+          //
+          // //Feature add a blockchain
+          // // Attempt to retrieve and parse the added chains from localStorage
+          // // let addedChainsStr = localStorage.getItem(wallet.toLowerCase() + ':chains:add');
+          // // let addedChains;
+          // //
+          // // // Safely parse addedChainsStr, ensuring it's not null before parsing
+          // // if (addedChainsStr) {
+          // //   addedChains = JSON.parse(addedChainsStr);
+          // // } else {
+          // //   addedChains = [];
+          // // }
+          // // //fitler by chain
+          // // addedChains = addedChains.filter((chain: any) => blockchains.includes(chain.network));
+          //
+          // //Feature add a path
+          // // Attempt to retrieve and parse the added chains from localStorage
+          // let addedPathsStr = localStorage.getItem(wallet.toLowerCase() + ':paths:add');
+          // let addedPaths;
+          //
+          // // Safely parse addedPathsStr, ensuring it's not null before parsing
+          // if (addedPathsStr) {
+          //   addedPaths = JSON.parse(addedPathsStr);
+          // } else {
+          //   addedPaths = [];
+          // }
+          // //fitler by chain
+          // addedPaths = addedPaths.filter((chain: any) => blockchains.includes(chain.network));
+          //
+          // // console.log(tag,'onConnaddedPathsect paths: ', addedPaths);
+          // // At this point, both paths and addedPaths are guaranteed to be arrays
+          // // You can now safely concatenate them using the spread operator
+          // paths = paths.concat(addedPaths);
+          // console.log('onConnect paths: ', paths);
 
           //state.app.setPaths(paths);
 
           let pairParams: any = {
             type: wallet,
-            blockchains,
+            blockchains: state.blockchains,
             ledgerApp: chain,
           };
           const resultPairWallet = await state.app.pairWallet(pairParams);
@@ -385,7 +409,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
               //get pubkeys
               if (state.app.pubkeys) {
-                console.log(tag, + ' connectWallet state.app.pubkeys: ', state.app.pubkeys);
+                console.log(tag, +' connectWallet state.app.pubkeys: ', state.app.pubkeys);
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < state.app.pubkeys.length; i++) {
                   const pubkey = state.app.pubkeys[i];
@@ -487,32 +511,78 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('username', username);
       }
 
-      // Define constants
+      // // Define constants
       const walletType = WalletOption.KEEPKEY;
-      const localStorageKey = `cache:blockchains:${walletType}`;
-      //availableChainsByWallet USE ALL CHAINS @TODO - get from wallet
-      // const preferredChains = availableChainsByWallet[walletType] || [];
-      const preferredChains = prefurredChainsByWallet[walletType] || [];
+      console.log(tag, 'walletType: ', walletType);
 
-      // Function to get NetworkId from chain string
+      // const localStorageKey = `cache:blockchains:${walletType}`;
+      // //availableChainsByWallet USE ALL CHAINS @TODO - get from wallet
+      // // const preferredChains = availableChainsByWallet[walletType] || [];
+      // const preferredChains = prefurredChainsByWallet[walletType] || [];
+      //
+      // // Function to get NetworkId from chain string
+      // const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
+      //   const chainEnum: any = getChainEnumValue(chainStr) as any;
+      //   return ChainToNetworkId[chainEnum];
+      // };
+      //
+      // // Fetch blockchains from local storage or use default preferredChains
+      // let blockchainsCached: string[] = JSON.parse(localStorage.getItem(localStorageKey) || '[]');
+      //
+      // if (blockchainsCached.length === 0) {
+      //   blockchainsCached = preferredChains
+      //     .map(getNetworkIdFromChainStr)
+      //     .filter((networkId: any): networkId is string => networkId !== undefined);
+      //
+      //   localStorage.setItem(localStorageKey, JSON.stringify(blockchainsCached));
+      // }
+      //
+      // const blockchains: string[] = blockchainsCached;
+      // console.log(tag, 'blockchains: ', blockchains);
+
+      //TODO wallet or wallet type? cache per device? or wallet type?
+      const cacheKey = `cache:blockchains:${walletType}`;
+      const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+
+      console.log(tag, 'cachedBlockchains: ', cachedBlockchains);
+
       const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
-        const chainEnum: any = getChainEnumValue(chainStr) as any;
+        const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
         return ChainToNetworkId[chainEnum];
       };
 
-      // Fetch blockchains from local storage or use default preferredChains
-      let blockchainsCached: string[] = JSON.parse(localStorage.getItem(localStorageKey) || '[]');
+      /*
 
-      if (blockchainsCached.length === 0) {
-        blockchainsCached = preferredChains
-          .map(getNetworkIdFromChainStr)
-          .filter((networkId: any): networkId is string => networkId !== undefined);
+        The following madness determines the `blockchains` variable based on several conditions:
 
-        localStorage.setItem(localStorageKey, JSON.stringify(blockchainsCached));
-      }
+        1. if `cachedBlockchains` array is not empty:
+            - If true, use `cachedBlockchains`.
+        2. If `cachedBlockchains` is empty, check if `state.app.blockchains` array is not empty:
+            - If true, use `state.app.blockchains`.
+        3. If both `cachedBlockchains` and `state.app.blockchains` are empty, use `availableChainsByWallet[wallet]`:
 
-      const blockchains: string[] = blockchainsCached;
-      console.log(tag, 'blockchains: ', blockchains);
+       */
+
+      let allSupported = availableChainsByWallet[walletType]
+        .map(getNetworkIdFromChainStr)
+        .filter((networkId: any): networkId is string => networkId !== undefined);
+
+      console.log(tag, 'allSupported: ', allSupported);
+      let blockchains;
+      // if (cachedBlockchains.length > 0) {
+      //   blockchains = cachedBlockchains;
+      //   console.log('Using cachedBlockchains:', blockchains);
+      // } else if (state.app.blockchains.length > 0) {
+      //   blockchains = state.app.blockchains;
+      //   console.log('Using state.app.blockchains:', blockchains);
+      // } else {
+      //   blockchains = allSupported;
+      //   console.log('Using allSupported:', blockchains);
+      // }
+
+      blockchains = allSupported;
+
+      console.log('Selected blockchains: ', blockchains);
 
       // Fetch paths based on blockchains
       const paths: any = getPaths(blockchains);
@@ -554,6 +624,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       };
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
+      console.log(tag, 'appInit.blockchains: ', appInit.blockchains);
       console.log(tag, 'appInit: ', appInit);
       console.log(tag, 'keepkeyApiKey: ', keepkeyApiKey);
       console.log(tag, 'assetsMap: ', appInit.assetsMap);
@@ -563,6 +634,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
       }
       const api = await appInit.init(wallets, setup);
+
+      let assets = appInit.assetsMap;
+      console.log(tag, 'assets: ', assets);
+      //push assets to frontend
+
       //load pubkey cache
       //get pubkeys from cache
       let pubkeyCache = await db.getPubkeys({});
@@ -572,6 +648,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         await appInit.loadPubkeyCache(pubkeyCache);
       } else {
         console.log(tag, 'Empty pubkey cache!');
+        //get pubkeys?
       }
 
       let balanceCache = await db.getBalances({});
@@ -579,7 +656,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (balanceCache && balanceCache.length > 0) {
         await appInit.loadBalanceCache(balanceCache);
         //@ts-ignore
-        dispatch({ type: WalletActions.SET_BALANCES, payload: appInit.balances });
+        dispatch({ type: WalletActions.SET_BALANCES, payload: balanceCache });
       } else {
         console.log(tag, 'Empty balance cache!');
       }
@@ -607,7 +684,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
             console.log(tag, 'setting balances for context: ', appInit.context);
-            // console.log(tag, 'setting balances: ', data);
+            console.log(tag, 'setting balances: ', data);
+
             // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < data.length; i++) {
               let balance = data[i];
@@ -619,7 +697,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
           // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            // console.log(tag, 'SET_PUBKEYS setting pubkeys: ', data);
+            console.log(tag, 'SET_PUBKEYS setting pubkeys: ', data);
+
             // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < data.length; i++) {
               let pubkey = data[i];
@@ -639,9 +718,16 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
 
       if (lastConnectedWallet) {
-        console.log('lastConnectedWallet');
-        console.log('Loading from cache!');
+        console.log('lastConnectedWallet', lastConnectedWallet);
+        console.log('auto-connect');
         // await appInit.setContext(lastConnectedWallet);
+        await connectWallet(lastConnectedWallet);
+        if (!appInit.pubkeys || appInit.pubkeys.length === 0) {
+          await appInit.getPubkeys();
+        }
+        if (!appInit.balances || appInit.balances.length === 0) {
+          await appInit.getBalances();
+        }
 
         // //get wallet type
         // const walletType = lastConnectedWallet.split(':')[0];
@@ -673,6 +759,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 

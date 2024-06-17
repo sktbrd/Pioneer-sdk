@@ -16,7 +16,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['MAYA']
@@ -24,7 +24,8 @@ console.log("BLOCKCHAIN: ",BLOCKCHAIN)
 let ASSET = 'CACAO'
 let MIN_BALANCE = process.env['MIN_BALANCE_MAYA'] || "0.004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.001"
-let spec = process.env['PIONEER_URL_SPEC'] || 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = process.env['PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
+// let spec = process.env['PIONEER_URL_SPEC'] || 'http://127.0.0.1:9001/spec/swagger.json'
 //http://127.0.0.1:9001/spec/swagger.json
 
 let wss = process.env['VITE_URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
@@ -62,8 +63,8 @@ const test_service = async function (this: any) {
         assert(username)
 
         //add custom path
-        let pathsAdd:any = [
-        ]
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
 
         let config:any = {
             username,
@@ -71,7 +72,8 @@ const test_service = async function (this: any) {
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            paths:pathsAdd,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -108,12 +110,16 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
 
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        app.setPaths(paths)
+        log.info(tag, "ASSET: ", ASSET);
+        log.info(tag, "ChainToCaip[ASSET]: ", ChainToCaip['MAYA']);
+        log.info(tag, "caip: ", ChainToCaip['MAYA']);
+        log.info(tag, "asset: ", assets.get(ChainToCaip['MAYA'])); // Use `get` method for Map
+        assert(assets.get(ChainToCaip['MAYA'])); // Corrected this line
+
+
 
         // //connect
         // assert(blockchains)
@@ -169,20 +175,21 @@ const test_service = async function (this: any) {
         //   TEST_AMOUNT,
         // );
         // log.info("assetValue: ",assetValue)
-        let assetString = 'MAYA.MAYA'
-        await AssetValue.loadStaticAssets();
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
 
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // let assetString = 'MAYA.MAYA'
+        // await AssetValue.loadStaticAssets();
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        //
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

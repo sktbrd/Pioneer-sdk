@@ -30,14 +30,6 @@ export function Asset({ usePioneer, onClose, asset }: any) {
     }
   }, [asset]);
 
-  useEffect(() => {
-    if (activeTab === 'tokens') {
-      app.getBalances().then((balances: any) => {
-        setBalances(balances);
-      });
-    }
-  }, [activeTab]);
-
   const formatBalance = (balance: string) => {
     const [integer, decimal] = balance.split('.');
     const largePart = decimal?.slice(0, 4);

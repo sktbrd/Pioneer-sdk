@@ -103,7 +103,8 @@ export const utxoWalletMethods = async ({
       address_n: bip32ToAddressNList(DerivationPath[chain]),
     };
     const addressInfo = customAddressInfo || defaultAddressInfo;
-    console.log(tag, 'addressInfo: ', addressInfo);
+    console.log(tag, 'addressInfo: ', addressInfo.coin);
+    console.log(tag, 'addressInfo: ', addressInfo.script_type);
     const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
     return walletAddress as string;
   };
@@ -117,9 +118,9 @@ export const utxoWalletMethods = async ({
       console.time('getPubkeys Duration' + chain); // Starts the timer
       let pubkeys = await Promise.all(
         paths.map(async (path: any) => {
-          console.log(tag, 'path: ', path);
           if (!path.addressNList) throw new Error('addressNList not found in path: FATAL');
           if (path.type === 'address') return;
+          console.log(tag, 'path: ', path.note);
           // if (path.script_type === 'p2wpkh' && path.coin !== 'Bitcoin') return;
           // Marked as async to use await inside
           // Create the path query for public key retrieval
@@ -154,7 +155,7 @@ export const utxoWalletMethods = async ({
             //convert xpub to zpub
             pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'zpub');
             if (!pubkeyResponse.xpub) throw Error('Failed to format xpub to zpub: FATAL');
-            console.log('converted from zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
+            console.log(tag, 'converted from zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
           }
 
           // Combine the original path object with the xpub and master from the responses
@@ -175,9 +176,8 @@ export const utxoWalletMethods = async ({
       console.timeEnd('getPubkeys Duration' + chain); // Ensure the timer is ended in case of error
     }
   };
-  const pubkeys = await _getPubkeys(paths);
+  // const pubkeys = await _getPubkeys(paths);
   const getPubkeys = async (paths) => _getPubkeys(paths);
-  console.log('pubkeys: ', pubkeys);
 
   const signTransaction = async (psbt: Psbt, inputs: KeepKeyInputObject[], memo: string = '') => {
     //console.log('psbt.txOutputs: ', psbt.txOutputs);

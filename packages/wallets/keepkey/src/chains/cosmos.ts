@@ -22,26 +22,34 @@ export type SignTransactionTransferParams = {
 export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; api: string }) => {
   let tag = TAG + ' | cosmosWalletMethods | ';
   try {
-    if (!api) api = ApiUrl.Cosmos;
-    const { address: fromAddress } = (await sdk.address.cosmosGetAddress({
-      address_n: bip32ToAddressNList(DerivationPath[Chain.Cosmos]),
-    })) as { address: string };
+    console.time('cosmosWalletMethods - total time');
 
-    //log.info("api: ", api);
+    if (!api) api = ApiUrl.Cosmos;
+
+    console.time('GaiaToolbox initialization');
     const toolbox = GaiaToolbox({ server: api });
-    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(
-      (await (async () => {
-        try {
-          return await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
-        } catch (error) {
-          //log.error("Cosmos Error getting fee rate:", error);
-          return '1000';
-        }
-      })()) ?? '1000',
-    );
+    console.timeEnd('GaiaToolbox initialization');
+
+    console.time('Setting DEFAULT_COSMOS_FEE_MAINNET amount');
+    // DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(
+    //   (await (async () => {
+    //     console.time('Fetching fee rate');
+    //     try {
+    //       const feeRate = await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos);
+    //       console.timeEnd('Fetching fee rate');
+    //       return feeRate;
+    //     } catch (error) {
+    //       console.timeEnd('Fetching fee rate');
+    //       //log.error("Cosmos Error getting fee rate:", error);
+    //       return '1000';
+    //     }
+    //   })()) ?? '1000',
+    // );
+    console.timeEnd('Setting DEFAULT_COSMOS_FEE_MAINNET amount');
 
     // Function to sign the transaction
     const signTransaction = async (input: any, isIbc = false) => {
+      console.time('signTransaction');
       try {
         let responseSign;
         if (isIbc) {
@@ -49,8 +57,10 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
         } else {
           responseSign = await sdk.cosmos.cosmosSignAmino(input);
         }
+        console.timeEnd('signTransaction');
         return responseSign;
       } catch (e) {
+        console.timeEnd('signTransaction');
         console.error(e);
         throw e;
       }
@@ -58,18 +68,17 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
 
     // Function to broadcast the transaction
     const broadcastTransaction = async (serializedTx: string) => {
-      // const decodedBytes = atob(serializedTx);
-      // const uint8Array = new Uint8Array(decodedBytes.length);
-      // for (let i = 0; i < decodedBytes.length; i++) {
-      //   uint8Array[i] = decodedBytes.charCodeAt(i);
-      // }
+      console.time('broadcastTransaction');
       console.log(tag, 'serializedTx: ', serializedTx);
       const response = await toolbox.broadcast(serializedTx);
+      console.timeEnd('broadcastTransaction');
       return response;
     };
 
     // Transfer function
     const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+      console.time('transfer');
+      const fromAddress = await getAddress();
       const accountInfo = await toolbox.getAccount(fromAddress);
       const input = {
         signDoc: {
@@ -93,16 +102,21 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
       };
 
       const signedTx = await signTransaction(input);
-      return await broadcastTransaction(signedTx.serialized);
+      const result = await broadcastTransaction(signedTx.serialized);
+      console.timeEnd('transfer');
+      return result;
     };
 
     // Transfer IBC function
     const ibcTransfer = async (from: string, to: string, amount: string, sourceChannel: string) => {
+      console.time('ibcTransfer');
       let tag = TAG + ' | transferIbc | ';
       try {
         //log.info("transferIbc: ",{from,to,amount,sourceChannel})
+        const fromAddress = await getAddress();
         const accountInfo = await toolbox.getAccount(fromAddress);
         if (!accountInfo) throw new Error('missing accountInfo');
+
         //log.info(tag,"accountInfo: ",accountInfo)
         // const input = {
         //   signDoc: {
@@ -139,12 +153,26 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
       } catch (e) {
         //log.error(tag, "Error in transferIbc:", e);
         throw e;
+      } finally {
+        console.timeEnd('ibcTransfer');
       }
     };
-    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
-    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, ibcTransfer };
+
+    const getAddress = async () => {
+      console.time('getAddress');
+      const { address } = (await sdk.address.cosmosGetAddress({
+        address_n: bip32ToAddressNList(DerivationPath[Chain.Cosmos]),
+      })) as { address: string };
+      console.timeEnd('getAddress');
+      return address;
+    };
+
+    const getPubkeys = async () => ({ type: 'address', pubkey: await getAddress() });
+
+    console.timeEnd('cosmosWalletMethods - total time');
+    return { ...toolbox, getAddress, getPubkeys, transfer, ibcTransfer };
   } catch (error: any) {
-    //log.error(tag, e);
+    console.error(error);
     throw error;
   }
 };

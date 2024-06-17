@@ -32,7 +32,7 @@ export const MATICToolbox = ({
   return {
     ...baseToolbox,
     getNetworkParams,
-    getBalance: (address: any, potentialScamFilter?: boolean) =>
-      getBalance({ provider, api: maticApi, address, chain: Chain.Polygon, potentialScamFilter }),
+    getBalance: (pubkey: any, potentialScamFilter?: boolean) =>
+      getBalance({ provider, api: maticApi, pubkey, chain: Chain.Polygon, potentialScamFilter }),
   };
 };

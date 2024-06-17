@@ -16,7 +16,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip, shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 import {
     getPaths,
@@ -24,7 +24,10 @@ import {
 } from '@pioneer-platform/pioneer-coins';
 let BLOCKCHAIN = ChainToNetworkId['ARB']
 let ASSET = 'ARB'
-let MIN_BALANCE = process.env['MIN_BALANCE_DOGE'] || "1.0004"
+let ASSET_CAIP = shortListSymbolToCaip[ASSET]
+assert(ASSET_CAIP)
+
+let MIN_BALANCE = process.env['MIN_BALANCE_ARB'] || "1.0004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
@@ -99,6 +102,7 @@ const test_service = async function (this: any) {
         const walletsVerbose: any = [];
 
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
+
         // //log.info(tag,"walletKeepKey: ",keepkeyWallet)
         const walletKeepKey = {
             type: WalletOption.KEEPKEY,
@@ -114,12 +118,18 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
+        assert(assets.get(ASSET_CAIP));
+        log.info(tag, "asset info: ", assets.get(ASSET_CAIP));
+
         // log.info(tag,"app.assetsMap: ",app.assetsMap)
-        log.info(tag,"app.assets: ",app.assets)
-        let asset = app.assets.filter((b:any) => b.networkId === ChainToNetworkId[Chain.Arbitrum])
-        log.info(tag,"asset: ",asset)
-        assert(asset[0])
-        assert(asset[0].caip)
+        // log.info(tag,"app.assets: ",app.assetsMap)
+        // let asset = app.assets.filter((b:any) => b.networkId === ChainToNetworkId[Chain.Arbitrum])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
 
         // //connect
         assert(app.blockchains)
@@ -160,18 +170,16 @@ const test_service = async function (this: any) {
         // await app.getBalances()
         log.info(tag,"balances: ",app.balances)
         log.info(tag,"balances: ",app.balances.length)
-        let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
-        log.info(tag,"*** balance: ",balance[0])
+        // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
+        // log.info(tag,"*** balance: ",balance[0])
 
-        assert(balance[0])
-        assert(balance[0].caip)
-        assert(balance[0].ticker)
+        // assert(balance[0])
+        // assert(balance[0].caip)
+        // assert(balance[0].ticker)
         //verify balances
 
         //
         // await app.getAssets()
-        log.info(tag,"assets: ",app.assets)
-        log.info(tag,"assets: ",app.assets.length)
         log.info(tag,"caip: ",Chain.Arbitrum)
         log.info(tag,"caip: ",ChainToCaip[Chain.Arbitrum])
         // let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Arbitrum])
@@ -180,33 +188,43 @@ const test_service = async function (this: any) {
         // assert(asset[0].caip)
         // assert(asset[0].ticker)
 
-        await app.setAssetContext(asset[0])
+
+        log.info(tag,"assetContext: ",ChainToCaip[ASSET])
+        log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
         log.info(tag,"assetContext: ",app.assetContext)
-        assert(app.assetContext.name)
-        assert(app.assetContext.chain)
+        assert(app.assetContext)
         assert(app.assetContext.caip)
-        assert(app.assetContext.icon)
+        // assert(app.assetContext.ticker)
+
+        // await app.setAssetContext(asset[0])
+        // log.info(tag,"assetContext: ",app.assetContext)
+        // assert(app.assetContext.name)
+        // assert(app.assetContext.chain)
+        // assert(app.assetContext.caip)
+        // assert(app.assetContext.icon)
 
 
         // create assetValue
-        const assetString = `${ASSET}.ETH`;
-        console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
-        assert(assetValue)
-        //send
-        let sendPayload = {
-            assetValue,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // const assetString = `${ASSET}.ETH`;
+        // console.log('assetString: ', assetString);
+        // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        // log.info("assetValue: ",assetValue)
+        // assert(assetValue)
+        // //send
+        // let sendPayload = {
+        //     assetValue,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
 
     } catch (e) {

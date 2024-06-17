@@ -196,7 +196,8 @@ const test_service = async function (this: any) {
         let paths = getPaths([networkId])
         log.info("paths: ",paths)
         //get default paths
-        let kkApikey = await connectFunction(chains, paths);
+        let pubkeys:any = [] //pubkey cache
+        let kkApikey = await connectFunction(chains, paths, pubkeys);
         log.info("kkApikey: ", kkApikey);
         log.info("keepkey: ",keepkey)
 

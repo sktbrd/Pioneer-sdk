@@ -7,6 +7,8 @@ export const list = {
     { chain: 'AVAX', identifier: 'AVAX.AVAX', decimals: 18 },
     { chain: 'ARB', identifier: 'ARB.ETH', decimals: 18 },
     { chain: 'BASE', identifier: 'BASE.ETH', decimals: 18 },
+    { chain: 'MATIC', identifier: 'MATIC.MATIC', decimals: 18 },
+    { chain: 'OP', identifier: 'OP.ETH', decimals: 18 },
     { chain: 'BCH', identifier: 'BCH.BCH', decimals: 8 },
     { chain: 'BNB', identifier: 'BNB.BNB', decimals: 8 },
     { chain: 'BSC', identifier: 'BSC.BNB', decimals: 18 },

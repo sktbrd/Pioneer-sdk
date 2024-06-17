@@ -19,6 +19,7 @@
   "dependencies": {
     "@coinmasters/core": "workspace:*",
     "@coinmasters/pioneer-db": "workspace:*",
+    "@coinmasters/pioneer-db-sql": "workspace:^",
     "@coinmasters/types": "workspace:*",
     "@pioneer-platform/loggerdog": "^8.3.1",
     "@types/node": "^20.10.4",

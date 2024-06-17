@@ -62,6 +62,13 @@ export function Classic({ usePioneer }: any) {
       console.log('App loaded... connecting');
       await connectWallet('KEEPKEY');
       setIsConnecting(true);
+
+      //get allblockchains for keepkey
+      //check gas asset for balances
+      //get balanceCache
+      //if not in cache, get balance
+      //if balance is 0, dont add, else auto-enable
+
     } else {
       console.log('App not loaded yet... can not connect');
     }
@@ -106,7 +113,7 @@ export function Classic({ usePioneer }: any) {
       await app.setPaths(paths);
       await app.getAssets();
       await app.getPubkeys();
-      await app.getBalances();
+      // await app.getBalances();
       console.log('assetsMap: ', app.assetsMap);
       console.log("assets: ", assets);
     }

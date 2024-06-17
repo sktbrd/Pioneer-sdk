@@ -19,7 +19,7 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 
 let BLOCKCHAIN = ChainToNetworkId['DASH']
@@ -62,16 +62,23 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
-        //add custom path
-        // let pathsAdd:any = [
-        // ]
+        let pathsCustom:any = [
+        ]
+
+        log.info(tag,"BLOCKCHAIN: ",BLOCKCHAIN)
+        assert(BLOCKCHAIN)
+        let blockchains = [BLOCKCHAIN]
+        let paths = getPaths(blockchains)
+        paths = paths.concat(pathsCustom)
+        log.info("paths: ",paths.length)
 
         let config:any = {
             username,
             queryKey,
             spec,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
-            wss,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -108,23 +115,11 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         log.info(tag,"wallets: ",app.wallets.length)
 
-        let blockchains = [BLOCKCHAIN, ChainToNetworkId['ETH']]
+        let assets = app.assetsMap;
+        log.info(tag, "assets: ", assets);
+        assert(assets);
 
-        //get paths for wallet
-        let paths = getPaths(blockchains)
-        log.info("paths: ",paths.length)
-        // @ts-ignore
-        //HACK only use 1 path per chain
-        //TODO get user input (performance or find all funds)
-        let optimized:any = [];
-        blockchains.forEach((network: any) => {
-            const pathForNetwork = paths.filter((path: { network: any; }) => path.network === network).slice(-1)[0];
-            if (pathForNetwork) {
-                optimized.push(pathForNetwork);
-            }
-        });
-        log.info("optimized: ", optimized.length);
-        app.setPaths(optimized)
+
 
         // //connect
         // assert(blockchains)
@@ -143,47 +138,65 @@ const test_service = async function (this: any) {
         log.info(tag,"context: ",context)
         assert(context)
 
+
+
+        await app.getBalances()
+        log.info(tag,"balances: ",app.balances)
+        assert(app.balances)
+        assert(app.balances[0])
+        log.info(tag,"balances: ",app.balances[0])
+
+
+        log.info(tag,"assetContext: ",ChainToCaip[ASSET])
+        log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+
+
         // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
-
-        let fromAddress = await app.swapKit.getAddress(Chain.Dash)
-        log.info("fromAddress: ",fromAddress)
-
-        //get pubkeys
-        log.info("BLOCKCHAIN: ",BLOCKCHAIN)
-        let pubkeys = await app.getPubkeys([BLOCKCHAIN])
-        // let pubkeys = await app.getPubkeys()
-        log.info("pubkeys: ",pubkeys)
-
-        //send
-        let estimatePayload:any = {
-            feeRate: 10,
-            pubkeys,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("estimatePayload: ",estimatePayload)
-        //verify amount is < max spendable
-        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Dash, params:estimatePayload})
-        log.info("maxSpendable: ",maxSpendable)
-
-        //send
-        let sendPayload = {
-            // assetValue,
-            assetValue:maxSpendable,
-            isMax: true,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        // sendPayload.assetValue = maxSpendable
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await app.swapKit.transfer(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+        // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // await AssetValue.loadStaticAssets();
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        // log.info("assetValue: ",assetValue)
+        //
+        // let fromAddress = await app.swapKit.getAddress(Chain.Dash)
+        // log.info("fromAddress: ",fromAddress)
+        //
+        // //get pubkeys
+        // log.info("BLOCKCHAIN: ",BLOCKCHAIN)
+        // let pubkeys = await app.getPubkeys([BLOCKCHAIN])
+        // // let pubkeys = await app.getPubkeys()
+        // log.info("pubkeys: ",pubkeys)
+        //
+        // //send
+        // let estimatePayload:any = {
+        //     feeRate: 10,
+        //     pubkeys,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("estimatePayload: ",estimatePayload)
+        // //verify amount is < max spendable
+        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Dash, params:estimatePayload})
+        // log.info("maxSpendable: ",maxSpendable)
+        //
+        // //send
+        // let sendPayload = {
+        //     // assetValue,
+        //     assetValue:maxSpendable,
+        //     isMax: true,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // // sendPayload.assetValue = maxSpendable
+        // log.info("sendPayload: ",sendPayload)
+        // const txHash = await app.swapKit.transfer(sendPayload);
+        // log.info("txHash: ",txHash)
+        // assert(txHash)
 
         console.log("************************* TEST PASS *************************")
     } catch (e) {

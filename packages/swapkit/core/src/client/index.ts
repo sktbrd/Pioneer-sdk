@@ -100,7 +100,7 @@ export class SwapKitCore<T = ''> {
     let tag = TAG + ' | getAddress | ';
     try {
       console.log(tag, 'chain: ', chain);
-      if(!this.connectedChains[chain]) throw Error('chain not connected! ' + chain)
+      if (!this.connectedChains[chain]) throw Error('chain not connected! ' + chain);
       const address = this.connectedChains[chain]?.address;
       if (!address) {
         throw new Error(`Failed to get address from connected wallet ${chain}`);
@@ -128,10 +128,21 @@ export class SwapKitCore<T = ''> {
   getWallet = (chain: Chain) => this.connectedWallets[chain] as WalletMethods[Chain];
   getExplorerAddressUrl = (chain: Chain, address: string) =>
     getExplorerAddressUrl({ chain, address });
-  getBalance = async (chain: Chain, potentialScamFilter?: boolean) => {
-    const wallet = await this.syncWalletByChain(chain, potentialScamFilter);
-
-    return wallet?.balance || [];
+  getBalance = async (chain: Chain, pubkeys: any, nodes?: any) => {
+    let tag = TAG + ' | getBalance | ';
+    try {
+      console.log(tag, 'chain: ', chain);
+      console.log(tag, 'nodes: ', nodes);
+      let balance = await this.getWallet(chain)?.getBalance(pubkeys, nodes);
+      console.log(tag, 'balance: ', balance);
+      // const wallet = await this.syncWalletByChain(chain, potentialScamFilter);
+      //
+      // return wallet?.balance || [];
+      return balance;
+    } catch (e) {
+      console.log(tag, e);
+      throw e;
+    }
   };
   getBalances = async (chain: Chain, pubkeys: any) => {
     let tag = TAG + ' | getBalances | ';
@@ -455,7 +466,6 @@ export class SwapKitCore<T = ''> {
           }
         }
       }
-
 
       // for (let i = 0; i < pubkeys.length; i++) {
       //   let pubkey = pubkeys[i];

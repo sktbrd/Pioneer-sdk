@@ -11,7 +11,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
-    "@pioneer-platform/pioneer-caip": "^9.2.27",
+    "@pioneer-platform/pioneer-caip": "^9.2.31",
     "@pioneer-platform/pioneer-coins": "^9.2.23",
     "axios": "^1.6.7",
     "canvas-confetti": "^1.9.3",

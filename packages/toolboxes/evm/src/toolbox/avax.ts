@@ -33,7 +33,7 @@ export const AVAXToolbox = ({
   return {
     ...baseToolbox,
     getNetworkParams,
-    getBalance: (address: any, potentialScamFilter?: boolean) =>
-      getBalance({ provider, api: avaxApi, address, chain: Chain.Avalanche, potentialScamFilter }),
+    getBalance: (pubkey: any, potentialScamFilter?: boolean) =>
+      getBalance({ provider, api: avaxApi, pubkey, chain: Chain.Avalanche, potentialScamFilter }),
   };
 };

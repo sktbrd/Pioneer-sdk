@@ -320,47 +320,26 @@ export class DB {
     //paths
     //pubkeys
     this.createPubkey = async (pubkey: any): Promise<any> => {
-      if (typeof window !== 'undefined') {
-        // Browser environment: IndexedDB logic
-        const db: IDBDatabase = await this.openIndexedDB();
-        const txStore = db.transaction('pubkeys', 'readwrite').objectStore('pubkeys');
-        const request = txStore.add(pubkey);
-        return new Promise<number>((resolve, reject) => {
-          request.onsuccess = () => resolve(request.result as number);
-          request.onerror = () => {
-            // If error is due to a duplicate entry, resolve true, else rethrow or handle the error
-            if (request.error && request.error.name === 'ConstraintError') {
-              console.log('Duplicate pubkey, not added.');
-              resolve(true); // Resolve true indicating pubkey already exists
+      return new Promise<number>((resolve, reject) => {
+        this.db.run(
+          'INSERT OR REPLACE INTO pubkeys (master, address, pubkey, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?)',
+          [
+            pubkey.master,
+            pubkey.address,
+            pubkey.pubkey,
+            pubkey.context,
+            pubkey.contextType,
+            JSON.stringify(pubkey.networks),
+          ],
+          function (this: sqlite3.RunResult, err: Error | null) {
+            if (err) {
+              reject(err);
             } else {
-              console.error('Error adding pubkey:', request.error);
-              resolve(false); // You could resolve false or handle it differently depending on your needs
+              resolve(this.lastID as number);
             }
-          };
-        });
-      } else {
-        // Node.js environment: SQLite logic
-        return new Promise<number>((resolve, reject) => {
-          this.db.run(
-            'INSERT INTO pubkeys (master, address, pubkey, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?)',
-            [
-              pubkey.master,
-              pubkey.address,
-              pubkey.pubkey,
-              pubkey.context,
-              pubkey.contextType,
-              JSON.stringify(pubkey.networks),
-            ],
-            function (this: sqlite3.RunResult, err: Error | null) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(this.lastID as number);
-              }
-            },
-          );
-        });
-      }
+          },
+        );
+      });
     };
 
     this.getPubkeys = async (

@@ -288,7 +288,8 @@ const test_service = async function (this: any) {
         const connectFunction = walletKeepKey.wallet.connect(input);
     
         // Step 2: Invoke the inner function with chains and paths
-        let kkApikey = await connectFunction(chains, paths);
+        let pubkeys:any = []
+        let kkApikey = await connectFunction(chains, paths, pubkeys);
         log.info("kkApikey: ", kkApikey);
 
         //walletKeepKey

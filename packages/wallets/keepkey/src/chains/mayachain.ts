@@ -24,28 +24,18 @@ type SignTransactionDepositParams = {
 export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) => {
   try {
     const toolbox = MayachainToolbox();
-    console.log('getAddress: ', {
-      address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
-    });
-    const { address: fromAddress } = (await sdk.address.mayachainGetAddress({
-      address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
-    })) as { address: string };
-    console.log('address: ', fromAddress);
 
     const signTransactionTransfer = async ({
-      amount,
-      asset,
-      to,
-      from,
-      memo,
-    }: SignTransactionTransferParams) => {
+                                             amount,
+                                             asset,
+                                             to,
+                                             from,
+                                             memo,
+                                           }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        //console.log('account_number: ', account_number);
-        //console.log('sequence: ', sequence);
         let payload: any = {
           signDoc: {
             account_number,
@@ -74,14 +64,9 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
           },
           signerAddress: from,
         };
-        // console.log('payload: ', payload);
-        //console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoTransfer(payload);
-        //console.log('keepKeyResponse: ', keepKeyResponse);
 
-        // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
-        //console.log('Result broadcast: ', resultBroadcast);
 
         return resultBroadcast.txid;
       } catch (e) {
@@ -90,27 +75,27 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       }
     };
 
-    const transfer = async ({ assetValue, recipient, memo }: TransferParams) =>
-      signTransactionTransfer({
+    const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+      const fromAddress = await getAddress();
+      return signTransactionTransfer({
         from: fromAddress,
         to: recipient,
         asset: assetValue.symbol,
         amount: assetValue.getBaseValue('string'),
         memo,
       });
+    };
 
     const signTransactionDeposit = async ({
-      amount,
-      asset,
-      memo = '',
-    }: SignTransactionDepositParams) => {
+                                            amount,
+                                            asset,
+                                            memo = '',
+                                          }: SignTransactionDepositParams) => {
       try {
+        const fromAddress = await getAddress();
         const accountInfo = await toolbox.getAccount(fromAddress);
-        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
-        //console.log('account_number: ', account_number);
-        //console.log('sequence: ', sequence);
         let payload: any = {
           signerAddress: fromAddress,
           signDoc: {
@@ -140,13 +125,8 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             ],
           },
         };
-        //console.log('payload: ', payload);
-        //console.log('payload: ', JSON.stringify(payload));
         const keepKeyResponse = await sdk.mayachain.mayachainSignAminoDeposit(payload);
-        //console.log('keepKeyResponse.serialized: ', keepKeyResponse.serialized);
-        // Broadcast tx
         let resultBroadcast = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
-        //console.log('Result broadcast: ', resultBroadcast);
 
         return resultBroadcast;
       } catch (e) {
@@ -155,17 +135,26 @@ export const mayachainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       }
     };
 
-    const deposit = async ({ assetValue, memo }: DepositParam) =>
-      signTransactionDeposit({
+    const deposit = async ({ assetValue, memo }: DepositParam) => {
+      const fromAddress = await getAddress();
+      return signTransactionDeposit({
         memo,
         asset: assetValue.symbol,
         amount: assetValue.getBaseValue('string'),
         from: fromAddress,
       });
+    };
 
-    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
+    const getAddress = async () => {
+      const { address } = (await sdk.address.mayachainGetAddress({
+        address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
+      })) as { address: string };
+      return address;
+    };
 
-    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, deposit };
+    const getPubkeys = async () => ({ type: 'address', pubkey: await getAddress() });
+
+    return { ...toolbox, getAddress, getPubkeys, transfer, deposit };
   } catch (error: any) {
     console.error(' | mayachain | ', error);
     throw error;

@@ -1,6 +1,11 @@
 /*
     E2E testing
 
+       This an e2e testing framework targeting node.js containers
+
+       it is the equivalent of the pioneer-react file for a web browser.
+
+       it is the building blocks of a pioneer-cli that run perform transfers as a "skill"
  */
 
 require("dotenv").config()
@@ -10,7 +15,7 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet, getChainEnumValue, Chain } from '@coinmasters/types';
+import { WalletOption, availableChainsByWallet, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { AssetValue } from '@pioneer-platform/helpers';
 import type { AssetValue as AssetValueType } from '@pioneer-platform/helpers';
@@ -20,14 +25,14 @@ const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId, shortListNameToCaip} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
 import {
     getPaths,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
-
+const DB = require('@coinmasters/pioneer-db-sql');
 console.log("spec: ",spec)
 
 
@@ -35,12 +40,20 @@ console.log("spec: ",spec)
 let txid:string
 let IS_SIGNED: boolean
 
+
+
 const test_service = async function (this: any) {
     let tag = TAG + " | test_service | "
     try {
+        const txDB = new DB.DB({ });
+        await txDB.init();
+
         //(tag,' CHECKPOINT 1');
-        console.time('start2build');
-        console.time('start2broadcast');
+        console.time('start2init');
+        console.time('start2pair');
+        console.time('start2Pubkeys');
+        console.time('start2BalancesGas');
+        console.time('start2BalancesTokens');
         console.time('start2end');
 
         // if force new user
@@ -51,9 +64,17 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
+        //TODO test enabled blockchain cacheing
         const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
         assert(AllChainsSupported)
         log.info(tag,"AllChainsSupported: ",AllChainsSupported)
+
+        let pubkeysCache = await txDB.getPubkeys()
+        log.info("pubkeysCache: ",pubkeysCache.length)
+
+        //get balances cache
+        let balancesCache = await txDB.getBalances()
+        log.info("balancesCache: ",balancesCache.length)
 
         // const AllChainsSupported = [Chain.Base];
         // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
@@ -62,10 +83,11 @@ const test_service = async function (this: any) {
           (chainStr: any) => ChainToNetworkId[getChainEnumValue(chainStr)],
         );
         log.info(tag,"blockchains: ",blockchains)
+        log.info(tag,"blockchains: ",blockchains.length)
         //add custom path
         // let blockchains = [BLOCKCHAIN]
         let paths = getPaths(blockchains)
-        log.info(tag,"paths: ",paths)
+        log.info(tag,"paths: ",paths.length)
         assert(paths)
 
         let config:any = {
@@ -75,6 +97,8 @@ const test_service = async function (this: any) {
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             paths,
             blockchains,
+            pubkeys:pubkeysCache,
+            balances:balancesCache,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -95,7 +119,6 @@ const test_service = async function (this: any) {
         //console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
 
-
         const walletsVerbose: any = [];
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
         log.info(tag,"walletKeepKey: ",keepkeyWallet)
@@ -110,58 +133,118 @@ const test_service = async function (this: any) {
         walletsVerbose.push(walletKeepKey);
         // console.time('start2init');
         let resultInit = await app.init(walletsVerbose, {})
-        log.info(tag,"resultInit: ",resultInit)
+        // log.info(tag,"resultInit: ",resultInit)
+        console.timeEnd('start2init');
 
         let assets = await app.assetsMap
-        log.info(tag,"assets: START: ",assets)
+        // log.info(tag,"assets: START: ",assets)
         assert(assets)
-
+        for(let i = 0; i < blockchains.length; i++){
+            let blockchain = blockchains[i]
+            log.info('blockchain: ',blockchain)
+            let chain = NetworkIdToChain[blockchain]
+            assert(chain)
+            log.info('chain: ',chain)
+            let caip = shortListSymbolToCaip[chain]
+            log.info('caip: ',caip)
+            assert(caip)
+            assert(assets.get(caip))
+        }
         //verify 1 asset per chain
-
-
-        //lets test marketInfo on top assets
-        // let topList = Object.keys(shortListNameToCaip)
-        // log.info(tag,"topList: ",topList)
-
-        //TODO this is failing! bad market data!
-        //topList creata a list of assets
-        // for(let i =0; i<topList.length; i++){
-        //     let caip = shortListNameToCaip[topList[i]]
-        //     log.info(tag,"caip: ",caip)
-        //     //get marekt info
-        //     let priceData = await app.pioneer.MarketInfo({ caip });
-        //     priceData = priceData.data || {};
-        //     log.info(tag,"priceData: ",priceData)
-        //     assert(priceData)
-        // }
 
 
         // console.time('start2paired');
         let pairObject = {
             type:WalletOption.KEEPKEY,
-            blockchains
+            blockchains,
         }
         let resultPair = await app.pairWallet(pairObject)
         log.info(tag,"resultPair: ",resultPair)
+        console.timeEnd('start2pair');
 
         let assets2 = await app.assetsMap
         assert(assets2)
-        log.info(tag,"assets2: ",assets2)
 
-        let balances = await app.getBalances()
-        log.info(tag,"balances: TOTAL: ",balances.length)
-        assert(balances)
-        assert(balances[0])
-        assert(app.balances)
-        assert(app.balances[0])
-        log.info(tag,"balances: ",app.balances)
+        // log.info(tag,"assets2: ",assets2)
 
-        for(let i = 0; i < balances.length; i++){
-            let balance = balances[i]
-            log.info(tag,"balance: ",balance)
-            assert(balance)
-            assert(balance.caip)
+        //get balances from cache
+
+        //filter balances for networkId
+        // let balancesCache = balances1.filter((balance:any) => balance.networkId === NetworkId.ETH)
+        log.info("pubkeysCache: ",pubkeysCache.length)
+        log.info("app.pubkeys.length: ",app.pubkeys.length)
+        if(!app.pubkeys || app.pubkeys.length === 0){
+            log.info(tag,"No pubkeys found, recalculating...")
+            let pubkeys = await app.getPubkeys()
+            assert(pubkeys)
+            assert(pubkeys[0])
+            assert(app.pubkeys)
+            assert(app.pubkeys[0])
+            log.info(tag,"pubkeys: ",pubkeys)
+            log.info(tag,"app.pubkeys: ",app.pubkeys)
+            for(let i = 0; i < pubkeys.length; i++){
+                let pubkey = pubkeys[i]
+                log.info(tag,"pubkey: ",pubkey)
+                assert(pubkey)
+                assert(pubkey.pubkey)
+                try{
+                    log.info(tag,'saving pubkey: ',pubkey)
+                    txDB.createPubkey(pubkey)
+                }catch(e){
+                    console.error('Already saved pubkey: '+pubkey.pubkey)
+                }
+            }
         }
+        console.timeEnd('start2Pubkeys');
+        log.info("balanceCache: ",balancesCache.length)
+        log.info("app.balances.length: ",app.balances.length)
+        if(!app.balances || app.balances.length === 0){
+            log.info(tag,"No balances found, recalculating...")
+
+            let balances = await app.getBalances()
+            log.info(tag,"balances: TOTAL: ",balances.length)
+            assert(balances)
+            assert(balances[0])
+            assert(app.balances)
+            assert(app.balances[0])
+            log.info(tag,"balances: ",app.balances)
+
+            for(let i = 0; i < balances.length; i++){
+                let balance = balances[i]
+                log.info(tag,"balance: ",balance)
+                assert(balance)
+                assert(balance.caip)
+                txDB.createBalance(balance)
+            }
+
+            //for each blockchain should be gas asset balance
+            let portfolioValue = 0
+            for(let i = 0; i < blockchains.length; i++){
+                let blockchain = blockchains[i]
+                let chain = NetworkIdToChain[blockchain]
+                assert(chain)
+                let caip = shortListSymbolToCaip[chain]
+                assert(caip)
+                log.info(tag,"caip: ",caip)
+                let balance = balances.find((balance:any) => balance.caip === caip)
+                assert(balance)
+                assert(balance.caip)
+                log.info(tag,balance.caip + " USD: ",balance.valueUsd)
+                portfolioValue += balance.valueUsd
+            }
+            log.info(tag,"portfolioValue: ",portfolioValue)
+        }
+        console.timeEnd('start2BalancesGas');
+
+
+
+        //for each blockchain get token protocals
+
+        //get chart of protocol per chain
+
+        //get token balances
+
+        //recalculate portfolio value
 
         //ok on swap in select assets, we want onlyOwned
         // let filterForMemoless = {
@@ -178,17 +261,18 @@ const test_service = async function (this: any) {
 
         //swap out we want everything including tokens, BUT filter by memoless AND trading pairs.
         //if no trading pairs, then smart route with a pivot asset
-        let filterForOutput = {
-            hasPubkey: false,
-            onlyOwned: false,
-            noTokens: false,
-            // searchQuery:"",
-            memoless: true,
-            integrations: ['rango', 'uniswap'],
-        }
-        let assetsFiltered = await app.getAssets(filterForOutput)
-        log.info(tag,"assetsFiltered: (swapin)",assetsFiltered.length)
-        log.info(tag,"assetsFiltered: (swapin)",assetsFiltered)
+
+        // let filterForOutput = {
+        //     hasPubkey: false,
+        //     onlyOwned: false,
+        //     noTokens: false,
+        //     // searchQuery:"",
+        //     memoless: true,
+        //     integrations: ['rango', 'uniswap'],
+        // }
+        // let assetsFiltered = await app.getAssets(filterForOutput)
+        // log.info(tag,"assetsFiltered: (swapin)",assetsFiltered.length)
+        // log.info(tag,"assetsFiltered: (swapin)",assetsFiltered)
 
 
         //filter by memoless
@@ -495,6 +579,7 @@ const test_service = async function (this: any) {
         //search for output
 
         console.log("************************* TEST PASS *************************")
+        console.timeEnd('start2end');
     } catch (e) {
         log.error(e)
         //process

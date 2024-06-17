@@ -17,13 +17,14 @@
     "docker:push:all": "npm run docker:build && npm run docker:tag && npm run docker:push"
   },
   "dependencies": {
+    "@coinmasters/pioneer-db-sql": "workspace:^",
     "@coinmasters/pioneer-sdk": "workspace:*",
     "@coinmasters/types": "workspace:^",
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
     "@keepkey/device-protocol": "^7.12.2",
     "@pioneer-platform/loggerdog": "^8.3.1",
-    "@pioneer-platform/pioneer-caip": "^9.2.27",
+    "@pioneer-platform/pioneer-caip": "^9.2.31",
     "@pioneer-platform/pioneer-coins": "^9.2.23",
     "@types/node": "^20.10.4",
     "assert": "^2.1.0",

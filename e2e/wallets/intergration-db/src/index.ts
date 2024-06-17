@@ -26,7 +26,8 @@ let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/sw
 
 console.log("spec: ",spec)
 
-const DB = require('@coinmasters/pioneer-db');
+// const DB = require('@coinmasters/pioneer-db');
+const DB = require('@coinmasters/pioneer-db-sql');
 console.log("DB: ",DB)
 
 let txid:string
@@ -53,17 +54,16 @@ const test_service = async function (this: any) {
 
         //get all pubkeys
 
-        // let pubkeys = await txDB.getPubkeys({})
-        // console.log("pubkeys: ",pubkeys)
+        let pubkeys = await txDB.getPubkeys({})
+        console.log("pubkeys: ",pubkeys)
 
         //get pubkeys by networkId
         //get pubkeys by context
         //get pubkeys by networkIds
 
         //get all balances
-        let balances1 = await txDB.getBalances()
-        console.log("balances1: ",balances1)
-
+        // let balances1 = await txDB.getBalances()
+        // console.log("balances1: ",balances1)
 
 
         // let balances = [{
@@ -110,6 +110,56 @@ const test_service = async function (this: any) {
         // }]
         // let saved2 = await txDB.createBalance(balances[0])
         // console.log("saved2: ",saved2)
+
+        // if(!balances1 || balances1.length === 0){
+        //     let balances = [{
+        //         "chain": "ETH",
+        //         "identifier": "ETH.ETH",
+        //         "decimals": 18,
+        //         "type": "Native",
+        //         "networkId": "eip155:1",
+        //         "caip": "eip155:1/slip44:60",
+        //         "symbol": "ETH",
+        //         "sourceList": "thorchain",
+        //         "assetId": "eip155:1/slip44:60",
+        //         "chainId": "eip155:1",
+        //         "name": "Ethereum",
+        //         "networkName": "Ethereum",
+        //         "precision": 18,
+        //         "color": "#5C6BC0",
+        //         "icon": "https://assets.coincap.io/assets/icons/256/eth.png",
+        //         "explorer": "https://etherscan.io",
+        //         "explorerAddressLink": "https://etherscan.io/address/",
+        //         "explorerTxLink": "https://etherscan.io/tx/",
+        //         "relatedAssetKey": "eip155:1/slip44:60",
+        //         "integrations": [
+        //             "mayachain",
+        //             "changelly",
+        //             "thorswap",
+        //             "rango",
+        //             "uniswap",
+        //             "chainflip"
+        //         ],
+        //         "memoless": true,
+        //         "balance": "0.NaN",
+        //         "pubkey": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //         "address": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //         "master": "0xe6F612699AA300d4C61571a101f726B4c59D0577",
+        //         "context": "keepkey:device.wallet",
+        //         "contextType": "keepkey",
+        //         "ticker": "ETH",
+        //         "priceUsd": 3267.27,
+        //         "rank": 2,
+        //         "alias": 2,
+        //         "source": "coingecko",
+        //         "valueUsd": "0"
+        //     }]
+        //     let saved2 = await txDB.createBalance(balances[0])
+        //     console.log("saved2: ",saved2)
+        //
+        //
+        // }
+
         //
         //
         //
@@ -167,6 +217,9 @@ const test_service = async function (this: any) {
         // let pubkeys = [{"type":"address","master":"0x141D9959cAe3853b035000490C03991eB70Fc4aC","address":"0x141D9959cAe3853b035000490C03991eB70Fc4aC","pubkey":"0x141D9959cAe3853b035000490C03991eB70Fc4aC","context":"keepkey:device.wallet","contextType":"keepkey","networks":["eip155:1","eip155:8453"]}]
         // let saved = await txDB.createPubkey(pubkeys[0])
         // console.log("saved: ",saved)
+        //
+        // let saved2 = await txDB.createPubkey(pubkeys[0])
+        // console.log("saved2: ",saved)
 
         // let result = await txDB.foo('txid:0x1234')
         // console.log("result: ",result)

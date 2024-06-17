@@ -23,20 +23,16 @@ type SignTransactionDepositParams = {
 export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) => {
   try {
     const toolbox = ThorchainToolboxPioneer();
-    const { address: fromAddress } = (await sdk.address.thorchainGetAddress({
-      address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
-    })) as { address: string };
 
     const signTransactionTransfer = async ({
-      amount,
-      asset,
-      to,
-      from,
-      memo,
-    }: SignTransactionTransferParams) => {
+                                             amount,
+                                             asset,
+                                             to,
+                                             from,
+                                             memo,
+                                           }: SignTransactionTransferParams) => {
       try {
         const accountInfo = await toolbox.getAccount(from);
-        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoTransfer({
@@ -68,24 +64,26 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       }
     };
 
-    const transfer = async ({ assetValue, recipient, memo }: TransferParams) =>
-      signTransactionTransfer({
+    const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+      const fromAddress = await getAddress();
+      return signTransactionTransfer({
         from: fromAddress,
         to: recipient,
         asset: assetValue.symbol,
         amount: assetValue.getBaseValue('string'),
         memo,
       });
+    };
 
     const signTransactionDeposit = async ({
-      amount,
-      asset,
-      memo = '',
-    }: SignTransactionDepositParams) => {
+                                            amount,
+                                            asset,
+                                            memo = '',
+                                          }: SignTransactionDepositParams) => {
       try {
         console.log(' | signTransactionDeposit | asset: ', asset);
+        const fromAddress = await getAddress();
         const accountInfo = await toolbox.getAccount(fromAddress);
-        //console.log('accountInfo: ', accountInfo);
         let account_number = accountInfo.result.value.account_number || '0';
         let sequence = accountInfo.result.value.sequence || '0';
         let signPayload: any = {
@@ -121,7 +119,6 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
         console.log('signPayload: ', JSON.stringify(signPayload));
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit(signPayload);
         console.log('keepKeyResponse: ', keepKeyResponse);
-        //console.log('URL: ', RPCUrl.THORChain);
         let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         return txid.txid;
       } catch (error: any) {
@@ -130,16 +127,26 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
       }
     };
 
-    const deposit = async ({ assetValue, memo }: DepositParam) =>
-      signTransactionDeposit({
+    const deposit = async ({ assetValue, memo }: DepositParam) => {
+      const fromAddress = await getAddress();
+      return signTransactionDeposit({
         memo,
         asset: assetValue.symbol,
         amount: assetValue.getBaseValue('string'),
         from: fromAddress,
       });
+    };
 
-    const getPubkeys = () => ({ type: 'address', pubkey: fromAddress });
-    return { ...toolbox, getAddress: () => fromAddress, getPubkeys, transfer, deposit };
+    const getAddress = async () => {
+      const { address } = (await sdk.address.thorchainGetAddress({
+        address_n: bip32ToAddressNList(DerivationPath[Chain.THORChain]),
+      })) as { address: string };
+      return address;
+    };
+
+    const getPubkeys = async () => ({ type: 'address', pubkey: await getAddress() });
+
+    return { ...toolbox, getAddress, getPubkeys, transfer, deposit };
   } catch (error) {
     throw error;
   }

@@ -10,10 +10,18 @@ import type { TransferParams } from '../types.ts';
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from './BaseCosmosToolbox.ts';
 
 export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxType => {
+  console.time('CosmosClient instantiation');
+  const clientStartTime = new Date().toISOString();
+  console.log(`CosmosClient instantiation start: ${clientStartTime}`);
+
   const client = new CosmosClient({
     server: server || ApiUrl.Cosmos,
     chainId: ChainId.Cosmos,
   });
+
+  const clientEndTime = new Date().toISOString();
+  console.log(`CosmosClient instantiation end: ${clientEndTime}`);
+  console.timeEnd('CosmosClient instantiation');
 
   const baseToolbox: {
     validateAddress: (address: string) => Promise<boolean>;
@@ -31,7 +39,16 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
   });
 
   const getFees = async () => {
+    console.time('getFees');
+    const startTime = new Date().toISOString();
+    console.log(`getFees start: ${startTime}`);
+
     const baseFee = (await getFeeRateFromThorswap(ChainId.Cosmos)) || 500;
+
+    const endTime = new Date().toISOString();
+    console.log(`getFees end: ${endTime}`);
+    console.timeEnd('getFees');
+
     return {
       type: 'base',
       average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal.GAIA),
@@ -40,24 +57,36 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
     };
   };
 
+  const transfer = async (params: TransferParams) => {
+    console.time('transfer');
+    const startTime = new Date().toISOString();
+    console.log(`transfer start: ${startTime}`);
+
+    const gasFees = await getFees();
+
+    const result = await baseToolbox.transfer({
+      ...params,
+      fee: params.fee || {
+        amount: [
+          {
+            denom: 'uatom',
+            amount: gasFees[params.feeOptionKey || 'fast'].getBaseValue('string') || '1000',
+          },
+        ],
+        gas: '200000',
+      },
+    });
+
+    const endTime = new Date().toISOString();
+    console.log(`transfer end: ${endTime}`);
+    console.timeEnd('transfer');
+
+    return result;
+  };
+
   return {
     ...baseToolbox,
     getFees,
-    transfer: async (params: TransferParams) => {
-      const gasFees = await getFees();
-
-      return baseToolbox.transfer({
-        ...params,
-        fee: params.fee || {
-          amount: [
-            {
-              denom: 'uatom',
-              amount: gasFees[params.feeOptionKey || 'fast'].getBaseValue('string') || '1000',
-            },
-          ],
-          gas: '200000',
-        },
-      });
-    },
+    transfer,
   };
 };
