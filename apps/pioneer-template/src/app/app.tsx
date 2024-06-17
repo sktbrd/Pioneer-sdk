@@ -24,7 +24,8 @@ import {
   Wallets,
   Blockchains,
   Balances,
-  Classic
+  Classic,
+  Search
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 
@@ -51,7 +52,7 @@ export default function App() {
   const onStartApp = useOnStartApp();
   const { state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('classic');
+  const [intent, setIntent] = useState('search');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -133,6 +134,9 @@ export default function App() {
         break;
       case 'paths':
         return <Paths usePioneer={usePioneer} networkId={'eip155:1'}/>;
+        break;
+      case 'search':
+        return <Search usePioneer={usePioneer}/>;
         break;
       // case 'quote':
       //   return <Quote quote={SAMPLE_DATA[0]} onAcceptSign={onAcceptSign}/>;
