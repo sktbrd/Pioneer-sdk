@@ -1,5 +1,18 @@
 # @coinmasters/core
 
+## 11.0.36
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.36
+  - @coinmasters/toolbox-utxo@11.0.36
+  - @coinmasters/types@4.7.36
+  - @coinmasters/toolbox-evm@11.0.36
+  - @coinmasters/api@3.7.36
+
 ## 11.0.35
 
 ### Patch Changes

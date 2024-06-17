@@ -29,6 +29,7 @@ export const useOnStartApp = () => {
             //set keepkey as last connected wallet
             localStorage.setItem("lastConnectedWallet", WalletOption.KEEPKEY);
 
+            console.log('onStart called!')
             onStart(walletsVerbose, pioneerSetup);
         } catch (e) {
             console.error("Failed to start app!", e);

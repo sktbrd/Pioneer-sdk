@@ -626,7 +626,6 @@ export class SDK {
               (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
                 ChainsConfigured,
                 this.paths,
-                this.pubkeys,
               )) || '';
             this.keepkeyApiKey = keepkeyApiKey;
             this.context = 'keepkey:' + info.label + '.json';
@@ -1227,7 +1226,7 @@ export class SDK {
       const tag = `${TAG} | getBalances | `;
       try {
         if (!this.assets || this.assets.length === 0) await this.getAssets();
-        if (!this.context) throw Error('No Wallet Paired! No context!');
+        // if (!this.context) throw Error('No Wallet Paired! No context!');
         console.log(tag, 'this.blockchains: ', this.blockchains);
         let balances = [];
 
@@ -1271,9 +1270,11 @@ export class SDK {
         balances = resolvedBalances.filter((result: any) => result !== null);
 
         console.log(tag, 'balances: ', balances);
-        this.balances = [
-          ...new Map([...this.balances, ...balances].map((item) => [item.id, item])).values(),
-        ];
+        this.balances = balances;
+        //TODO this broke?
+        // this.balances = [
+        //   ...new Map([...this.balances, ...balances].map((item) => [item.id, item])).values(),
+        // ];
         console.log(tag, 'this.balances: ', this.balances);
         this.events.emit('SET_BALANCES', this.balances);
         return balances;

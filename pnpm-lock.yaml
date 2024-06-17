@@ -23,8 +23,8 @@ importers:
   .:
     dependencies:
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
       pioneer:
         specifier: link:/Users/highlander/WebstormProjects/SwapKit/packages/pioneer
         version: link:../SwapKit/packages/pioneer
@@ -436,8 +436,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/lp/e2e-lp-pro:
     dependencies:
@@ -488,8 +488,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/lp/e2e-lp-rune-doge:
     dependencies:
@@ -540,8 +540,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-base-eth:
     dependencies:
@@ -592,8 +592,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-base-pro:
     dependencies:
@@ -644,8 +644,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-bitcoincash-doge:
     dependencies:
@@ -699,8 +699,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-bitcoincash-doge-memoless:
     dependencies:
@@ -754,8 +754,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-dash-rune:
     dependencies:
@@ -806,8 +806,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-doge-bitcoincash:
     dependencies:
@@ -861,8 +861,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-doge-bitcoincash-memoless:
     dependencies:
@@ -916,8 +916,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-eth-base:
     dependencies:
@@ -1017,8 +1017,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-eth-maya:
     dependencies:
@@ -1063,8 +1063,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-eth-xrp:
     dependencies:
@@ -1112,8 +1112,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-eth-zcash:
     dependencies:
@@ -1164,8 +1164,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-maya-rune:
     dependencies:
@@ -1210,8 +1210,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-osmosis-cosmos:
     dependencies:
@@ -1262,8 +1262,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-pro-base:
     dependencies:
@@ -1314,8 +1314,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-rune-maya:
     dependencies:
@@ -1366,8 +1366,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/swaps/e2e-swap-xrp-bch:
     dependencies:
@@ -1412,8 +1412,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/synths/e2e-deposit-rune:
     dependencies:
@@ -1461,8 +1461,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/synths/e2e-withdrawal-rune:
     dependencies:
@@ -1510,8 +1510,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-arbitrum:
     dependencies:
@@ -1562,8 +1562,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-base:
     dependencies:
@@ -1614,8 +1614,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-bitcoin:
     dependencies:
@@ -1663,8 +1663,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-bitcoin-cash:
     dependencies:
@@ -1715,8 +1715,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-cacao:
     dependencies:
@@ -1764,8 +1764,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-cosmos:
     dependencies:
@@ -1816,8 +1816,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-dash:
     dependencies:
@@ -1865,8 +1865,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-dogecoin:
     dependencies:
@@ -1914,8 +1914,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-ethereum:
     dependencies:
@@ -1966,8 +1966,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-mayachain:
     dependencies:
@@ -2015,8 +2015,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-osmosis:
     dependencies:
@@ -2067,8 +2067,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-pro:
     dependencies:
@@ -2119,8 +2119,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-ripple:
     dependencies:
@@ -2171,8 +2171,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-rune:
     dependencies:
@@ -2220,8 +2220,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-usdt:
     dependencies:
@@ -2269,8 +2269,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/transfers/e2e-transfer-zcash:
     dependencies:
@@ -2324,8 +2324,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/integration-wallet-multi:
     dependencies:
@@ -2376,8 +2376,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/integration-wallet-package-keepkey:
     dependencies:
@@ -2419,8 +2419,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/integration-wallet-package-keystore:
     dependencies:
@@ -2456,8 +2456,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/intergration-ai:
     dependencies:
@@ -2511,8 +2511,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/intergration-coins:
     dependencies:
@@ -2535,8 +2535,8 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/wallets/keystore
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
       '@pioneer-platform/loggerdog':
         specifier: ^8.3.1
         version: 8.3.1(@types/node@20.13.0)
@@ -2603,8 +2603,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/intergration-wallet-keepkey:
     dependencies:
@@ -2655,8 +2655,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   e2e/wallets/intergration-wallet-keystore:
     dependencies:
@@ -2704,8 +2704,8 @@ importers:
         specifier: workspace:*
         version: link:../../../internal/config
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
 
   internal/config:
     devDependencies:
@@ -2898,8 +2898,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/wallets/xdefi
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
       '@types/react':
         specifier: 18.2.21
         version: 18.2.21
@@ -3164,8 +3164,8 @@ importers:
         specifier: workspace:*
         version: link:../types
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
       '@pioneer-platform/loggerdog':
         specifier: ^8.3.1
         version: 8.3.1(@types/node@20.14.2)
@@ -3283,8 +3283,8 @@ importers:
         specifier: workspace:*
         version: link:../../wallets/xdefi
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
     devDependencies:
       '@internal/config':
         specifier: workspace:*
@@ -3572,8 +3572,8 @@ importers:
         specifier: workspace:*
         version: link:../../swapkit/types
       '@pioneer-platform/helpers':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.10
+        version: 4.0.10
       '@pioneer-platform/pioneer-caip':
         specifier: ^9.2.31
         version: 9.2.31
@@ -9264,6 +9264,20 @@ packages:
       '@parcel/watcher-win32-ia32': 2.3.0
       '@parcel/watcher-win32-x64': 2.3.0
 
+  /@pioneer-platform/helpers@4.0.10:
+    resolution: {integrity: sha512-xy/OT2VGbo2a8nJ4L/vErE0QupBG2XfdVqsxzV0HjouaGBHMFVY/JypmtKrOf2nGA/GSH2IUxb+XoS7TShsOuw==}
+    dependencies:
+      '@coinmasters/tokens': 3.7.35
+      '@coinmasters/types': 4.7.35
+      '@noble/hashes': 1.4.0
+      '@pioneer-platform/loggerdog': 8.3.1(@types/node@18.15.13)
+      '@types/node': 18.15.13
+      ts-node: 8.10.2(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+
   /@pioneer-platform/helpers@4.0.6:
     resolution: {integrity: sha512-rKvwe1smkFrewxhR/p2ZSq9DaceSEsQMevuAO9O52RS7vCEC0n/et8T3D8+Y/qikHEocMr3JznboTExbO6jy0A==}
     dependencies:
@@ -9293,20 +9307,6 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
     dev: false
-
-  /@pioneer-platform/helpers@4.0.8:
-    resolution: {integrity: sha512-7qloz0qL0L0nBN8DbJovXmQkSvAXE95jvYz/2rZ4tPG+558nUV7f18sMyYyEFrvcqCzNVLWyPQZi23tX3TneGw==}
-    dependencies:
-      '@coinmasters/tokens': 3.7.35
-      '@coinmasters/types': 4.7.35
-      '@noble/hashes': 1.4.0
-      '@pioneer-platform/loggerdog': 8.3.1(@types/node@18.15.13)
-      '@types/node': 18.15.13
-      ts-node: 8.10.2(typescript@5.2.2)
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
 
   /@pioneer-platform/loggerdog@8.3.1(@types/node@13.13.52):
     resolution: {integrity: sha512-0JTucwEb1nG+MrPBRaIEdj9ptzjKatphh75/Zc3rJ19qJI9gUUZVx6PgjMYIF9cdi0saqytz291WRgge7qOW5g==}
@@ -14000,7 +14000,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001634
+      caniuse-lite: 1.0.30001636
       electron-to-chromium: 1.4.803
       node-releases: 2.0.14
       update-browserslist-db: 1.0.16(browserslist@4.23.1)
@@ -14176,8 +14176,8 @@ packages:
   /caniuse-lite@1.0.30001600:
     resolution: {integrity: sha512-+2S9/2JFhYmYaDpZvo0lKkfvuKIglrx68MwOBqMGHhQsNkLjB5xtc/TGoEPs+MxjSyN/72qer2g97nzR641mOQ==}
 
-  /caniuse-lite@1.0.30001634:
-    resolution: {integrity: sha512-fbBYXQ9q3+yp1q1gBk86tOFs4pyn/yxFm5ZNP18OXJDfA3txImOY9PhfxVggZ4vRHDqoU8NrKU81eN0OtzOgRA==}
+  /caniuse-lite@1.0.30001636:
+    resolution: {integrity: sha512-bMg2vmr8XBsbL6Lr0UHXy/21m84FTxDLWn2FSqMd5PrlbMxwJlQnC2YWYxVgp66PZE+BBNF2jYQUBKCo1FDeZg==}
     dev: false
 
   /canvas-confetti@1.9.3:

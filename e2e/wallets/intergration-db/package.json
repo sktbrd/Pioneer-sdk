@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-db",
-  "version": "1.7.35",
+  "version": "1.7.36",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.8"
+    "@pioneer-platform/helpers": "^4.0.10"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

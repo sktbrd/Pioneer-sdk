@@ -489,8 +489,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log(tag, 'Database initialized');
       let txs = await db.getAllTransactions();
       console.log(tag, 'txs: ', txs);
+
       let pubkeys = await db.getPubkeys({});
       console.log(tag, 'pubkeys: ', pubkeys);
+
+      let balances = await db.getBalances({});
+      console.log(tag, 'balances: ', balances);
 
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
@@ -511,34 +515,9 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.setItem('username', username);
       }
 
-      // // Define constants
+      //TODO dont do this
       const walletType = WalletOption.KEEPKEY;
       console.log(tag, 'walletType: ', walletType);
-
-      // const localStorageKey = `cache:blockchains:${walletType}`;
-      // //availableChainsByWallet USE ALL CHAINS @TODO - get from wallet
-      // // const preferredChains = availableChainsByWallet[walletType] || [];
-      // const preferredChains = prefurredChainsByWallet[walletType] || [];
-      //
-      // // Function to get NetworkId from chain string
-      // const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
-      //   const chainEnum: any = getChainEnumValue(chainStr) as any;
-      //   return ChainToNetworkId[chainEnum];
-      // };
-      //
-      // // Fetch blockchains from local storage or use default preferredChains
-      // let blockchainsCached: string[] = JSON.parse(localStorage.getItem(localStorageKey) || '[]');
-      //
-      // if (blockchainsCached.length === 0) {
-      //   blockchainsCached = preferredChains
-      //     .map(getNetworkIdFromChainStr)
-      //     .filter((networkId: any): networkId is string => networkId !== undefined);
-      //
-      //   localStorage.setItem(localStorageKey, JSON.stringify(blockchainsCached));
-      // }
-      //
-      // const blockchains: string[] = blockchainsCached;
-      // console.log(tag, 'blockchains: ', blockchains);
 
       //TODO wallet or wallet type? cache per device? or wallet type?
       const cacheKey = `cache:blockchains:${walletType}`;
@@ -604,6 +583,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         spec,
         wss,
         paths,
+        pubkeys,
+        balances,
         // @ts-ignore
         ethplorerApiKey:
           // @ts-ignore
@@ -639,27 +620,27 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log(tag, 'assets: ', assets);
       //push assets to frontend
 
-      //load pubkey cache
-      //get pubkeys from cache
-      let pubkeyCache = await db.getPubkeys({});
-      console.log('pubkeyCache: ', pubkeyCache);
-      if (pubkeyCache && pubkeyCache.length > 0) {
-        console.log(tag, 'Loading cache: pubkeys!');
-        await appInit.loadPubkeyCache(pubkeyCache);
-      } else {
-        console.log(tag, 'Empty pubkey cache!');
-        //get pubkeys?
-      }
-
-      let balanceCache = await db.getBalances({});
-      console.log(tag, 'balanceCache: ', balanceCache);
-      if (balanceCache && balanceCache.length > 0) {
-        await appInit.loadBalanceCache(balanceCache);
-        //@ts-ignore
-        dispatch({ type: WalletActions.SET_BALANCES, payload: balanceCache });
-      } else {
-        console.log(tag, 'Empty balance cache!');
-      }
+      // //load pubkey cache
+      // //get pubkeys from cache
+      // let pubkeyCache = await db.getPubkeys({});
+      // console.log('pubkeyCache: ', pubkeyCache);
+      // if (pubkeyCache && pubkeyCache.length > 0) {
+      //   console.log(tag, 'Loading cache: pubkeys!');
+      //   await appInit.loadPubkeyCache(pubkeyCache);
+      // } else {
+      //   console.log(tag, 'Empty pubkey cache!');
+      //   //get pubkeys?
+      // }
+      //
+      // let balanceCache = await db.getBalances({});
+      // console.log(tag, 'balanceCache: ', balanceCache);
+      // if (balanceCache && balanceCache.length > 0) {
+      //   await appInit.loadBalanceCache(balanceCache);
+      //   //@ts-ignore
+      //   dispatch({ type: WalletActions.SET_BALANCES, payload: balanceCache });
+      // } else {
+      //   console.log(tag, 'Empty balance cache!');
+      // }
 
       // @ts-ignore
       console.log(tag, 'appInit.wallets: ', appInit.wallets);
@@ -720,14 +701,26 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (lastConnectedWallet) {
         console.log('lastConnectedWallet', lastConnectedWallet);
         console.log('auto-connect');
-        // await appInit.setContext(lastConnectedWallet);
+        await appInit.setContext(lastConnectedWallet);
         await connectWallet(lastConnectedWallet);
-        if (!appInit.pubkeys || appInit.pubkeys.length === 0) {
-          await appInit.getPubkeys();
-        }
-        if (!appInit.balances || appInit.balances.length === 0) {
-          await appInit.getBalances();
-        }
+
+        // if (!appInit.pubkeys || appInit.pubkeys.length === 0) {
+        //   await appInit.getPubkeys();
+        //
+        //   if (appInit.pubkeys.length > 0) {
+        //     // @ts-ignore
+        //     dispatch({ type: WalletActions.SET_PUBKEYS, payload: appInit.pubkeys });
+        //   }
+        // }
+        //
+        // if (!appInit.balances || appInit.balances.length === 0) {
+        //   await appInit.getBalances();
+        //   if (appInit.balances.length > 0) {
+        //     console.log('Setting balances: ', appInit.balances);
+        //     // @ts-ignore
+        //     dispatch({ type: WalletActions.SET_BALANCES, payload: appInit.balances });
+        //   }
+        // }
 
         // //get wallet type
         // const walletType = lastConnectedWallet.split(':')[0];

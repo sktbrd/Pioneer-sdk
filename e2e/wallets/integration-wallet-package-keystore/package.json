@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-wallet-package-keystore",
-  "version": "0.5.35",
+  "version": "0.5.36",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.8"
+    "@pioneer-platform/helpers": "^4.0.10"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

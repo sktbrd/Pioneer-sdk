@@ -63,6 +63,8 @@ export function Classic({ usePioneer }: any) {
       await connectWallet('KEEPKEY');
       setIsConnecting(true);
 
+      await app.getPubkeys();
+      await app.getBalances();
       //get allblockchains for keepkey
       //check gas asset for balances
       //get balanceCache
@@ -82,11 +84,11 @@ export function Classic({ usePioneer }: any) {
     setAssetContext(app?.assetContext);
   }, [app, app?.assetContext]);
 
-  useEffect(() => {
-    if (assets) {
-      console.log("state change: assets", assets);
-    }
-  }, [app, app?.assetsMap, assets]);
+  // useEffect(() => {
+  //   if (assets) {
+  //     console.log("state change: assets", assets);
+  //   }
+  // }, [app, app?.assetsMap, assets]);
 
   const onSelect = (asset: any) => {
     console.log("onSelect", asset);

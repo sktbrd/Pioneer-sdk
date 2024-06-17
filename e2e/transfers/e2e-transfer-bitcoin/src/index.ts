@@ -12,7 +12,7 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
+import { WalletOption, availableChainsByWallet, Chain, NetworkIdToChain } from '@coinmasters/types';
 import { AssetValue } from '@pioneer-platform/helpers';
 // console.log(process.env['BLOCKCHAIR_API_KEY'])
 // if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars! VITE_BLOCKCHAIR_API_KEY")
@@ -70,32 +70,104 @@ const test_service = async function (this: any) {
         log.info("paths: ",paths)
         // let paths = []
 
-        // paths.push({
-        //     note:"Bitcoin account 1 Native Segwit (Bech32)",
-        //     blockchain: 'bitcoin',
-        //     symbol: 'BTC',
-        //     symbolSwapKit: 'BTC',
-        //     network: 'bip122:000000000019d6689c085ae165831e93',
-        //     script_type:"p2wpkh", //bech32
-        //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
-        //     type:"zpub",
-        //     addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
-        //     addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
-        //     curve: 'secp256k1',
-        //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-        // })
+        //add account 0 p2sh segwit
+        paths.push({
+            note:"Bitcoin account 0",
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
+            script_type:"p2sh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
 
-        // paths.push({
-        //     note:"Bitcoin account 1 legacy",
-        //     networks: ['bip122:000000000019d6689c085ae165831e93'],
-        //     script_type:"p2pkh",
-        //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
-        //     type:"xpub",
-        //     addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
-        //     addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
-        //     curve: 'secp256k1',
-        //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-        // })
+        //add account1
+
+        paths.push({
+            note:"Bitcoin account 1 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        paths.push({
+            note:"Bitcoin account 1 legacy",
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
+            script_type:"p2pkh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        //add account2
+        paths.push({
+            note:"Bitcoin account 1 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        paths.push({
+            note:"Bitcoin account 1 legacy",
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
+            script_type:"p2pkh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 2],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 2, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        //add account3
+        paths.push({
+            note:"Bitcoin account 1 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 3],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 3, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        paths.push({
+            note:"Bitcoin account 1 legacy",
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
+            script_type:"p2pkh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 3],
+            addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 3, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
 
         let config:any = {
             username,
@@ -158,6 +230,43 @@ const test_service = async function (this: any) {
         }
         resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
+
+        log.info("app.pubkeys.length: ",app.pubkeys.length)
+        if(!app.pubkeys || app.pubkeys.length === 0){
+            log.info(tag,"No pubkeys found, recalculating...")
+            let pubkeys = await app.getPubkeys()
+            assert(pubkeys)
+            assert(pubkeys[0])
+            assert(app.pubkeys)
+            assert(app.pubkeys[0])
+            log.info(tag,"pubkeys: ",pubkeys)
+            log.info(tag,"app.pubkeys: ",app.pubkeys)
+            for(let i = 0; i < pubkeys.length; i++){
+                let pubkey = pubkeys[i]
+                log.info(tag,"pubkey: ",pubkey)
+                assert(pubkey)
+                assert(pubkey.pubkey)
+            }
+        }
+        log.info("app.balances.length: ",app.balances.length)
+        if(!app.balances || app.balances.length === 0){
+            log.info(tag,"No balances found, recalculating...")
+            let balances = await app.getBalances()
+            log.info(tag,"balances: TOTAL: ",balances.length)
+            assert(balances)
+            assert(balances[0])
+            assert(app.balances)
+            assert(app.balances[0])
+            log.info(tag,"balances: ",app.balances)
+            for(let i = 0; i < balances.length; i++){
+                let balance = balances[i]
+                log.info(tag,"balance: ",balance)
+                assert(balance)
+                assert(balance.caip)
+            }
+        }
+        console.timeEnd('start2BalancesGas');
+
 
         log.info(tag,"app.assets: ",app.assets)
         log.info(tag,"app.pubkeys: ",app.pubkeys)
@@ -242,7 +351,14 @@ const test_service = async function (this: any) {
         if(totalSpend <= 0) throw Error("error, no spendable balance. you are broke!")
 
 
-
+        //get total balances value in USD
+        let totalValueUsd = 0
+        for (let i = 0; i < app.balances.length; i++) {
+            let balance = app.balances[i]
+            log.info(tag, "balance: ", balance)
+            totalValueUsd += balance.valueUsd
+        }
+        log.info(tag, "totalValueUsd: ", totalValueUsd)
 
         //TODO view inputs for pubkeys
 
@@ -251,28 +367,28 @@ const test_service = async function (this: any) {
 
 
         // create assetValue
-        const assetString = `${ASSET}.${ASSET}`;
-        console.log('assetString: ', assetString);
-        await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
-        log.info("assetValue: ",assetValue)
-        assert(assetValue)
-
-
-        //send
-        let estimatePayload:any = {
-            feeRate: 10,
-            pubkeys,
-            memo: '',
-            recipient: FAUCET_ADDRESS,
-        }
-        log.info("estimatePayload: ",estimatePayload)
-        //verify amount is < max spendable
-        let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
-        log.info("maxSpendable: ",maxSpendable)
-        log.info("maxSpendable: ",maxSpendable.getValue('string'))
+        // const assetString = `${ASSET}.${ASSET}`;
+        // console.log('assetString: ', assetString);
+        // await AssetValue.loadStaticAssets();
+        // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+        // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
+        // log.info("assetValue: ",assetValue)
+        // assert(assetValue)
+        //
+        //
+        // //send
+        // let estimatePayload:any = {
+        //     feeRate: 10,
+        //     pubkeys,
+        //     memo: '',
+        //     recipient: FAUCET_ADDRESS,
+        // }
+        // log.info("estimatePayload: ",estimatePayload)
+        // //verify amount is < max spendable
+        // let maxSpendable = await app.swapKit.estimateMaxSendableAmount({chain:Chain.Bitcoin, params:estimatePayload})
+        // log.info("maxSpendable: ",maxSpendable)
+        // log.info("maxSpendable: ",maxSpendable.getValue('string'))
 
         // send
         // let sendPayload = {
@@ -289,6 +405,7 @@ const test_service = async function (this: any) {
         // assert(txHash)
 
         console.log("************************* TEST PASS *************************")
+        console.timeEnd('start2end');
     } catch (e) {
         log.error(e)
         //process

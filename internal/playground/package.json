@@ -34,7 +34,7 @@
     "@coinmasters/wallet-trezor": "workspace:*",
     "@coinmasters/wallet-wc": "workspace:*",
     "@coinmasters/wallet-xdefi": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.8",
+    "@pioneer-platform/helpers": "^4.0.10",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@vitejs/plugin-react": "4.0.4",

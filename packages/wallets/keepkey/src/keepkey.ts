@@ -242,72 +242,71 @@ const checkAndLaunch = async () => {
 
 const connectKeepkey =
   ({
-     apis,
-     rpcUrls,
-     addChain,
-     config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
-   }) =>
-    async (chains, paths, pubkeys) => {
-      if (!keepkeyConfig) throw new Error('KeepKey config not found');
-      console.log('pubkeys: ', pubkeys.length);
+    apis,
+    rpcUrls,
+    addChain,
+    config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
+  }) =>
+  async (chains, paths) => {
+    if (!keepkeyConfig) throw new Error('KeepKey config not found');
+    console.log('pubkeys: ', pubkeys.length);
 
-      console.time('Total connectKeepkey time');
+    console.time('Total connectKeepkey time');
 
-      // Debug start
-      console.time('checkAndLaunch');
-      await checkAndLaunch();
-      console.timeEnd('checkAndLaunch');
+    // Debug start
+    console.time('checkAndLaunch');
+    await checkAndLaunch();
+    console.timeEnd('checkAndLaunch');
 
-      if (!paths) paths = [];
+    if (!paths) paths = [];
 
-      console.time('KeepKeySdk.create');
-      const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-      console.timeEnd('KeepKeySdk.create');
+    console.time('KeepKeySdk.create');
+    const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
+    console.timeEnd('KeepKeySdk.create');
 
-      let features = {};
+    let features = await keepKeySdk.system.info.getFeatures();
 
-      const chainPromises = chains.map(async (chain) => {
-        if (!chain) return;
+    const chainPromises = chains.map(async (chain) => {
+      if (!chain) return;
 
-        const chainLogLabel = `Chain ${chain} processing time`;
-        console.time(chainLogLabel);
+      const chainLogLabel = `Chain ${chain} processing time`;
+      console.time(chainLogLabel);
 
-        console.time(`getToolbox for ${chain}`);
-        const { address, walletMethods } = await getToolbox({
-          sdk: keepKeySdk,
-          apiClient: apis[chain],
-          rpcUrl: rpcUrls[chain],
-          chain,
-          covalentApiKey,
-          ethplorerApiKey,
-          utxoApiKey,
-          paths,
-        });
-        console.timeEnd(`getToolbox for ${chain}`);
-
-        console.time(`addChain for ${chain}`);
-        addChain({
-          chain,
-          info: features,
-          walletMethods,
-          wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
-          keepkeySdk: keepKeySdk,
-        });
-        console.timeEnd(`addChain for ${chain}`);
-
-        console.timeEnd(chainLogLabel);
+      console.time(`getToolbox for ${chain}`);
+      const { address, walletMethods } = await getToolbox({
+        sdk: keepKeySdk,
+        apiClient: apis[chain],
+        rpcUrl: rpcUrls[chain],
+        chain,
+        covalentApiKey,
+        ethplorerApiKey,
+        utxoApiKey,
+        paths,
       });
+      console.timeEnd(`getToolbox for ${chain}`);
 
-      // Wait for all the promises to resolve
-      console.time('Promise.all(chainPromises)');
-      await Promise.all(chainPromises);
-      console.timeEnd('Promise.all(chainPromises)');
+      console.time(`addChain for ${chain}`);
+      addChain({
+        chain,
+        info: features,
+        walletMethods,
+        wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
+        keepkeySdk: keepKeySdk,
+      });
+      console.timeEnd(`addChain for ${chain}`);
 
-      console.timeEnd('Total connectKeepkey time');
+      console.timeEnd(chainLogLabel);
+    });
 
-      return { keepkeyApiKey: keepkeyConfig.apiKey, info: features };
-    };
+    // Wait for all the promises to resolve
+    console.time('Promise.all(chainPromises)');
+    await Promise.all(chainPromises);
+    console.timeEnd('Promise.all(chainPromises)');
 
+    console.timeEnd('Total connectKeepkey time');
+
+    return { keepkeyApiKey: keepkeyConfig.apiKey, info: features };
+  };
 
 // const connectKeepkey =
 //   ({
