@@ -578,7 +578,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         curve: 'secp256k1',
         showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
       });
-
       paths.push({
         note: 'Bitcoin account 1 Native Segwit (Bech32)',
         blockchain: 'bitcoin',

@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-swap-osmosis-cosmos",
-  "version": "1.7.37",
+  "version": "1.7.38",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
