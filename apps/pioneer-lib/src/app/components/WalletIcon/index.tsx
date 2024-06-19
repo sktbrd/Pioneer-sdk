@@ -33,7 +33,7 @@ export const getWalletBadgeContent = (walletType: string, size?: string) => {
   if (icon) {
     return (
       <AvatarBadge boxSize={size}>
-        <Image rounded="full" src={icon} />
+        <Image boxSize="100px" rounded="full" src={icon} />
       </AvatarBadge>
     );
   } else {

@@ -69,8 +69,7 @@ export class KeepKeySigner extends AbstractSigner {
     data,
     maxFeePerGas,
     maxPriorityFeePerGas,
-    gasPrice,
-    ...restTx
+    gasPrice
   }: EVMTxParams & { maxFeePerGas?: string; maxPriorityFeePerGas?: string; gasPrice?: string }) => {
     if (!to) throw new Error('Missing to address');
     if (!gasLimit) throw new Error('Missing gasLimit');

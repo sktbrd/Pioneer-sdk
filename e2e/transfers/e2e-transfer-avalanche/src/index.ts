@@ -3,8 +3,6 @@
 
  */
 
-import { AssetValue } from '@pioneer-platform/helpers';
-
 require("dotenv").config()
 require('dotenv').config({path:"../../.env"});
 require('dotenv').config({path:"./../../.env"});
@@ -13,30 +11,35 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
-//@ts-ignore
-import { getPaths } from '@pioneer-platform/pioneer-coins';
+import { AssetValue } from '@pioneer-platform/helpers';
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@coinmasters/pioneer-sdk')
 let wait = require('wait-promise');
-let {ChainToNetworkId} = require('@pioneer-platform/pioneer-caip');
+let {ChainToNetworkId, ChainToCaip, shortListSymbolToCaip} = require('@pioneer-platform/pioneer-caip');
 let sleep = wait.sleep;
+import {
+    getPaths,
+    // @ts-ignore
+} from '@pioneer-platform/pioneer-coins';
+let BLOCKCHAIN = ChainToNetworkId['AVAX']
+assert(BLOCKCHAIN)
+let ASSET = 'AVAX'
+let ASSET_CAIP = shortListSymbolToCaip[ASSET]
+assert(ASSET_CAIP)
 
-let BLOCKCHAIN = ChainToNetworkId['ETH']
-let ASSET = 'USDT'
-let ASSET_CAIP = ''
-let MIN_BALANCE = process.env['MIN_BALANCE_USDT'] || "1.0004"
+let MIN_BALANCE = process.env['MIN_BALANCE_ARB'] || "1.0004"
 let TEST_AMOUNT = process.env['TEST_AMOUNT'] || "0.005"
 let spec = process.env['URL_PIONEER_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
 let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
+let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
+if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
+let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS
+
 
 
 console.log("spec: ",spec)
 console.log("wss: ",wss)
-
-let FAUCET_ETH_ADDRESS = process.env['FAUCET_ETH_ADDRESS']
-if(!FAUCET_ETH_ADDRESS) throw Error("Need Faucet Address!")
-let FAUCET_ADDRESS = FAUCET_ETH_ADDRESS || '0xC3aFFff54122658b89C31183CeC4F15514F34624'
 
 let txid:string
 let IS_SIGNED: boolean
@@ -59,18 +62,25 @@ const test_service = async function (this: any) {
         const username = "user:"+Math.random()
         assert(username)
 
+        //add custom path
+        let pathsCustom:any = [
+        ]
+
+        log.info(tag,"BLOCKCHAIN: ",BLOCKCHAIN)
+        assert(BLOCKCHAIN)
         let blockchains = [BLOCKCHAIN]
         let paths = getPaths(blockchains)
+        paths = paths.concat(pathsCustom)
+        log.info("paths: ",paths.length)
 
         let config:any = {
             username,
             queryKey,
             spec,
-            blockchains,
-            paths,
             keepkeyApiKey:process.env.KEEPKEY_API_KEY,
             wss,
-            // paths,
+            paths,
+            blockchains,
             // @ts-ignore
             ethplorerApiKey:
             // @ts-ignore
@@ -80,7 +90,7 @@ const test_service = async function (this: any) {
             // @ts-ignore
               process.env.VITE__COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q',
             // @ts-ignore
-            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'fake',
+            utxoApiKey: process.env.VITE_BLOCKCHAIR_API_KEY || 'B_s9XK926uwmQSGTDEcZB3vSAmt5t2',
             // @ts-ignore
             walletConnectProjectId:
             // @ts-ignore
@@ -91,8 +101,10 @@ const test_service = async function (this: any) {
         // console.log(tag,' config: ',config);
         let app = new SDK.SDK(spec,config)
         const walletsVerbose: any = [];
+
         const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
-        //log.info(tag,"walletKeepKey: ",keepkeyWallet)
+
+        // //log.info(tag,"walletKeepKey: ",keepkeyWallet)
         const walletKeepKey = {
             type: WalletOption.KEEPKEY,
             icon: "https://pioneers.dev/coins/keepkey.png",
@@ -110,10 +122,20 @@ const test_service = async function (this: any) {
         let assets = app.assetsMap;
         log.info(tag, "assets: ", assets);
         assert(assets);
+        assert(assets.get(ASSET_CAIP));
+        log.info(tag, "asset info: ", assets.get(ASSET_CAIP));
+
+        // log.info(tag,"app.assetsMap: ",app.assetsMap)
+        // log.info(tag,"app.assets: ",app.assetsMap)
+        // let asset = app.assets.filter((b:any) => b.networkId === ChainToNetworkId[Chain.Arbitrum])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
 
         // //connect
-        // assert(blockchains)
-        // assert(blockchains[0])
+        assert(app.blockchains)
+        assert(app.blockchains[0])
+        log.info(tag,"blockchains: ",blockchains)
         let pairObject = {
             type:WalletOption.KEEPKEY,
             blockchains
@@ -121,75 +143,83 @@ const test_service = async function (this: any) {
         resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
 
+        // // log.info(tag,"app.assetsMap: ",app.assetsMap)
+        // log.info(tag,"app.assets: ",app.assets)
+        // let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Arbitrum])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
+        // assert(asset[0].ticker)
+
+        await app.getPubkeys()
+
         //check pairing
         // //context should match first account
         let context = await app.context
         log.info(tag,"context: ",context)
         assert(context)
 
-        //
-        await app.getPubkeys()
+        //get osmo paths
+        assert(app.paths)
+        assert(app.paths[0])
+
+
+
         log.info(tag,"pubkeys: ",app.pubkeys)
         assert(app.pubkeys)
         assert(app.pubkeys[0])
 
-        //get balances
-        //await app.getBalance()
 
-        //verify pubkeys
         await app.getBalances()
         log.info(tag,"balances: ",app.balances)
-        //verify balances
-        assert(app.balances)
+        log.info(tag,"balances: ",app.balances.length)
+        // let balance = app.balances.filter((b:any) => b.networkId === BLOCKCHAIN)
+        // log.info(tag,"*** balance: ",balance[0])
 
-        //get charts
-        let charts = await app.getCharts()
-        log.info(tag,"charts: ",charts)
-
-        log.info(tag,"pubkeys: ",app.pubkeys)
-        log.info(tag,"balances: ",app.balances)
-
-        //filter by nft's
-        let nfts = app.balances.filter((e:any) => e.type === 'nft')
-        log.info(tag,"nfts: ",nfts)
-
-
-        // log.info(tag,"nfts: ",app.nfts)
-        // log.debug(tag,"wallets: ",app.wallets)
-        // log.info(tag,"pubkeys: ",app.pubkeys.length)
-        // // log.info(tag,"balances: ",app.balances.length)
-        // log.info(tag,"nfts: ",app.nfts.length)
-        // log.info(tag,"context: ",app.context)
-        // log.info(tag,"assetContext: ",app.assetContext)
-        // log.info(tag,"blo: ",app.assetContext)
-        // log.info(tag,"assetContext: ",app.assetContext)
-
-        //balances
-        // let balance = app.balances.filter((e:any) => e.symbol === ASSET)
-        // log.info("balance: ",balance)
-        // log.info("balance: ",balance[0].balance)
-        // assert(balance)
         // assert(balance[0])
-        // assert(balance[0].balance)
+        // assert(balance[0].caip)
+        // assert(balance[0].ticker)
+        //verify balances
 
+        //
+        // await app.getAssets()
+        log.info(tag,"caip: ",Chain.Arbitrum)
+        log.info(tag,"caip: ",ChainToCaip[Chain.Arbitrum])
+        // let asset = app.assets.filter((b:any) => b.caip === ChainToCaip[Chain.Arbitrum])
+        // log.info(tag,"asset: ",asset)
+        // assert(asset[0])
+        // assert(asset[0].caip)
+        // assert(asset[0].ticker)
+
+
+        log.info(tag,"assetContext: ",ChainToCaip[ASSET])
+        log.info(tag,"asset: ",assets.get(ChainToCaip[ASSET]))
+        assert(assets.get(ChainToCaip[ASSET]))
+        await app.setAssetContext(assets.get(ChainToCaip[ASSET]))
+        log.info(tag,"assetContext: ",app.assetContext)
+        assert(app.assetContext)
+        assert(app.assetContext.caip)
+        // assert(app.assetContext.ticker)
+
+        // await app.setAssetContext(asset[0])
+        // log.info(tag,"assetContext: ",app.assetContext)
+        // assert(app.assetContext.name)
+        // assert(app.assetContext.chain)
+        // assert(app.assetContext.caip)
+        // assert(app.assetContext.icon)
+
+
+        // create assetValue
+        // const assetString = `${ASSET}.ETH`;
+        // console.log('assetString: ', assetString);
         // await AssetValue.loadStaticAssets();
-        // //get assetValue for asset
-        // let assetString = 'ETH.USDT-0XDAC17F958D2EE523A2206206994597C13D831EC7'
-        // // create assetValue
-        // // const assetString = `${ASSET}.${ASSET}`;
-        // log.info('assetString: ', assetString);
-        // // await AssetValue.loadStaticAssets();
         // log.info("TEST_AMOUNT: ",TEST_AMOUNT)
         // log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        // let assetValue = await AssetValue.fromString(
-        //   assetString,
-        //   parseFloat(TEST_AMOUNT),
-        // );
+        // const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         // log.info("assetValue: ",assetValue)
-
-        //send
+        // assert(assetValue)
+        // //send
         // let sendPayload = {
-        //     from:app.pubkeys[0].master,
         //     assetValue,
         //     memo: '',
         //     recipient: FAUCET_ADDRESS,
@@ -198,7 +228,6 @@ const test_service = async function (this: any) {
         // const txHash = await app.swapKit.transfer(sendPayload);
         // log.info("txHash: ",txHash)
         // assert(txHash)
-
 
 
     } catch (e) {

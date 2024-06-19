@@ -64,7 +64,9 @@ export function Classic({ usePioneer }: any) {
       setIsConnecting(true);
 
       await app.getPubkeys();
+      app.getCharts();
       await app.getBalances();
+
       //get allblockchains for keepkey
       //check gas asset for balances
       //get balanceCache
@@ -134,17 +136,19 @@ export function Classic({ usePioneer }: any) {
   };
 
   // Sorting function to sort assets by balance.valueUsd
-  const sortedAssets = [...assets.values()].sort((a: any, b: any) => {
-    const balanceA = app.balances.find((balance: any) => balance.caip === a.caip);
-    const balanceB = app.balances.find((balance: any) => balance.caip === b.caip);
+  const sortedAssets = [...assets.values()]
+    .filter(asset => asset.type === 'native')
+    .sort((a: any, b: any) => {
+      const balanceA = app.balances.find((balance: any) => balance.caip === a.caip);
+      const balanceB = app.balances.find((balance: any) => balance.caip === b.caip);
 
-    const valueUsdA = balanceA?.valueUsd || 0;
-    const valueUsdB = balanceB?.valueUsd || 0;
+      const valueUsdA = balanceA?.valueUsd || 0;
+      const valueUsdB = balanceB?.valueUsd || 0;
 
-    if (valueUsdA === 0) return 1;
-    if (valueUsdB === 0) return -1;
-    return valueUsdB - valueUsdA;
-  });
+      if (valueUsdA === 0) return 1;
+      if (valueUsdB === 0) return -1;
+      return valueUsdB - valueUsdA;
+    });
 
   const formatUsd = (valueUsd:any) => {
     if (valueUsd == null) return null;
@@ -214,6 +218,8 @@ export function Classic({ usePioneer }: any) {
                                   <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
                                   <br/>
                                   <Badge colorScheme="green">USD {formatUsd(balance.valueUsd)}</Badge>
+                                  <br/>
+                                  {/*type {formatUsd(asset.type)}*/}
                                 </Text>
                               );
                             })}

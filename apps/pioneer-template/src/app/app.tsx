@@ -99,7 +99,7 @@ export default function App() {
         return <Blockchains usePioneer={usePioneer}/>;
         break;
       case 'balances':
-        return <Balances usePioneer={usePioneer}/>;
+        return <Balances usePioneer={usePioneer} onSelect={onSelect} />;
         break;
       case 'asset':
         return <Asset usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} asset={selectedAsset}/>;

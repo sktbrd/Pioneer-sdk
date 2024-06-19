@@ -15,7 +15,7 @@ require("dotenv").config({path:'../../../.env'})
 require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
-import { WalletOption, availableChainsByWallet, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
+import { WalletOption, availableChainsByWallet, getChainEnumValue, NetworkIdToChain, Chain } from '@coinmasters/types';
 //@ts-ignore
 import { AssetValue } from '@pioneer-platform/helpers';
 import type { AssetValue as AssetValueType } from '@pioneer-platform/helpers';
@@ -65,9 +65,29 @@ const test_service = async function (this: any) {
         assert(username)
 
         //TODO test enabled blockchain cacheing
-        const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
-        assert(AllChainsSupported)
-        log.info(tag,"AllChainsSupported: ",AllChainsSupported)
+        // const AllChainsSupported = availableChainsByWallet['KEEPKEY'];
+        // assert(AllChainsSupported)
+        // log.info(tag,"AllChainsSupported: ",AllChainsSupported)
+
+        let AllChainsSupported = [
+            'ETH',
+            // 'ARB',
+            // 'OP',  //Fast
+            // 'MATIC', //SLOW charting
+            // 'AVAX', //fast
+            // 'BASE', //fast
+            // 'BSC', //fast
+            // 'BTC',
+            // 'BCH',
+            // 'GAIA',
+            // 'OSMO',
+            // 'XRP',
+            // 'DOGE',
+            // 'DASH',
+            // 'MAYA',
+            // 'LTC',
+            // 'THOR'
+        ]
 
         let pubkeysCache = await txDB.getPubkeys()
         log.info("pubkeysCache: ",pubkeysCache.length)
@@ -77,6 +97,7 @@ const test_service = async function (this: any) {
         log.info("balancesCache: ",balancesCache.length)
 
         // const AllChainsSupported = [Chain.Base];
+        // const AllChainsSupported = [Chain.Ethereum, Chain.Base];
         // const AllChainsSupported = [Chain.Ethereum, Chain.Base, Chain.BitcoinCash];
         let blockchains = AllChainsSupported.map(
           // @ts-ignore
@@ -89,6 +110,34 @@ const test_service = async function (this: any) {
         let paths = getPaths(blockchains)
         log.info(tag,"paths: ",paths.length)
         assert(paths)
+
+        //add custom btc paths
+        //add account 0 p2sh segwit
+        paths.push({
+            note:"Bitcoin account 0 segwit (p2sh)",
+            networks: ['bip122:000000000019d6689c085ae165831e93'],
+            script_type:"p2sh-p2wpkh",
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"xpub",
+            addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
+            addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+        paths.push({
+            note:"Bitcoin account 0 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
 
         let config:any = {
             username,
@@ -136,6 +185,27 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultInit: ",resultInit)
         console.timeEnd('start2init');
 
+        /*
+            Adding asset to pioneerSDK in real time
+
+            1. needs a caip!
+            //check local
+            //check remote by caip
+
+            build asset
+            icon:
+            symbol:
+            name:
+            decimals:
+            chain:
+            networkId:
+         */
+        //add a custom asset (token)
+        //let asset =
+        //add a custom blockchain
+
+        //add a custom asset (gas token)
+
         let assets = await app.assetsMap
         // log.info(tag,"assets: START: ",assets)
         assert(assets)
@@ -173,6 +243,10 @@ const test_service = async function (this: any) {
         // let balancesCache = balances1.filter((balance:any) => balance.networkId === NetworkId.ETH)
         log.info("pubkeysCache: ",pubkeysCache.length)
         log.info("app.pubkeys.length: ",app.pubkeys.length)
+
+        //find missing pubkeys
+
+        //only query on missing pubkeys
         if(!app.pubkeys || app.pubkeys.length === 0){
             log.info(tag,"No pubkeys found, recalculating...")
             let pubkeys = await app.getPubkeys()
@@ -195,46 +269,92 @@ const test_service = async function (this: any) {
                 }
             }
         }
+
         console.timeEnd('start2Pubkeys');
-        log.info("balanceCache: ",balancesCache.length)
-        log.info("app.balances.length: ",app.balances.length)
-        if(!app.balances || app.balances.length === 0){
-            log.info(tag,"No balances found, recalculating...")
+        log.info("balanceCache: ", balancesCache.length);
+        log.info("app.balances.length: ", app.balances.length);
+        /*
+            If you have an expired balance, you need to recalculate the balance
+         */
 
-            let balances = await app.getBalances()
-            log.info(tag,"balances: TOTAL: ",balances.length)
-            assert(balances)
-            assert(balances[0])
-            assert(app.balances)
-            assert(app.balances[0])
-            log.info(tag,"balances: ",app.balances)
+        //find expired balances > 1 hour
+        //find enabled charts, find cached charts
+        //is missing perform chart query
+        if (!app.balances || app.balances.length === 0) {
+            log.info(tag, "No balances found, recalculating...");
 
-            for(let i = 0; i < balances.length; i++){
-                let balance = balances[i]
-                log.info(tag,"balance: ",balance)
-                assert(balance)
-                assert(balance.caip)
-                txDB.createBalance(balance)
+            let balances = await app.getBalances();
+            // log.info(tag, "balances: ", balances)
+            log.info(tag, "balances: ", balances.length)
+            log.info(tag, "balances: ", balances[0])
+            let chartData = await app.getCharts();
+            log.info(tag, "chartData: ", chartData.length)
+            log.info(tag, "chartData: ", chartData[0])
+            balances = [...balances, ...chartData];
+            log.info(tag, "balances: ", balances);
+            log.info(tag, "balances: TOTAL: ", balances.length);
+            assert(balances);
+            assert(balances[0]);
+            assert(app.balances);
+            assert(app.balances[0]);
+            log.info(tag, "balances: ", app.balances);
+
+            for (let i = 0; i < balances.length; i++) {
+                let balance = balances[i];
+                log.info(tag, "*** balance: ", balance);
+                assert(balance);
+                assert(balance.caip);
+                txDB.createBalance(balance);
             }
-
-            //for each blockchain should be gas asset balance
-            let portfolioValue = 0
-            for(let i = 0; i < blockchains.length; i++){
-                let blockchain = blockchains[i]
-                let chain = NetworkIdToChain[blockchain]
-                assert(chain)
-                let caip = shortListSymbolToCaip[chain]
-                assert(caip)
-                log.info(tag,"caip: ",caip)
-                let balance = balances.find((balance:any) => balance.caip === caip)
-                assert(balance)
-                assert(balance.caip)
-                log.info(tag,balance.caip + " USD: ",balance.valueUsd)
-                portfolioValue += balance.valueUsd
-            }
-            log.info(tag,"portfolioValue: ",portfolioValue)
         }
         console.timeEnd('start2BalancesGas');
+
+        // Verify gas balances for each enabled chain
+        for (let i = 0; i < blockchains.length; i++) {
+            let blockchain = blockchains[i];
+            let chain = NetworkIdToChain[blockchain];
+            assert(chain);
+            let caip = shortListSymbolToCaip[chain];
+            assert(caip);
+            log.info(tag, "caip: ", caip);
+            let balance = app.balances.find((balance: any) => balance.caip === caip);
+            assert(balance);
+            assert(balance.caip);
+            log.info(tag, balance.caip + " USD: ", balance.valueUsd);
+        }
+
+        // Portfolio breakdown by tokens, nfts, and gas assets
+        let portfolio: any = {
+            tokens: [],
+            nfts: [],
+            gasAssets: []
+        };
+
+        for (let i = 0; i < app.balances.length; i++) {
+            let balance: any = app.balances[i];
+            if (balance.type === 'nft') {
+                portfolio.nfts.push(balance);
+            } else if (balance.type === 'Native') {
+                portfolio.gasAssets.push(balance);
+            } else {
+                portfolio.tokens.push(balance);
+            }
+        }
+
+        log.info(tag, " ** Portfolio Breakdown: ** tokens: ", portfolio.tokens.length);
+        log.info(tag, " ** Portfolio Breakdown: ** nfts: ", portfolio.nfts.length);
+        log.info(tag, " ** Portfolio Breakdown: ** gasAssets: ", portfolio.gasAssets.length);
+
+        let portfolioValue = 0;
+        for (let i = 0; i < app.balances.length; i++) {
+            let balance: any = app.balances[i];
+            assert(balance);
+            assert(balance.networkId);
+            assert(balance.caip);
+            log.info(tag, balance.caip + " USD: ", balance.valueUsd);
+            portfolioValue += parseFloat(balance.valueUsd);
+        }
+        log.info(tag, "portfolioValue: ", portfolioValue);
 
 
 

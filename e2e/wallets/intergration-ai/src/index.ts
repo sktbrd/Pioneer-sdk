@@ -335,7 +335,23 @@ const test_service = async function (this: any) {
         //
 
 
+        //Inquire test pairing process
 
+        //verify connected wallets
+        //do you want to add a new wallet?
+
+        //verify bockchains per wallet
+        //for each wallet inquire "add an asset"?
+
+        //verify assets per blockchain
+
+
+        //verify charts
+        //Zapper zerion
+
+
+        //final asset count and portolio value
+        //do you want to hard code a portfolio value to any assets?
 
 
 
