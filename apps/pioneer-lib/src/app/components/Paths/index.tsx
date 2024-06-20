@@ -122,9 +122,9 @@ export function Paths({ usePioneer, networkId }: any) {
           </Flex>
         </Card>
       ))}
-      <Button onClick={onAddPath} mt={4}>
-        Add Custom Path
-      </Button>
+      {/*<Button onClick={onAddPath} mt={4}>*/}
+      {/*  Add Custom Path*/}
+      {/*</Button>*/}
       <Modal isOpen={isOpen} onClose={onModalClose}>
         <ModalOverlay />
         <ModalContent>

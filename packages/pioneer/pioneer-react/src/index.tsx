@@ -547,18 +547,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       console.log(tag, 'allSupported: ', allSupported);
       let blockchains;
-      // if (cachedBlockchains.length > 0) {
-      //   blockchains = cachedBlockchains;
-      //   console.log('Using cachedBlockchains:', blockchains);
-      // } else if (state.app.blockchains.length > 0) {
-      //   blockchains = state.app.blockchains;
-      //   console.log('Using state.app.blockchains:', blockchains);
-      // } else {
-      //   blockchains = allSupported;
-      //   console.log('Using allSupported:', blockchains);
-      // }
+      if (cachedBlockchains.length > 0) {
+        blockchains = cachedBlockchains;
+        console.log('Using cachedBlockchains:', blockchains);
+      } else {
+        blockchains = allSupported;
+        console.log('Using allSupported:', blockchains);
+      }
 
-      blockchains = allSupported;
+      // blockchains = allSupported;
 
       console.log('Selected blockchains: ', blockchains);
 

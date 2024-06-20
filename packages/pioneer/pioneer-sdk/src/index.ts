@@ -675,13 +675,13 @@ export class SDK {
             tokens.forEach((token) => {
               chains.add(token.chain);
               chainTokenCounts[token.chain] = (chainTokenCounts[token.chain] || 0) + 1;
-              console.log('*** token: ', token);
+              // console.log('*** token: ', token);
               let expandedInfo = tokenToCaip(token);
 
               if (expandedInfo.caip) {
                 expandedInfo.sourceList = sourceList;
                 let assetInfoKey = expandedInfo.caip.toLowerCase();
-                console.log(tag, 'assetInfoKey: ', assetInfoKey);
+                // console.log(tag, 'assetInfoKey: ', assetInfoKey);
 
                 let assetInfo =
                   assetData[expandedInfo.caip] || assetData[expandedInfo.caip.toLowerCase()];
@@ -702,7 +702,7 @@ export class SDK {
                     tokenMap.set(assetInfoKey, combinedInfo);
                     allAssets.push(combinedInfo);
                   } else {
-                    console.error('***  Skipping token: ', token);
+                    // console.error('***  Skipping token: ', token);
                     // console.error('***  Not in supported blockchains: ', this.blockchains);
                   }
                 } else {

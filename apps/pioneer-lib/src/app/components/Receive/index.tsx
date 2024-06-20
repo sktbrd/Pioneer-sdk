@@ -89,9 +89,9 @@ export function Receive({ usePioneer, onClose }: any) {
           <Tr>
             <Td>Address</Td>
             <Td>
-              {pubkeys.map((pubkey: any, index: any) => (
-                <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />
-              ))}
+              {/*{pubkeys.map((pubkey: any, index: any) => (*/}
+              {/*  <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />*/}
+              {/*))}*/}
               <Select value={selectedAddress} onChange={handleAddressChange}>
                 {pubkeys.map((pubkey: any, index: any) => (
                   <option key={index} value={pubkey.address || pubkey.master}>

@@ -64,7 +64,7 @@ export function Classic({ usePioneer }: any) {
       setIsConnecting(true);
 
       await app.getPubkeys();
-      app.getCharts();
+      // app.getCharts();
       await app.getBalances();
 
       //get allblockchains for keepkey

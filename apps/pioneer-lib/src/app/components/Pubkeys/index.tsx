@@ -11,24 +11,25 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Tooltip,
+  Badge,
   Flex,
   IconButton,
+  Collapse,
   Input,
-  FormControl,
-  FormLabel,
-  useClipboard,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon, AddIcon } from '@chakra-ui/icons';
 import Pubkey from '../../components/Pubkey'; // Adjust the import path as needed
 import PubkeyAdd from '../../components/PubkeyAdd'; // Adjust the import path as needed
 
-export function Pubkeys({usePioneer}:any) {
+export function Pubkeys({ usePioneer, networkId, pubkey }: any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isAddModalOpen, onOpen: onAddModalOpen, onClose: onAddModalClose } = useDisclosure();
   const [selectedPubkey, setSelectedPubkey] = useState(null);
-  const [copiedAddress, setCopiedAddress] = useState('');
+  const [copiedValue, setCopiedValue] = useState('');
+  const [expandedKey, setExpandedKey] = useState('');
 
   useEffect(() => {
     if (app?.pubkeys) {
@@ -41,40 +42,77 @@ export function Pubkeys({usePioneer}:any) {
     onOpen();
   };
 
-  const handleCopy = (address: any) => {
-    navigator.clipboard.writeText(address);
-    setCopiedAddress(address);
-    setTimeout(() => setCopiedAddress(''), 3000);
+  const handleCopy = (value: string) => {
+    navigator.clipboard.writeText(value);
+    setCopiedValue(value);
+    setTimeout(() => setCopiedValue(''), 3000);
   };
+
+  const toggleExpand = (key: string) => {
+    setExpandedKey(expandedKey === key ? '' : key);
+  };
+
+  // Filter pubkeys based on networkId and pubkey
+  const filteredPubkeys = app?.pubkeys?.filter((key: any) => {
+    const matchesNetworkId = !networkId || key.networks.includes(networkId);
+    const matchesPubkey = !pubkey || key.pubkey === pubkey;
+    return matchesNetworkId && matchesPubkey;
+  }) || [];
 
   return (
     <div>
-      <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onAddModalOpen}>
-        Add Pubkey
-      </Button>
-      <div>
-        total: {app?.pubkeys?.length}
-        {app?.pubkeys?.map((key: any, index: any) => (
-          <Flex key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
-            <Box>
-              <Text fontWeight="bold">wallet: {key.contextType}</Text>
-              <Text fontWeight="bold">type: {key.type}</Text>
-              <Text fontWeight="bold">networks: {key.networks}</Text>
-              <Text fontWeight="bold">address: {key.master || key.address}</Text>
-              <Text fontWeight="bold">pubkey: {key.pubkey}</Text>
+      <Box p={4}>
+        <Text fontWeight="bold">Total: {filteredPubkeys.length}</Text>
+        {filteredPubkeys.map((key, index) => (
+          <Flex
+            key={index}
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            alignItems="flex-start"
+            justifyContent="space-between"
+            my={2}
+            direction="column"
+            width="100%"
+          >
+            <Box mb={2}>
+              <Text fontWeight="bold">Type: <Badge colorScheme='green'>{key.type}</Badge></Text>
             </Box>
-            <Flex alignItems="center">
-              <IconButton
-                icon={copiedAddress === key.address ? <CheckIcon /> : <CopyIcon />}
-                onClick={() => handleCopy(key.address)}
-                aria-label="Copy address"
-                mr={2}
-              />
-              <Button onClick={() => handlePubkeyClick(key)}>Select</Button>
-            </Flex>
+            <Box mb={2} width="100%">
+              <Flex width="100%" alignItems="center">
+                <Text fontWeight="bold" flexShrink={0} mr={2}>
+                  Address:
+                </Text>
+                <Input value={key.master || key.address} isReadOnly size="xl" flex="1" mr={2} />
+                <Tooltip label={copiedValue === (key.master || key.address) ? "Copied" : "Copy Address"} hasArrow>
+                  <IconButton
+                    icon={copiedValue === (key.master || key.address) ? <CheckIcon /> : <CopyIcon />}
+                    onClick={() => handleCopy(key.master || key.address)}
+                    aria-label="Copy address"
+                  />
+                </Tooltip>
+              </Flex>
+            </Box>
+            {(key.master || key.address) !== key.pubkey && (
+              <Box mb={2} width="100%">
+                <Flex width="100%" alignItems="center">
+                  <Text fontWeight="bold" flexShrink={0} mr={2}>
+                    Pubkey:
+                  </Text>
+                  <Input value={key.pubkey} isReadOnly size="sm" flex="1" mr={2} />
+                  <Tooltip label={copiedValue === key.pubkey ? "Copied" : "Copy Pubkey"} hasArrow>
+                    <IconButton
+                      icon={copiedValue === key.pubkey ? <CheckIcon /> : <CopyIcon />}
+                      onClick={() => handleCopy(key.pubkey)}
+                      aria-label="Copy pubkey"
+                    />
+                  </Tooltip>
+                </Flex>
+              </Box>
+            )}
           </Flex>
         ))}
-      </div>
+      </Box>
 
       <Modal isOpen={isOpen} onClose={onClose} size={'xxl'}>
         <ModalOverlay />
@@ -93,7 +131,7 @@ export function Pubkeys({usePioneer}:any) {
           <ModalHeader>Add New Pubkey</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <PubkeyAdd usePioneer={usePioneer}/>
+            <PubkeyAdd usePioneer={usePioneer} />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onAddModalClose}>
@@ -106,4 +144,5 @@ export function Pubkeys({usePioneer}:any) {
     </div>
   );
 }
+
 export default Pubkeys;

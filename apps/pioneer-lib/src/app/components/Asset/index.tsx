@@ -7,6 +7,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Transfer } from '../Transfer';
 import { Receive } from '../Receive';
 import { Paths } from '../Paths';
+import { Pubkeys } from '../Pubkeys';
 import Balances from '../Balances';
 
 export function Asset({ usePioneer, onClose, asset }: any) {
@@ -96,7 +97,12 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                       width="100%"
                       onClick={() => openUrl(pubkey.type === 'address' ? asset.explorerAddressLink + '/' + pubkey.address : asset.explorerXpubLink + '/' + pubkey.pubkey)}
                     >
-                      View Transaction History
+                      <Box>
+                        <Text>View Transaction History</Text>
+                        <Badge>
+                          <Text size="sm">({pubkey.note})</Text>
+                        </Badge>
+                      </Box>
                     </Button>
                   ))}
               </Flex>
@@ -109,8 +115,8 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   <Tabs mt={4} onChange={(index) => {
                   }}>
                     <TabList>
-                      <Tab>Accounts</Tab>
                       <Tab>Paths</Tab>
+                      <Tab>Accounts</Tab>
                       {showAdvanced && asset.networkId.includes('eip155') && (
                         <>
                           <Tab>Tokens</Tab>
@@ -121,34 +127,10 @@ export function Asset({ usePioneer, onClose, asset }: any) {
 
                     <TabPanels>
                       <TabPanel>
-                        <VStack spacing={4} width="100%" align="center">
-                          {app.pubkeys
-                            .filter((pubkey: any) => {
-                              if (asset?.networkId?.startsWith('eip155')) {
-                                return pubkey.networks.some((networkId: any) => networkId.startsWith('eip155'));
-                              }
-                              return pubkey.networks.includes(asset.networkId);
-                            })
-                            .map((pubkey: any, index: any) => (
-                              <Card key={index} width="100%" maxWidth="600px" borderWidth="1px" borderRadius="lg" boxShadow="md">
-                                <CardBody>
-                                  <Text fontWeight="bold" mb={2}>{pubkey.note}</Text>
-                                  <Text mb={2}>Path: <Badge>{pubkey.pathMaster}</Badge></Text>
-                                  <Text fontWeight="bold" mb={2}>Address: {pubkey.master || pubkey.address}</Text>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => openUrl(pubkey.type === 'address' ? asset.explorerAddressLink + '/' + pubkey.address : asset.explorerXpubLink + '/' + pubkey.pubkey)}
-                                  >
-                                    View Transaction History
-                                  </Button>
-                                </CardBody>
-                              </Card>
-                            ))}
-                        </VStack>
+                        <Paths usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
                       <TabPanel>
-                        <Paths usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
+                        <Pubkeys usePioneer={usePioneer}networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
                       {showAdvanced && asset.networkId.includes('eip155') && (
                         <>

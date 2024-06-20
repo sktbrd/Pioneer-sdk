@@ -75,6 +75,13 @@ export const theme = extendTheme({
       baseStyle: {
         fontWeight: 'bold', // Example button styling
       },
+      Avatar: {
+        sizes: {
+          xxl: {
+            boxSize: '8rem', // Adjust this value to your desired size
+          },
+        },
+      },
       // Variant styles
       variants: {
         solid: (props: any) => ({

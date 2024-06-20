@@ -23,6 +23,8 @@ import { getWalletBadgeContent } from '../WalletIcon';
 //@ts-ignore
 import confetti from 'canvas-confetti'; // Make sure to install the confetti package
 
+const TAG = ' | Transfer | ';
+
 export function Transfer({ usePioneer }: any): JSX.Element {
   const toast = useToast();
   const { state, setIntent, connectWallet } = usePioneer();
@@ -31,22 +33,23 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMax, setisMax] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
+  const [inputAmountUsd, setInputAmountUsd] = useState('');
   const [sendAmount, setSendAmount] = useState<any | undefined>();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [memo, setMemo] = useState('');
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
-
+  const [priceUsd, setPriceUsd] = useState(null);
   const [maxSpendable, setMaxSpendable] = useState('');
   const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(true);
+  const [useUsdInput, setUseUsdInput] = useState(false);
 
-  // const textColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'gray.700');
   const headingColor = useColorModeValue('teal.500', 'teal.300');
 
   useEffect(() => {
-    if(assetContext && assetContext.icon)setAvatarUrl(assetContext.icon);
+    if (assetContext && assetContext.icon) setAvatarUrl(assetContext.icon);
   }, [app, app?.swapKit, assetContext]);
 
   useEffect(() => {
@@ -60,10 +63,15 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   }, [app]);
 
   let onStart = async function () {
-    let tag = " | onStart Transfer | ";
+    let tag = TAG + " | onStart Transfer | ";
     if (app && app.swapKit && assetContext && assetContext.chain && app.swapKit.estimateMaxSendableAmount && assetContext.networkId) {
       console.log("onStart Transfer page");
       console.log(tag, "assetContext: ", assetContext);
+
+      //get balance from app
+      let balance = app.balances.filter((balance: any) => balance.caip === assetContext.caip);
+      console.log(tag, "balance: ", balance);
+      if (balance && balance[0] && balance[0].priceUsd) setPriceUsd(balance[0].priceUsd);
 
       const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
       console.log(tag, "walletInfo: ", walletInfo);
@@ -76,9 +84,16 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         pubkeys = pubkeys.filter((pubkey: any) => pubkey.networks.includes(assetContext.networkId));
         console.log("onStart Transfer pubkeys", pubkeys);
 
+        // Check local storage for cached maxSpendable
+        const cacheKey = `maxSpendable_${assetContext.caip}`;
+        const cachedMaxSpendable = localStorage.getItem(cacheKey);
+        if (cachedMaxSpendable) {
+          setMaxSpendable(cachedMaxSpendable);
+          setLoadingMaxSpendable(false);
+        }
+
         //get assetValue for the asset
-        // console.log(tag,"assetValue:", assetValue);
-        if(!assetContext.caip) throw Error('Invalid asset context. Missing caip.')
+        if (!assetContext.caip) throw Error('Invalid asset context. Missing caip.');
         let estimatePayload: any = {
           feeRate: 10,
           caip: assetContext.caip,
@@ -90,8 +105,10 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         console.log("maxSpendableAmount", maxSpendableAmount);
         console.log("maxSpendableAmount", maxSpendableAmount.getValue('string'));
         console.log("onStart Transfer pubkeys", pubkeys);
-        setMaxSpendable(maxSpendableAmount.getValue('string'));
+        const newMaxSpendable = maxSpendableAmount.getValue('string');
+        setMaxSpendable(newMaxSpendable);
         setLoadingMaxSpendable(false);
+        localStorage.setItem(cacheKey, newMaxSpendable);
       }
     }
   };
@@ -102,7 +119,13 @@ export function Transfer({ usePioneer }: any): JSX.Element {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setisMax(false);
-    setInputAmount(event.target.value);
+    if (useUsdInput) {
+      setInputAmountUsd(event.target.value);
+      setInputAmount((parseFloat(event.target.value) / (priceUsd || 1)).toFixed(8));
+    } else {
+      setInputAmount(event.target.value);
+      setInputAmountUsd((parseFloat(event.target.value) * (priceUsd || 1)).toFixed(2));
+    }
   };
 
   const handleRecipientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,12 +210,12 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const setMaxAmount = () => {
     setisMax(true);
     setInputAmount(maxSpendable);
+    setInputAmountUsd((parseFloat(maxSpendable) * (priceUsd || 1)).toFixed(2));
   };
 
-  const formatNumber = (number:any) => {
-    return number
+  const formatNumber = (number: any) => {
+    return number;
   };
-
 
   if (loadingMaxSpendable) {
     return (
@@ -207,8 +230,10 @@ export function Transfer({ usePioneer }: any): JSX.Element {
     );
   }
 
+  const isOverMax = parseFloat(inputAmount) > parseFloat(maxSpendable);
+
   return (
-    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor}  margin="0 auto">
+    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} margin="0 auto">
       <Heading as="h1" mb={4} size="lg" color={headingColor}>
         Send Crypto!
       </Heading>
@@ -225,17 +250,20 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         <div>
           <Flex align="center" direction={{ base: 'column', md: 'row' }} gap={20}>
             <Box>
-              <Avatar size="xxl" src={avatarUrl}>
-                {getWalletBadgeContent(walletType, '4em')}
+              <Avatar size="xl" src={avatarUrl}>
+                {/*{getWalletBadgeContent(walletType, '4em')}*/}
               </Avatar>
             </Box>
             <Box>
               <Text mb={2} >Asset: <Badge colorScheme="green">{assetContext?.name || 'N/A'}</Badge></Text>
               <Text mb={2} >Chain: <Badge colorScheme="green">{assetContext?.chain || 'N/A'}</Badge></Text>
               <Text mb={4} >Symbol: <Badge colorScheme="green">{assetContext?.symbol || 'N/A'}</Badge></Text>
-              <Text mb={4} >
+              <Text mb={4}>
                 Max Spendable: {formatNumber(maxSpendable)} {assetContext?.symbol}
               </Text>
+              <Badge colorScheme="teal" fontSize="sm">
+                ${((parseFloat(maxSpendable) * (priceUsd || 1)).toFixed(2))} USD
+              </Badge>
             </Box>
           </Flex>
           <br />
@@ -254,15 +282,26 @@ export function Transfer({ usePioneer }: any): JSX.Element {
             </FormControl>
             <FormControl>
               <FormLabel >Input Amount:</FormLabel>
-              <Input
-                onChange={handleInputChange}
-                placeholder="0.0"
-                value={inputAmount}
-              />
+              <Flex align="center">
+                <Input
+                  onChange={handleInputChange}
+                  placeholder="0.0"
+                  value={useUsdInput ? inputAmountUsd : inputAmount}
+                  isInvalid={isOverMax}
+                />
+                <Text ml={2}>{useUsdInput ? 'USD' : assetContext?.symbol}</Text>
+              </Flex>
+              <Text fontSize="sm" color="blue.500" cursor="pointer" onClick={() => setUseUsdInput(!useUsdInput)}>
+                {useUsdInput
+                  ? `Switch to ${assetContext?.symbol} (${inputAmount})`
+                  : `Switch to USD ($${inputAmountUsd} USD)`}
+              </Text>
             </FormControl>
           </Grid>
-          {!assetContext?.networkId.includes('eip155') && (
-            <Flex justify="space-between" align="center" mt="4">
+          <br />
+          <Flex justify="space-between" w="full" mt="4">
+            <Button onClick={setMaxAmount} size="sm" colorScheme="teal">MAX</Button>
+            {!assetContext?.networkId.includes('eip155') && (
               <Button
                 variant="ghost"
                 rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -270,11 +309,10 @@ export function Transfer({ usePioneer }: any): JSX.Element {
               >
                 Advanced
               </Button>
-            </Flex>
-          )}
-
+            )}
+          </Flex>
           {showAdvanced && (
-            <FormControl>
+            <FormControl mt={4}>
               <FormLabel >
                 Memo:
                 <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
@@ -285,7 +323,6 @@ export function Transfer({ usePioneer }: any): JSX.Element {
             </FormControl>
           )}
           <br />
-          <Button onClick={setMaxAmount} size="sm" colorScheme="teal">MAX</Button>
         </div>
       )}
 
@@ -295,6 +332,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
         mt={4}
         onClick={handleSend}
         isLoading={isSubmitting}
+        isDisabled={isOverMax}
       >
         {isSubmitting ? 'Sending...' : 'Send'}
       </Button>
