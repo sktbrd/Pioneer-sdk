@@ -1,5 +1,31 @@
 # @coinmasters/integration-coins
 
+## 1.7.40
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.40
+  - @coinmasters/wallet-keystore@11.0.40
+  - @coinmasters/wallet-keepkey@13.0.40
+  - @coinmasters/types@4.7.40
+  - @coinmasters/core@11.0.40
+
+## 1.7.39
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.39
+  - @coinmasters/wallet-keystore@11.0.39
+  - @coinmasters/wallet-keepkey@13.0.39
+  - @coinmasters/types@4.7.39
+  - @coinmasters/core@11.0.39
+
 ## 1.7.38
 
 ### Patch Changes

@@ -576,11 +576,22 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
       });
       paths.push({
+        note: 'Bitcoin account 1',
+        networks: ['bip122:000000000019d6689c085ae165831e93'],
+        script_type: 'p2pkh',
+        available_scripts_types: ['p2pkh', 'p2sh', 'p2wpkh', 'p2sh-p2wpkh'],
+        type: 'xpub',
+        addressNList: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1],
+        addressNListMaster: [0x80000000 + 44, 0x80000000 + 0, 0x80000000 + 1, 0, 0],
+        curve: 'secp256k1',
+        showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+      });
+      paths.push({
         note: 'Bitcoin account 1 Native Segwit (Bech32)',
         blockchain: 'bitcoin',
         symbol: 'BTC',
         symbolSwapKit: 'BTC',
-        network: 'bip122:000000000019d6689c085ae165831e93',
+        networks: ['bip122:000000000019d6689c085ae165831e93'],
         script_type: 'p2wpkh', //bech32
         available_scripts_types: ['p2pkh', 'p2sh', 'p2wpkh', 'p2sh-p2wpkh'],
         type: 'zpub',

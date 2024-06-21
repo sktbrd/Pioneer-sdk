@@ -29,6 +29,7 @@ let {ChainToNetworkId, shortListSymbolToCaip} = require('@pioneer-platform/pione
 let sleep = wait.sleep;
 import {
     getPaths,
+    addressNListToBIP32,
     // @ts-ignore
 } from '@pioneer-platform/pioneer-coins';
 let spec = process.env['VITE_PIONEER_URL_SPEC'] || 'https://pioneers.dev/spec/swagger.json'
@@ -77,13 +78,13 @@ const test_service = async function (this: any) {
             // 'AVAX', //fast
             // 'BASE', //fast
             // 'BSC', //fast
-            // 'BTC',
+            'BTC',
             // 'BCH',
             // 'GAIA',
             // 'OSMO',
             // 'XRP',
             // 'DOGE',
-            'DASH',
+            // 'DASH',
             // 'MAYA',
             // 'LTC',
             // 'THOR'
@@ -107,6 +108,7 @@ const test_service = async function (this: any) {
         log.info(tag,"blockchains: ",blockchains.length)
         //add custom path
         // let blockchains = [BLOCKCHAIN]
+        // let paths:any = []
         let paths = getPaths(blockchains)
         log.info(tag,"paths: ",paths.length)
         assert(paths)
@@ -114,23 +116,23 @@ const test_service = async function (this: any) {
         //add custom btc paths
         //add account 0 p2sh segwit
         if(blockchains.includes('bip122:000000000019d6689c085ae165831e93')){
+            // paths.push({
+            //     note:"Bitcoin account 0 segwit (p2sh)",
+            //     networks: ['bip122:000000000019d6689c085ae165831e93'],
+            //     script_type:"p2sh-p2wpkh",
+            //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            //     type:"ypub",
+            //     addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
+            //     addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+            //     curve: 'secp256k1',
+            //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+            // })
             paths.push({
-                note:"Bitcoin account 0 segwit (p2sh)",
-                networks: ['bip122:000000000019d6689c085ae165831e93'],
-                script_type:"p2sh-p2wpkh",
-                available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
-                type:"xpub",
-                addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
-                addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
-                curve: 'secp256k1',
-                showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-            })
-            paths.push({
-                note:"Bitcoin account 0 Native Segwit (Bech32)",
+                note:"Bitcoin account 1 Native Segwit (Bech32)",
                 blockchain: 'bitcoin',
                 symbol: 'BTC',
                 symbolSwapKit: 'BTC',
-                network: 'bip122:000000000019d6689c085ae165831e93',
+                networks: ['bip122:000000000019d6689c085ae165831e93'],
                 script_type:"p2wpkh", //bech32
                 available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
                 type:"zpub",
@@ -139,6 +141,20 @@ const test_service = async function (this: any) {
                 curve: 'secp256k1',
                 showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
             })
+        }
+
+        for(let i = 0; i < paths.length; i++){
+            let path = paths[i]
+            log.info(tag,"path: ",path)
+            assert(path.networks)
+        }
+
+        for(let i = 0; i < pubkeysCache.length; i++){
+            let pubkey = pubkeysCache[i]
+            log.info(tag,"pubkey: ",pubkey)
+            assert(pubkey.pubkey)
+            assert(pubkey.type)
+            assert(pubkey.path)
         }
 
 
@@ -248,9 +264,18 @@ const test_service = async function (this: any) {
         log.info("app.pubkeys.length: ",app.pubkeys.length)
 
         //find missing pubkeys
+        let incomplete = false
+        for(let i = 0; i < app.paths.length; i++){
+            let path = app.paths[i]
+            let pubkey = app.pubkeys.find((pubkey:any) => pubkey.path === path.path)
+           if(!pubkey){
+               incomplete = true
+               break
+           }
+        }
 
         //only query on missing pubkeys
-        if(!app.pubkeys || app.pubkeys.length === 0){
+        if(incomplete){
             log.info(tag,"No pubkeys found, recalculating...")
             let pubkeys = await app.getPubkeys()
             assert(pubkeys)
@@ -273,13 +298,59 @@ const test_service = async function (this: any) {
             }
         }
 
+        log.info(tag,'app.paths: ',app.paths.length)
+        log.info(tag,'app.pubkeys: ',app.pubkeys.length)
+        if(app.pubkeys.length !== app.paths.length) throw Error('Missing pubkeys! failed to sync')
+
+        for(let i = 0; i < paths.length; i++){
+            let path = paths[i]
+            log.info(tag,' path: ',path)
+            log.info(tag,' path: ',addressNListToBIP32(path.addressNList))
+            let pubkey = app.pubkeys.find((pubkey:any) => pubkey.path === addressNListToBIP32(path.addressNList))
+            assert(pubkey)
+        }
+
+
+        //validate pubkeys
+        for(let i = 0; i < app.pubkeys.length; i++){
+            let pubkey = app.pubkeys[i]
+            log.info(tag,"pubkey: ",pubkey)
+            assert(pubkey)
+            assert(pubkey.pubkey)
+            assert(pubkey.type)
+        }
+
         console.timeEnd('start2Pubkeys');
-        log.info("balanceCache: ", balancesCache.length);
-        log.info("app.balances.length: ", app.balances.length);
+
+        log.info(tag,'app.paths: ',app.paths.length)
+        log.info(tag,'app.pubkeys: ',app.pubkeys.length)
+        if(app.pubkeys.length !== app.paths.length) throw Error('Missing pubkeys! failed to sync')
+
+        //
+        paths.push({
+            note:"Bitcoin account 2 Native Segwit (Bech32)",
+            blockchain: 'bitcoin',
+            symbol: 'BTC',
+            symbolSwapKit: 'BTC',
+            network: 'bip122:000000000019d6689c085ae165831e93',
+            script_type:"p2wpkh", //bech32
+            available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+            type:"zpub",
+            addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2],
+            addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 2, 0, 0],
+            curve: 'secp256k1',
+            showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+        })
+
+        //
+
+
+
         /*
             If you have an expired balance, you need to recalculate the balance
          */
-
+        log.info("balanceCache: ", balancesCache.length);
+        log.info("app.balances.length: ", app.balances.length);
         //find expired balances > 1 hour
         //find enabled charts, find cached charts
         //is missing perform chart query

@@ -107,16 +107,19 @@ export class DB {
 
             // Create 'pubkeys' table
             this.db.run(`
-          CREATE TABLE IF NOT EXISTS pubkeys (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            master TEXT,
-            address TEXT,
-            pubkey TEXT UNIQUE,
-            context TEXT,
-            contextType TEXT,
-            networks TEXT
-          );
-        `, (err) => {
+              CREATE TABLE IF NOT EXISTS pubkeys (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                master TEXT,
+                address TEXT,
+                pubkey TEXT UNIQUE,
+                type TEXT,
+                path TEXT,
+                pathMaster TEXT,
+                context TEXT,
+                contextType TEXT,
+                networks TEXT
+              );
+            `, (err) => {
               if (err) {
                 console.error(tag, 'Failed to create pubkeys table:', err);
                 throw err;
@@ -322,11 +325,14 @@ export class DB {
     this.createPubkey = async (pubkey: any): Promise<any> => {
       return new Promise<number>((resolve, reject) => {
         this.db.run(
-          'INSERT OR REPLACE INTO pubkeys (master, address, pubkey, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?)',
+          'INSERT OR REPLACE INTO pubkeys (master, address, pubkey, type, path, pathMaster, context, contextType, networks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             pubkey.master,
             pubkey.address,
             pubkey.pubkey,
+            pubkey.type,
+            pubkey.path,
+            pubkey.pathMaster,
             pubkey.context,
             pubkey.contextType,
             JSON.stringify(pubkey.networks),

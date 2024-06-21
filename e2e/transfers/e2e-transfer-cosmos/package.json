@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-transfer-cosmos",
-  "version": "1.7.38",
+  "version": "1.7.40",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

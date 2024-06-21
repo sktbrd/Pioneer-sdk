@@ -302,16 +302,38 @@ export class SDK {
         throw e;
       }
     };
-    this.setPaths = async function (paths: any) {
+    this.setPaths = async function (newPaths) {
       try {
-        if (!paths) throw Error('paths required!');
-        //log.debug('setPaths called! paths: ', paths);
-        this.paths = paths;
+        if (!newPaths) throw new Error('paths required!');
+
+        // Ensure paths is an array
+        if (!Array.isArray(newPaths)) {
+          throw new Error('Paths should be an array!');
+        }
+
+        // Check for duplicates before adding
+        newPaths.forEach((path:any) => {
+          if (!this.paths.some((existingPath: any) => existingPath === path)) {
+            this.paths.push(path);
+          }
+        });
+
+        // Emit event after updating paths
         this.events.emit('SET_PATHS', this.paths);
       } catch (e) {
-        console.error('Failed to load balances! e: ', e);
+        console.error('Failed to load paths! Error: ', e);
       }
     };
+    // this.setPaths = async function (paths: any) {
+    //   try {
+    //     if (!paths) throw Error('paths required!');
+    //     //log.debug('setPaths called! paths: ', paths);
+    //     this.paths = paths;
+    //     this.events.emit('SET_PATHS', this.paths);
+    //   } catch (e) {
+    //     console.error('Failed to load balances! e: ', e);
+    //   }
+    // };
     this.setBlockchains = async function (blockchains: any) {
       try {
         if (!blockchains) throw Error('blockchains required!');
@@ -962,7 +984,7 @@ export class SDK {
             if (path.type === 'address') {
               pubkey.address = address;
               pubkey.pubkey = address;
-            } else if (path.type === 'xpub' || path.type === 'zpub') {
+            } else if (path.type === 'xpub' || path.type === 'ypub' || path.type === 'zpub') {
               let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys([path]);
               if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
               console.log(tag, ' [path]: ', [path]);
@@ -1003,30 +1025,6 @@ export class SDK {
           }
         });
         this.events.emit('SET_PUBKEYS', this.pubkeys);
-
-        //update assets
-        //@ts-ignore
-        // for (let i = 0; i < this.assets.length; i++) {
-        //   //lookup pubkeys for asset
-        //   const asset = this.assets[i];
-        //   const assetPubkeys = [];
-        //
-        //   // Lookup pubkeys for the asset based on networkId
-        //   this.pubkeys.forEach((pubkeyObj: any) => {
-        //     if (pubkeyObj.networks && pubkeyObj.networks.includes(asset.networkId)) {
-        //       assetPubkeys.push(pubkeyObj);
-        //     }
-        //   });
-        //
-        //   // Update the asset's pubkeys array
-        //   asset.pubkeys = assetPubkeys;
-        //
-        //   // Update the assetsMap as well
-        //   this.assetsMap.set(asset.caip, asset);
-        //
-        //   // Update the asset in its place within the this.assets array
-        //   this.assets[i] = asset;
-        // }
 
         return pubkeysNew;
       } catch (e) {
@@ -1172,6 +1170,10 @@ export class SDK {
         // Get ETH address
         let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
         console.log(tag, 'pubkeys: ', pubkeys);
+        if (!pubkeys[8]) {
+          console.error(tag, 'No ETH address found, not charting');
+          return [];
+        }
 
         let address = pubkeys[0].address;
 

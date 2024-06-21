@@ -123,16 +123,16 @@ export function Paths({ usePioneer, networkId }: any) {
         </Card>
       ))}
       {/*<Button onClick={onAddPath} mt={4}>*/}
-      {/*  Add Custom Path*/}
+      {/*  Add Path*/}
       {/*</Button>*/}
-      <Modal isOpen={isOpen} onClose={onModalClose}>
+      <Modal isOpen={isOpen} onClose={onModalClose} size="xxxl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{isEditMode ? 'Path Details' : 'Add Custom Path'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {isEditMode ? (
-              <PathWizard />
+              <PathWizard usePioneer={usePioneer} networkId={networkId}/>
             ) : (
               <Path path={selectedPath} />
             )}

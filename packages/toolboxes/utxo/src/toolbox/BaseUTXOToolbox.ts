@@ -127,6 +127,7 @@ const getPubkeyBalance = async function (
     console.log(tag, 'getPubkeyBalance type: ', type);
     switch (type) {
       case 'zpub':
+      case 'ypub':
       case 'xpub':
         // eslint-disable-next-line no-case-declarations
         const xpubBalance = await apiClient.getBalanceXpub(pubkey);

@@ -1,5 +1,25 @@
 # @coinmasters/toolbox-cosmos
 
+## 11.0.40
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.40
+  - @coinmasters/api@3.7.40
+
+## 11.0.39
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.39
+  - @coinmasters/api@3.7.39
+
 ## 11.0.38
 
 ### Patch Changes

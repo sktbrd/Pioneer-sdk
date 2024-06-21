@@ -117,12 +117,12 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                     <TabList>
                       <Tab>Paths</Tab>
                       <Tab>Accounts</Tab>
-                      {showAdvanced && asset.networkId.includes('eip155') && (
-                        <>
-                          <Tab>Tokens</Tab>
-                          <Tab>NFTs</Tab>
-                        </>
-                      )}
+                      {/*{showAdvanced && asset.networkId.includes('eip155') && (*/}
+                      {/*  <>*/}
+                      {/*    <Tab>Tokens</Tab>*/}
+                      {/*    <Tab>NFTs</Tab>*/}
+                      {/*  </>*/}
+                      {/*)}*/}
                     </TabList>
 
                     <TabPanels>
@@ -132,16 +132,16 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                       <TabPanel>
                         <Pubkeys usePioneer={usePioneer}networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
-                      {showAdvanced && asset.networkId.includes('eip155') && (
-                        <>
-                          <TabPanel>
-                            <Balances usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
-                          </TabPanel>
-                          <TabPanel>
-                            <Text>NFTs content</Text>
-                          </TabPanel>
-                        </>
-                      )}
+                      {/*{showAdvanced && asset.networkId.includes('eip155') && (*/}
+                      {/*  <>*/}
+                      {/*    <TabPanel>*/}
+                      {/*      <Balances usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>*/}
+                      {/*    </TabPanel>*/}
+                      {/*    <TabPanel>*/}
+                      {/*      <Text>NFTs content</Text>*/}
+                      {/*    </TabPanel>*/}
+                      {/*  </>*/}
+                      {/*)}*/}
                     </TabPanels>
                   </Tabs>
                 </div>

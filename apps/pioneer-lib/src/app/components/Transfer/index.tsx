@@ -15,6 +15,14 @@ import {
   Tooltip,
   useToast,
   useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { AssetValue } from '@pioneer-platform/helpers';
@@ -22,6 +30,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { getWalletBadgeContent } from '../WalletIcon';
 //@ts-ignore
 import confetti from 'canvas-confetti'; // Make sure to install the confetti package
+import Image from 'next/image';
 
 const TAG = ' | Transfer | ';
 
@@ -44,6 +53,8 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const [maxSpendable, setMaxSpendable] = useState('');
   const [loadingMaxSpendable, setLoadingMaxSpendable] = useState(true);
   const [useUsdInput, setUseUsdInput] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const bgColor = useColorModeValue('white', 'gray.700');
   const headingColor = useColorModeValue('teal.500', 'teal.300');
@@ -204,6 +215,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
       });
     } finally {
       setIsSubmitting(false);
+      onClose(); // Close the confirmation modal after the transaction
     }
   }, [assetContext, inputAmount, app, recipient, sendAmount, toast, memo, isMax, connectWallet, setIntent]);
 
@@ -233,110 +245,143 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   const isOverMax = parseFloat(inputAmount) > parseFloat(maxSpendable);
 
   return (
-    <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} margin="0 auto">
-      <Heading as="h1" mb={4} size="lg" color={headingColor}>
-        Send Crypto!
-      </Heading>
+    <>
+      <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} margin="0 auto">
+        <Heading as="h1" mb={4} size="lg" color={headingColor}>
+          Send Crypto!
+        </Heading>
 
-      {isPairing ? (
-        <Box>
-          <Text mb={2}>
-            Connecting to {context}...
-            <Spinner size="xl" />
-            Please check your wallet to approve the connection.
-          </Text>
-        </Box>
-      ) : (
-        <div>
-          <Flex align="center" direction={{ base: 'column', md: 'row' }} gap={20}>
-            <Box>
-              <Avatar size="xl" src={avatarUrl}>
-                {/*{getWalletBadgeContent(walletType, '4em')}*/}
-              </Avatar>
-            </Box>
-            <Box>
-              <Text mb={2} >Asset: <Badge colorScheme="green">{assetContext?.name || 'N/A'}</Badge></Text>
-              <Text mb={2} >Chain: <Badge colorScheme="green">{assetContext?.chain || 'N/A'}</Badge></Text>
-              <Text mb={4} >Symbol: <Badge colorScheme="green">{assetContext?.symbol || 'N/A'}</Badge></Text>
-              <Text mb={4}>
-                Max Spendable: {formatNumber(maxSpendable)} {assetContext?.symbol}
-              </Text>
-              <Badge colorScheme="teal" fontSize="sm">
-                ${((parseFloat(maxSpendable) * (priceUsd || 1)).toFixed(2))} USD
-              </Badge>
-            </Box>
-          </Flex>
-          <br />
-          <Grid
-            gap={10}
-            templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
-            w="full"
-          >
-            <FormControl>
-              <FormLabel >Recipient:</FormLabel>
-              <Input
-                onChange={handleRecipientChange}
-                placeholder="Address"
-                value={recipient}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel >Input Amount:</FormLabel>
-              <Flex align="center">
+        {isPairing ? (
+          <Box>
+            <Text mb={2}>
+              Connecting to {context}...
+              <Spinner size="xl" />
+              Please check your wallet to approve the connection.
+            </Text>
+          </Box>
+        ) : (
+          <div>
+            <Flex align="center" direction={{ base: 'column', md: 'row' }} gap={20}>
+              <Box>
+                <Avatar size="xl" src={avatarUrl}>
+                  {/*{getWalletBadgeContent(walletType, '4em')}*/}
+                </Avatar>
+              </Box>
+              <Box>
+                <Text mb={2} >Asset: <Badge colorScheme="green">{assetContext?.name || 'N/A'}</Badge></Text>
+                <Text mb={2} >Chain: <Badge colorScheme="green">{assetContext?.chain || 'N/A'}</Badge></Text>
+                <Text mb={4} >Symbol: <Badge colorScheme="green">{assetContext?.symbol || 'N/A'}</Badge></Text>
+                <Text mb={4}>
+                  Max Spendable: {formatNumber(maxSpendable)} {assetContext?.symbol}
+                </Text>
+                <Badge colorScheme="teal" fontSize="sm">
+                  ${((parseFloat(maxSpendable) * (priceUsd || 1)).toFixed(2))} USD
+                </Badge>
+              </Box>
+            </Flex>
+            <br />
+            <Grid
+              gap={10}
+              templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+              w="full"
+            >
+              <FormControl>
+                <FormLabel >Recipient:</FormLabel>
                 <Input
-                  onChange={handleInputChange}
-                  placeholder="0.0"
-                  value={useUsdInput ? inputAmountUsd : inputAmount}
-                  isInvalid={isOverMax}
+                  onChange={handleRecipientChange}
+                  placeholder="Address"
+                  value={recipient}
                 />
-                <Text ml={2}>{useUsdInput ? 'USD' : assetContext?.symbol}</Text>
-              </Flex>
-              <Text fontSize="sm" color="blue.500" cursor="pointer" onClick={() => setUseUsdInput(!useUsdInput)}>
-                {useUsdInput
-                  ? `Switch to ${assetContext?.symbol} (${inputAmount})`
-                  : `Switch to USD ($${inputAmountUsd} USD)`}
-              </Text>
-            </FormControl>
-          </Grid>
-          <br />
-          <Flex justify="space-between" w="full" mt="4">
-            <Button onClick={setMaxAmount} size="sm" colorScheme="teal">MAX</Button>
-            {!assetContext?.networkId.includes('eip155') && (
-              <Button
-                variant="ghost"
-                rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                onClick={() => setShowAdvanced(!showAdvanced)}
-              >
-                Advanced
-              </Button>
+              </FormControl>
+              <FormControl>
+                <FormLabel >Input Amount:</FormLabel>
+                <Flex align="center">
+                  <Input
+                    onChange={handleInputChange}
+                    placeholder="0.0"
+                    value={useUsdInput ? inputAmountUsd : inputAmount}
+                    isInvalid={isOverMax}
+                  />
+                  <Text ml={2}>{useUsdInput ? 'USD' : assetContext?.symbol}</Text>
+                </Flex>
+                <Text fontSize="sm" color="blue.500" cursor="pointer" onClick={() => setUseUsdInput(!useUsdInput)}>
+                  {useUsdInput
+                    ? `Switch to ${assetContext?.symbol} (${inputAmount})`
+                    : `Switch to USD ($${inputAmountUsd} USD)`}
+                </Text>
+              </FormControl>
+            </Grid>
+            <br />
+            <Flex justify="space-between" w="full" mt="4">
+              <Button onClick={setMaxAmount} size="sm" colorScheme="teal">MAX</Button>
+              {!assetContext?.networkId.includes('eip155') && (
+                <Button
+                  variant="ghost"
+                  rightIcon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                >
+                  Advanced
+                </Button>
+              )}
+            </Flex>
+            {showAdvanced && (
+              <FormControl mt={4}>
+                <FormLabel >
+                  Memo:
+                  <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
+                    <InfoOutlineIcon ml="2" />
+                  </Tooltip>
+                </FormLabel>
+                <Input placeholder="Enter memo (optional)" value={memo} onChange={(e) => setMemo(e.target.value)} />
+              </FormControl>
             )}
-          </Flex>
-          {showAdvanced && (
-            <FormControl mt={4}>
-              <FormLabel >
-                Memo:
-                <Tooltip label="Optional memo to include with your transaction for reference." aria-label="A tooltip for memo input">
-                  <InfoOutlineIcon ml="2" />
-                </Tooltip>
-              </FormLabel>
-              <Input placeholder="Enter memo (optional)" value={memo} onChange={(e) => setMemo(e.target.value)} />
-            </FormControl>
-          )}
-          <br />
-        </div>
-      )}
+            <br />
+          </div>
+        )}
 
-      <Button
-        colorScheme="green"
-        w="full"
-        mt={4}
-        onClick={handleSend}
-        isLoading={isSubmitting}
-        isDisabled={isOverMax}
-      >
-        {isSubmitting ? 'Sending...' : 'Send'}
-      </Button>
-    </VStack>
+        <Button
+          colorScheme="green"
+          w="full"
+          mt={4}
+          onClick={onOpen}
+          isDisabled={isOverMax}
+        >
+          {isSubmitting ? 'Sending...' : 'Send'}
+        </Button>
+      </VStack>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Transaction</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Recipient: {recipient}</Text>
+            <Text>Amount: {inputAmount} {assetContext?.symbol}</Text>
+            <Text>Amount (USD): ${inputAmountUsd}</Text>
+            {memo && <Text>Memo: {memo}</Text>}
+            {isSubmitting && (
+              <Box mt={4}>
+                <Image
+                  src="/svg/hold-and-release.svg"
+                  alt="Hold and release"
+                  width={600}
+                  height={600}
+                />
+              </Box>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button colorScheme="green" onClick={handleSend} isLoading={isSubmitting}>
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 

@@ -63,7 +63,7 @@ export function Pubkeys({ usePioneer, networkId, pubkey }: any) {
     <div>
       <Box p={4}>
         <Text fontWeight="bold">Total: {filteredPubkeys.length}</Text>
-        {filteredPubkeys.map((key, index) => (
+        {filteredPubkeys.map((key:any, index:any) => (
           <Flex
             key={index}
             p={4}
