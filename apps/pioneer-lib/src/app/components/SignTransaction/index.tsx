@@ -126,8 +126,21 @@ export function SignTransaction({ usePioneer, setTxHash, onClose, quote }: any) 
   const onConnect = async (retryCount = 0, maxRetries = 3) => {
     try{
       if(!app) throw new Error("app still loading...")
+      //verify wallet is connected for chains needed
+      let networks = [assetContext.networkId];
+      if(app.blockchains !== networks) {
+        //repair wallet
+
+        let paths = getPaths(networks)
+        await app.setPaths(paths)
+        //TODO wallet select
+        await connectWallet('KEEPKEY');
+        await app.getPubkeys()
+      }
       //
       const walletInfo = await app.swapKit.syncWalletByChain(assetContext.chain);
+      console.log('walletInfo: ', walletInfo);
+
       if (!walletInfo) {
         console.log('Wallet not found, must pair first.');
         setIsPairing(true);

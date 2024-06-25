@@ -166,7 +166,7 @@ const test_service = async function (this: any) {
         log.info(tag,"pairObject: ",pairObject)
         resultInit = await app.pairWallet(pairObject)
         log.info(tag,"resultInit: ",resultInit)
-
+        await app.getPubkeys()
         //check pairing
         // //context should match first account
         let context = await app.context

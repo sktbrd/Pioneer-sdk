@@ -146,7 +146,7 @@ export function Quote({ usePioneer, quote, onAcceptSign, memoless, setTxHash }: 
     console.log("quote: ",quote)
     if (quote && quote.quote && quote.quote.id) {
       const intervalId = setInterval(() => {
-        checkStatus();
+        // checkStatus();
       }, 30000); // Check every 30 seconds
 
       return () => clearInterval(intervalId); // Cleanup the interval when the component unmounts

@@ -16,13 +16,14 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
-import Basic from '..//Basic';
+import Basic from '../Basic';
 import Blockchains from '../Blockchains';
+import Wallets from '../Wallets';
 import Paths from '../Paths';
 import Pubkeys from '../Pubkeys';
 import Cache from '../Storage';
 
-export default function Settings({usePioneer}:any) {
+export default function Settings({usePioneer, handleWalletClick}:any) {
   const { state } = usePioneer();
   const { app } = state;
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
@@ -43,6 +44,7 @@ export default function Settings({usePioneer}:any) {
       <Tabs>
         <TabList>
           <Tab>Context</Tab>
+          <Tab>Wallets</Tab>
           <Tab>blockchains</Tab>
           <Tab>paths</Tab>
           <Tab>pubkeys</Tab>
@@ -54,6 +56,9 @@ export default function Settings({usePioneer}:any) {
           </TabPanel>
           <TabPanel>
             <Blockchains usePioneer={usePioneer} onSelect={onSelect} />
+          </TabPanel>
+          <TabPanel>
+            <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick} />
           </TabPanel>
           <TabPanel>
             <Paths usePioneer={usePioneer}/>

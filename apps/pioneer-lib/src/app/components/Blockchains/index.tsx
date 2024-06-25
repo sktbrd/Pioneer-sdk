@@ -14,7 +14,7 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-export function Blockchains({usePioneer, onSelect}: any) {
+export function Blockchains({usePioneer, onSelect, modalSelected}: any) {
   const { state } = usePioneer();
   const { app } = state;
 
@@ -120,6 +120,11 @@ export function Blockchains({usePioneer, onSelect}: any) {
     return acc;
   }, { UTXO: [], EVM: [], others: [] });
 
+  const handleAddEvmChain = () => {
+    console.log('Add EVM Chain button clicked');
+    modalSelected('BLOCKCHAIN_WIZZARD');
+  };
+
   return (
     <Box>
       <Flex justifyContent="space-between" mb={4}>
@@ -141,6 +146,9 @@ export function Blockchains({usePioneer, onSelect}: any) {
         <>
           <Text fontSize="xl" my={4}>EVM Chains</Text>
           {EVM.map(renderChain)}
+          <Button mt={2} colorScheme="blue" onClick={handleAddEvmChain}>
+            Add an EVM Chain
+          </Button>
         </>
       )}
       {others.length > 0 && (

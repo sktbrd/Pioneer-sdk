@@ -698,6 +698,20 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const walletActionsArray = Object.values(WalletActions);
       for (const action of walletActionsArray) {
         events.on(action, async (data: any) => {
+          // SET_NFTS
+          if (action === WalletActions.SET_NFTS) {
+            console.log(tag, 'setting nfs for context: ', appInit.context);
+            console.log(tag, 'setting balances: ', data);
+
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            for (let i = 0; i < data.length; i++) {
+              let balance = data[i];
+              console.log('balance: ', balance);
+              let saved = await db.createBalance(balance);
+              console.log('SET_BALANCES saved balance: ', saved);
+            }
+          }
+
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
             console.log(tag, 'setting balances for context: ', appInit.context);

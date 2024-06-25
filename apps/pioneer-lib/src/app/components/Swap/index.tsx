@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { FeeOption, Chain } from '@coinmasters/types';
 // import { COIN_MAP_LONG } from "@pioneer-platform/pioneer-coins";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import ErrorQuote from '../../components/ErrorQuote';
 import Assets from '../../components/Assets';
@@ -50,7 +50,7 @@ const MODAL_STRINGS = {
 };
 
 export function Swap({usePioneer}:any): JSX.Element {
-  const { state } = usePioneer();
+  const { state, connectWallet } = usePioneer();
   const { txid } = useParams<{ txid?: string }>();
   const { app, assetContext, outboundAssetContext, blockchainContext } = state;
   // tabs
@@ -62,6 +62,7 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
   const [memoless, setMemoless] = useState<any>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [quote, setQuote] = useState(null);
   const [error, setError] = useState<any>({});
   const [integrations, setIntegrations] = useState<any>(null);
@@ -77,6 +78,28 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [quotesData, setQuotesData] = useState<typeof Quote[]>([]);
   const [showGoBack, setShowGoBack] = useState(false);
   const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
+
+  const isStartCalled = useRef(false);
+  //TODO I think this is spammy? figure out how to only run on startup
+  let onStart = async function () {
+    if (app && app.pairWallet && !isConnecting) {
+      console.log('App loaded... connecting');
+      await connectWallet('KEEPKEY');
+      setIsConnecting(true);
+
+      await app.getPubkeys();
+      await app.getBalances();
+    } else {
+      console.log('App not loaded yet... can not connect');
+    }
+  };
+
+  useEffect(() => {
+    if (!isStartCalled.current) {
+      onStart();
+      isStartCalled.current = true;
+    }
+  }, [app, isConnecting]);
 
   const setHighestValues = async () => {
     if (app && app.balances.length > 0 &&  app?.assetsMap) {
@@ -128,83 +151,188 @@ export function Swap({usePioneer}:any): JSX.Element {
   };
 
   useEffect(() => {
-    //console.log("**** inputAmount: ", inputAmount);
+    console.log("**** inputAmount: ", inputAmount);
   }, [inputAmount]);
 
   useEffect(() => {
-    if(!app?.assetContext?.balance) setMemoless(true);
     if(app?.assetContext?.integrations) setIntegrations(app.assetContext.integrations);
   }, [app, app?.assetContext, app?.assetContext?.balance]);
 
   const fetchQuote = async () => {
-    // try {
-    //   //console.log('sliderValue: ', sliderValue);
-    //   let senderAddress
-    //   if(!memoless){
-    //     senderAddress = assetContext.address;
-    //     if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
-    //   }
-    //
-    //   let recipientAddress = app.outboundAssetContext.address;
-    //   let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
-    //   let trader
-    //   if(ethPubkey){
-    //     trader = ethPubkey.address
-    //     console.log("trader: ",trader)
-    //   }
-    //
-    //   if(!inputAmount || inputAmount <= 0) {
-    //     throw Error('Invalid amount!');
-    //   }
-    //
-    //
-    //   //get receiver context
-    //   if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
-    //
-    //   //get USDvauleIn if < 50 throw error
-    //   const usdValue = parseFloat(swap?.sellAmount) * swap?.sellAsset?.priceUsd;
-    //   if(usdValue < 50)  alert('Trades under 50 USD are high risk and have low success rates. currently not supported. Please try again with a higher amount.');
-    //
-    //   const entry:any = {
-    //     affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
-    //     sellAsset: app.assetContext,
-    //     // @ts-ignore
-    //     sellAmount: parseFloat(inputAmount).toPrecision(8),
-    //     buyAsset: app.outboundAssetContext,
-    //     recipientAddress,
-    //     slippage: '3',
-    //   };
-    //   if(senderAddress) entry.senderAddress = senderAddress
-    //   if(trader) entry.trader = trader;
-    //   if(memoless) entry.memoless = true;
-    //   console.log('entry: ', entry);
-    //   console.log('entry: ', JSON.stringify(entry));
-    //   try {
-    //     let result = await app.pioneer.Quote(entry);
-    //     result = result.data;
-    //     console.log('Quote result: ', result);
-    //
-    //     if (result && result.length > 0) {
-    //       setQuotesData(result);
-    //       openModal(MODAL_STRINGS.selectQuote);
-    //     } else {
-    //       alert('No routes found!');
-    //     }
-    //
-    //     // if error, render Error
-    //     if (result && result.error) {
-    //       openModal(MODAL_STRINGS.errorQuote);
-    //       setError(result);
-    //     }
-    //   } catch (e) {
-    //     openModal(MODAL_STRINGS.errorQuote);
-    //     setError(`Invalid request: ${e}`);
-    //   }
-    // } catch (e: any) {
-    //   console.error('ERROR: ', e);
-    //   // alert(`Failed to get quote! ${e.message}`);
-    // }
+    try {
+      console.log('app.pubkeys: ', app.pubkeys);
+      console.log('assetContext.networkId: ', assetContext.networkId);
+      console.log('outboundAssetContext.networkId: ', outboundAssetContext.networkId);
+
+      if (!assetContext.networkId || !outboundAssetContext.networkId) {
+        throw new Error('networkId required');
+      }
+
+      let senderAddress;
+      let recipientAddress;
+
+      //TODO memoless
+
+      const pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(assetContext.networkId));
+      senderAddress = pubkeys[0]?.address || pubkeys[0]?.master;
+      if (!senderAddress) throw new Error('senderAddress not found! wallet not connected');
+      if (senderAddress.includes('bitcoincash:')) {
+        senderAddress = senderAddress.replace('bitcoincash:', '');
+      }
+
+      //mark both
+      app.assetContext.memoless = false
+      app.outboundAssetContext.memoless = false
+
+      const pubkeysOut = app.pubkeys.filter((e: any) => e.networks.includes(outboundAssetContext.networkId));
+      recipientAddress = pubkeysOut[0]?.address || pubkeysOut[0]?.master;
+      if (!recipientAddress) throw new Error('recipientAddress not found! wallet not connected');
+      if (recipientAddress.includes('bitcoincash:')) {
+        recipientAddress = recipientAddress.replace('bitcoincash:', '');
+      }
+
+      const ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
+      let trader;
+      if (ethPubkey) {
+        trader = ethPubkey.address;
+        console.log('trader: ', trader);
+      }
+
+      if (!inputAmount || inputAmount <= 0) {
+        throw new Error('Invalid amount!');
+      }
+
+      const entry: any = {
+        affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
+        sellAsset: app.assetContext,
+        sellAmount: inputAmount.toPrecision(8),
+        buyAsset: app.outboundAssetContext,
+        recipientAddress,
+        senderAddress,
+        slippage: '3',
+      };
+
+      if (trader) entry.trader = trader;
+      if (memoless) entry.memoless = false;
+
+      console.log('entry: ', entry);
+      console.log('entry: ', JSON.stringify(entry));
+      if(!entry.senderAddress) throw error('senderAddress not found! wallet not connected')
+      try {
+        let result = await app.pioneer.Quote(entry);
+        result = result.data;
+        console.log('Quote result: ', result);
+
+        if (result && result.length > 0) {
+          setQuotesData(result);
+          openModal(MODAL_STRINGS.selectQuote);
+        } else {
+          alert('No routes found!');
+        }
+
+        if (result && result.error) {
+          openModal(MODAL_STRINGS.errorQuote);
+          setError(result);
+        }
+      } catch (e) {
+        openModal(MODAL_STRINGS.errorQuote);
+        setError(`Invalid request: ${e}`);
+      }
+    } catch (e: any) {
+      console.error('ERROR: ', e);
+      // alert(`Failed to get quote! ${e.message}`);
+    }
   };
+
+  // const fetchQuote = async () => {
+  //   try {
+  //     console.log('app.pubkeys: ', app.pubkeys);
+  //     console.log('assetContext.networkId: ', assetContext.networkId);
+  //     console.log('outboundAssetContext.networkId: ', outboundAssetContext.networkId);
+  //     if(!assetContext.networkId || !outboundAssetContext.networkId) throw Error('networkId required');
+  //
+  //     senderAddress = pubkeys[0].address || pubkeys[0].master;
+  //     recipientAddress = pubkeysOut[0].address || pubkeysOut[0].master;
+  //     assetContext.address = senderAddress;
+  //     outboundAssetContext.address = recipientAddress;
+  //
+  //     let senderAddress
+  //     if(!memoless){
+  //       let pubkeys = app.pubkeys.filter((e: any) => e.networks.includes(assetContext.networkId));
+  //       senderAddress = pubkeys[0].address || pubkeys[0].master;
+  //       if(!senderAddress) throw Error('senderAddress not found! wallet not connected');
+  //       //TODO BCH tech debt
+  //       if(senderAddress.indexOf('bitcoincash:') > -1) senderAddress = senderAddress.replace('bitcoincash:', '');
+  //     }
+  //
+  //     let pubkeysOut = app.pubkeys.filter((e: any) => e.networks.includes(outboundAssetContext.networkId));
+  //     //TODO if > 1 then user should select
+  //     let recipientAddress = pubkeysOut[0].address || pubkeysOut[0].master;
+  //
+  //
+  //     //todo trader config in localStorage!
+  //     let ethPubkey = app.pubkeys.find((pubkey: any) => pubkey.networks.includes('eip155:1'));
+  //     let trader
+  //     if(ethPubkey){
+  //       trader = ethPubkey.address
+  //       console.log("trader: ",trader)
+  //     }
+  //
+  //     if(!inputAmount || inputAmount <= 0) {
+  //       throw Error('Invalid amount!');
+  //     }
+  //
+  //
+  //     //get receiver context
+  //     if(recipientAddress.indexOf('bitcoincash:') > -1) recipientAddress = recipientAddress.replace('bitcoincash:', '');
+  //
+  //     //get USDvauleIn if < 50 throw error
+  //     // const usdValue = parseFloat(swap?.sellAmount) * swap?.sellAsset?.priceUsd;
+  //     // if(usdValue < 50)  alert('Trades under 50 USD are high risk and have low success rates. currently not supported. Please try again with a higher amount.');
+  //
+  //     const entry:any = {
+  //       affiliate: '0x658DE0443259a1027caA976ef9a42E6982037A03',
+  //       sellAsset: app.assetContext,
+  //       // @ts-ignore
+  //       sellAmount: parseFloat(inputAmount).toPrecision(8),
+  //       buyAsset: app.outboundAssetContext,
+  //       recipientAddress,
+  //       slippage: '3',
+  //     };
+  //
+  //     if(senderAddress) entry.senderAddress = senderAddress
+  //     if(trader) entry.trader = trader;
+  //
+  //     //TODO user selects if memoless or not.
+  //     if(memoless) entry.memoless = false;
+  //     console.log('entry: ', entry);
+  //     console.log('entry: ', JSON.stringify(entry));
+  //     try {
+  //       let result = await app.pioneer.Quote(entry);
+  //       result = result.data;
+  //       console.log('Quote result: ', result);
+  //
+  //       if (result && result.length > 0) {
+  //         setQuotesData(result);
+  //         openModal(MODAL_STRINGS.selectQuote);
+  //       } else {
+  //         alert('No routes found!');
+  //       }
+  //
+  //       // if error, render Error
+  //       if (result && result.error) {
+  //         openModal(MODAL_STRINGS.errorQuote);
+  //         setError(result);
+  //       }
+  //     } catch (e) {
+  //       openModal(MODAL_STRINGS.errorQuote);
+  //       setError(`Invalid request: ${e}`);
+  //     }
+  //   } catch (e: any) {
+  //     console.error('ERROR: ', e);
+  //     // alert(`Failed to get quote! ${e.message}`);
+  //   }
+  // };
 
   let handleQuoteSelection = function (quote: any) {
     //console.log('handleQuoteSelection: ', quote);
@@ -323,7 +451,7 @@ export function Swap({usePioneer}:any): JSX.Element {
 
   let onSelect = async function (asset:any) {
     //console.log('onSelect',asset);
-    await app.setAssetContext(asset);
+    if(app)await app.setAssetContext(asset);
     onClose();
   };
 
@@ -337,6 +465,7 @@ export function Swap({usePioneer}:any): JSX.Element {
     // await app.setWalletContext(wallet);
     // onClose();
   }
+
 
   return (
     <Box>
@@ -448,13 +577,14 @@ export function Swap({usePioneer}:any): JSX.Element {
           </VStack>
           </Box>
         )}
-        {!amountSelected && (<>
-          <Box>
-            <Text fontSize="sm" color="gray.500" textAlign="center">
-              {`How much would you like to trade?`}
-            </Text>
-          </Box>
-        </>)}
+
+        {/*{!amountSelected && (<>*/}
+        {/*  <Box>*/}
+        {/*    <Text fontSize="sm" color="gray.500" textAlign="center">*/}
+        {/*      {`How much would you like to trade?`}*/}
+        {/*    </Text>*/}
+        {/*  </Box>*/}
+        {/*</>)}*/}
 
         {showGoBack && (
           <div>

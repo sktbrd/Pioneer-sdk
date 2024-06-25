@@ -144,10 +144,10 @@ export class SDK {
 
   // public setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
   // @ts-ignore
-  public setAssetContext: (asset: any) => Promise<any>;
+  public setAssetContext: (asset?: any) => Promise<any>;
 
   // @ts-ignore
-  public setOutboundAssetContext: (asset: any) => Promise<any>;
+  public setOutboundAssetContext: (asset?: any) => Promise<any>;
 
   // @ts-ignore
   public keepkeyApiKey: string;
@@ -312,7 +312,7 @@ export class SDK {
         }
 
         // Check for duplicates before adding
-        newPaths.forEach((path:any) => {
+        newPaths.forEach((path: any) => {
           if (!this.paths.some((existingPath: any) => existingPath === path)) {
             this.paths.push(path);
           }
@@ -1262,6 +1262,7 @@ export class SDK {
         });
 
         console.log('NFTs: ', NFTs);
+        this.nfts = NFTs;
 
         // Fetch portfolio
         let portfolio = await this.pioneer.GetPortfolio({ address });
@@ -1330,231 +1331,6 @@ export class SDK {
         throw e;
       }
     };
-
-    // this.getCharts = async function () {
-    //   const tag = `${TAG} | getCharts | `;
-    //   try {
-    //     // Get ETH address
-    //     let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
-    //     console.log(tag, 'pubkeys: ', pubkeys);
-    //
-    //     let address = pubkeys[0].address;
-    //
-    //     // Get all eip155 enabled chains
-    //     let evmChains = this.blockchains.filter((chain) => chain.includes('eip155'));
-    //     console.log(tag, 'evmChains: ', evmChains);
-    //
-    //     // Fetch NFTs for each chain concurrently
-    //     let nftPromises = evmChains.map((chain) =>
-    //       this.pioneer
-    //         .GetCovalentNfts({ address, networkId: chain })
-    //         .then((result) => ({ chain, result })),
-    //     );
-    //
-    //     let nftResults = await Promise.all(nftPromises);
-    //     let NFTs = [];
-    //
-    //     nftResults.forEach(({ chain, result }) => {
-    //       if (result.data.items && result.data.items.length > 0) {
-    //         result.data.items.forEach((item: any) => {
-    //           if (item.nft_data) {
-    //             item.nft_data.forEach((nft: any) => {
-    //               if (item.contract_address && nft.token_id && nft.external_data) {
-    //                 let balanceString: any = {};
-    //                 balanceString.context = this.context;
-    //                 balanceString.contextType = this.context.split(':')[0];
-    //                 balanceString.collection = item.contract_name;
-    //                 balanceString.caip = `${chain}/erc721:${item.contract_address}:${nft.token_id}`;
-    //                 balanceString.tokenId = nft.token_id;
-    //                 balanceString.image = nft.external_data.image;
-    //                 balanceString.pubkey = address;
-    //                 balanceString.ticker = item.contract_ticker_symbol;
-    //                 balanceString.ref = balanceString.context + balanceString.caip;
-    //                 balanceString.identifier = 'unsupported';
-    //                 balanceString.networkId = chain;
-    //                 balanceString.symbol = item.contract_ticker_symbol;
-    //                 balanceString.type = 'nft';
-    //                 balanceString.balance = item.balance || 1;
-    //                 balanceString.priceUsd = item.floor_price_quote || 0;
-    //                 balanceString.valueUsd = item.floor_price_quote || 0;
-    //
-    //                 if (!item.is_spam) {
-    //                   NFTs.push(balanceString);
-    //                 }
-    //               }
-    //             });
-    //           }
-    //         });
-    //       } else {
-    //         console.log('No items found in result.');
-    //       }
-    //     });
-    //
-    //     console.log('NFTs: ', NFTs);
-    //
-    //     // Fetch portfolio
-    //     let portfolio = await this.pioneer.GetPortfolio({ address });
-    //     console.log(tag, 'portfolio: ', portfolio);
-    //     console.log(tag, 'portfolio: ', JSON.stringify(portfolio));
-    //
-    //     // Process portfolio tokens
-    //     let balances = portfolio.data.tokens
-    //       .map((token) => {
-    //         if (token.assetCaip && token.blockchainCaip) {
-    //           let balanceString: any = {};
-    //           balanceString.context = this.context;
-    //           balanceString.contextType = this.context.split(':')[0];
-    //           balanceString.caip = token.assetCaip;
-    //           balanceString.pubkey = address;
-    //           balanceString.ticker = token.token.symbol;
-    //           balanceString.ref = balanceString.context + balanceString.caip;
-    //           balanceString.identifier = caipToThorchain(balanceString.caip, balanceString.ticker);
-    //           balanceString.networkId = token.blockchainCaip;
-    //           balanceString.symbol = token.token.symbol;
-    //           balanceString.type = 'token';
-    //           balanceString.balance = token.token.balance.toString();
-    //           balanceString.priceUsd = token.token.priceUSD || 0;
-    //           balanceString.valueUsd = token.token.balanceUSD;
-    //           return balanceString;
-    //         }
-    //         return null;
-    //       })
-    //       .filter(Boolean);
-    //
-    //     console.log(tag, 'NFTs: ', NFTs.length);
-    //     console.log(tag, 'balances: ', balances.length);
-    //     let allBalances = [...NFTs, ...balances];
-    //     this.addBalances(allBalances);
-    //
-    //     return allBalances;
-    //   } catch (e) {
-    //     console.error(tag, 'e: ', e);
-    //     throw e;
-    //   }
-    // };
-
-    // this.getCharts = async function () {
-    //   const tag = `${TAG} | getCharts | `;
-    //   try {
-    //     //get pioneer NFT's
-    //
-    //     //BASE/ETH pioneers
-    //
-    //     //get token balances for each eip155 blockchain
-    //
-    //     //portfolio
-    //     //let portfolio = await this.pioneer.GetPortfolio({address:});
-    //
-    //     //get ETH address
-    //     let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
-    //     console.log(tag, 'pubkeys: ', pubkeys);
-    //
-    //     let address = pubkeys[0].address;
-    //     //covalent nft
-    //     //get all eip155 enabled chains
-    //
-    //     let evmChains = this.blockchains.filter((chain) => chain.includes('eip155'));
-    //     console.log(tag, 'evmChains: ', evmChains);
-    //     let NFTs = [];
-    //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    //     for (let i = 0; i < evmChains.length; i++) {
-    //       let chain = evmChains[i];
-    //       console.log(tag, 'chain: ', chain);
-    //
-    //       let result = await this.pioneer.GetCovalentNfts({ address, networkId: chain });
-    //       console.log('result: ', result);
-    //       console.log('result: ', JSON.stringify(result));
-    //       // Uncomment the following block if you need to process the result items
-    //       if (result.data.items && result.data.items.length > 0) {
-    //         console.log('result.items: ', result.data.items);
-    //         // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    //         for (let j = 0; j < result.data.items.length; j++) {
-    //           let item: any = result.data.items[j];
-    //           console.log('item: ', item);
-    //           if (item.nft_data) {
-    //             // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    //             for (let k = 0; k < item.nft_data.length; k++) {
-    //               let nft = item.nft_data[k];
-    //               console.log('nft: ', nft);
-    //               if (!item.contract_address) continue;
-    //               if (!nft.token_id) continue;
-    //               if (!nft.external_data) continue;
-    //               let balanceString: any = {};
-    //               // Do something with the item
-    //               balanceString.context = this.context;
-    //               balanceString.contextType = this.context.split(':')[0];
-    //               balanceString.collection = item.contract_name;
-    //               balanceString.caip =
-    //                 chain + '/erc721:' + item.contract_address + ':' + nft.token_id;
-    //               balanceString.tokenId = nft.token_id;
-    //               balanceString.image = nft.external_data.image;
-    //               balanceString.pubkey = address;
-    //               balanceString.ticker = item.contract_ticker_symbol;
-    //               balanceString.ref = balanceString.context + balanceString.caip;
-    //               balanceString.identifier = 'unsupported';
-    //               balanceString.networkId = chain;
-    //               balanceString.symbol = item.contract_ticker_symbol;
-    //               balanceString.type = 'nft';
-    //               balanceString.balance = item.balance || 1;
-    //               balanceString.priceUsd = item.floor_price_quote || 0;
-    //               balanceString.valueUsd = item.floor_price_quote || 0;
-    //
-    //               if (!item.is_spam) {
-    //                 NFTs.push(balanceString);
-    //               }
-    //             }
-    //           }
-    //         }
-    //       } else {
-    //         console.log('No items found in result.');
-    //       }
-    //     }
-    //     console.log('NFTs: ', NFTs);
-    //     //Zapper NFT chart
-    //
-    //     //Zapper Token chart
-    //
-    //     let portfolio = await this.pioneer.GetPortfolio({ address });
-    //     console.log(tag, 'portfolio: ', portfolio);
-    //     console.log(tag, 'portfolio: ', JSON.stringify(portfolio));
-    //
-    //     let balances: any = [];
-    //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    //     for (let i = 0; i < portfolio.data.tokens.length; i++) {
-    //       let token = portfolio.data.tokens[i];
-    //
-    //       //known asset?
-    //
-    //       //validate token
-    //       if (token.assetCaip && token.blockchainCaip) {
-    //         let balanceString: any = {};
-    //         // Balance formatted
-    //         balanceString.context = this.context;
-    //         balanceString.contextType = this.context.split(':')[0];
-    //         balanceString.caip = token.assetCaip;
-    //         balanceString.pubkey = address;
-    //         balanceString.ticker = token.token.symbol;
-    //         balanceString.ref = balanceString.context + balanceString.caip;
-    //         balanceString.identifier = caipToThorchain(balanceString.caip, balanceString.ticker);
-    //         balanceString.networkId = token.blockchainCaip;
-    //         balanceString.symbol = token.token.symbol;
-    //         balanceString.type = 'token';
-    //         balanceString.balance = token.token.balance.toString();
-    //         balanceString.priceUsd = token.token.priceUSD || 0;
-    //         balanceString.valueUsd = token.token.balanceUSD;
-    //         balances.push(balanceString);
-    //       }
-    //     }
-    //
-    //     let allbalances = [...NFTs, ...balances];
-    //     this.addBalances(allbalances);
-    //     return {};
-    //   } catch (e) {
-    //     console.error(tag, 'e: ', e);
-    //     throw e;
-    //   }
-    // };
-    // @ts-ignore
     this.refresh = async function () {
       const tag = `${TAG} | refresh | `;
       try {
@@ -1588,7 +1364,7 @@ export class SDK {
         throw e;
       }
     };
-    this.setAssetContext = async function (asset: any) {
+    this.setAssetContext = async function (asset?: any) {
       const tag = `${TAG} | setAssetContext | `;
       try {
         //accept null
@@ -1601,6 +1377,23 @@ export class SDK {
         if (!assetInfo) throw Error('Invalid Asset! not found in assetsMap! caip: ' + asset.caip);
         console.log(tag, 'assetInfo: ', assetInfo);
 
+        //find related pubkeys
+        let networkId = assetInfo.networkId;
+        if (networkId.includes('eip155')) networkId = 'eip155:*';
+        let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes(networkId));
+        assetInfo.pubkeys = pubkeys;
+
+        //find related nodes
+        let balances = this.balances.filter((b: any) => b.caip === assetInfo.caip);
+        assetInfo.balances = balances;
+
+        //get marketInfo for asset
+        let priceData = await this.pioneer.MarketInfo({
+          caip: assetInfo.caip.toLowerCase(),
+        });
+        priceData = priceData.data;
+        assetInfo = { ...assetInfo, ...priceData };
+
         this.events.emit('SET_ASSET_CONTEXT', assetInfo);
         this.assetContext = assetInfo;
         return { success: true };
@@ -1609,7 +1402,7 @@ export class SDK {
         throw e;
       }
     };
-    this.setOutboundAssetContext = async function (asset: any) {
+    this.setOutboundAssetContext = async function (asset?: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
         console.log(tag, 'asset: ', asset);
@@ -1622,6 +1415,23 @@ export class SDK {
         let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (!assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
         console.log(tag, 'assetInfo: ', assetInfo);
+
+        //find related pubkeys
+        let networkId = assetInfo.networkId;
+        if (networkId.includes('eip155')) networkId = 'eip155:*';
+        let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
+        assetInfo.pubkeys = pubkeys;
+
+        //find related nodes
+        let balances = this.balances.filter((b: any) => b.caip === assetInfo.caip);
+        assetInfo.balances = balances;
+
+        //get marketInfo for asset
+        let priceData = await this.pioneer.MarketInfo({
+          caip: assetInfo.caip.toLowerCase(),
+        });
+        priceData = priceData.data;
+        assetInfo = { ...assetInfo, ...priceData };
 
         this.events.emit('SET_OUTBOUND_ASSET_CONTEXT', assetInfo);
         this.outboundAssetContext = assetInfo;

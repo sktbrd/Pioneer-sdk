@@ -14,21 +14,28 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
   const [isValid, setIsValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const getAssetBalance = (caip: string) => {
+    return app?.balances?.find((balance: any) => balance.caip === caip);
+  };
+
   useEffect(() => {
-    if (app?.assetContext?.priceUsd && app?.outboundAssetContext?.priceUsd) {
-      let rate = app.assetContext.priceUsd / app.outboundAssetContext.priceUsd;
+    const assetContextBalance = getAssetBalance(app?.assetContext?.caip);
+    const outboundAssetContextBalance = getAssetBalance(app?.outboundAssetContext?.caip);
+
+    if (assetContextBalance && outboundAssetContextBalance) {
+      let rate = assetContextBalance.priceUsd / outboundAssetContextBalance.priceUsd;
       setExchangeRate(rate || 0);
     }
-  }, [app, app?.assetContext, app?.outboundAssetContext]);
+  }, [app]);
 
   const handleDepositChange = (valueAsString: any) => {
     setDepositAmount(valueAsString);
-    updateValidation(valueAsString, app?.assetContext?.priceUsd);
+    updateValidation(valueAsString, getAssetBalance(app?.assetContext?.caip)?.priceUsd);
   };
 
   const handleReceiveChange = (valueAsString: any) => {
     setReceiveAmount(valueAsString);
-    updateValidation(valueAsString, app?.outboundAssetContext?.priceUsd, true);
+    updateValidation(valueAsString, getAssetBalance(app?.outboundAssetContext?.caip)?.priceUsd, true);
   };
 
   const updateValidation = (value: string, priceUsd: number, isReceive: boolean = false) => {
@@ -57,7 +64,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
   };
 
   const maxDeposit = () => {
-    const maxBalance = app.assetContext.balance || 0;
+    const maxBalance = getAssetBalance(app?.assetContext?.caip)?.balance || 0;
     handleDepositChange(maxBalance.toString());
   };
 
@@ -80,14 +87,14 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
                   </NumberInputStepper>
                 </NumberInput>
                 <Button variant="outline" ml={2} w="40%">
-                  {renderUSDAmount(depositAmount, app?.assetContext?.priceUsd)}
+                  {renderUSDAmount(depositAmount, getAssetBalance(app?.assetContext?.caip)?.priceUsd)}
                 </Button>
               </HStack>
               <FormErrorMessage>{errorMessage}</FormErrorMessage>
               <Text fontSize="sm" color="gray.500">{app?.assetContext?.name} on {app?.assetContext?.chain}</Text>
               <HStack justifyContent="space-between" mt={2}>
                 <Text fontSize="xs" color="green.400">
-                  Balance: {parseFloat(app?.assetContext?.balance).toFixed(3)} (${parseFloat(app?.assetContext?.priceUsd).toFixed(0)} USD)
+                  Balance: {parseFloat(getAssetBalance(app?.assetContext?.caip)?.balance).toFixed(3)} (${parseFloat(getAssetBalance(app?.assetContext?.caip)?.priceUsd).toFixed(0)} USD)
                 </Text>
                 <Button size="xs" colorScheme="green" onClick={maxDeposit} isDisabled={!isValid}>Max</Button>
               </HStack>
@@ -109,7 +116,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
                   </NumberInputStepper>
                 </NumberInput>
                 <Button variant="outline" ml={2} w="40%">
-                  {renderUSDAmount(receiveAmount, app?.outboundAssetContext?.priceUsd)}
+                  {renderUSDAmount(receiveAmount, getAssetBalance(app?.outboundAssetContext?.caip)?.priceUsd)}
                 </Button>
               </HStack>
               <FormErrorMessage>{errorMessage}</FormErrorMessage>

@@ -116,17 +116,17 @@ const test_service = async function (this: any) {
         //add custom btc paths
         //add account 0 p2sh segwit
         if(blockchains.includes('bip122:000000000019d6689c085ae165831e93')){
-            // paths.push({
-            //     note:"Bitcoin account 0 segwit (p2sh)",
-            //     networks: ['bip122:000000000019d6689c085ae165831e93'],
-            //     script_type:"p2sh-p2wpkh",
-            //     available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
-            //     type:"ypub",
-            //     addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
-            //     addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
-            //     curve: 'secp256k1',
-            //     showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
-            // })
+            paths.push({
+                note:"Bitcoin account 0 segwit (p2sh)",
+                networks: ['bip122:000000000019d6689c085ae165831e93'],
+                script_type:"p2sh-p2wpkh",
+                available_scripts_types:['p2pkh','p2sh','p2wpkh','p2sh-p2wpkh'],
+                type:"ypub",
+                addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
+                addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+                curve: 'secp256k1',
+                showDisplay: false // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+            })
             paths.push({
                 note:"Bitcoin account 1 Native Segwit (Bech32)",
                 blockchain: 'bitcoin',
@@ -491,7 +491,6 @@ const test_service = async function (this: any) {
         // }
         // let assetsFiltered2 = await app.getAssets(filterForNoTokens)
         // log.info(tag,"assetsFiltered: (no tokens)",assetsFiltered2.length)
-
 
         // let filterForBitcoin = {
         //     hasPubkey: false,

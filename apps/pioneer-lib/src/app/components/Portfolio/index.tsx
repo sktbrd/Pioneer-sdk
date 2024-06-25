@@ -161,22 +161,18 @@ export function Portfolio({usePioneer}:any) {
         </Center>
       ) : (
         <div>
-          <br/>
           {/* Doughnut Chart */}
           <Center bottom="0" left="0" >
-          <Box height="300px" width="300px" position="relative">
+          <Box height="100px" width="100px" position="relative">
             <Doughnut data={chartData} options={options} />
             <Center bottom="0" left="0" position="absolute" right="0" top="0">
-              <Text fontSize="lg" fontWeight="bold" textAlign="center">
-                Total Value: {totalValueUsd.toFixed(2)}
-              </Text>
             </Center>
           </Box>
+            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+              Total Value:
+              <br/>{totalValueUsd.toFixed(2)}
+            </Text>
           </Center>
-          <br/>
-          <Box width="100%" maxHeight="600px" overflowY="auto" mt="20px">
-            <Balances usePioneer={usePioneer} onSelect={onSelect} />
-          </Box>
         </div>
       )}
     </Flex>

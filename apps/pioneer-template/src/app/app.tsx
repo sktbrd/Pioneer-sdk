@@ -24,7 +24,8 @@ import {
   Wallets,
   Blockchains,
   Balances,
-  Classic
+  Classic,
+  Nfts
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 
@@ -51,7 +52,7 @@ export default function App() {
   const onStartApp = useOnStartApp();
   const { state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('classic');
+  const [intent, setIntent] = useState('nfts');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -95,6 +96,9 @@ export default function App() {
       case 'basic':
         return <Basic usePioneer={usePioneer}/>;
         break;
+      case 'pioneer':
+        return <Pioneer usePioneer={usePioneer}/>;
+        break;
       case 'blockchains':
         return <Blockchains usePioneer={usePioneer}/>;
         break;
@@ -112,6 +116,9 @@ export default function App() {
         break;
       case 'assets':
         return <Assets usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false, memoless:true }}/>;
+        break;
+      case 'nfts':
+        return <Nfts usePioneer={usePioneer} onClose={onClose} onSelect={onSelect} filters={{onlyOwned: false, noTokens: false, hasPubkey:false, memoless:true }}/>;
         break;
       case 'wallets':
         return <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>;
@@ -168,6 +175,7 @@ export default function App() {
           <span className="text-xl font-bold">Pioneer SDK</span>
           <Select onChange={handleIntentChange} placeholder="Select Component" width="auto">
             <option value="basic">Basic</option>
+            <option value="pioneer">Pioneer</option>
             <option value="transfer">Transfer</option>
             <option value="blockchains">Blockchains</option>
             <option value="quote">Quote</option>

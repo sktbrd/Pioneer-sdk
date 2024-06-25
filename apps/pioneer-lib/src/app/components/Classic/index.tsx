@@ -27,18 +27,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { getPaths } from '@pioneer-platform/pioneer-coins';
-
-//
 import React, { useEffect, useState } from 'react';
 import { Blockchains } from '../Blockchains';
 import { Asset } from '../Asset';
-// import { Pubkey } from '../Pubkey';
-// import { Balance } from '../Balance';
-// import { WalletOption, prefurredChainsByWallet } from '@coinmasters/types';
-// import {
-//   ChainToNetworkId,
-//   getChainEnumValue,
-// } from '@pioneer-platform/pioneer-caip';
 
 export function Classic({ usePioneer }: any) {
   const { state, connectWallet } = usePioneer();
@@ -64,15 +55,7 @@ export function Classic({ usePioneer }: any) {
       setIsConnecting(true);
 
       await app.getPubkeys();
-      // app.getCharts();
       await app.getBalances();
-
-      //get allblockchains for keepkey
-      //check gas asset for balances
-      //get balanceCache
-      //if not in cache, get balance
-      //if balance is 0, dont add, else auto-enable
-
     } else {
       console.log('App not loaded yet... can not connect');
     }
@@ -85,12 +68,6 @@ export function Classic({ usePioneer }: any) {
   useEffect(() => {
     setAssetContext(app?.assetContext);
   }, [app, app?.assetContext]);
-
-  // useEffect(() => {
-  //   if (assets) {
-  //     console.log("state change: assets", assets);
-  //   }
-  // }, [app, app?.assetsMap, assets]);
 
   const onSelect = (asset: any) => {
     console.log("onSelect", asset);
@@ -117,7 +94,6 @@ export function Classic({ usePioneer }: any) {
       await app.setPaths(paths);
       await app.getAssets();
       await app.getPubkeys();
-      // await app.getBalances();
       console.log('assetsMap: ', app.assetsMap);
       console.log("assets: ", assets);
     }
@@ -135,7 +111,6 @@ export function Classic({ usePioneer }: any) {
     return { integer, largePart, smallPart };
   };
 
-  // Sorting function to sort assets by balance.valueUsd
   const sortedAssets = [...assets.values()]
     .filter(asset => asset.type === 'native')
     .sort((a: any, b: any) => {
@@ -160,10 +135,9 @@ export function Classic({ usePioneer }: any) {
     });
   };
 
-
   return (
-    <Flex direction="column">
-      <Flex alignItems="center" p={4} borderBottom="1px solid #ccc">
+    <Flex direction="column" width="100%" height="100vh" overflow="hidden">
+      <Flex alignItems="center" p={4} borderBottom="1px solid #ccc" width="100%">
         {assetContext ? (
           <IconButton
             icon={<ChevronLeftIcon />}
@@ -184,14 +158,14 @@ export function Classic({ usePioneer }: any) {
           ml="auto"
         />
       </Flex>
-      <Flex flex="1" overflowY="auto">
+      <Flex flex="1" overflowY="auto" width="100%">
         <Stack width="100%">
           {assetContext ? (
             <Asset usePioneer={usePioneer} onClose={onClose} asset={app?.assetContext} />
           ) : (
             <>
               {!assets || assets.size === 0 ? (
-                <Flex justifyContent="center" alignItems="center" height="100vh">
+                <Flex justifyContent="center" alignItems="center" width="100%">
                   <Spinner size="xl" />
                   blockchains{app?.blockchains?.length}
                   Loading....
@@ -199,11 +173,11 @@ export function Classic({ usePioneer }: any) {
               ) : (
                 <>
                   {sortedAssets.map((asset: any, index: any) => (
-                    <Card key={index} borderRadius="md" p={1} mb={1}>
-                      <Flex align="center">
+                    <Card key={index} borderRadius="md" p={1} mb={1} width="100%">
+                      <Flex align="center" width="100%">
                         <Avatar src={asset.icon} />
-                        <Box ml={3} width='100%' minWidth="360px">
-                          <Text fontWeight="bold">{asset.name}</Text>
+                        <Box ml={3} flex="1" minWidth="0">
+                          <Text fontWeight="bold" isTruncated>{asset.name}</Text>
                           {app.balances
                             .filter((balance: any) => balance.caip === asset.caip)
                             .map((balance: any, index: any) => {
@@ -218,8 +192,6 @@ export function Classic({ usePioneer }: any) {
                                   <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
                                   <br/>
                                   <Badge colorScheme="green">USD {formatUsd(balance.valueUsd)}</Badge>
-                                  <br/>
-                                  {/*type {formatUsd(asset.type)}*/}
                                 </Text>
                               );
                             })}
@@ -236,7 +208,7 @@ export function Classic({ usePioneer }: any) {
           )}
         </Stack>
       </Flex>
-      <Flex alignItems="center" p={4} borderTop="1px solid #ccc">
+      <Flex alignItems="center" p={4} borderTop="1px solid #ccc" width="100%">
         <Text>KeepKey</Text>
         <IconButton
           icon={<AddIcon />}

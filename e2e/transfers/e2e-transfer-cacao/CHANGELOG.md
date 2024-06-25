@@ -1,5 +1,18 @@
 # @coinmasters/e2e-transfer-mayachain
 
+## 1.7.41
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.41
+  - @coinmasters/wallet-keystore@11.0.41
+  - @coinmasters/wallet-keepkey@13.0.41
+  - @coinmasters/types@4.7.41
+  - @coinmasters/core@11.0.41
+
 ## 1.7.40
 
 ### Patch Changes

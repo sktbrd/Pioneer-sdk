@@ -82,6 +82,16 @@ const BeginSwap: any = ({
     }
   };
 
+  const onClickOutbound = () => {
+    if(app)app.setOutboundAssetContext();
+    openModal('Select Outbound')
+  }
+
+  const onClickInput = () => {
+    if(app)app.setAssetContext();
+    openModal('Select Asset')
+  }
+
   return (
     <div>
       <Box
@@ -109,7 +119,7 @@ const BeginSwap: any = ({
             overflowY="auto"
             p="4"
             w="200px" // Ensure sufficient width
-            onClick={() => openModal('Select Asset')}
+            onClick={() => onClickInput()}
           >
             {!assetContext ? (
               <Spinner color="blue.500" size="lg" />
@@ -137,7 +147,7 @@ const BeginSwap: any = ({
             overflowY="auto"
             p="4"
             w="200px" // Ensure sufficient width
-            onClick={() => openModal('Select Outbound')}
+            onClick={() => onClickOutbound()}
           >
             {!outboundAssetContext ? (
               <Spinner color="blue.500" size="lg" />

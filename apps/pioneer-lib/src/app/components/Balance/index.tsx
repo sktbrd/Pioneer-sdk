@@ -6,7 +6,6 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWalletBadgeContent } from '../WalletIcon';
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
-// import { useRouter } from 'next/router';
 
 let TAG = " | Balance | ";
 
@@ -16,21 +15,17 @@ interface BalanceProps {
 }
 
 export function Balance({ usePioneer, onClose, balance }: any) {
-  // const router = useRouter();
   const { state, hideModal, resetState } = usePioneer();
-  const { api, app, balances, context } = state;
+  const { app } = state;
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const data = typeof balance === 'object' && balance !== null ? balance : JSON.parse(balance || '{}');
 
   const balanceFormatted = balance.balance || 'N/A';
-  const valueUsdFormatted = balance.valueUsd ? `$${balance.valueUsd}` : 'N/A';
+  const valueUsdFormatted = balance.valueUsd ? `$${parseFloat(balance.valueUsd).toFixed(2)}` : 'N/A';
 
   const handleModal = (action: string) => {
-    //console.log("balance: ", balance);
     app.setAssetContext(balance);
-    //console.log("action")
-    // router.push(`/intent/${action}`);
     onClose();
   };
 
@@ -39,72 +34,23 @@ export function Balance({ usePioneer, onClose, balance }: any) {
     resetState();
   };
 
+  const formatBalance = (balance: string) => {
+    const [integer, decimal] = balance.split('.');
+    const largePart = decimal?.slice(0, 4);
+    const smallPart = decimal?.slice(4, 8);
+    return { integer, largePart, smallPart };
+  };
+
   return (
     <Stack spacing={4}>
       <Flex alignItems="center">
-        <Avatar
-          size="md"
-          src={`https://pioneers.dev/coins/${COIN_MAP_LONG[balance?.chain as keyof typeof COIN_MAP_LONG]}.png`}
-          mr={4}
-        >
-          {getWalletBadgeContent(balance?.context.split(':')[0])}
-        </Avatar>
-        <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4} flexGrow={1}>
-          <Badge colorScheme="blue" mb={2}>{balance.ticker || 'N/A'}</Badge>
-          {/*<Text fontSize="lg">ref: {balance.ref}</Text>*/}
-          <Text fontSize="lg">Balance: {balanceFormatted}</Text>
-          {balance.valueUsd ? (
-            <Text fontSize="lg">Value (USD): {valueUsdFormatted}</Text>
-          ) : (
-            <></>
-          )}
-        </Box>
-        <Box ml={4}>
-          {/*<Button colorScheme="blue" size="lg" onClick={() => handleModal('transfer')}>Send</Button>*/}
-          {/*<Button colorScheme="green" size="lg" onClick={() => handleModal('receive')}>Receive</Button>*/}
-          {/*<Button colorScheme="purple" size="lg" onClick={() => handleModal('swap')}>Swap</Button>*/}
-        </Box>
+        <Text fontSize="sm">Balance: {balanceFormatted}</Text>
+        {balance.valueUsd ? (
+          <Badge colorScheme="green" fontSize="sm">Value (USD): {valueUsdFormatted}</Badge>
+        ) : null}
       </Flex>
-      {/*<Collapse in={showAdvanced} animateOpacity>*/}
-      {/*  <Box border="1px" borderColor={useColorModeValue('gray.200', 'gray.700')} borderRadius="md" p={4}>*/}
-      {/*    <Table variant="simple">*/}
-      {/*      <Thead>*/}
-      {/*        <Tr>*/}
-      {/*          <Th>Key</Th>*/}
-      {/*          <Th>Value</Th>*/}
-      {/*        </Tr>*/}
-      {/*      </Thead>*/}
-      {/*      <Tbody>*/}
-      {/*        {Object.entries(data as Record<string, unknown>).map(([key, value]) => (*/}
-      {/*          <Tr key={key}>*/}
-      {/*            <Td>{key}</Td>*/}
-      {/*            <Td>*/}
-      {/*              {typeof value === 'string'*/}
-      {/*                ? value*/}
-      {/*                : typeof value === 'number'*/}
-      {/*                  ? value.toString()*/}
-      {/*                  : typeof value === 'boolean'*/}
-      {/*                    ? value.toString()*/}
-      {/*                    : value === null*/}
-      {/*                      ? 'null'*/}
-      {/*                      : typeof value === 'object'*/}
-      {/*                        ? JSON.stringify(value)*/}
-      {/*                        : 'Unsupported Type'}*/}
-      {/*            </Td>*/}
-      {/*          </Tr>*/}
-      {/*        ))}*/}
-      {/*      </Tbody>*/}
-      {/*    </Table>*/}
-      {/*  </Box>*/}
-      {/*</Collapse>*/}
-      {/*<Box alignSelf="flex-end">*/}
-      {/*  <IconButton*/}
-      {/*    icon={<ChevronDownIcon />}*/}
-      {/*    onClick={() => setShowAdvanced(!showAdvanced)}*/}
-      {/*    aria-label="Show Advanced"*/}
-      {/*  />*/}
-      {/*</Box>*/}
     </Stack>
   );
 }
+
 export default Balance;

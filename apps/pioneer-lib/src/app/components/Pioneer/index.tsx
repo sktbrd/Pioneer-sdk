@@ -27,6 +27,7 @@ import {
   Spinner,
   Stack,
   AvatarGroup,
+  Tabs, TabList, TabPanels, Tab, TabPanel,
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
@@ -35,16 +36,21 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import AssetSelect from '../../components/AssetSelect';
+import Assets from '../../components/Assets';
 import KeepKey from '../../components/KeepKey';
 import Ledger from '../../components/Ledger';
 import Evm from '../../components/Evm';
 import WalletConnect from '../../components/WalletConnect';
 import MetaMask from '../../components/MetaMask';
 // import MiddleEllipsis from '../../components/MiddleEllipsis';
+import Asset from '../../components/Asset';
+import Blockchains from '../../components/Blockchains';
+import BlockchainWizard from '../../components/BlockchainWizzard';
 import Onboarding from '../../components/Onboarding';
 import Portfolio from '../../components/Portfolio';
 import Receive from '../../components/Receive';
 import Settings from '../../components/Settings';
+import Balances from '../../components/Balances';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
 import Wallets from '../../components/Wallets';
@@ -53,8 +59,8 @@ import {
   getWalletContent,
   pioneerImagePng,
 } from '../WalletIcon';
+import { usePioneer } from '@coinmasters/pioneer-react';
 // import { usePioneer } from '@coinmasters/pioneer-react';
-
 
 export interface PioneerProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -78,8 +84,6 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
   const [isPioneer, setIsPioneer] = useState(false);
   const [isSwitchingWallet, setIsSwitchingWallet] = useState(false);
 
-
-
   useEffect(() => {
     if (openModal) {
       setModalType(openModal.toUpperCase());
@@ -90,7 +94,6 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
     }
   }, [openModal]);
 
-  // Function to toggle the visibility of all wallets
   const toggleShowAllWallets = (e: any) => {
     e.stopPropagation();
     setShowAllWallets(!showAllWallets);
@@ -131,41 +134,6 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
       setIsSwitchingWallet(false);
     }
   }, [balances]);
-
-  // const renderWallets = () => {
-  //   if (typeof window !== 'undefined') {
-  //
-  //     const walletsToDisplay = showAllWallets
-  //       ? walletsAvailable
-  //       : walletsAvailable.filter((wallet: any) =>
-  //         ['metamask', 'keepkey', 'ledger'].includes(wallet.type.toLowerCase()),
-  //       );
-  //
-  //     // Retrieve and parse paired wallets
-  //     let pairedWallets: any = window.localStorage.getItem('pairedWallets');
-  //     if (pairedWallets) {
-  //       pairedWallets = JSON.parse(pairedWallets).map((pw: any) => pw.split(':')[0].toUpperCase());
-  //     } else {
-  //       pairedWallets = [];
-  //     }
-  //
-  //     return walletsToDisplay.map((wallet: any) => (
-  //       <Card key={wallet.type} onClick={() => handleWalletClick(wallet.type)}>
-  //         <CardBody>
-  //           <Flex align="center" direction="column" justify="center">
-  //             <Avatar m={2} size="md" src={wallet.icon}>
-  //               {pairedWallets?.includes(wallet?.type?.toUpperCase()) ? (
-  //                 <AvatarBadge bg="green.500" boxSize="1em" />
-  //               ) : (
-  //                 <AvatarBadge bg="red.500" boxSize="1em" />
-  //               )}
-  //             </Avatar>
-  //           </Flex>
-  //         </CardBody>
-  //       </Card>
-  //     ));
-  //   }
-  // };
 
   const onStart = async function () {
     try {
@@ -272,6 +240,16 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
                 <WalletConnect usePioneer={usePioneer} />
               </div>
             )}
+            {modalType === 'BLOCKCHAINS' && (
+              <div>
+                <Blockchains usePioneer={usePioneer} modalSelected={modalSelected}/>
+              </div>
+            )}
+            {modalType === 'BLOCKCHAIN_WIZZARD' && (
+              <div>
+                <BlockchainWizard usePioneer={usePioneer}/>
+              </div>
+            )}
             {modalType === 'TRANSFER' && (
               <div>
                 <Transfer usePioneer={usePioneer} />
@@ -304,7 +282,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
             )}
             {modalType === 'SETTINGS' && (
               <div>
-                <Settings usePioneer={usePioneer}/>
+                <Settings usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>
               </div>
             )}
             {modalType === 'TREZOR' && <div>Trezor TODO</div>}
@@ -331,166 +309,158 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {!isWalletPaired ? (<>
-
+      {!isWalletPaired ? (
         <Button onClick={() => onConnectPress()} colorScheme="blue" borderRadius="full">
-          {isSyncing ? (<>
-            <Spinner></Spinner>Syncing Wallet...
-          </>) : (<>
-            Connect Wallet
-          </>)}
+          {isSyncing ? (
+            <Spinner />
+          ) : (
+            'Connect Wallet'
+          )}
         </Button>
-      </>) : (<>
-        <Menu>
+      ) : (
+        <Menu closeOnSelect={false}>
           <MenuButton as={Button} cursor="pointer" minW={100} rounded="full" variant="link">
             <Avatar size="md">
               {isSwitchingWallet ? (
-                <div>
-                  <Box display="inline-block" position="relative">
-                    <Avatar size="md" src={pioneerImage} />
-                    <CircularProgress
-                      isIndeterminate
-                      color="green.500"
-                      left="50%"
-                      position="absolute"
-                      size="1.25em"
-                      top="50%"
-                      transform="translate(-50%, -50%)"
-                    />
-                  </Box>
-                </div>
+                <Box display="inline-block" position="relative">
+                  <Avatar size="md" src={pioneerImage} />
+                  <CircularProgress
+                    isIndeterminate
+                    color="green.500"
+                    left="50%"
+                    position="absolute"
+                    size="1.25em"
+                    top="50%"
+                    transform="translate(-50%, -50%)"
+                  />
+                </Box>
               ) : (
-                <div>
-                  {isPioneer ? (
-                    <Avatar size="md" src='/png/pioneer.png'>
-                      {avatarContent}
-                    </Avatar>
-                  ) : (
-                    <Avatar size="md" src='/png/pioneer.png'>
-                      {avatarContent}
-                    </Avatar>
-                  )}
-                </div>
+                <Avatar size="md" src='/png/pioneer.png'>
+                  {avatarContent}
+                </Avatar>
               )}
             </Avatar>
           </MenuButton>
           <MenuList>
-            <Box borderBottomWidth="1px" p="4">
-              <Flex align="center" justify="space-between">
-                {/*<Stack direction="row" spacing={-3} align="center">*/}
-                {/*  <AvatarGroup size="md" max={4}>*/}
-                {/*    {app?.blockchains.slice(0, 4).map((chain: any, index: any) => { // Limit to first 4 chains*/}
-
-                {/*      // @ts-ignore*/}
-                {/*      const chainKey = NetworkIdToChain[chain];*/}
-                {/*      // @ts-ignore*/}
-                {/*      const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;*/}
-
-                {/*      return (*/}
-                {/*        <Avatar*/}
-                {/*          key={index}*/}
-                {/*          src={imageUrl}*/}
-                {/*          name={chainKey} // Optional: Use the chainKey or another property for the avatar's tooltip*/}
-                {/*          onClick={() => modalSelected('SETTINGS')}*/}
-                {/*        />*/}
-                {/*      );*/}
-                {/*    })}*/}
-                {/*    {app?.blockchains.length > 4 && ( // Conditionally render this if there are more than 4 chains*/}
-                {/*      <Text pl="3" alignSelf="center">*/}
-                {/*        +{app.blockchains.length - 4}*/}
-                {/*      </Text>*/}
-                {/*    )}*/}
-                {/*  </AvatarGroup>*/}
-                {/*</Stack>*/}
-                <Spacer />
-                <IconButton
-                  isRound
-                  aria-label="Settings"
-                  icon={<FaCog />}
-                  onClick={() => modalSelected('SETTINGS')}
-                  size="md"
-                />
-              </Flex>
-              {/*{app?.blockchains.length === 0 && <Text>No blockchains enabled.</Text>}*/}
-            </Box>
-            <Box
-              borderRadius="md"
-              borderWidth="1px"
-              maxWidth="300px"
-              p="4"
-              textAlign="center"
-              width="100%"
-            >
-              <Flex justify="space-around" wrap="wrap">
-                {' '}
-                {/* Flex container for the buttons */}
-                {/* Portfolio Button */}
-                <Flex align="center" direction="column" m={2}>
-                  <IconButton
-                    aria-label="Portfolio"
-                    colorScheme="green"
-                    icon={<FaRegMoneyBillAlt />}
-                    onClick={() => modalSelected('PORTFOLIO')}
-                    rounded="full"
-                    size="lg"
-                    variant="solid"
-                  />
-                  <Text fontSize="xs">Portfolio</Text>
-                </Flex>
-                {/* Send Button */}
-                <Flex align="center" direction="column" m={2}>
-                  <IconButton
-                    aria-label="Send"
-                    colorScheme="green"
-                    icon={<FaPaperPlane />}
-                    onClick={() => modalSelected('TRANSFER')}
-                    rounded="full"
-                    size="lg"
-                    variant="solid"
-                  />
-                  <Text fontSize="xs">Send</Text>
-                </Flex>
-                {/* Receive Button */}
-                <Flex align="center" direction="column" m={2}>
-                  <IconButton
-                    aria-label="Receive"
-                    colorScheme="green"
-                    icon={<FaDownload />}
-                    onClick={() => modalSelected('RECEIVE')}
-                    rounded="full"
-                    size="lg"
-                    variant="solid"
-                  />
-                  <Text fontSize="xs">Receive</Text>
-                </Flex>
-                {/* Swap Button */}
-                {/*<Flex align="center" direction="column" m={2}>*/}
-                {/*  <IconButton*/}
-                {/*    aria-label="Swap"*/}
-                {/*    colorScheme="green"*/}
-                {/*    icon={<FaExchangeAlt />}*/}
-                {/*    onClick={() => modalSelected('SWAP')}*/}
-                {/*    rounded="full"*/}
-                {/*    size="lg"*/}
-                {/*    variant="solid"*/}
-                {/*  />*/}
-                {/*  <Text fontSize="xs">Swap</Text>*/}
-                {/*</Flex>*/}
-              </Flex>
-            </Box>
             <MenuItem>
-              <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick}/>
-              {/*<SimpleGrid columns={3} maxWidth="280px" row={1}>*/}
-              {/*  {renderWallets()}*/}
-              {/*  /!*<Text color="blue.500" cursor="pointer" fontSize="sm" onClick={toggleShowAllWallets}>*!/*/}
-              {/*  /!*  {showAllWallets ? 'Hide Wallets' : 'more'}*!/*/}
-              {/*  /!*</Text>*!/*/}
-              {/*</SimpleGrid>*/}
+                  {/* Left-aligned content */}
+                  <Box flex="1"
+                       onClick={() => modalSelected('BLOCKCHAINS')}>
+                    <Flex direction="column" align="flex-start">
+                      <Avatar size="md" src={'https://pioneers.dev/coins/pioneerMan.png'} mb="2" />
+                      <AvatarGroup size="2xs" max={4}>
+                        {app?.blockchains.slice(0, 4).map((chain: any, index: any) => {
+                          const chainKey = NetworkIdToChain[chain];
+                          const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;
+                          return (
+                            <Avatar
+                              key={index}
+                              src={imageUrl}
+                              name={chainKey}
+                              onClick={() => modalSelected('SETTINGS')}
+                            />
+                          );
+                        })}
+                        {app?.blockchains.length > 4 && (
+                          <Text pl="3" alignSelf="center">
+                            +{app.blockchains.length - 4}
+                          </Text>
+                        )}
+                      </AvatarGroup>
+                    </Flex>
+                  </Box>
+
+                  {/* Center-aligned content */}
+                  <Box flex="1" textAlign="center">
+                    <Flex direction="column" align="center">
+                      <Avatar size="sm" src={app?.assetContext?.icon} mb="2" />
+                      <Text noOfLines={1}>{app?.assetContext?.name}</Text>
+                    </Flex>
+                  </Box>
+
+                  {/* Right-aligned content */}
+                  <Box flex="1" textAlign="right">
+                    <IconButton
+                      isRound
+                      aria-label="Settings"
+                      icon={<FaCog />}
+                      onClick={() => modalSelected('SETTINGS')}
+                      size="md"
+                    />
+                  </Box>
+            </MenuItem>
+            <MenuItem>
+              <Flex align="center" justify="center" width="100%">
+                <Portfolio usePioneer={usePioneer} />
+              </Flex>
+            </MenuItem>
+            <MenuItem>
+              <Flex align="center" justify="center" width="100%">
+                  <Flex justify="center" direction="column" m={2}>
+                    <IconButton
+                      aria-label="Portfolio"
+                      colorScheme="green"
+                      icon={<FaRegMoneyBillAlt />}
+                      onClick={() => modalSelected('PORTFOLIO')}
+                      rounded="full"
+                      size="md"
+                      variant="solid"
+                    />
+                    <Text fontSize="xs">Portfolio</Text>
+                  </Flex>
+                  <Flex align="center" direction="column" m={2}>
+                    <IconButton
+                      aria-label="Send"
+                      colorScheme="green"
+                      icon={<FaPaperPlane />}
+                      onClick={() => modalSelected('TRANSFER')}
+                      rounded="full"
+                      size="md"
+                      variant="solid"
+                    />
+                    <Text fontSize="xs">Send</Text>
+                  </Flex>
+                  <Flex align="center" direction="column" m={2}>
+                    <IconButton
+                      aria-label="Receive"
+                      colorScheme="green"
+                      icon={<FaDownload />}
+                      onClick={() => modalSelected('RECEIVE')}
+                      rounded="full"
+                      size="md"
+                      variant="solid"
+                    />
+                    <Text fontSize="xs">Receive</Text>
+                  </Flex>
+              </Flex>
+            </MenuItem>
+            <MenuItem>
+              <Box display="flex" justifyContent="center" maxH="300px" overflowY="auto">
+                <Tabs justifyContent="center">
+                  <TabList justifyContent="center">
+                    <Tab>Assets</Tab>
+                    <Tab>NFTs</Tab>
+                    <Tab>Activity</Tab>
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      <Assets usePioneer={usePioneer} onClose={onClose} />
+                    </TabPanel>
+                    <TabPanel>
+                      <Box>
+                        <Text>NFTs content</Text>
+                      </Box>
+                    </TabPanel>
+                    <TabPanel>
+                      <Text>History</Text>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              </Box>
             </MenuItem>
           </MenuList>
         </Menu>
-      </>)}
-
+      )}
     </div>
   );
 };
