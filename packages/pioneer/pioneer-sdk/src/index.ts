@@ -221,7 +221,7 @@ export class SDK {
         const PioneerClient = new Pioneer(config.spec, config);
         this.pioneer = await PioneerClient.init();
         if (!this.pioneer) throw Error('Fialed to init pioneer server!');
-        console.log(tag, 'setup: ', setup);
+        //console.log(tag, 'setup: ', setup);
         //this.wallets = walletsVerbose
         this.wallets = walletsVerbose;
         let walletArray = [];
@@ -232,7 +232,7 @@ export class SDK {
           walletArray.push(wallet);
         }
         // log.info("wallets",this.wallets)
-        console.log(tag, 'this.paths: ', this.paths.length);
+        //console.log(tag, 'this.paths: ', this.paths.length);
         //force paths if not set
         if (this.blockchains.length > 0 && this.paths.length === 0)
           this.setPaths(getPaths(this.blockchains));
@@ -351,7 +351,7 @@ export class SDK {
         if (!caip) throw new Error('caip required!');
 
         let dataLocal = assetData[caip];
-        console.log(tag, 'dataLocal: ', dataLocal);
+        //console.log(tag, 'dataLocal: ', dataLocal);
         //get assetData from discover
         if (!dataLocal) {
           if (!data.networkId) throw new Error('networkId required! can not build asset');
@@ -446,7 +446,7 @@ export class SDK {
       try {
         if (pubkeys.length === 0) throw Error('No pubkeys to load!');
         const combinedPubkeys = [...this.pubkeys, ...pubkeys];
-        console.log('combinedPubkeys: ', combinedPubkeys);
+        //console.log('combinedPubkeys: ', combinedPubkeys);
         // Remove duplicates based on .pubkey property
         this.pubkeys = combinedPubkeys.reduce((acc, currentItem) => {
           if (!acc.some((item: { pubkey: any }) => item.pubkey === currentItem.pubkey)) {
@@ -454,7 +454,7 @@ export class SDK {
           }
           return acc;
         }, []);
-        console.log('checkpoint 1 this.pubkeys: ', this.pubkeys);
+        //console.log('checkpoint 1 this.pubkeys: ', this.pubkeys);
 
         //combine pubkeys with balances
         //update assets
@@ -467,7 +467,7 @@ export class SDK {
             pubkeysMap.get(network).push(pubkey);
           });
         });
-        console.log('new pubkeys: ', this.pubkeys);
+        //console.log('new pubkeys: ', this.pubkeys);
         this.events.emit('SET_PUBKEYS', this.pubkeys);
       } catch (e) {
         console.error('Failed to load pubkeys! e: ', e);
@@ -476,7 +476,7 @@ export class SDK {
     this.pairWallet = async function (options: any) {
       const tag = `${TAG} | pairWallet | `;
       try {
-        console.log(tag, 'pairWallet options: ', options);
+        //console.log(tag, 'pairWallet options: ', options);
         let wallet = options.type;
         // let blockchains = options.blockchains;
         if (!wallet) throw Error('Must have wallet to pair! (Invalid params into pairWallet)');
@@ -505,7 +505,7 @@ export class SDK {
         // await this.verifyWallet();
 
         let resultPair: string;
-        console.log(tag, 'type: ', walletSelected.type);
+        //console.log(tag, 'type: ', walletSelected.type);
         let ChainsConfigured = this.blockchains.map(
           (networkId: string | number) =>
             NetworkIdToChain[networkId] ||
@@ -513,12 +513,12 @@ export class SDK {
               throw new Error(`(NetworkIdToChain) Missing NetworkId: ${networkId}`);
             })(),
         );
-        console.log(tag, 'ChainsConfigured: ', ChainsConfigured);
+        //console.log(tag, 'ChainsConfigured: ', ChainsConfigured);
         //TODO filter for supported chains by wallet
         switch (walletSelected.type) {
           case 'KEEPKEY':
-            console.log(tag, 'this.blockchains: ', this.blockchains);
-            console.log(tag, 'this.paths: ', this.paths.length);
+            //console.log(tag, 'this.blockchains: ', this.blockchains);
+            //console.log(tag, 'this.paths: ', this.paths.length);
             // eslint-disable-next-line no-case-declarations
             let { keepkeyApiKey, info } =
               (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
@@ -527,9 +527,9 @@ export class SDK {
               )) || '';
             this.keepkeyApiKey = keepkeyApiKey;
             this.context = 'keepkey:' + info.label + '.json';
-            console.log(tag, 'info: ', info);
-            console.log(tag, 'this.context: ', this.context);
-            console.log(tag, 'this.keepkeyApiKey: ', this.keepkeyApiKey);
+            //console.log(tag, 'info: ', info);
+            //console.log(tag, 'this.context: ', this.context);
+            //console.log(tag, 'this.keepkeyApiKey: ', this.keepkeyApiKey);
             resultPair = 'success';
             break;
           case 'WALLETCONNECT':
@@ -606,7 +606,7 @@ export class SDK {
         if (resultPair) {
           // update
           const matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
-          console.log(tag, 'matchingWalletIndex: ', matchingWalletIndex);
+          //console.log(tag, 'matchingWalletIndex: ', matchingWalletIndex);
           // get balances
           // @ts-ignore
           let context;
@@ -614,7 +614,7 @@ export class SDK {
             context = 'ledger:ledger.wallet'; //placeholder until we know eth address
           } else {
             // console.log('this.swapKit: ', this.swapKit);
-            console.log('wallet: ', wallet);
+            //console.log('wallet: ', wallet);
             context = `${wallet.toLowerCase()}:device.wallet`;
 
             // isPioneer?
@@ -629,7 +629,7 @@ export class SDK {
             }
           }
 
-          console.log('context: ', context);
+          //console.log('context: ', context);
           // add context to wallet
           //@ts-ignore
           // this.wallets[matchingWalletIndex].context = context;
@@ -679,14 +679,14 @@ export class SDK {
     this.getAssets = async function (filterParams?: any) {
       try {
         const tag = `${TAG} | getAssets | `;
-        console.log(tag, 'filterParams: ', filterParams);
+        //console.log(tag, 'filterParams: ', filterParams);
         //Array.from(this.assetsMap.values())
         if (
           !this.assetsMap ||
           Array.from(this.assetsMap.values()).length === 0 ||
           (filterParams && !filterParams.onlyOwned)
         ) {
-          console.log('No cached assets, loading...');
+          //console.log('No cached assets, loading...');
           let tokenMap = new Map();
           let chains = new Set();
           let chainTokenCounts = {};
@@ -776,8 +776,8 @@ export class SDK {
             });
           }
 
-          console.log('tokenMap: ', Object.keys(tokenMap).length);
-          console.log('Processed Assets: ', allAssets.length);
+          //console.log('tokenMap: ', Object.keys(tokenMap).length);
+          //console.log('Processed Assets: ', allAssets.length);
           //filter assets for blockchain
           this.assetsMap = tokenMap; // Update the main map to include all enriched assets
           this.events.emit('SET_ASSETS', this.assetsMap);
@@ -793,13 +793,13 @@ export class SDK {
 
         // Filter params
         if (filterParams) {
-          console.log(tag, 'Applying filters...', filterParams);
+          //console.log(tag, 'Applying filters...', filterParams);
 
           // Convert the assetMap to an array
           let currentAssets = Array.from(this.assetsMap.values());
           // console.log(tag, 'currentAssets: ', currentAssets);
           // Initial assets count
-          console.log(tag, `Total assets before filtering: ${currentAssets.length}`);
+          //console.log(tag, `Total assets before filtering: ${currentAssets.length}`);
 
           // Filter by Search Query
           if (filterParams.searchQuery) {
@@ -808,7 +808,7 @@ export class SDK {
               const assetName = asset.name ? asset.name.toLowerCase() : '';
               return assetName.includes(normalizedSearchQuery);
             });
-            console.log(tag, `Assets after search query filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after search query filter: ${currentAssets.length}`);
           }
 
           // Filter by Ownership Presence
@@ -817,26 +817,26 @@ export class SDK {
             currentAssets = currentAssets.filter((asset) =>
               this.balances.some((balance) => balance.caip === asset.caip),
             );
-            console.log(tag, `Assets after ownership filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after ownership filter: ${currentAssets.length}`);
           }
 
           // Filter by Token Type
           if (filterParams.noTokens && filterParams.noTokens === true) {
-            console.log(tag, `Before token type filter: ${currentAssets.length}`);
+            //console.log(tag, `Before token type filter: ${currentAssets.length}`);
             currentAssets = currentAssets.filter((asset) => asset.type !== 'token');
-            console.log(tag, `Assets after token type filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after token type filter: ${currentAssets.length}`);
           }
 
           // Filter by Memoless
           if (filterParams.memoless !== null && filterParams.memoless !== undefined) {
             currentAssets = currentAssets.filter((asset) => asset.memoless === true);
-            console.log(tag, `Assets after memo-less filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after memo-less filter: ${currentAssets.length}`);
           }
 
           // Filter by Public Key Presence
           if (filterParams.hasPubkey) {
-            console.log(tag, `Before token hasPubkey filter: ${currentAssets.length}`);
-            console.log(tag, this.pubkeys);
+            //console.log(tag, `Before token hasPubkey filter: ${currentAssets.length}`);
+            //console.log(tag, this.pubkeys);
             // TODO: Filter this.pubkeys for a match
             currentAssets = currentAssets.filter((asset: any) => {
               return this.pubkeys.some((pubkey: any) => {
@@ -851,19 +851,19 @@ export class SDK {
                 return false;
               });
             });
-            console.log(tag, `Assets after public key presence filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after public key presence filter: ${currentAssets.length}`);
           }
 
           // Filter by Required Integration
           if (filterParams.integrations && filterParams.integrations.length > 0) {
-            console.log(
-              tag,
-              `Looking for integrations in assets: ${filterParams.integrations.join(', ')}`,
-            );
+            // console.log(
+            //   tag,
+            //   `Looking for integrations in assets: ${filterParams.integrations.join(', ')}`,
+            // );
 
             currentAssets = currentAssets.filter((asset) => {
               if (!asset.integrations) {
-                console.log(tag, `Asset ${asset.name} has no integrations.`);
+                //console.log(tag, `Asset ${asset.name} has no integrations.`);
                 return false;
               }
 
@@ -872,20 +872,20 @@ export class SDK {
               );
 
               if (!hasRequiredIntegration) {
-                console.log(
-                  tag,
-                  `Asset ${
-                    asset.name
-                  } does not include required integrations. Asset integrations: ${asset.integrations.join(
-                    ', ',
-                  )}`,
-                );
+                // console.log(
+                //   tag,
+                //   `Asset ${
+                //     asset.name
+                //   } does not include required integrations. Asset integrations: ${asset.integrations.join(
+                //     ', ',
+                //   )}`,
+                // );
               }
 
               return hasRequiredIntegration;
             });
 
-            console.log(tag, `Assets after required integration filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after required integration filter: ${currentAssets.length}`);
           }
 
           // Filter by Required networkId
@@ -895,17 +895,17 @@ export class SDK {
                 asset.networkId && // Ensure the asset has a networkId defined
                 filterParams.networks.includes(asset.networkId), // Check if the asset's networkId is in the list of required networks
             );
-            console.log(tag, `Assets after required networks filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after required networks filter: ${currentAssets.length}`);
           }
 
           // Filter by Asset Context (if applicable)
           if (this.assetContext) {
             currentAssets = currentAssets.filter((asset) => asset.caip !== this.assetContext.caip);
-            console.log(tag, `Assets after asset context filter: ${currentAssets.length}`);
+            //console.log(tag, `Assets after asset context filter: ${currentAssets.length}`);
           }
 
           // console.log(tag, `Total assets after all filters: ${currentAssets}`);
-          console.log(tag, `Total assets after all filters: ${currentAssets.length}`);
+          //console.log(tag, `Total assets after all filters: ${currentAssets.length}`);
           return currentAssets;
         } else {
           // Return assets as an array from assetMap if no filters are applied
@@ -919,20 +919,20 @@ export class SDK {
     this.getPubkeys = async function (wallets?: any) {
       const tag = `${TAG} | getPubkeys | `;
       try {
-        console.log(tag, 'this.blockchains: ', this.blockchains);
-        console.log(tag, 'this.paths: ', this.paths.length);
+        //console.log(tag, 'this.blockchains: ', this.blockchains);
+        //console.log(tag, 'this.paths: ', this.paths.length);
         if (this.paths.length === 0) throw new Error('No paths found!');
         if (!this.swapKit) throw new Error('SwapKit not initialized!');
-        console.log(tag, 'PRE this.pubkeys: ', this.pubkeys.length);
-        console.log(tag, 'PRE this.paths: ', this.paths.length);
-        console.log(tag, 'PRE this.blockchains: ', this.blockchains);
+        //console.log(tag, 'PRE this.pubkeys: ', this.pubkeys.length);
+        //console.log(tag, 'PRE this.paths: ', this.paths.length);
+        //console.log(tag, 'PRE this.blockchains: ', this.blockchains);
 
         let pubkeysNew = [];
         // For each enabled blockchain
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.blockchains.length; i++) {
           let blockchain = this.blockchains[i];
-          console.log(tag, 'blockchain: ', blockchain);
+          //console.log(tag, 'blockchain: ', blockchain);
 
           let filteredPaths = this.paths.filter((path) => {
             // Ensure path.networks is defined
@@ -950,7 +950,7 @@ export class SDK {
             return path.networks.includes(blockchain);
           });
 
-          console.log(tag, 'filteredPaths: ', filteredPaths);
+          //console.log(tag, 'filteredPaths: ', filteredPaths);
 
           if (!filteredPaths || filteredPaths.length === 0)
             throw new Error('Unable to get pubkey for blockchain: ' + blockchain);
@@ -958,13 +958,13 @@ export class SDK {
           // Get address for all paths for this blockchain
           for (let path of filteredPaths) {
             let chain: Chain = NetworkIdToChain[blockchain];
-            console.log(tag, 'chain: ', chain);
+            //console.log(tag, 'chain: ', chain);
 
             if (!chain) throw new Error('missing chain for blockchain!');
 
             let pubkey: any = {};
             pubkey.type = path.type;
-            console.log(tag, 'path: ', path);
+            //console.log(tag, 'path: ', path);
 
             let addressInfo = {
               address_n: path.addressNListMaster,
@@ -973,7 +973,7 @@ export class SDK {
               showDisplay: false,
             };
 
-            console.log(tag, 'addressInfo: ', addressInfo);
+            //console.log(tag, 'addressInfo: ', addressInfo);
             let address = await this.swapKit?.getAddressAsync(chain, addressInfo);
             if (!address) throw new Error(`Failed to get address for ${chain}`);
             if (address && address.indexOf('bitcoincash:') > -1)
@@ -987,8 +987,8 @@ export class SDK {
             } else if (path.type === 'xpub' || path.type === 'ypub' || path.type === 'zpub') {
               let pubkeys = await this.swapKit?.getWallet(chain)?.getPubkeys([path]);
               if (!pubkeys) throw new Error(`Failed to get pubkeys for ${chain}`);
-              console.log(tag, ' [path]: ', [path]);
-              console.log(tag, '[path]  pubkeys: ', pubkeys);
+              //console.log(tag, ' [path]: ', [path]);
+              //console.log(tag, '[path]  pubkeys: ', pubkeys);
 
               // let pubkeyForPath = pubkeys[0];
               // console.log(tag, ' pubkeyForPath: ', pubkeyForPath);
@@ -1035,7 +1035,7 @@ export class SDK {
     this.getBalance = async function (caip: string, pubkeys: any, nodes: any) {
       const tag = `${TAG} | getBalance | `;
       try {
-        console.log(tag, 'caip: ', caip);
+        //console.log(tag, 'caip: ', caip);
         let asset = this.assetsMap.get(caip);
         if (!asset) {
           //TODO get asset chart from pioneer
@@ -1056,13 +1056,13 @@ export class SDK {
         let nodes = [];
         let balance = await this.swapKit?.getBalance(chain, pubkeys, nodes);
         if (!balance) throw Error('failed to get balance for chain: ' + networkId);
-        console.log(tag, 'balance: ', balance);
+        //console.log(tag, 'balance: ', balance);
 
         if (!balance.caip) throw Error('invalid balnace! caip required!');
-        console.log(tag, 'balance: ', balance);
+        //console.log(tag, 'balance: ', balance);
         if (!balance.ticker) throw Error('invalid balance! ticker required!');
-        console.log(tag, 'caip: ', balance.caip);
-        console.log(tag, 'ticker: ', balance.ticker);
+        //console.log(tag, 'caip: ', balance.caip);
+        //console.log(tag, 'ticker: ', balance.ticker);
         let balanceString: any = {};
         // Balance formatted
         balanceString.context = this.context;
@@ -1086,7 +1086,7 @@ export class SDK {
         } catch (e) {
           console.error('No Market Data for: ', balanceString.caip);
         }
-        console.log(tag, 'priceData: ', priceData);
+        //console.log(tag, 'priceData: ', priceData);
         if (!priceData) console.error('Unable to get price data for asset: ', balanceString.caip);
         balanceString.priceUsd = priceData.priceUsd || 0;
         balanceString.valueUsd = balanceString.balance * balanceString.priceUsd;
@@ -1101,13 +1101,13 @@ export class SDK {
       try {
         if (!this.assets || this.assets.length === 0) await this.getAssets();
         // if (!this.context) throw Error('No Wallet Paired! No context!');
-        console.log(tag, 'this.blockchains: ', this.blockchains);
+        //console.log(tag, 'this.blockchains: ', this.blockchains);
         let balances = [];
 
         // Create an array of promises for fetching balances
         const balancePromises = this.blockchains.map(async (blockchain: any) => {
           let chain: Chain = NetworkIdToChain[blockchain];
-          console.log(tag, 'chain: ', chain);
+          //console.log(tag, 'chain: ', chain);
 
           // Get pubkeys for the chain
           let pubkeys = this.pubkeys.filter((pubkey: any) => {
@@ -1117,7 +1117,7 @@ export class SDK {
             return pubkey.networks.includes(blockchain);
           });
 
-          console.log(tag, 'pubkeys: ', pubkeys);
+          //console.log(tag, 'pubkeys: ', pubkeys);
 
           if (pubkeys && pubkeys.length > 0) {
             try {
@@ -1125,7 +1125,7 @@ export class SDK {
               // Get primary gas asset for chain
               let caip = shortListSymbolToCaip[chain];
               let resultBalance = await this.getBalance(caip, pubkeys, nodes);
-              console.log('resultBalance: ', resultBalance);
+              //console.log('resultBalance: ', resultBalance);
               if (resultBalance) return resultBalance;
             } catch (e) {
               console.error(tag, 'e: ', e);
@@ -1143,9 +1143,9 @@ export class SDK {
         // Filter out null results and merge the balances
         balances = resolvedBalances.filter((result: any) => result !== null);
 
-        console.log(tag, 'balances: ', balances);
+        //console.log(tag, 'balances: ', balances);
         this.balances = balances;
-        console.log(tag, 'this.balances: ', this.balances);
+        //console.log(tag, 'this.balances: ', this.balances);
         this.events.emit('SET_BALANCES', this.balances);
         return balances;
       } catch (e) {
@@ -1169,7 +1169,7 @@ export class SDK {
       try {
         // Get ETH address
         let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
-        console.log(tag, 'pubkeys: ', pubkeys);
+        //console.log(tag, 'pubkeys: ', pubkeys);
         if (!pubkeys[8]) {
           console.error(tag, 'No ETH address found, not charting');
           return [];
@@ -1179,14 +1179,14 @@ export class SDK {
 
         // Get all eip155 enabled chains
         let evmChains = this.blockchains.filter((chain) => chain.includes('eip155'));
-        console.log(tag, 'evmChains: ', evmChains);
+        //console.log(tag, 'evmChains: ', evmChains);
 
         //remove slow chains
         const ignoredNetworkIds = ['eip155:137'];
 
         // Filter out the chains with network IDs in the ignoredNetworkIds array
         evmChains = evmChains.filter((chain) => !ignoredNetworkIds.includes(chain.networkId));
-        console.log(tag, 'evmChains: ', evmChains);
+        //console.log(tag, 'evmChains: ', evmChains);
 
         // Function to add a timeout to a promise
         const withTimeout = (promise, chain) => {
@@ -1257,17 +1257,17 @@ export class SDK {
               }
             });
           } else {
-            console.log('No items found in result.');
+            //console.log('No items found in result.');
           }
         });
 
-        console.log('NFTs: ', NFTs);
+        //console.log('NFTs: ', NFTs);
         this.nfts = NFTs;
 
         // Fetch portfolio
         let portfolio = await this.pioneer.GetPortfolio({ address });
-        console.log(tag, 'portfolio: ', portfolio);
-        console.log(tag, 'portfolio: ', JSON.stringify(portfolio));
+        //console.log(tag, 'portfolio: ', portfolio);
+        //console.log(tag, 'portfolio: ', JSON.stringify(portfolio));
 
         // Process portfolio tokens
         let balances = await Promise.all(
@@ -1275,7 +1275,7 @@ export class SDK {
             if (token.assetCaip && token.networkId) {
               // Get asset info
               let assetInfo = this.assetsMap.get(token.assetCaip);
-              console.log(tag, 'assetInfo: ', assetInfo);
+              //console.log(tag, 'assetInfo: ', assetInfo);
               let success = false;
               if (!assetInfo) {
                 token.chart = 'zapper';
@@ -1293,7 +1293,7 @@ export class SDK {
                 balanceString.ticker = token.token.symbol;
                 balanceString.ref = balanceString.context + balanceString.caip;
                 // balanceString.identifier = caipToThorchain(balanceString.caip, balanceString.ticker);
-                console.log(tag, 'token.networkId: ', token.networkId);
+                //console.log(tag, 'token.networkId: ', token.networkId);
                 if (token.networkId && token.networkId.includes('/')) {
                   token.networkId = token.networkId.split('/')[0];
                 }
@@ -1316,13 +1316,13 @@ export class SDK {
 
         balances = balances.filter(Boolean); // Filter out null values
 
-        console.log(tag, 'NFTs: ', NFTs);
-        console.log(tag, 'TOKEN balances: ', balances);
+        //console.log(tag, 'NFTs: ', NFTs);
+        //console.log(tag, 'TOKEN balances: ', balances);
         let allBalances = [...NFTs, ...balances, ...this.balances];
-        console.log(tag, 'Final: balances: ', balances.length);
+        //console.log(tag, 'Final: balances: ', balances.length);
         // this.addBalances(allBalances);
         this.balances = allBalances;
-        console.log(tag, 'this.balances: ', this.balances);
+        //console.log(tag, 'this.balances: ', this.balances);
         this.events.emit('SET_BALANCES', this.balances);
 
         return allBalances;
@@ -1375,7 +1375,7 @@ export class SDK {
         if (!asset.caip) throw Error('Invalid Asset! missing caip!');
         let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (!assetInfo) throw Error('Invalid Asset! not found in assetsMap! caip: ' + asset.caip);
-        console.log(tag, 'assetInfo: ', assetInfo);
+        //console.log(tag, 'assetInfo: ', assetInfo);
 
         //find related pubkeys
         let networkId = assetInfo.networkId;
@@ -1405,7 +1405,7 @@ export class SDK {
     this.setOutboundAssetContext = async function (asset?: any) {
       const tag = `${TAG} | setOutputAssetContext | `;
       try {
-        console.log(tag, 'asset: ', asset);
+        //console.log(tag, 'asset: ', asset);
         //accept null
         if (!asset) {
           this.outboundAssetContext = null;
@@ -1414,7 +1414,7 @@ export class SDK {
         if (!asset.caip) throw Error('Invalid Asset! missing caip!');
         let assetInfo = this.assetsMap.get(asset.caip.toLowerCase());
         if (!assetInfo) return { success: false, error: 'caip not found! caip: ' + asset.caip };
-        console.log(tag, 'assetInfo: ', assetInfo);
+        //console.log(tag, 'assetInfo: ', assetInfo);
 
         //find related pubkeys
         let networkId = assetInfo.networkId;

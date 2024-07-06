@@ -86,7 +86,7 @@ export function Assets({ usePioneer, onSelect, onClose, filters }: any) {
   };
 
   const formatBalance = (balance: string) => {
-    console.log("balance: ", balance);
+    // console.log("balance: ", balance);
     const [integer, decimal] = balance.split('.');
     const largePart = decimal?.slice(0, 4);
     const smallPart = decimal?.slice(4, 8);

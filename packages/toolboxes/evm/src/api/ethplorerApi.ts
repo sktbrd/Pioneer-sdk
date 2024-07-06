@@ -12,7 +12,7 @@ export const ethplorerApi = (apiKey = 'freekey') => ({
         `${baseUrl}/getAddressInfo/${address}`,
         { searchParams: { apiKey } },
       );
-      console.log('tokens: ', tokens);
+      //console.log('tokens: ', tokens);
 
       const tokenBalances = [];
       for (const token of tokens) {
@@ -30,7 +30,7 @@ export const ethplorerApi = (apiKey = 'freekey') => ({
           decimal: parseInt(decimals) || 0,
         });
       }
-      console.log('tokenBalances: ', tokenBalances);
+      //console.log('tokenBalances: ', tokenBalances);
       return tokenBalances;
     } catch (error) {
       console.error(`Error fetching balance: ${error}`);

@@ -99,7 +99,7 @@ export class SwapKitCore<T = ''> {
   getAddress = async (chain: any, addressInfo?: any) => {
     let tag = TAG + ' | getAddress | ';
     try {
-      console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'chain: ', chain);
       if (!this.connectedChains[chain]) throw Error('chain not connected! ' + chain);
       const address = this.connectedChains[chain]?.address;
       if (!address) {
@@ -113,12 +113,12 @@ export class SwapKitCore<T = ''> {
   getAddressAsync = async (chain: any, addressInfo?: any) => {
     let tag = TAG + ' | getAddressAsync | ';
     try {
-      console.log(tag, 'chain: ', chain);
-      console.log(tag, 'addressInfo: ', addressInfo);
+      //console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'addressInfo: ', addressInfo);
       const wallet = await this.getWallet(chain);
       if (!wallet) throw Error('chain not connected! ' + chain);
       let address = await wallet?.getAddress(addressInfo);
-      console.log(tag, 'address: ', address);
+      //console.log(tag, 'address: ', address);
       return address;
     } catch (e) {
       console.error(e);
@@ -131,40 +131,40 @@ export class SwapKitCore<T = ''> {
   getBalance = async (chain: Chain, pubkeys: any, nodes?: any) => {
     let tag = TAG + ' | getBalance | ';
     try {
-      console.log(tag, 'chain: ', chain);
-      console.log(tag, 'nodes: ', nodes);
+      //console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'nodes: ', nodes);
       let balance = await this.getWallet(chain)?.getBalance(pubkeys, nodes);
-      console.log(tag, 'balance: ', balance);
+      //console.log(tag, 'balance: ', balance);
       // const wallet = await this.syncWalletByChain(chain, potentialScamFilter);
       //
       // return wallet?.balance || [];
       return balance;
     } catch (e) {
-      console.log(tag, e);
+      //console.log(tag, e);
       throw e;
     }
   };
   getBalances = async (chain: Chain, pubkeys: any) => {
     let tag = TAG + ' | getBalances | ';
     try {
-      console.log(tag, '****** CHECKPOINT *******: ', chain);
-      console.log(tag, 'chain: ', chain);
-      console.log(tag, 'pubkeys: ', pubkeys);
+      //console.log(tag, '****** CHECKPOINT *******: ', chain);
+      //console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'pubkeys: ', pubkeys);
       let balances: any = [];
 
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < pubkeys.length; i++) {
         let pubkey = pubkeys[i];
-        console.log(tag, '****** pubkey: ', pubkey);
-        console.log(tag, 'this.getWallet(chain): ', this.getWallet(chain));
+        //console.log(tag, '****** pubkey: ', pubkey);
+        //console.log(tag, 'this.getWallet(chain): ', this.getWallet(chain));
 
         // Get balance of pubkey
         let pubkeyBalance: any = await this.getWallet(chain)?.getBalance([pubkey]);
-        console.log(tag, 'pubkeyBalances: ', pubkeyBalance);
+        //console.log(tag, 'pubkeyBalances: ', pubkeyBalance);
         balances.push(pubkeyBalance);
       }
 
-      console.log(tag, 'final balances: ', balances);
+      //console.log(tag, 'final balances: ', balances);
       return balances;
     } catch (e) {
       console.error(tag, 'Error: ', e);
@@ -173,7 +173,7 @@ export class SwapKitCore<T = ''> {
   };
   swap = async ({ streamSwap, recipient, route, feeOptionKey }: SwapParams) => {
     const tag = TAG + ' | swap | ';
-    console.log(tag, 'route: ', route);
+    //console.log(tag, 'route: ', route);
     if (!route) throw new SwapKitError('core_swap_route_not_found');
     if (!route.meta && route.quote) route = route.quote;
     const { quoteMode } = route.meta;
@@ -196,7 +196,7 @@ export class SwapKitCore<T = ''> {
 
     try {
       const swapType = classifySwap(quoteMode);
-      console.log(tag, 'swapType: ', swapType);
+      //console.log(tag, 'swapType: ', swapType);
 
       switch (swapType) {
         case 'AGG_SWAP': {
@@ -222,7 +222,7 @@ export class SwapKitCore<T = ''> {
         }
 
         case 'SWAP_OUT': {
-          console.log('route: ', route);
+          //console.log('route: ', route);
           if (!route.calldata.fromAsset) throw new SwapKitError('core_swap_asset_not_recognized');
           const asset = await AssetValue.fromString(route.calldata.fromAsset);
           if (!asset) throw new SwapKitError('core_swap_asset_not_recognized');
@@ -293,7 +293,7 @@ export class SwapKitCore<T = ''> {
         }
         case 'ETH_TO_ETH': {
           //Placeholder UNISWAP swaps
-          console.log(' ETH_TO_ETH  Detected! ');
+          //console.log(' ETH_TO_ETH  Detected! ');
           // const walletMethods = this.connectedWallets[Chain.Ethereum];
           // console.log("walletMethods: ", walletMethods)
           // //Uniswap needs permit2
@@ -422,7 +422,7 @@ export class SwapKitCore<T = ''> {
       let balance = [];
       const address = await this.getAddress(chain);
       const pubkeys = await this.getWallet(chain)?.getPubkeys();
-      console.log(tag, 'address: ', address);
+      //console.log(tag, 'address: ', address);
 
       if (!address) {
         console.error('Failed to get address for chain! chain: ' + chain);
@@ -430,36 +430,36 @@ export class SwapKitCore<T = ''> {
       if (pubkeys.length <= 0) {
         console.error('Failed to get pubkeys for chain! chain: ' + chain);
       }
-      console.log(tag, 'chain: ', chain);
-      console.log(tag, 'address: ', address);
-      console.log(tag, 'pubkeys: ', pubkeys);
+      //console.log(tag, 'chain: ', chain);
+      //console.log(tag, 'address: ', address);
+      //console.log(tag, 'pubkeys: ', pubkeys);
 
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < pubkeys.length; i++) {
         let pubkey = pubkeys[i];
-        console.log(tag, 'pubkey: ', pubkey);
+        //console.log(tag, 'pubkey: ', pubkey);
         if (!pubkey || !pubkey.networks) continue;
-        console.log(tag, 'pubkey networks: ', pubkey.networks);
+        //console.log(tag, 'pubkey networks: ', pubkey.networks);
         //if eip155 in network name
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let j = 0; j < pubkey.networks.length; j++) {
           let networkId = pubkey.networks[j];
-          console.log(tag, 'networkId: ', networkId);
+          //console.log(tag, 'networkId: ', networkId);
           if (networkId.includes('eip155') || pubkey.type === 'address') {
-            console.log(tag, 'network includes eip155 or is marked address');
+            //console.log(tag, 'network includes eip155 or is marked address');
             //get balance
-            console.log(tag, 'address: ', [{ address }]);
+            //console.log(tag, 'address: ', [{ address }]);
             let balance = await this.getWallet(chain)?.getBalance([{ address }]);
-            console.log(tag, 'balance: ', balance);
+            //console.log(tag, 'balance: ', balance);
             balance.push(balance);
           } else {
-            console.log(tag, 'Scan Xpub or other public key type');
+            //console.log(tag, 'Scan Xpub or other public key type');
             //
-            console.log(tag, 'address: ', [{ pubkey }]);
+            //console.log(tag, 'address: ', [{ pubkey }]);
             let pubkeyBalances: AssetValue[] = await this.getWallet(chain)?.getBalance([
               { pubkey },
             ]);
-            console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
+            //console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
             pubkeyBalances.forEach((pubkeyBalance) => {
               balance.push(pubkeyBalance);
             });
@@ -469,7 +469,7 @@ export class SwapKitCore<T = ''> {
 
       // for (let i = 0; i < pubkeys.length; i++) {
       //   let pubkey = pubkeys[i];
-      //   console.log(tag, 'pubkey: ', pubkey);
+      //   //console.log(tag, 'pubkey: ', pubkey);
       //   //if eip155 in network name
       //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
       //   for (let j = 0; j < pubkey.networks.length; j++) {
@@ -727,11 +727,11 @@ export class SwapKitCore<T = ''> {
   transfer = async (params: CoreTxParams & { router?: string }) => {
     let tag = TAG + ' | transfer | ';
     try {
-      console.log(tag, 'params: ', params);
+      //console.log(tag, 'params: ', params);
       const walletInstance = this.connectedWallets[params.assetValue.chain];
       if (!walletInstance) throw new SwapKitError('core_wallet_connection_not_found');
       let transferParams = await this.#prepareTxParams(params);
-      console.log(tag, 'CORE transferParams: ', transferParams);
+      //console.log(tag, 'CORE transferParams: ', transferParams);
       return await walletInstance.transfer(transferParams);
     } catch (error) {
       //@ts-ignore
@@ -1084,7 +1084,7 @@ export class SwapKitCore<T = ''> {
   }) => {
     const tag = TAG + ' | EstimateMaxSendableAmount | ';
     try {
-      console.log(tag, 'Estimating max sendable amount for chain: ', chain);
+      //console.log(tag, 'Estimating max sendable amount for chain: ', chain);
       const walletMethods = this.getWallet<typeof chain>(chain);
       if (!walletMethods) throw Error('Failed to getWallet for chain: ' + chain);
       switch (chain) {
@@ -1096,20 +1096,20 @@ export class SwapKitCore<T = ''> {
         case Chain.Optimism:
         case Chain.Polygon: {
           const { estimateMaxSendableAmount } = await import('@coinmasters/toolbox-evm');
-          console.log(
-            tag,
-            ` Estimating max sendable amount for EVM chain ${chain} with params:`,
-            params,
-          );
+          //console.log(
+          //   tag,
+          //   ` Estimating max sendable amount for EVM chain ${chain} with params:`,
+          //   params,
+          // );
           //set from address
           if (!params.from) params.from = walletMethods.getAddress();
           if (!params.from) throw new Error('From address not found for wallet: ' + chain);
-          console.log(tag, 'params.from: ', params.from);
+          //console.log(tag, 'params.from: ', params.from);
           const result = await estimateMaxSendableAmount({
             ...params,
             toolbox: walletMethods as EVMToolbox,
           });
-          console.log(`${TAG} Estimated max sendable amount for EVM chain ${chain}:`, result);
+          //console.log.log(`${TAG} Estimated max sendable amount for EVM chain ${chain}:`, result);
           return result;
         }
 
@@ -1119,14 +1119,14 @@ export class SwapKitCore<T = ''> {
         case Chain.Dash:
         case Chain.Zcash:
         case Chain.Litecoin: {
-          console.log(
-            `${TAG} Estimating max sendable amount for UTXO chain ${chain} with params:`,
-            params,
-          );
+          // console.log(
+          //   `${TAG} Estimating max sendable amount for UTXO chain ${chain} with params:`,
+          //   params,
+          // );
           if (!walletMethods) throw new Error('Wallet methods not found');
-          console.log(tag, 'walletMethods', walletMethods);
+          //console.log.log(tag, 'walletMethods', walletMethods);
           const result = await (walletMethods as any).estimateMaxSendableAmount(params);
-          console.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);
+          //console.log.log(`${TAG} Estimated max sendable amount for UTXO chain ${chain}:`, result);
           return result;
         }
 

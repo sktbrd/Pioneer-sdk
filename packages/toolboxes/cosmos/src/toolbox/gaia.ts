@@ -12,7 +12,7 @@ import { BaseCosmosToolbox, getFeeRateFromThorswap } from './BaseCosmosToolbox.t
 export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxType => {
   console.time('CosmosClient instantiation');
   const clientStartTime = new Date().toISOString();
-  console.log(`CosmosClient instantiation start: ${clientStartTime}`);
+  //console.log(`CosmosClient instantiation start: ${clientStartTime}`);
 
   const client = new CosmosClient({
     server: server || ApiUrl.Cosmos,
@@ -20,7 +20,7 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
   });
 
   const clientEndTime = new Date().toISOString();
-  console.log(`CosmosClient instantiation end: ${clientEndTime}`);
+  //console.log(`CosmosClient instantiation end: ${clientEndTime}`);
   console.timeEnd('CosmosClient instantiation');
 
   const baseToolbox: {
@@ -41,12 +41,12 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
   const getFees = async () => {
     console.time('getFees');
     const startTime = new Date().toISOString();
-    console.log(`getFees start: ${startTime}`);
+    //console.log(`getFees start: ${startTime}`);
 
     const baseFee = (await getFeeRateFromThorswap(ChainId.Cosmos)) || 500;
 
     const endTime = new Date().toISOString();
-    console.log(`getFees end: ${endTime}`);
+    //console.log(`getFees end: ${endTime}`);
     console.timeEnd('getFees');
 
     return {
@@ -60,7 +60,7 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
   const transfer = async (params: TransferParams) => {
     console.time('transfer');
     const startTime = new Date().toISOString();
-    console.log(`transfer start: ${startTime}`);
+    //console.log(`transfer start: ${startTime}`);
 
     const gasFees = await getFees();
 
@@ -78,7 +78,7 @@ export const GaiaToolbox = ({ server }: { server?: string } = {}): GaiaToolboxTy
     });
 
     const endTime = new Date().toISOString();
-    console.log(`transfer end: ${endTime}`);
+    //console.log(`transfer end: ${endTime}`);
     console.timeEnd('transfer');
 
     return result;

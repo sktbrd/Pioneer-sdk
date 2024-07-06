@@ -90,14 +90,14 @@ export const BaseCosmosToolbox = ({
   getBalance: async (pubkeys: any) => {
     let tag = TAG + ' | getBalance | ';
     try {
-      console.log(tag, 'pubkeys: ', pubkeys);
+      //console.log(tag, 'pubkeys: ', pubkeys);
       let address;
       if (Array.isArray(pubkeys)) {
         address = pubkeys[0].address;
       } else {
         address = pubkeys.address;
       }
-      console.log(tag, 'address: ', address);
+      //console.log(tag, 'address: ', address);
       const balance = await cosmosClient.getBalance(address);
 
       return balance;
@@ -109,8 +109,8 @@ export const BaseCosmosToolbox = ({
       //     .map(async ({ denom, amount }) => {
       //       try {
       //         let balance = await getAssetFromDenom(denom, amount);
-      //         console.log(tag, 'balance: ', balance);
-      //         console.log(tag, 'chain: ', chain);
+      //         //console.log(tag, 'balance: ', balance);
+      //         //console.log(tag, 'chain: ', chain);
       //         balance.caip = ChainToCaip[chain];
       //         return balance;
       //       } catch (error) {

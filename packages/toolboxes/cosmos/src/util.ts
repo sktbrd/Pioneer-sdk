@@ -74,14 +74,14 @@ export const estimateMaxSendableAmount = async ({
 }: CosmosMaxSendableAmountParams): Promise<AssetValue> => {
   let tag = TAG + ' | estimateMaxSendableAmount | ';
   try {
-    console.log(tag, 'pubkeys: ', pubkeys);
+    //console.log(tag, 'pubkeys: ', pubkeys);
     if (!pubkeys || pubkeys.length === 0) throw new Error('No pubkeys provided');
 
     // console.log(tag, 'assetEntity: ', assetEntity);
-    console.log(tag, 'from: ', from);
+    //console.log(tag, 'from: ', from);
     // Retrieve balances for the account
     const balance: any = await toolbox.getBalance(pubkeys[0]);
-    console.log(tag, 'balance: ', balance);
+    //console.log(tag, 'balance: ', balance);
 
     //TODO  Retrieve fees
     // const fees = await toolbox.getFees();

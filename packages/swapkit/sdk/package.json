@@ -16,7 +16,7 @@
     "@coinmasters/wallet-trezor": "workspace:*",
     "@coinmasters/wallet-wc": "workspace:*",
     "@coinmasters/wallet-xdefi": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.10"
+    "@pioneer-platform/helpers": "^4.0.11"
   },
   "description": "SwapKit Lib swapkit-sdk",
   "devDependencies": {

@@ -404,7 +404,7 @@ const sendTransaction = async (
   //console.log("TOOLBOX: checkpoint: ")
   if (!signer) throw new Error('Signer is not defined');
   const { from, to, data, value, ...transaction } = tx;
-  console.log('TOOLBOX: tx: ', tx);
+  //console.log('TOOLBOX: tx: ', tx);
   if (!to) throw new Error('No to address provided');
 
   const parsedTxObject = {
@@ -462,7 +462,7 @@ const sendTransaction = async (
   }
 
   try {
-    console.log('TOOLBOX: checkpoint: parsedTxObject: ', parsedTxObject);
+    //console.log('TOOLBOX: checkpoint: parsedTxObject: ', parsedTxObject);
 
     const txObject: any = {
       ...parsedTxObject,
@@ -473,14 +473,14 @@ const sendTransaction = async (
       ...feeData,
     };
     if(isEIP1559) delete txObject.gasPrice;
-    console.log('TOOLBOX: txObject: ', txObject);
+    //console.log('TOOLBOX: txObject: ', txObject);
     try {
       const response = await signer.sendTransaction(txObject);
       //console.log("TOOLBOX: response: ",response)
       return typeof response?.hash === 'string' ? response.hash : response;
     } catch (error) {
       //
-      console.log('TOOLBOX: sendTransaction failed, doing manual sign/broadcast: ', error);
+      //console.log('TOOLBOX: sendTransaction failed, doing manual sign/broadcast: ', error);
       const txHex = await signer.signTransaction({
         ...txObject,
         from: address,

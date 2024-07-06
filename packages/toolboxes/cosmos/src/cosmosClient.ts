@@ -55,15 +55,15 @@ export class CosmosClient {
   getBalance = async (address: string) => {
     let tag = TAG + ' | getBalance | ';
     try {
-      console.log(tag, 'getBalance: ', address);
+      //console.log(tag, 'getBalance: ', address);
 
       const response = await fetch(`${this.rpcUrl}/api/v1/account/${address}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch balances: ${response.statusText}`);
       }
       const balancesCosmos = await response.json();
-      console.log(tag, 'balancesCosmos: ', balancesCosmos);
-      console.log(tag, 'balancesCosmos: ', balancesCosmos.balance);
+      //console.log(tag, 'balancesCosmos: ', balancesCosmos);
+      //console.log(tag, 'balancesCosmos: ', balancesCosmos.balance);
 
       //to SafeValue
       let value = formatBigIntToSafeValue({
@@ -76,7 +76,7 @@ export class CosmosClient {
       let balanceCosmos = AssetValue.fromStringSync(identifier, value);
       balanceCosmos.caip = ChainToCaip['GAIA'];
       balanceCosmos.identifier = identifier;
-      console.log(tag, 'balanceCosmos: ', balanceCosmos);
+      //console.log(tag, 'balanceCosmos: ', balanceCosmos);
 
       return balanceCosmos;
     } catch (error) {
@@ -104,9 +104,9 @@ export class CosmosClient {
   broadcast = async (tx: string) => {
     const tag = `${TAG} | broadcast | `;
     try {
-      console.log('tx: ', tx);
+      //console.log('tx: ', tx);
       const body = { rawTx: tx };
-      console.log('body: ', body);
+      //console.log('body: ', body);
       let broadcast = {
         network: 'cosmos',
         serialized: tx,
@@ -120,13 +120,13 @@ export class CosmosClient {
         },
         body: JSON.stringify(broadcast),
       });
-      console.log(tag, 'response: ', response);
+      //console.log(tag, 'response: ', response);
       if (!response.ok) {
         throw new Error(`Failed to broadcast transaction: ${response.statusText}`);
       }
 
       const cosmosInfo = await response.json();
-      console.log(tag, 'cosmosInfo: ', cosmosInfo);
+      //console.log(tag, 'cosmosInfo: ', cosmosInfo);
       return cosmosInfo.txid;
     } catch (e) {
       console.error(tag, e);

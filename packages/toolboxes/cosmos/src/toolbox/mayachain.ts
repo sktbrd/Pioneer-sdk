@@ -32,14 +32,14 @@ const getBalance = async (pubkey: any) => {
     }
 
     const balancesEndpoint = `${PIONEER_API_URI}/api/v1/ibc/balances/mayachain/${address}`;
-    console.log(tag, 'URL:', balancesEndpoint);
+    //console.log(tag, 'URL:', balancesEndpoint);
 
     const response = await fetch(balancesEndpoint);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const balances = await response.json();
-    console.log(tag, 'Balances raw:', balances);
+    //console.log(tag, 'Balances raw:', balances);
 
     await AssetValue.loadStaticAssets();
     for (let i = 0; i < balances.length; i++) {
@@ -58,7 +58,7 @@ const getBalance = async (pubkey: any) => {
     //   return assetValue;
     // });
 
-    console.log(tag, 'Balances final:', balances);
+    //console.log(tag, 'Balances final:', balances);
     return balances[0];
   } catch (e) {
     console.error('Error fetching balances:', e);

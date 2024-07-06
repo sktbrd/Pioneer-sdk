@@ -223,7 +223,7 @@ const test_service = async function (this: any) {
         //user selects route
         for(let i = 0; i < result?.length; i++){
             let route = result[i]
-            console.log("route: ", route)
+            //console.log("route: ", route)
             //detect if erroed
             if(route.integration === 'thorswap'){
                 selected = route.quote.route
@@ -261,7 +261,7 @@ const test_service = async function (this: any) {
 
         //verify PRO
 
-        console.log("************************* TEST PASS *************************")
+        //console.log("************************* TEST PASS *************************")
     } catch (e) {
         log.error(e)
         //process

@@ -60,7 +60,7 @@ const getSuggestedTxFee = async (chain: Chain) => {
       numBlocks: number;
       feeByBlockTarget: { 1: number; 3: number };
     }>(`https://app.bitgo.com/api/v2/${chain.toLowerCase()}/tx/fee`);
-    console.log("BITGO: feePerKb: ", feePerKb);
+    //console.log("BITGO: feePerKb: ", feePerKb);
     const suggestedFee = feePerKb / 1000;
     return Math.max(suggestedFee, getDefaultTxFeeByChain(chain));
   } catch (error) {
@@ -120,13 +120,13 @@ const getUnconfirmedBalance = async ({
 const getXpubData = async ({ pubkey, chain }: BlockchairParams<{ address?: string }>) => {
   try {
     if (!pubkey) throw new Error('pubkey is required');
-    console.log('pubkey: ', pubkey);
-    console.log('chain: ', chain);
+    //console.log('pubkey: ', pubkey);
+    //console.log('chain: ', chain);
     const url = `/utxo/getBalance/${chain}/${pubkey}`;
     //console.log('getXpubData URL: ', url);
     //const response = await blockchairRequest<any>(`${baseUrlPioneer()}${url}`);
     let response = await RequestClient.get<any>(`${baseUrlPioneer()}${url}`);
-    console.log('getXpubData: response: ', response);
+    //console.log('getXpubData: response: ', response);
     if (!response) {
       response = 0;
     }

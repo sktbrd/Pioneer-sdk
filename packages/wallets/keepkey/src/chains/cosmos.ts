@@ -69,7 +69,7 @@ export const cosmosWalletMethods: any = async ({ sdk, api }: { sdk: KeepKeySdk; 
     // Function to broadcast the transaction
     const broadcastTransaction = async (serializedTx: string) => {
       console.time('broadcastTransaction');
-      console.log(tag, 'serializedTx: ', serializedTx);
+      //console.log(tag, 'serializedTx: ', serializedTx);
       const response = await toolbox.broadcast(serializedTx);
       console.timeEnd('broadcastTransaction');
       return response;

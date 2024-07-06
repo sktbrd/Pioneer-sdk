@@ -336,7 +336,7 @@ export class DB {
           request.onerror = () => {
             // If error is due to a duplicate entry, resolve true, else rethrow or handle the error
             if (request.error && request.error.name === 'ConstraintError') {
-              console.log('Duplicate pubkey, not added.');
+              //console.log('Duplicate pubkey, not added.');
               resolve(true); // Resolve true indicating pubkey already exists
             } else {
               console.error('Error adding pubkey:', request.error);
@@ -390,7 +390,7 @@ export class DB {
           request.onerror = () => {
             // If error is due to a duplicate entry, resolve true, else rethrow or handle the error
             if (request.error && request.error.name === 'ConstraintError') {
-              console.log('Duplicate pubkey, not added.');
+              //console.log('Duplicate pubkey, not added.');
               resolve(true); // Resolve true indicating pubkey already exists
             } else {
               console.error('Error adding pubkey:', request.error);
@@ -445,7 +445,7 @@ export class DB {
           request.onerror = () => {
             // If error is due to a duplicate entry, resolve true, else rethrow or handle the error
             if (request.error && request.error.name === 'ConstraintError') {
-              console.log('Duplicate pubkey, not added.');
+              //console.log('Duplicate pubkey, not added.');
               resolve(true); // Resolve true indicating pubkey already exists
             } else {
               console.error('Error adding pubkey:', request.error);

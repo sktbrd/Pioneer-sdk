@@ -68,7 +68,7 @@ export interface PioneerProps
 }
 
 export function Pioneer({ children, usePioneer }: any): JSX.Element {
-  const { state, hideModal, resetState } = usePioneer();
+  const { state, hideModal, resetState, connectWallet } = usePioneer();
   const { api, app, balances, context, openModal } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isWalletPaired, setIsWalletPaired] = useState(false);
@@ -140,6 +140,10 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
       console.log('onStart');
       if (app && app.wallets) {
         setWalletsAvailable(app.wallets);
+        //find last connected wallet
+
+        //if keepkey available, use keepkey
+        connectWallet('KEEPKEY')
       }
       if (app && app.isPioneer) {
         console.log('app.isPioneer: ', app.isPioneer);
@@ -351,6 +355,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
                       <AvatarGroup size="2xs" max={4}>
                         {app?.blockchains.slice(0, 4).map((chain: any, index: any) => {
                           const chainKey = NetworkIdToChain[chain];
+                          //@ts-ignore
                           const imageUrl = `https://pioneers.dev/coins/${COIN_MAP_LONG[chainKey] || 'pioneer'}.png`;
                           return (
                             <Avatar

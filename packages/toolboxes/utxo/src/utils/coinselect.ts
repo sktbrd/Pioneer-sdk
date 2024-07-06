@@ -40,9 +40,9 @@ export const accumulative = ({
       : UTXOScriptType.P2PKH;
 
   // skip input if adding it would cost more than input is worth
-  console.log('feeRate: ', feeRate);
+  //console.log('feeRate: ', feeRate);
   const filteredInputs = inputs.filter((input) => getInputSize(input) * feeRate <= input.value);
-  console.log('filteredInputs: ', filteredInputs);
+  //console.log('filteredInputs: ', filteredInputs);
 
   const txSizeWithoutInputs =
     TX_OVERHEAD + outputs.reduce((total, output) => total + getOutputSize(output, newTxType), 0);

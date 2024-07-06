@@ -254,9 +254,9 @@ const connectKeepkey =
     console.time('Total connectKeepkey time');
 
     // Debug start
-    console.time('checkAndLaunch');
+    // console.time('checkAndLaunch');
     await checkAndLaunch();
-    console.timeEnd('checkAndLaunch');
+    // console.timeEnd('checkAndLaunch');
 
     if (!paths) paths = [];
 
@@ -270,9 +270,9 @@ const connectKeepkey =
       if (!chain) return;
 
       const chainLogLabel = `Chain ${chain} processing time`;
-      console.time(chainLogLabel);
-
-      console.time(`getToolbox for ${chain}`);
+      // console.time(chainLogLabel);
+      //
+      // console.time(`getToolbox for ${chain}`);
       const { address, walletMethods } = await getToolbox({
         sdk: keepKeySdk,
         apiClient: apis[chain],
@@ -283,9 +283,9 @@ const connectKeepkey =
         utxoApiKey,
         paths,
       });
-      console.timeEnd(`getToolbox for ${chain}`);
+      // console.timeEnd(`getToolbox for ${chain}`);
 
-      console.time(`addChain for ${chain}`);
+      // console.time(`addChain for ${chain}`);
       addChain({
         chain,
         info: features,
@@ -293,15 +293,15 @@ const connectKeepkey =
         wallet: { address, balance: [], walletType: WalletOption.KEEPKEY },
         keepkeySdk: keepKeySdk,
       });
-      console.timeEnd(`addChain for ${chain}`);
+      // console.timeEnd(`addChain for ${chain}`);
 
-      console.timeEnd(chainLogLabel);
+      // console.timeEnd(chainLogLabel);
     });
 
     // Wait for all the promises to resolve
-    console.time('Promise.all(chainPromises)');
+    // console.time('Promise.all(chainPromises)');
     await Promise.all(chainPromises);
-    console.timeEnd('Promise.all(chainPromises)');
+    // console.timeEnd('Promise.all(chainPromises)');
 
     console.timeEnd('Total connectKeepkey time');
 

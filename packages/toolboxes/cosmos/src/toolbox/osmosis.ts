@@ -10,7 +10,7 @@ const TAG = ' | osmosis-toolbox | ';
 const getAccount = async (address: string): Promise<any> => {
   let tag = TAG + ' | getAccount | ';
   try {
-    console.log(tag, 'address: ', address);
+    //console.log(tag, 'address: ', address);
     const url = `${PIONEER_API_URI}/api/v1/getAccountInfo/osmosis/${address}`;
     const response = await fetch(url);
     if (!response.ok) {
@@ -35,7 +35,7 @@ const getAccount = async (address: string): Promise<any> => {
 const getBalance = async (pubkey: any) => {
   let tag = TAG + ' | getBalance | ';
   try {
-    console.log(tag, 'pubkey: ', pubkey);
+    //console.log(tag, 'pubkey: ', pubkey);
     let address;
     if (Array.isArray(pubkey)) {
       address = pubkey[0].address;
@@ -56,7 +56,7 @@ const getBalance = async (pubkey: any) => {
     }
 
     const balancesOsmo = await response.json();
-    console.log('balancesOsmo: ', balancesOsmo);
+    //console.log('balancesOsmo: ', balancesOsmo);
     let balanceOsmo: any;
     await AssetValue.loadStaticAssets();
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -169,7 +169,7 @@ const sendRawTransaction = async (tx, sync = true) => {
 
     // Define the URL for broadcasting transactions
     let urlRemote = `${RPCUrl.Osmosis}/cosmos/tx/v1beta1/txs`;
-    console.log(tag, 'urlRemote: ', urlRemote);
+    //console.log(tag, 'urlRemote: ', urlRemote);
 
     // Sending the transaction using fetch
     let response = await fetch(urlRemote, {
@@ -185,7 +185,7 @@ const sendRawTransaction = async (tx, sync = true) => {
     }
 
     let result = await response.json();
-    console.log(tag, '** Broadcast ** REMOTE: result: ', result);
+    //console.log(tag, '** Broadcast ** REMOTE: result: ', result);
 
     // Handle the response
     if (result.tx_response.txhash) {

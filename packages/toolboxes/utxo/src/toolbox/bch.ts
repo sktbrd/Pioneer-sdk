@@ -176,11 +176,11 @@ const buildTx = async ({
     if (!validateAddress(recipientCashAddress)) throw new Error('Invalid address');
 
     let utxos = [];
-    console.log(tag, 'pubkeys: ', pubkeys);
+    //console.log(tag, 'pubkeys: ', pubkeys);
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < pubkeys.length; i++) {
       const pubkey = pubkeys[i];
-      console.log(tag, 'pubkey: ', pubkey);
+      //console.log(tag, 'pubkey: ', pubkey);
       if (!pubkey.xpub) throw new Error('Invalid xpub');
       // Get UTXOs for the current pubkey
       //@ts-ignore
@@ -251,17 +251,17 @@ const buildTx = async ({
 
     let inputs: any[], outputs: any[];
     if (isMax) {
-      console.log(tag, 'isMax: detected!');
-      console.log(tag, 'targetOutputs: ', targetOutputs);
+      //console.log(tag, 'isMax: detected!');
+      //console.log(tag, 'targetOutputs: ', targetOutputs);
       targetOutputs = targetOutputs.map((output) => {
         const newOutput = { ...output };
         delete newOutput.value;
         return newOutput;
       });
-      console.log(tag, 'targetOutputs: ', targetOutputs);
+      //console.log(tag, 'targetOutputs: ', targetOutputs);
       ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
     } else {
-      console.log(tag, 'isMax: not detected!');
+      //console.log(tag, 'isMax: not detected!');
       ({ inputs, outputs } = coinSelect.default(utxos, targetOutputs, feeRate));
     }
 
@@ -394,8 +394,8 @@ const buildTx = async ({
 //
 //   let inputs: any[], outputs: any[];
 //   if (isMax) {
-//     console.log('isMax: detected!');
-//     console.log('targetOutputs: ', targetOutputs);
+//     //console.log('isMax: detected!');
+//     //console.log('targetOutputs: ', targetOutputs);
 //     targetOutputs = targetOutputs
 //       // .filter((output) => output.address !== undefined)
 //       .map((output) => {
@@ -403,10 +403,10 @@ const buildTx = async ({
 //         delete newOutput.value;
 //         return newOutput;
 //       });
-//     console.log('targetOutputs: ', targetOutputs);
+//     //console.log('targetOutputs: ', targetOutputs);
 //     ({ inputs, outputs } = split.default(utxos, targetOutputs, feeRate));
 //   } else {
-//     console.log('isMax: not detected!');
+//     //console.log('isMax: not detected!');
 //     //const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
 //     //({ inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain }));
 //

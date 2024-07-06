@@ -179,7 +179,7 @@ const test_service = async function (this: any) {
 
         // create assetValue
         const assetString = `DOGE.DOGE`;
-        console.log('assetString: ', assetString);
+        //console.log('assetString: ', assetString);
 
         const assetValue = AssetValue.fromStringSync(assetString, parseFloat(TEST_AMOUNT));
         log.info("assetValue: ",assetValue)
@@ -196,9 +196,9 @@ const test_service = async function (this: any) {
         }
         log.info("paramsLP: ",paramsLP)
         const { runeTx, assetTx } = await app?.swapKit.createLiquidity(paramsLP);
-        console.log("paramsLP: ",paramsLP)
-        console.log("runeTx: ",runeTx)
-        console.log("assetTx: ",assetTx)
+        //console.log("paramsLP: ",paramsLP)
+        //console.log("runeTx: ",runeTx)
+        //console.log("assetTx: ",assetTx)
 
         //send
         // const txHash = await app?.swapKit.swap({
@@ -214,7 +214,7 @@ const test_service = async function (this: any) {
         //TODO check balance
 
 
-        console.log("************************* TEST PASS *************************")
+        //console.log("************************* TEST PASS *************************")
     } catch (e) {
         log.error(e)
         //process

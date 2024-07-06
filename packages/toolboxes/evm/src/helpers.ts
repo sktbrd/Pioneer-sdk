@@ -176,17 +176,17 @@ export const estimateMaxSendableAmount = async function ({
 }: EVMMaxSendableAmountsParams) {
   let tag = TAG + ' | estimateMaxSendableAmount | ';
   try {
-    console.log(tag, 'checkpoint ');
-    console.log(tag, 'from: ', from);
-    console.log(tag, 'caip: ', caip);
+    //console.log(tag, 'checkpoint ');
+    //console.log(tag, 'from: ', from);
+    //console.log(tag, 'caip: ', caip);
     if (!from) throw new Error('Missing from address');
     if (!caip) throw new Error('Missing caip');
     const balanceData = await toolbox.getBalance({ address: from });
     if (!balanceData) return 0;
-    console.log(tag, 'balanceData: ', balanceData);
+    //console.log(tag, 'balanceData: ', balanceData);
 
     //caip is the chain address identifier protocol
-    console.log(tag, 'caip: ', caip);
+    //console.log(tag, 'caip: ', caip);
 
     //if token, then return token balance
     let isNative = function (caip: string): boolean {
@@ -196,14 +196,14 @@ export const estimateMaxSendableAmount = async function ({
     let native = isNative(caip);
     if (native) {
       // const balance = balanceData.find
-      console.log(tag, 'Native detected!');
+      //console.log(tag, 'Native detected!');
     } else {
-      console.log(tag, 'Token detected!');
+      //console.log(tag, 'Token detected!');
     }
     //if native asset then return gasToken balance
 
     const fees = (await toolbox.estimateGasPrices())[feeOptionKey];
-    console.log(tag, 'fees: ', fees);
+    //console.log(tag, 'fees: ', fees);
 
     //TODO this makes no sense to me. If you are sending native token, its not a smart contract fee
     //and if you are sending a token the fee amount of the gass asset has nothing to do with the token max sendable amount
@@ -383,7 +383,7 @@ export const getBalance = async ({
 }) => {
   let tag = TAG + ' | getBalance | ';
   try {
-    console.log(tag, 'pubkey: ', pubkey);
+    //console.log(tag, 'pubkey: ', pubkey);
 
     let address;
     if (Array.isArray(pubkey)) {
@@ -392,7 +392,7 @@ export const getBalance = async ({
       address = pubkey.address;
     }
 
-    console.log(tag, 'EVM toolbox getBalance: ', address);
+    //console.log(tag, 'EVM toolbox getBalance: ', address);
 
     // const tokenBalances = await api.getBalance(pubkey.address).catch((e) => {
     //   console.error(`Error fetching token balances for address ${pubkey.address}:`, e);
@@ -404,18 +404,18 @@ export const getBalance = async ({
       return BigInt(0); // Return 0 on failure
     });
 
-    console.log(tag, 'chain: ', chain);
-    console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance.toString());
+    //console.log(tag, 'chain: ', chain);
+    //console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance.toString());
     let safeValue = formatBigIntToSafeValue({
       value: evmGasTokenBalance,
       decimal: BaseDecimal[chain] || 18,
     });
-    console.log('safeValue: ', safeValue);
+    //console.log('safeValue: ', safeValue);
     //@ts-ignore
     let gasTokenBalance = AssetValue.fromChainOrSignature(chain, safeValue);
     gasTokenBalance.isGasAsset = true; // Marking it as gas asset
     gasTokenBalance.caip = ChainToCaip[chain];
-    console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
+    //console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
 
     // let balances: any = [];
     // balances.push(gasTokenBalance);
@@ -426,12 +426,12 @@ export const getBalance = async ({
     //   let tokenBalance = tokenBalances[i];
     //   if (tokenBalance.symbol && tokenBalance.chain && tokenBalance.chain === chain) {
     //     try {
-    //       console.log(tag, 'tokenBalance: ', tokenBalance);
+    //       //console.log(tag, 'tokenBalance: ', tokenBalance);
     //       let tokenString = `${tokenBalance.chain}.${tokenBalance.symbol.toUpperCase()}`;
-    //       console.log(tag, 'tokenString: ', tokenString);
-    //       console.log(tag, 'tokenBalance.value: ', tokenBalance.value);
+    //       //console.log(tag, 'tokenString: ', tokenString);
+    //       //console.log(tag, 'tokenBalance.value: ', tokenBalance.value);
     //       if (tokenString.includes('HTTPS://')) {
-    //         console.log('Spam detected: ', tokenString);
+    //         //console.log('Spam detected: ', tokenString);
     //       } else {
     //         let formattedBalance = AssetValue.fromIdentifierSync(
     //           //@ts-ignore
@@ -449,7 +449,7 @@ export const getBalance = async ({
     //       console.error(`Error formatting balance for token ${tokenBalance.symbol}:`, error);
     //     }
     //   } else {
-    //     console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
+    //     //console.log('Mismatched chain or missing token data:', { chain, tokenBalance });
     //   }
     // }
     //

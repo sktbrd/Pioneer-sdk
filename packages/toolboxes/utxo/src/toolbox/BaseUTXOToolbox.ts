@@ -123,15 +123,15 @@ const getPubkeyBalance = async function (
 ) {
   let tag = TAG + ' | getPubkeyBalance | ';
   try {
-    console.log(tag, 'getPubkeyBalance pubkey: ', pubkey);
-    console.log(tag, 'getPubkeyBalance type: ', type);
+    //console.log(tag, 'getPubkeyBalance pubkey: ', pubkey);
+    //console.log(tag, 'getPubkeyBalance type: ', type);
     switch (type) {
       case 'zpub':
       case 'ypub':
       case 'xpub':
         // eslint-disable-next-line no-case-declarations
         const xpubBalance = await apiClient.getBalanceXpub(pubkey);
-        console.log(tag, ' xpubBalance: ', xpubBalance);
+        //console.log(tag, ' xpubBalance: ', xpubBalance);
         return xpubBalance;
       case 'address':
         // eslint-disable-next-line no-case-declarations
@@ -139,7 +139,7 @@ const getPubkeyBalance = async function (
         //console.log('getPubkeyBalance address: ', address);
         // eslint-disable-next-line no-case-declarations
         const addressBalance = await apiClient.getBalance(address);
-        console.log(tag, ' addressBalance: ', addressBalance);
+        //console.log(tag, ' addressBalance: ', addressBalance);
         //console.log('getPubkeyBalance: addressBalance: ', addressBalance);
         return addressBalance;
       default:
@@ -157,22 +157,22 @@ const getBalance = async ({ pubkey, chain, apiClient }: any) => {
       throw new Error('pubkey must be an array');
     }
 
-    console.log(tag, 'chain: ', chain);
-    console.log(tag, 'pubkeys: ', pubkey);
+    //console.log(tag, 'chain: ', chain);
+    //console.log(tag, 'pubkeys: ', pubkey);
 
     let totalBalanceRaw = BigInt(0);
 
     for (const key of pubkey) {
       const balanceRaw = await getPubkeyBalance(key.pubkey, key.type, apiClient);
-      console.log(tag, `(${key.note}: (${key.path}) balance for ${key.pubkey}: `, balanceRaw);
+      //console.log(tag, `(${key.note}: (${key.path}) balance for ${key.pubkey}: `, balanceRaw);
       totalBalanceRaw += BigInt(balanceRaw);
     }
-    console.log(tag, 'totalBalanceRaw: ', totalBalanceRaw);
+    //console.log(tag, 'totalBalanceRaw: ', totalBalanceRaw);
 
     const asset = await AssetValue.fromChainOrSignature(chain, totalBalanceRaw);
     asset.caip = ChainToCaip[chain];
     if (!asset.caip) throw new Error('Invalid chain! missing caip! ');
-    console.log('BaseUTXO asset: ', asset);
+    //console.log('BaseUTXO asset: ', asset);
 
     asset.pubkeys = pubkey.map((key) => key.pubkey).join(','); // combining all pubkeys for reference
 
@@ -190,15 +190,15 @@ const getBalance = async ({ pubkey, chain, apiClient }: any) => {
 //       pubkey = pubkey[0];
 //     }
 //
-//     console.log(tag, 'chain: ', chain);
-//     console.log(tag, 'pubkey: ', pubkey);
+//     //console.log(tag, 'chain: ', chain);
+//     //console.log(tag, 'pubkey: ', pubkey);
 //     let balanceRaw = await getPubkeyBalance(pubkey.pubkey, pubkey.type, apiClient);
-//     console.log(tag, 'balanceRaw: ', balanceRaw);
+//     //console.log(tag, 'balanceRaw: ', balanceRaw);
 //
 //     const asset = await AssetValue.fromChainOrSignature(chain, BigInt(balanceRaw));
 //     asset.caip = ChainToCaip[chain];
 //     if (!asset.caip) throw new Error('Invalid chain! missing caip! ');
-//     console.log('BaseUTXO asset: ', asset);
+//     //console.log('BaseUTXO asset: ', asset);
 //     asset.pubkey = pubkey.pubkey;
 //
 //     return asset;
@@ -211,7 +211,7 @@ const getBalance = async ({ pubkey, chain, apiClient }: any) => {
 // const getBalance = async ({ pubkeys, chain, apiClient }: { pubkeys: any[] } & any) => {
 //   const tag = TAG + ' getBalance';
 //   try {
-//     console.log(tag, 'pubkeys: ', pubkeys);
+//     //console.log(tag, 'pubkeys: ', pubkeys);
 //
 //     // Legacy support
 //     if (typeof pubkeys === 'string') {
@@ -231,19 +231,19 @@ const getBalance = async ({ pubkey, chain, apiClient }: any) => {
 //       }
 //
 //       let balance = await getPubkeyBalance(pubkey, type, apiClient);
-//       console.log(tag, 'PRE BaseUTXO getPubkeyBalance balance: ', balance);
+//       //console.log(tag, 'PRE BaseUTXO getPubkeyBalance balance: ', balance);
 //
 //       if (typeof balance === 'object') balance = 0;
-//       console.log(tag, 'POST BaseUTXO getPubkeyBalance balance: ', balance);
+//       //console.log(tag, 'POST BaseUTXO getPubkeyBalance balance: ', balance);
 //
 //       totalBalance += balance;
 //     }
 //
 //     totalBalance = totalBalance / 100000000;
-//     console.log(tag, `BaseUTXO totalBalance:`, totalBalance);
+//     //console.log(tag, `BaseUTXO totalBalance:`, totalBalance);
 //
 //     const asset = await AssetValue.fromChainOrSignature(chain, totalBalance);
-//     console.log(tag, 'BaseUTXO asset: ', asset);
+//     //console.log(tag, 'BaseUTXO asset: ', asset);
 //
 //     return [asset];
 //   } catch (error) {

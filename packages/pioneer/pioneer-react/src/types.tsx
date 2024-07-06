@@ -10,6 +10,7 @@ export enum WalletActions {
   SET_INTENT = 'SET_INTENT',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_ASSETS = 'SET_ASSETS',
+  SET_NFTS = 'SET_NFTS',
   SET_BLOCKCHAIN_CONTEXT = 'SET_BLOCKCHAIN_CONTEXT',
   SET_PUBKEY_CONTEXT = 'SET_PUBKEY_CONTEXT',
   SET_OUTBOUND_CONTEXT = 'SET_OUTBOUND_CONTEXT',
@@ -64,6 +65,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_CONTEXT; payload: string }
   | { type: WalletActions.SET_CONTEXT_TYPE; payload: string }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: string }
+  | { type: WalletActions.SET_NFTS; payload: any }
   | { type: WalletActions.SET_BLOCKCHAIN_CONTEXT; payload: string }
   | { type: WalletActions.SET_PUBKEY_CONTEXT; payload: string | null }
   | { type: WalletActions.SET_OUTBOUND_CONTEXT; payload: string | null }

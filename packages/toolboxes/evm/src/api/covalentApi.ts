@@ -51,7 +51,7 @@ export const covalentApi = ({ apiKey, chainId }: { apiKey: string; chainId: Chai
           contract_address,
           native_token,
         } = items[i];
-        console.log('item: ', items[i]);
+        //console.log('item: ', items[i]);
 
         const caip = thorchainToCaip(
           `${contract_ticker_symbol}${native_token ? '' : `-${contract_address}`}`,

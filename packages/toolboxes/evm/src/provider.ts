@@ -7,16 +7,16 @@ export const getProvider = (chain: EVMChain, customUrl?: string) => {
   let tag = TAG + ' | getProvider | ';
   try {
     const providerUrl = customUrl || ChainToRPC[chain];
-    console.log(tag, 'network', chain);
-    console.log(tag, 'network', chain);
-    console.log(tag, 'networkId: ', ChainToChainId[chain]);
-    console.log(tag, 'chainId: ', ChainToChainId[chain].replace('eip155:', ''));
-    console.log(tag, 'providerUrl: ', providerUrl);
+    //console.log(tag, 'network', chain);
+    //console.log(tag, 'network', chain);
+    //console.log(tag, 'networkId: ', ChainToChainId[chain]);
+    //console.log(tag, 'chainId: ', ChainToChainId[chain].replace('eip155:', ''));
+    //console.log(tag, 'providerUrl: ', providerUrl);
     if (!providerUrl) {
       throw new Error('No providerUrl found for chain: ' + chain);
     }
     const network = new Network(chain, ChainToChainId[chain].replace('eip155:', ''));
-    console.log('network', network);
+    //console.log('network', network);
     const provider = new JsonRpcProvider(providerUrl);
 
     provider._detectNetwork().catch((error) => {

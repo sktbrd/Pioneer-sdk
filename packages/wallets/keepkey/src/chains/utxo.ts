@@ -99,8 +99,8 @@ export const utxoWalletMethods = async ({
       address_n: bip32ToAddressNList(DerivationPath[chain]),
     };
     const addressInfo = customAddressInfo || defaultAddressInfo;
-    console.log(tag, 'addressInfo: ', addressInfo.coin);
-    console.log(tag, 'addressInfo: ', addressInfo.script_type);
+    //console.log(tag, 'addressInfo: ', addressInfo.coin);
+    //console.log(tag, 'addressInfo: ', addressInfo.script_type);
     const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
     return walletAddress as string;
   };
@@ -109,14 +109,14 @@ export const utxoWalletMethods = async ({
   const _getPubkeys = async (paths: any) => {
     let tag = TAG + ' | _getPubkeys | ';
     try {
-      console.log(tag, 'Checkpoint 1');
+      //console.log(tag, 'Checkpoint 1');
       if (!paths || !paths.length) return [];
       console.time('getPubkeys Duration' + chain); // Starts the timer
       let pubkeys = await Promise.all(
         paths.map(async (path: any) => {
           if (!path.addressNList) throw new Error('addressNList not found in path: FATAL');
           if (path.type === 'address') return;
-          console.log(tag, 'path: ', path.note);
+          //console.log(tag, 'path: ', path.note);
           // if (path.script_type === 'p2wpkh' && path.coin !== 'Bitcoin') return;
           // Marked as async to use await inside
           // Create the path query for public key retrieval
@@ -129,9 +129,9 @@ export const utxoWalletMethods = async ({
           };
 
           // Get the public key
-          console.log(tag, 'pathQuery: ', pathQuery);
+          //console.log(tag, 'pathQuery: ', pathQuery);
           const pubkeyResponse = await sdk.system.info.getPublicKey(pathQuery);
-          console.log(tag, 'pubkeyResponse: ', pubkeyResponse);
+          //console.log(tag, 'pubkeyResponse: ', pubkeyResponse);
           if (!pubkeyResponse) throw new Error('Failed to get response from keepkey: FATAL');
           if (!pubkeyResponse.xpub)
             throw new Error('Failed to get correct response from keepkey: FATAL');
@@ -144,7 +144,7 @@ export const utxoWalletMethods = async ({
           };
 
           // Get the master address
-          console.log(tag, 'addressInfo: ', addressInfo);
+          //console.log(tag, 'addressInfo: ', addressInfo);
           const addressMaster = await sdk.address.utxoGetAddress(addressInfo);
           /*
                NOTE: formatting xpub to ypub or zpub is required because Blockbook assumes paths based on encoding.
@@ -154,14 +154,14 @@ export const utxoWalletMethods = async ({
             //convert xpub to zpub
             pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'zpub');
             if (!pubkeyResponse.xpub) throw Error('Failed to format xpub to zpub: FATAL');
-            console.log(tag, 'converted to zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
+            //console.log(tag, 'converted to zpub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
           }
 
           if (path.script_type === 'p2sh-p2wpkh') {
             //convert xpub to ypub
             pubkeyResponse.xpub = xpubConvert(pubkeyResponse.xpub, 'ypub');
             if (!pubkeyResponse.xpub) throw Error('Failed to format xpub to ypub: FATAL');
-            console.log(tag, 'converted to ypub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
+            //console.log(tag, 'converted to ypub: pubkeyResponse.xpub: ', pubkeyResponse.xpub);
           }
 
           // Combine the original path object with the xpub and master from the responses
@@ -239,9 +239,9 @@ export const utxoWalletMethods = async ({
         locktime: 0,
         opReturnData: memo,
       };
-      console.log('signPayload: ', JSON.stringify(signPayload));
+      //console.log('signPayload: ', JSON.stringify(signPayload));
       const responseSign = await sdk.utxo.utxoSignTransaction(signPayload);
-      console.log('responseSign: ', responseSign);
+      //console.log('responseSign: ', responseSign);
       return responseSign.serializedTx;
     } catch (error: any) {
       console.error(error);
@@ -272,7 +272,7 @@ export const utxoWalletMethods = async ({
         fetchTxHex: chain,
       });
 
-      console.log(tag, 'rawInputs: ', rawInputs);
+      //console.log(tag, 'rawInputs: ', rawInputs);
 
       // Create a Set to track unique txid and index pairs
       const uniqueInputSet = new Set();
@@ -295,9 +295,9 @@ export const utxoWalletMethods = async ({
         hex: txHex || '',
       }));
 
-      console.log(tag, 'transfer inputs: ', inputs);
+      //console.log(tag, 'transfer inputs: ', inputs);
       const txHex = await signTransaction(psbt, inputs, memo);
-      console.log(tag, 'txHex: ', txHex);
+      //console.log(tag, 'txHex: ', txHex);
       return await toolbox.broadcastTx(txHex);
     } catch (error: any) {
       console.error('Transfer error:', error);

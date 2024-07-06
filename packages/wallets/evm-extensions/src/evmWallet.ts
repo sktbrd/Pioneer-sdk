@@ -16,13 +16,13 @@ const connectEVMWallet =
     const promises = chains.map(async (chain) => {
 
 
-      console.log("chain: ", chain)
+      //console.log("chain: ", chain)
       const { getWeb3WalletMethods } = await import('@coinmasters/toolbox-evm');
       const { BrowserProvider } = await import('ethers');
       const web3provider = new BrowserProvider(getWalletForType(walletType), 'any');
       await web3provider.send('eth_requestAccounts', []);
       const address = await (await web3provider.getSigner()).getAddress();
-      console.log("address: ", address)
+      //console.log("address: ", address)
 
       const walletMethods = await getWeb3WalletMethods({
         chain,

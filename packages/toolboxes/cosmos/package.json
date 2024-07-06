@@ -34,7 +34,7 @@
     "vitest": "0.34.6"
   },
   "peerDependencies": {
-    "@pioneer-platform/helpers": "latest"
+    "@pioneer-platform/helpers": "^4.0.11"
   },
   "eslintConfig": {
     "extends": "../../../internal/eslint-config"

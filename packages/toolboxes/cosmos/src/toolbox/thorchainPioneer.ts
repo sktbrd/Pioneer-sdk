@@ -22,14 +22,14 @@ const getAccount = async (address: string): Promise<any> => {
 const getBalance = async (pubkey: any, chain: string) => {
   let tag = TAG + ' | getBalance | ';
   try {
-    console.log(tag, 'pubkey: ', pubkey);
+    //console.log(tag, 'pubkey: ', pubkey);
     let address;
     if (Array.isArray(pubkey)) {
       address = pubkey[0].address;
     } else {
       address = pubkey.address;
     }
-    console.log(tag, 'address: ', address);
+    //console.log(tag, 'address: ', address);
 
     const url = `${PIONEER_API_URI}/api/v1/getPubkeyBalance/thorchain/${address}`;
     const response = await fetch(url);

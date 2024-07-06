@@ -81,7 +81,7 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
                                             memo = '',
                                           }: SignTransactionDepositParams) => {
       try {
-        console.log(' | signTransactionDeposit | asset: ', asset);
+        //console.log(' | signTransactionDeposit | asset: ', asset);
         const fromAddress = await getAddress();
         const accountInfo = await toolbox.getAccount(fromAddress);
         let account_number = accountInfo.result.value.account_number || '0';
@@ -115,10 +115,10 @@ export const thorchainWalletMethods: any = async ({ sdk }: { sdk: KeepKeySdk }) 
             ],
           },
         };
-        console.log('signPayload: ', signPayload);
-        console.log('signPayload: ', JSON.stringify(signPayload));
+        //console.log('signPayload: ', signPayload);
+        //console.log('signPayload: ', JSON.stringify(signPayload));
         const keepKeyResponse = await sdk.thorchain.thorchainSignAminoDeposit(signPayload);
-        console.log('keepKeyResponse: ', keepKeyResponse);
+        //console.log('keepKeyResponse: ', keepKeyResponse);
         let txid = await toolbox.sendRawTransaction(keepKeyResponse.serialized);
         return txid.txid;
       } catch (error: any) {

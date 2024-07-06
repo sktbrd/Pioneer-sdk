@@ -12,7 +12,7 @@ const baseUrlPioneer = () => `https://pioneers.dev/api/v1`;
 
 const broadcastTx = async (txHash: string) => {
   try {
-    console.log('broadcastTx: Initiating with txHash');
+    //console.log('broadcastTx: Initiating with txHash');
 
     const broadcastData = {
       network: 'DASH',

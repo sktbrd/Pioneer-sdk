@@ -94,9 +94,9 @@ const getWalletconnect = async (
     if (!walletConnectProjectId) {
       throw new Error('Error while setting up walletconnect connection: Project ID not specified');
     }
-    console.log('chains', chains);
+    //console.log('chains', chains);
     const requiredNamespaces = getRequiredNamespaces(chains.map(chainToChainId));
-    console.log('requiredNamespaces', requiredNamespaces);
+    //console.log('requiredNamespaces', requiredNamespaces);
 
     const { WalletConnectModalSign } = await import('@walletconnect/modal-sign-html');
 

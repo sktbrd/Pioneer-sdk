@@ -55,7 +55,14 @@ export class KeepKeySigner extends AbstractSigner {
   };
 
   signMessage = async (message: string) => {
-    const response = await this.sdk.eth.ethSign({ address: this.address, message });
+    const toHex = (str: string) =>
+      '0x' +
+      Array.from(str)
+        .map((c) => c.charCodeAt(0).toString(16).padStart(2, '0'))
+        .join('');
+
+    const hexMessage = toHex(message);
+    const response = await this.sdk.eth.ethSign({ address: this.address, message: hexMessage });
 
     return response as string;
   };

@@ -44,28 +44,28 @@ export const BASEToolbox = ({
         } else {
           address = pubkey.address;
         }
-        console.log(tag, 'address: ', address);
+        //console.log(tag, 'address: ', address);
 
 
         // const tokenBalances = await api.getBalance(address[0].address);
         // console.log('tokenBalances: ', tokenBalances);
         const evmGasTokenBalance = await provider.getBalance(address);
-        console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance);
+        //console.log(tag, 'evmGasTokenBalance: ', evmGasTokenBalance);
         let safeValue = formatBigIntToSafeValue({
           value: evmGasTokenBalance,
           decimal: BaseDecimal['BASE'] || 18,
         });
 
         //console.log('tokenBalances: ', tokenBalances);
-        console.log(tag, 'evmGasTokenBalance safeValue: ', safeValue);
+        //console.log(tag, 'evmGasTokenBalance safeValue: ', safeValue);
         //safe
 
         await AssetValue.loadStaticAssets();
         //@ts-ignore
         let gasTokenBalance = AssetValue.fromChainOrSignature(Chain.Base, safeValue);
         gasTokenBalance.caip = ChainToCaip['BASE'];
-        console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
-        console.log(tag, 'gasTokenBalance: ', gasTokenBalance.getValue('string'));
+        //console.log(tag, 'gasTokenBalance: ', gasTokenBalance);
+        //console.log(tag, 'gasTokenBalance: ', gasTokenBalance.getValue('string'));
         //pro token balances
 
         // The token's contract address
@@ -108,7 +108,7 @@ export const BASEToolbox = ({
 
         return gasTokenBalance;
       } catch (e) {
-        console.log('getBalance error: ', e);
+        //console.log('getBalance error: ', e);
         throw e;
       }
     },

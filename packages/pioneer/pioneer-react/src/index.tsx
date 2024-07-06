@@ -237,7 +237,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   // };
 
   const resetState = () => {
-    console.log('RESET_STATE');
+    //console.log('RESET_STATE');
     // @ts-ignore
     dispatch({
       type: WalletActions.RESET_STATE,
@@ -246,7 +246,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   };
 
   const setIntent = (intent: string) => {
-    console.log('intent modal: ', intent);
+    //console.log('intent modal: ', intent);
     // @ts-ignore
     dispatch({
       type: WalletActions.SET_INTENT,
@@ -256,7 +256,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   };
 
   const showModal = (modal: string) => {
-    console.log('OPEN MODAL: modal: ', modal);
+    //console.log('OPEN MODAL: modal: ', modal);
     // @ts-ignore
     dispatch({
       type: WalletActions.OPEN_MODAL,
@@ -276,7 +276,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
   // TODO add wallet to state
   const clearHardwareError = () => {
-    console.log('Clearing hardware error state!');
+    //console.log('Clearing hardware error state!');
     // @ts-ignore
     dispatch({
       type: WalletActions.SET_HARDWARE_ERROR,
@@ -289,7 +289,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       let tag = TAG + ' | connectWallet | ';
       try {
         if (state && state?.app) {
-          console.log('connectWallet: ', wallet);
+          //console.log('connectWallet: ', wallet);
           //TODO use these
           // let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
           // let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
@@ -373,22 +373,22 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
             ledgerApp: chain,
           };
           const resultPairWallet = await state.app.pairWallet(pairParams);
-          console.log('resultPairWallet: ', resultPairWallet);
+          //console.log('resultPairWallet: ', resultPairWallet);
           if (resultPairWallet && resultPairWallet.error) {
             //push error to state
-            console.log('resultPairWallet.error: ', resultPairWallet.error);
+            //console.log('resultPairWallet.error: ', resultPairWallet.error);
             // @ts-ignore
             dispatch({
               type: WalletActions.SET_HARDWARE_ERROR,
               payload: resultPairWallet.error,
             });
           } else if (resultPairWallet) {
-            console.log('keepkeyApiKey: ', state.app.keepkeyApiKey);
-            console.log('resultPairWallet: ', resultPairWallet);
+            //console.log('keepkeyApiKey: ', state.app.keepkeyApiKey);
+            //console.log('resultPairWallet: ', resultPairWallet);
 
             if (resultPairWallet) localStorage.setItem('keepkeyApiKey', state.app.keepkeyApiKey);
-            console.log('state.app.assetContext: ', state.app.assetContext);
-            console.log('state.app.context: ', state.app.context);
+            //console.log('state.app.assetContext: ', state.app.assetContext);
+            //console.log('state.app.context: ', state.app.context);
 
             //add to local storage of connected wallets
             // const pairedWallets = JSON.parse(localStorage.getItem('pairedWallets') || '[]');
@@ -409,23 +409,23 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
               //get pubkeys
               if (state.app.pubkeys) {
-                console.log(tag, +' connectWallet state.app.pubkeys: ', state.app.pubkeys);
+                //console.log(tag, +' connectWallet state.app.pubkeys: ', state.app.pubkeys);
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < state.app.pubkeys.length; i++) {
                   const pubkey = state.app.pubkeys[i];
-                  console.log(TAG + ' connectWallet pubkey: ', pubkey);
+                  //console.log(TAG + ' connectWallet pubkey: ', pubkey);
                   let saved = await db.createPubkey(pubkey);
-                  console.log('saved pubkey: ', saved);
+                  //console.log('saved pubkey: ', saved);
                 }
               }
               //get balances
               if (state.app.balances) {
-                console.log(tag, 'balances: ', state.app.balances);
+                //console.log(tag, 'balances: ', state.app.balances);
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < state.app.balances.length; i++) {
                   const balance = state.app.balances[i];
                   let saved = await db.createBalance(balance);
-                  console.log('saved balance: ', saved);
+                  //console.log('saved balance: ', saved);
                 }
               }
 
@@ -478,23 +478,23 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   const onStart = async function (wallets: any, setup: any) {
     let tag = TAG + ' | onStart | ';
     try {
-      console.log(tag, 'onStart: ', wallets);
-      console.log(tag, 'setup:', setup);
+      //console.log(tag, 'onStart: ', wallets);
+      //console.log(tag, 'setup:', setup);
       if (!wallets) throw Error('wallets is required! onStart');
       if (!setup) throw Error('setup is required! onStart');
       if (!setup.appName) throw Error('setup appName is required! onStart');
       if (!setup.appIcon) throw Error('setup appIcon is required! onStart');
 
       await db.init({});
-      console.log(tag, 'Database initialized');
+      //console.log(tag, 'Database initialized');
       let txs = await db.getAllTransactions();
-      console.log(tag, 'txs: ', txs);
+      //console.log(tag, 'txs: ', txs);
 
       let pubkeys = await db.getPubkeys({});
-      console.log(tag, 'pubkeys: ', pubkeys);
+      //console.log(tag, 'pubkeys: ', pubkeys);
 
       let balances = await db.getBalances({});
-      console.log(tag, 'balances: ', balances);
+      //console.log(tag, 'balances: ', balances);
 
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
@@ -517,12 +517,12 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       //TODO dont do this
       const walletType = WalletOption.KEEPKEY;
-      console.log(tag, 'walletType: ', walletType);
+      //console.log(tag, 'walletType: ', walletType);
 
       //TODO wallet or wallet type? cache per device? or wallet type?
       const cacheKey = `cache:blockchains:${walletType}`;
       const cachedBlockchains: string[] = JSON.parse(localStorage.getItem(cacheKey) || '[]');
-      console.log(tag, 'cachedBlockchains: ', cachedBlockchains);
+      //console.log(tag, 'cachedBlockchains: ', cachedBlockchains);
 
       const getNetworkIdFromChainStr = (chainStr: string): string | undefined => {
         const chainEnum: any | undefined = getChainEnumValue(chainStr) as any;
@@ -545,23 +545,23 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         .map(getNetworkIdFromChainStr)
         .filter((networkId: any): networkId is string => networkId !== undefined);
 
-      console.log(tag, 'allSupported: ', allSupported);
+      //console.log(tag, 'allSupported: ', allSupported);
       let blockchains;
       if (cachedBlockchains.length > 0) {
         blockchains = cachedBlockchains;
-        console.log('Using cachedBlockchains:', blockchains);
+        //console.log('Using cachedBlockchains:', blockchains);
       } else {
         blockchains = allSupported;
-        console.log('Using allSupported:', blockchains);
+        //console.log('Using allSupported:', blockchains);
       }
 
       // blockchains = allSupported;
 
-      console.log('Selected blockchains: ', blockchains);
+      //console.log('Selected blockchains: ', blockchains);
 
       // Fetch paths based on blockchains
       const paths: any = getPaths(blockchains);
-      console.log(tag, 'paths: ', paths);
+      //console.log(tag, 'paths: ', paths);
 
       //add custom paths
       paths.push({
@@ -607,7 +607,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         localStorage.getItem('pioneerUrl') ||
         // @ts-ignore
         'https://pioneers.dev/spec/swagger.json';
-      console.log('spec: ', spec);
+      //console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
       const configPioneer: any = {
         appName: setup.appName,
@@ -641,19 +641,19 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       };
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
-      console.log(tag, 'appInit.blockchains: ', appInit.blockchains);
-      console.log(tag, 'appInit: ', appInit);
-      console.log(tag, 'keepkeyApiKey: ', keepkeyApiKey);
-      console.log(tag, 'assetsMap: ', appInit.assetsMap);
+      //console.log(tag, 'appInit.blockchains: ', appInit.blockchains);
+      //console.log(tag, 'appInit: ', appInit);
+      //console.log(tag, 'keepkeyApiKey: ', keepkeyApiKey);
+      //console.log(tag, 'assetsMap: ', appInit.assetsMap);
       //Network actions
       if (appInit.keepkeyApiKey !== keepkeyApiKey) {
-        console.log('SAVING API KEY. ');
+        //console.log('SAVING API KEY. ');
         localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
       }
       const api = await appInit.init(wallets, setup);
 
       let assets = appInit.assetsMap;
-      console.log(tag, 'assets: ', assets);
+      //console.log(tag, 'assets: ', assets);
       //push assets to frontend
 
       // //load pubkey cache
@@ -679,7 +679,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // }
 
       // @ts-ignore
-      console.log(tag, 'appInit.wallets: ', appInit.wallets);
+      //console.log(tag, 'appInit.wallets: ', appInit.wallets);
       // @ts-ignore
       dispatch({ type: WalletActions.SET_API, payload: api });
       // @ts-ignore
@@ -687,7 +687,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       // @ts-ignore
       if (appInit.assetsMap) {
-        console.log(tag, 'setting assetsMap: ', appInit.assetsMap);
+        //console.log(tag, 'setting assetsMap: ', appInit.assetsMap);
         // @ts-ignore
         dispatch({ type: WalletActions.SET_ASSETS, payload: appInit.assetsMap });
       }
@@ -700,42 +700,42 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         events.on(action, async (data: any) => {
           // SET_NFTS
           if (action === WalletActions.SET_NFTS) {
-            console.log(tag, 'setting nfs for context: ', appInit.context);
-            console.log(tag, 'setting balances: ', data);
+            //console.log(tag, 'setting nfs for context: ', appInit.context);
+            //console.log(tag, 'setting balances: ', data);
 
             // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < data.length; i++) {
               let balance = data[i];
-              console.log('balance: ', balance);
+              //console.log('balance: ', balance);
               let saved = await db.createBalance(balance);
-              console.log('SET_BALANCES saved balance: ', saved);
+              //console.log('SET_BALANCES saved balance: ', saved);
             }
           }
 
           // SET_BALANCES
           if (action === WalletActions.SET_BALANCES) {
-            console.log(tag, 'setting balances for context: ', appInit.context);
-            console.log(tag, 'setting balances: ', data);
+            //console.log(tag, 'setting balances for context: ', appInit.context);
+            //console.log(tag, 'setting balances: ', data);
 
             // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < data.length; i++) {
               let balance = data[i];
-              console.log('balance: ', balance);
+              //console.log('balance: ', balance);
               let saved = await db.createBalance(balance);
-              console.log('SET_BALANCES saved balance: ', saved);
+              //console.log('SET_BALANCES saved balance: ', saved);
             }
           }
 
           // SET_PUBKEYS
           if (action === WalletActions.SET_PUBKEYS) {
-            console.log(tag, 'SET_PUBKEYS setting pubkeys: ', data);
+            //console.log(tag, 'SET_PUBKEYS setting pubkeys: ', data);
 
             // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < data.length; i++) {
               let pubkey = data[i];
-              console.log(tag, 'pubkey: ', pubkey);
+              //console.log(tag, 'pubkey: ', pubkey);
               let saved = await db.createPubkey(pubkey);
-              console.log('SET_PUBKEYS saved pubkey: ', saved);
+              //console.log('SET_PUBKEYS saved pubkey: ', saved);
             }
           }
 
@@ -749,7 +749,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
 
       if (lastConnectedWallet) {
-        console.log('lastConnectedWallet', lastConnectedWallet);
+        //console.log('lastConnectedWallet', lastConnectedWallet);
         console.log('auto-connect');
         await appInit.setContext(lastConnectedWallet);
         await connectWallet(lastConnectedWallet);
