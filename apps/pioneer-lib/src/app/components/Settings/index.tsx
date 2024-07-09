@@ -55,10 +55,10 @@ export default function Settings({usePioneer, handleWalletClick}:any) {
             <Basic usePioneer={usePioneer}/>
           </TabPanel>
           <TabPanel>
-            <Blockchains usePioneer={usePioneer} onSelect={onSelect} />
+            <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick} />
           </TabPanel>
           <TabPanel>
-            <Wallets usePioneer={usePioneer} handleWalletClick={handleWalletClick} />
+            <Blockchains usePioneer={usePioneer} onSelect={onSelect} />
           </TabPanel>
           <TabPanel>
             <Paths usePioneer={usePioneer}/>

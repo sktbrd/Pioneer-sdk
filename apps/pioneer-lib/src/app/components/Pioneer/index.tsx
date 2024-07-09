@@ -48,6 +48,7 @@ import Blockchains from '../../components/Blockchains';
 import BlockchainWizard from '../../components/BlockchainWizzard';
 import Onboarding from '../../components/Onboarding';
 import Portfolio from '../../components/Portfolio';
+import Charts from '../../components/Charts';
 import Receive from '../../components/Receive';
 import Settings from '../../components/Settings';
 import Balances from '../../components/Balances';
@@ -396,7 +397,7 @@ export function Pioneer({ children, usePioneer }: any): JSX.Element {
             </MenuItem>
             <MenuItem>
               <Flex align="center" justify="center" width="100%">
-                <Portfolio usePioneer={usePioneer} />
+                <Charts usePioneer={usePioneer} />
               </Flex>
             </MenuItem>
             <MenuItem>

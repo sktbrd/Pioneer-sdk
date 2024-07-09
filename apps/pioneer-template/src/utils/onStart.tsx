@@ -11,8 +11,8 @@ export const useOnStartApp = () => {
             const { keepkeyWallet } = await import("@coinmasters/wallet-keepkey");
 
             const pioneerSetup: any = {
-                appName: "KeepKey Vault",
-                appIcon: "https://i.imgur.com/0UxjLIF.png",
+                appName: "Pioneer Template",
+                appIcon: "https://pioneers.dev/coins/pioneerMan.png",
             };
 
             const walletKeepKey = {

@@ -1,5 +1,14 @@
 # @thorswap-lib/swapkit-entities
 
+## 3.7.42
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/types@4.7.42
+
 ## 3.7.41
 
 ### Patch Changes

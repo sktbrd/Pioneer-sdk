@@ -24,6 +24,7 @@ import {
   Wallets,
   Blockchains,
   Balances,
+  Setup,
   Classic,
   Nfts
   //@ts-ignore
@@ -52,7 +53,7 @@ export default function App() {
   const onStartApp = useOnStartApp();
   const { state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('nfts');
+  const [intent, setIntent] = useState('onboarding');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -95,6 +96,9 @@ export default function App() {
     switch (intent) {
       case 'basic':
         return <Basic usePioneer={usePioneer}/>;
+        break;
+      case 'setup':
+        return <Setup usePioneer={usePioneer}/>;
         break;
       case 'pioneer':
         return <Pioneer usePioneer={usePioneer}/>;
