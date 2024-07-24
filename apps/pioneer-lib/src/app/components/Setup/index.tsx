@@ -14,7 +14,7 @@ import { FaWallet, FaLock } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 
 export function Setup({ usePioneer }: any) {
-  const { state } = usePioneer();
+  const { state, connectWallet } = usePioneer();
   const { app, assets } = state;
   const [isConnecting, setIsConnecting] = useState(false);
 

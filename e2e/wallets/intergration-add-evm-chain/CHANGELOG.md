@@ -1,5 +1,19 @@
 # @coinmasters/integration-coins
 
+## 1.7.43
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-db-sql@4.7.42
+  - @coinmasters/pioneer-sdk@4.7.43
+  - @coinmasters/wallet-keystore@11.0.43
+  - @coinmasters/wallet-keepkey@13.0.43
+  - @coinmasters/types@4.7.43
+  - @coinmasters/core@11.0.43
+
 ## 1.7.42
 
 ### Patch Changes

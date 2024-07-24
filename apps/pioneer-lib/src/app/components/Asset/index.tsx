@@ -130,7 +130,7 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                         <Paths usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
                       <TabPanel>
-                        <Pubkeys usePioneer={usePioneer}networkId={app?.assetContext?.networkId}/>
+                        <Pubkeys usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
                       {/*{showAdvanced && asset.networkId.includes('eip155') && (*/}
                       {/*  <>*/}

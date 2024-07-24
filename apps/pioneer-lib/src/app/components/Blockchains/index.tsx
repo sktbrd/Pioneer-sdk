@@ -14,7 +14,14 @@ import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkId
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-export function Blockchains({usePioneer, onSelect, modalSelected}: any) {
+const middleEllipsisStyle = {
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  maxWidth: '100px', // Adjust the width as needed
+};
+
+export function Blockchains({ usePioneer, onSelect, modalSelected }: any) {
   const { state } = usePioneer();
   const { app } = state;
 
@@ -38,12 +45,12 @@ export function Blockchains({usePioneer, onSelect, modalSelected}: any) {
     setEnabledChains(app?.blockchains || []);
   }, [app?.blockchains]);
 
-  const onStart = async function() {
+  const onStart = async function () {
     if (wallet && app && typeof window !== 'undefined') {
       const walletType = wallet.split(':')[0];
       await app.setContextType(walletType);
       let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()] || [];
-      let allByCaip = blockchainsForContext.map((chainStr:any) => {
+      let allByCaip = blockchainsForContext.map((chainStr: any) => {
         const chainEnum = getChainEnumValue(chainStr);
         return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
       });
@@ -106,7 +113,7 @@ export function Blockchains({usePioneer, onSelect, modalSelected}: any) {
         <Text fontWeight="bold">{(COIN_MAP_LONG as any)[(NetworkIdToChain as any)[chain]]}</Text>
       </Flex>
       <Flex alignItems="center">
-        <Badge mr={4}>{chain}</Badge>
+        <Badge mr={4}><Text fontSize='xs'style={middleEllipsisStyle} >{chain}</Text></Badge>
         <Switch isChecked={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
       </Flex>
     </Flex>

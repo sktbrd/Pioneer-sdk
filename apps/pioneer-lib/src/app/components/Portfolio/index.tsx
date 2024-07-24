@@ -18,7 +18,7 @@ import Paths from '../Paths';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export function Portfolio({ usePioneer }: any) {
-  const { state, showModal } = usePioneer();
+  const { state, showModal, connectWallet } = usePioneer();
   const { app, assets, blockchains } = state;
   const [showAll, setShowAll] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -45,7 +45,7 @@ export function Portfolio({ usePioneer }: any) {
     console.log('onSelect called');
   };
 
-  const handleSidebarItemClick = (index) => {
+  const handleSidebarItemClick = (index: any) => {
     setSelectedTab(index);
   };
 

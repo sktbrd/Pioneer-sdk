@@ -29,6 +29,7 @@ import {
 import { getPaths } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect, useState } from 'react';
 import { Blockchains } from '../Blockchains';
+import Context from '../Context';
 import { Asset } from '../Asset';
 
 export function Classic({ usePioneer }: any) {
@@ -151,6 +152,7 @@ export function Classic({ usePioneer }: any) {
             onClick={onSettingsOpen}
           />
         )}
+        <Context usePioneer={usePioneer}></Context>
         <IconButton
           icon={<RepeatIcon />}
           aria-label="Refresh"

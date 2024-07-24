@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 
 //components
 import {
+  PioneerButton,
   Pioneer,
   Basic,
   Portfolio,
@@ -26,7 +27,8 @@ import {
   Balances,
   Setup,
   Classic,
-  Nfts
+  Nfts,
+  Search
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 
@@ -53,7 +55,7 @@ export default function App() {
   const onStartApp = useOnStartApp();
   const { state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('onboarding');
+  const [intent, setIntent] = useState('classic');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -103,6 +105,9 @@ export default function App() {
       case 'pioneer':
         return <Pioneer usePioneer={usePioneer}/>;
         break;
+      case 'pioneerbutton':
+        return <PioneerButton usePioneer={usePioneer}/>;
+        break;
       case 'blockchains':
         return <Blockchains usePioneer={usePioneer}/>;
         break;
@@ -141,6 +146,9 @@ export default function App() {
         break;
       case 'pubkeys':
         return <Pubkeys usePioneer={usePioneer}/>;
+        break;
+      case 'search':
+        return <Search usePioneer={usePioneer} />;
         break;
       case 'paths':
         return <Paths usePioneer={usePioneer} networkId={'eip155:1'}/>;
@@ -196,7 +204,7 @@ export default function App() {
             <option value="swap">Swap</option>
           </Select>
         </div>
-        <Pioneer usePioneer={usePioneer}/>
+        <PioneerButton usePioneer={usePioneer}/>
       </header>
 
       {/* Main Content */}
