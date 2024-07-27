@@ -18,8 +18,8 @@ interface IProps {
   intention?: string;
   infoBoxCondition?: boolean;
   infoBoxText?: string;
-  approveLoader?: LoaderProps;
-  rejectLoader?: LoaderProps;
+  // approveLoader?: LoaderProps;
+  // rejectLoader?: LoaderProps;
 }
 
 export default function RequestModal({
@@ -27,8 +27,8 @@ export default function RequestModal({
                                        metadata,
                                        onApprove,
                                        onReject,
-                                       approveLoader,
-                                       rejectLoader,
+                                       // approveLoader,
+                                       // rejectLoader,
                                        intention,
                                        infoBoxCondition,
                                        infoBoxText,
@@ -69,7 +69,7 @@ export default function RequestModal({
       </VStack>
     );
   }, [
-    approveLoader,
+    // approveLoader,
     children,
     infoBoxCondition,
     infoBoxText,
@@ -77,7 +77,7 @@ export default function RequestModal({
     metadata,
     onApprove,
     onReject,
-    rejectLoader,
+    // rejectLoader,
   ]);
 
   return <>{isScam && !threatAcknowledged ? threatPromptContent : modalContent}</>;

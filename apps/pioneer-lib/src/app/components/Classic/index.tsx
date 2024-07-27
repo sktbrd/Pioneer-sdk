@@ -152,7 +152,7 @@ export function Classic({ usePioneer }: any) {
             onClick={onSettingsOpen}
           />
         )}
-        <Context usePioneer={usePioneer}></Context>
+        <Context usePioneer={usePioneer} setAssetContext={setAssetContext}></Context>
         <IconButton
           icon={<RepeatIcon />}
           aria-label="Refresh"

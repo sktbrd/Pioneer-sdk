@@ -220,7 +220,7 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }: any) => {
             variant="outline"
             value={customFee}
             onChange={handleCustomFeeChange}
-            fullWidth
+            // fullWidth
             margin="normal"
             type="number"
             bg="white"

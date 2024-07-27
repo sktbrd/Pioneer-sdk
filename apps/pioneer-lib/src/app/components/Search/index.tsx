@@ -25,10 +25,10 @@ export function Search({usePioneer}: any) {
   const [results, setResults] = useState([]);
 
   const handleSearch = () => {
-    const searchResults = [];
-    Object.keys(mockData).forEach((key) => {
-      searchResults.push(...mockData[key].filter((item) => item.name.toLowerCase().includes(query.toLowerCase())));
-    });
+    const searchResults:any = [];
+    // Object.keys(mockData).forEach((key:string) => {
+    //   searchResults.push(...mockData[key].filter((item:any) => item.name.toLowerCase().includes(query.toLowerCase())));
+    // });
     setResults(searchResults);
   };
 
@@ -47,13 +47,14 @@ export function Search({usePioneer}: any) {
 
       <Flex justify="center" mt={4}>
         <SimpleGrid columns={{ sm: 1, md: 2, lg: 3 }} spacing={4}>
-          {results.map((result) => (
-            <Box key={result.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4}>
-              <Avatar name={result.name} />
-              <Text mt={2} fontWeight="bold">{result.name}</Text>
-              <Text>{result.description}</Text>
-            </Box>
-          ))}
+          {/*{results.map((result) => (*/}
+          {/*  <div/>*/}
+          {/*  // <Box key={result.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4}>*/}
+          {/*  //   <Avatar name={result.name} />*/}
+          {/*  //   <Text mt={2} fontWeight="bold">{result.name}</Text>*/}
+          {/*  //   <Text>{result.description}</Text>*/}
+          {/*  // </Box>*/}
+          {/*))}*/}
         </SimpleGrid>
       </Flex>
     </Box>

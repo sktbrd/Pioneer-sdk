@@ -9,14 +9,16 @@ import { MdReport, MdReportProblem, MdNewReleases } from 'react-icons/md';
  * Types
  */
 interface IProps {
-  metadata: SignClientTypes.Metadata;
+  metadata: '';
   intention?: string;
 }
 
 export default function ProjectInfoCard({ metadata, intention }: IProps) {
   // const { currentRequestVerifyContext } = useSnapshot(SettingsStore.state);
   // const validation = currentRequestVerifyContext?.verified.validation;
-  const { icons, name, url } = metadata;
+  // const { icons, name, url } = metadata;
+  let name = 'app'
+  let url = 'https://pioneers.dev'
 
   useEffect(() => {
     // Check URL

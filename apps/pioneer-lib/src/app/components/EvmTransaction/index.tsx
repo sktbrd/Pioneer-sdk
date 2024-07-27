@@ -16,7 +16,7 @@ import {
   VStack,
   Divider
 } from '@chakra-ui/react';
-import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
+// import { caipToNetworkId } from '@pioneer-platform/pioneer-caip';
 import React, { useEffect, useState } from 'react';
 import RequestModal from './RequestModal';
 import RequestFeeCard from './RequestFeeCard';
@@ -53,6 +53,7 @@ export function EvmTransaction({ usePioneer, transaction, onClose }: any) {
   //updateFeeData
   const updateFeeData = function (feeData: any, isEIP1559: boolean) {
     console.log("updateFeeData: ", feeData);
+    console.log("updateFeeData: ", feeData);
     setFeeData(feeData);
     console.log('transaction: ', transaction);
     if (!isEIP1559) {
@@ -64,7 +65,7 @@ export function EvmTransaction({ usePioneer, transaction, onClose }: any) {
       transaction.maxFeePerGas = feeData.maxFeePerGas;
       transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
     }
-    setTransaction(transaction);
+    // setTransaction(transaction);
     console.log('transaction: ', transaction);
   }
 
@@ -75,8 +76,8 @@ export function EvmTransaction({ usePioneer, transaction, onClose }: any) {
         metadata={''}
         onApprove={onApprove}
         onReject={onReject}
-        approveLoader={{ active: isLoadingApprove }}
-        rejectLoader={{ active: isLoadingReject }}
+        // approveLoader={{ active: isLoadingApprove }}
+        // rejectLoader={{ active: isLoadingReject }}
       >
         <RequestFeeCard data={transaction} updateFeeData={updateFeeData} chainId={chainId} />
         <Divider my={4} />

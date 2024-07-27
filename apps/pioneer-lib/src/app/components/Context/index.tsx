@@ -16,7 +16,7 @@ import { AssetValue } from '@pioneer-platform/helpers';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 
-const Context = ({ usePioneer, openModal }: any) => {
+const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
   const toast = useToast();
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;
@@ -52,7 +52,7 @@ const Context = ({ usePioneer, openModal }: any) => {
       } catch (error) {
         toast({
           title: 'Error fetching address',
-          description: error.message,
+          description: 'There was an error fetching the address',
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -79,10 +79,27 @@ const Context = ({ usePioneer, openModal }: any) => {
     return addr.length > start + end ? `${addr.slice(0, start)}...${addr.slice(-end)}` : addr;
   };
 
+  const clearAssetContext = async () => {
+    app.setAssetContext();
+    setAssetContext();
+    setCurrentAssetContext({ icon: 'https://pioneers.dev/coins/ethereum.png', name: 'Ethereum' });
+    setAddress(await app.swapkit.getAddress('ETH'));
+  };
+
   return (
     <VStack align="start" borderRadius="md" p={6} spacing={5} width="100%">
       <Flex flex="1" textAlign="center" align="center" width="100%">
-        <Avatar size="md" src={currentAssetContext?.icon} mb="2" />
+        <Box
+          onClick={clearAssetContext}
+          cursor="pointer"
+          bg="gray.100"
+          p={1}
+          borderRadius="full"
+          _hover={{ bg: 'gray.200' }}
+          transition="background-color 0.2s"
+        >
+          <Avatar size="md" src={currentAssetContext?.icon} mb="2" />
+        </Box>
         <Box flex="1" />
         <Flex align="center" width="100%">
           <Input
