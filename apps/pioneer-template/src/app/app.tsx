@@ -28,7 +28,7 @@ import {
   Setup,
   Classic,
   Nfts,
-  Search
+  Chat
   //@ts-ignore
 } from '../../../pioneer-lib/src/index';
 
@@ -55,7 +55,7 @@ export default function App() {
   const onStartApp = useOnStartApp();
   const { state } = usePioneer();
   const { api, app, assets, context } = state;
-  const [intent, setIntent] = useState('classic');
+  const [intent, setIntent] = useState('swap');
   const [tabIndex, setTabIndex] = useState(1);
   // const [txHash, setTxHash] = useState(SAMPLE_SWAP_TXID);
   const [selectedAsset, setSelectedAsset] = useState({ });
@@ -147,9 +147,12 @@ export default function App() {
       case 'pubkeys':
         return <Pubkeys usePioneer={usePioneer}/>;
         break;
-      case 'search':
-        return <Search usePioneer={usePioneer} />;
+      case 'chat':
+        return <Chat usePioneer={usePioneer} />;
         break;
+      // case 'search':
+      //   return <Search usePioneer={usePioneer} />;
+      //   break;
       case 'paths':
         return <Paths usePioneer={usePioneer} networkId={'eip155:1'}/>;
         break;

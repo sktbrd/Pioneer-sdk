@@ -506,14 +506,15 @@ export class SDK {
 
         let resultPair: string;
         //console.log(tag, 'type: ', walletSelected.type);
-        let ChainsConfigured = this.blockchains.map(
-          (networkId: string | number) =>
-            NetworkIdToChain[networkId] ||
-            (() => {
-              throw new Error(`(NetworkIdToChain) Missing NetworkId: ${networkId}`);
-            })(),
-        );
-        //console.log(tag, 'ChainsConfigured: ', ChainsConfigured);
+        let ChainsConfigured = this.blockchains.map((networkId: string) => {
+          const chain = NetworkIdToChain[networkId.toLowerCase()];
+          if (!chain) {
+            console.error(`(NetworkIdToChain) Missing NetworkId: ${networkId}`);
+            return null; // or any other appropriate fallback value
+          }
+          return chain;
+        });
+        console.log(tag, 'ChainsConfigured: ', ChainsConfigured);
         //TODO filter for supported chains by wallet
         switch (walletSelected.type) {
           case 'KEEPKEY':

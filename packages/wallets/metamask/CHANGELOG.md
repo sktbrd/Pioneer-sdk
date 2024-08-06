@@ -1,5 +1,126 @@
 # @coinmasters/wallet-metamask
 
+## 10.0.56
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.56
+  - @coinmasters/toolbox-utxo@11.0.56
+  - @coinmasters/toolbox-evm@11.0.56
+
+## 10.0.55
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.55
+  - @coinmasters/toolbox-utxo@11.0.55
+  - @coinmasters/toolbox-evm@11.0.55
+
+## 10.0.54
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.54
+  - @coinmasters/toolbox-utxo@11.0.54
+  - @coinmasters/toolbox-evm@11.0.54
+
+## 10.0.53
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.53
+  - @coinmasters/toolbox-utxo@11.0.53
+  - @coinmasters/toolbox-evm@11.0.53
+
+## 10.0.52
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.52
+  - @coinmasters/toolbox-utxo@11.0.52
+  - @coinmasters/toolbox-evm@11.0.52
+
+## 10.0.51
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.51
+  - @coinmasters/toolbox-utxo@11.0.51
+  - @coinmasters/toolbox-evm@11.0.51
+
+## 10.0.50
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.50
+  - @coinmasters/toolbox-utxo@11.0.50
+  - @coinmasters/toolbox-evm@11.0.50
+
+## 10.0.49
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.49
+  - @coinmasters/toolbox-utxo@11.0.49
+  - @coinmasters/toolbox-evm@11.0.49
+
+## 10.0.48
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.48
+  - @coinmasters/toolbox-utxo@11.0.48
+  - @coinmasters/toolbox-evm@11.0.48
+
+## 10.0.47
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.47
+  - @coinmasters/toolbox-utxo@11.0.47
+  - @coinmasters/toolbox-evm@11.0.47
+
+## 10.0.46
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/toolbox-cosmos@11.0.46
+  - @coinmasters/toolbox-utxo@11.0.46
+  - @coinmasters/toolbox-evm@11.0.46
+
 ## 10.0.45
 
 ### Patch Changes

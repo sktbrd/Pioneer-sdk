@@ -1,5 +1,148 @@
 # @coinmasters/e2e-swap-dash-rune
 
+## 1.7.56
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.56
+  - @coinmasters/wallet-keystore@11.0.56
+  - @coinmasters/wallet-keepkey@13.0.56
+  - @coinmasters/types@4.7.56
+  - @coinmasters/core@11.0.56
+
+## 1.7.55
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.55
+  - @coinmasters/wallet-keystore@11.0.55
+  - @coinmasters/wallet-keepkey@13.0.55
+  - @coinmasters/types@4.7.55
+  - @coinmasters/core@11.0.55
+
+## 1.7.54
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.54
+  - @coinmasters/wallet-keystore@11.0.54
+  - @coinmasters/wallet-keepkey@13.0.54
+  - @coinmasters/types@4.7.54
+  - @coinmasters/core@11.0.54
+
+## 1.7.53
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.53
+  - @coinmasters/wallet-keystore@11.0.53
+  - @coinmasters/wallet-keepkey@13.0.53
+  - @coinmasters/types@4.7.53
+  - @coinmasters/core@11.0.53
+
+## 1.7.52
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.52
+  - @coinmasters/wallet-keystore@11.0.52
+  - @coinmasters/wallet-keepkey@13.0.52
+  - @coinmasters/types@4.7.52
+  - @coinmasters/core@11.0.52
+
+## 1.7.51
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.51
+  - @coinmasters/wallet-keystore@11.0.51
+  - @coinmasters/wallet-keepkey@13.0.51
+  - @coinmasters/types@4.7.51
+  - @coinmasters/core@11.0.51
+
+## 1.7.50
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.50
+  - @coinmasters/wallet-keystore@11.0.50
+  - @coinmasters/wallet-keepkey@13.0.50
+  - @coinmasters/types@4.7.50
+  - @coinmasters/core@11.0.50
+
+## 1.7.49
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.49
+  - @coinmasters/wallet-keystore@11.0.49
+  - @coinmasters/wallet-keepkey@13.0.49
+  - @coinmasters/types@4.7.49
+  - @coinmasters/core@11.0.49
+
+## 1.7.48
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.48
+  - @coinmasters/wallet-keystore@11.0.48
+  - @coinmasters/wallet-keepkey@13.0.48
+  - @coinmasters/types@4.7.48
+  - @coinmasters/core@11.0.48
+
+## 1.7.47
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.47
+  - @coinmasters/wallet-keystore@11.0.47
+  - @coinmasters/wallet-keepkey@13.0.47
+  - @coinmasters/types@4.7.47
+  - @coinmasters/core@11.0.47
+
+## 1.7.46
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.46
+  - @coinmasters/wallet-keystore@11.0.46
+  - @coinmasters/wallet-keepkey@13.0.46
+  - @coinmasters/types@4.7.46
+  - @coinmasters/core@11.0.46
+
 ## 1.7.45
 
 ### Patch Changes

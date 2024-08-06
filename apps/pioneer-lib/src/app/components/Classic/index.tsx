@@ -189,7 +189,7 @@ export function Classic({ usePioneer }: any) {
                                   {integer}.
                                   <Text as="span" fontSize="lg">{largePart}</Text>
                                   {largePart === '0000' && (
-                                    <Text as="span" fontSize="xs">{smallPart}</Text>
+                                    <Text as="span" fontSize="sm">{smallPart}</Text>
                                   )}
                                   <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
                                   <br/>

@@ -240,14 +240,14 @@ export function Quote({ usePioneer, quote, onAcceptSign, memoless, setTxHash }: 
             <Button colorScheme="blue" onClick={handleSignTransaction}>Sign Transaction</Button>
           )}
         </VStack>
-        <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
-          <Badge borderRadius="full" colorScheme="blue" p={2}>
-            <Text fontSize="md">
-              PRO reward: {formatNumber(quote.quote.proTokenEarned)} (
-              {formatUSD(quote.quote.proTokenEarned)} USD)
-            </Text>
-          </Badge>
-        </Stack>
+        {/*<Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between">*/}
+        {/*  <Badge borderRadius="full" colorScheme="blue" p={2}>*/}
+        {/*    <Text fontSize="md">*/}
+        {/*      PRO reward: {formatNumber(quote.quote.proTokenEarned)} (*/}
+        {/*      {formatUSD(quote.quote.proTokenEarned)} USD)*/}
+        {/*    </Text>*/}
+        {/*  </Badge>*/}
+        {/*</Stack>*/}
       </VStack>
     </Box>
   );

@@ -1,5 +1,126 @@
 # @coinmasters/integration-wallet-keepkey
 
+## 0.5.56
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.56
+  - @coinmasters/types@4.7.56
+  - @coinmasters/core@11.0.56
+
+## 0.5.55
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.55
+  - @coinmasters/types@4.7.55
+  - @coinmasters/core@11.0.55
+
+## 0.5.54
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.54
+  - @coinmasters/types@4.7.54
+  - @coinmasters/core@11.0.54
+
+## 0.5.53
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.53
+  - @coinmasters/types@4.7.53
+  - @coinmasters/core@11.0.53
+
+## 0.5.52
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.52
+  - @coinmasters/types@4.7.52
+  - @coinmasters/core@11.0.52
+
+## 0.5.51
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.51
+  - @coinmasters/types@4.7.51
+  - @coinmasters/core@11.0.51
+
+## 0.5.50
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.50
+  - @coinmasters/types@4.7.50
+  - @coinmasters/core@11.0.50
+
+## 0.5.49
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.49
+  - @coinmasters/types@4.7.49
+  - @coinmasters/core@11.0.49
+
+## 0.5.48
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.48
+  - @coinmasters/types@4.7.48
+  - @coinmasters/core@11.0.48
+
+## 0.5.47
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.47
+  - @coinmasters/types@4.7.47
+  - @coinmasters/core@11.0.47
+
+## 0.5.46
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-keepkey@13.0.46
+  - @coinmasters/types@4.7.46
+  - @coinmasters/core@11.0.46
+
 ## 0.5.45
 
 ### Patch Changes

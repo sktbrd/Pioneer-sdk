@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/integration-wallet-package-keepkey",
-  "version": "0.5.45",
+  "version": "0.5.56",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@internal/config": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.11"
+    "@pioneer-platform/helpers": "^4.0.12"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

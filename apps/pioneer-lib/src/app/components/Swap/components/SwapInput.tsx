@@ -19,26 +19,37 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
   };
 
   useEffect(() => {
+    updateExchangeRate();
+  }, [app?.assetContext, app?.outboundAssetContext]);
+
+  const updateExchangeRate = () => {
     const assetContextBalance = getAssetBalance(app?.assetContext?.caip);
     const outboundAssetContextBalance = getAssetBalance(app?.outboundAssetContext?.caip);
 
     if (assetContextBalance && outboundAssetContextBalance) {
       let rate = assetContextBalance.priceUsd / outboundAssetContextBalance.priceUsd;
       setExchangeRate(rate || 0);
+      console.log(`Exchange Rate set: ${rate}`);
+    } else {
+      setExchangeRate(null);
+      console.warn('Exchange Rate not set due to missing balance information.');
     }
-  }, [app]);
+  };
 
   const handleDepositChange = (valueAsString: any) => {
+    console.log(`Deposit change: ${valueAsString}`);
     setDepositAmount(valueAsString);
     updateValidation(valueAsString, getAssetBalance(app?.assetContext?.caip)?.priceUsd);
   };
 
   const handleReceiveChange = (valueAsString: any) => {
+    console.log(`Receive change: ${valueAsString}`);
     setReceiveAmount(valueAsString);
     updateValidation(valueAsString, getAssetBalance(app?.outboundAssetContext?.caip)?.priceUsd, true);
   };
 
   const updateValidation = (value: string, priceUsd: number, isReceive: boolean = false) => {
+    console.log(`Update validation: value=${value}, priceUsd=${priceUsd}, isReceive=${isReceive}, exchangeRate=${exchangeRate}`);
     const numericValue = parseFloat(value) || 0;
     const usdValue = numericValue * priceUsd;
     const isValidAmount = usdValue >= 50;
@@ -46,13 +57,23 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
     setErrorMessage(isValidAmount ? '' : 'Amount must be at least $50 USD in value.');
     if (isValidAmount) {
       if (isReceive) {
-        const depositValue = numericValue / exchangeRate;
-        setInputAmount(depositValue);
-        setDepositAmount(depositValue.toFixed(4));
+        if (exchangeRate > 0) {
+          const depositValue = numericValue / exchangeRate;
+          setInputAmount(depositValue);
+          setDepositAmount(depositValue.toFixed(4));
+          console.log(`Set deposit value: ${depositValue}`);
+        } else {
+          console.warn('Invalid exchange rate for receive calculation.');
+        }
       } else {
-        const receiveValue = numericValue * exchangeRate;
-        setInputAmount(numericValue);
-        setReceiveAmount(receiveValue.toFixed(4));
+        if (exchangeRate > 0) {
+          const receiveValue = numericValue * exchangeRate;
+          setInputAmount(numericValue);
+          setReceiveAmount(receiveValue.toFixed(4));
+          console.log(`Set receive value: ${receiveValue}`);
+        } else {
+          console.warn('Invalid exchange rate for deposit calculation.');
+        }
       }
     }
   };
@@ -65,6 +86,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
 
   const maxDeposit = () => {
     const maxBalance = getAssetBalance(app?.assetContext?.caip)?.balance || 0;
+    console.log(`Max deposit: ${maxBalance}`);
     handleDepositChange(maxBalance.toString());
   };
 

@@ -43,40 +43,40 @@ export default function OutputSelect({ usePioneer, onClose, onSelect }: any) {
   const fetchAssets = async () => {
     setIsLoading(true);
     try {
-      // if (app) {
-      //   console.log('app: ', app.pubkeys);
-      //   let allTokens = await app.assets;
-      //
-      //   //remove tokens that are not native
-      //   allTokens = allTokens.filter((token: any) => token.type === 'native');
-      //
-      //   for (let i = 0; i < allTokens.length; i++) {
-      //     let token = allTokens[i];
-      //     let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
-      //       pk.networks.includes(token.networkId),
-      //     );
-      //     if (pubkey) {
-      //       // console.log('pubkey: ', pubkey);
-      //       allTokens[i].pubkey = pubkey.pubkey;
-      //       allTokens[i].address = pubkey.address || pubkey.master;
-      //     } else {
-      //       allTokens[i].needsPubkey = true;
-      //     }
-      //     let balance = balances.find((b: { caip: string }) => b.caip === token.caip);
-      //     if (balance) {
-      //       allTokens[i].balance = balance.balance;
-      //     }
-      //   }
-      //   allTokens.sort((a:any, b:any) => {
-      //     if (a.balance && !b.balance) return -1;
-      //     if (!a.balance && b.balance) return 1;
-      //     if (a.pubkey && !b.pubkey) return -1;
-      //     if (!a.pubkey && b.pubkey) return 1;
-      //     return 0;
-      //   });
-      //   console.log('allTokens: ', allTokens);
-      //   setAssets(allTokens);
-      // }
+      if (app) {
+        console.log('app: ', app.pubkeys);
+        let allTokens = await app.assets;
+
+        //remove tokens that are not native
+        allTokens = allTokens.filter((token: any) => token.type === 'native');
+
+        for (let i = 0; i < allTokens.length; i++) {
+          let token = allTokens[i];
+          let pubkey = pubkeys.find((pk: { networks: string | any[] }) =>
+            pk.networks.includes(token.networkId),
+          );
+          if (pubkey) {
+            // console.log('pubkey: ', pubkey);
+            allTokens[i].pubkey = pubkey.pubkey;
+            allTokens[i].address = pubkey.address || pubkey.master;
+          } else {
+            allTokens[i].needsPubkey = true;
+          }
+          let balance = balances.find((b: { caip: string }) => b.caip === token.caip);
+          if (balance) {
+            allTokens[i].balance = balance.balance;
+          }
+        }
+        allTokens.sort((a:any, b:any) => {
+          if (a.balance && !b.balance) return -1;
+          if (!a.balance && b.balance) return 1;
+          if (a.pubkey && !b.pubkey) return -1;
+          if (!a.pubkey && b.pubkey) return 1;
+          return 0;
+        });
+        console.log('allTokens: ', allTokens);
+        setAssets(allTokens);
+      }
     } catch (e) {
       console.error(e);
     }

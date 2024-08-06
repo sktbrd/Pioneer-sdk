@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/add-evm-chain",
-  "version": "1.7.45",
+  "version": "1.7.56",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -23,7 +23,7 @@
     "@coinmasters/types": "workspace:^",
     "@coinmasters/wallet-keepkey": "workspace:*",
     "@coinmasters/wallet-keystore": "workspace:*",
-    "@pioneer-platform/helpers": "^4.0.11",
+    "@pioneer-platform/helpers": "^4.0.12",
     "@pioneer-platform/loggerdog": "^8.3.1",
     "@pioneer-platform/pioneer-caip": "^9.2.31",
     "@pioneer-platform/pioneer-coins": "^9.2.23",

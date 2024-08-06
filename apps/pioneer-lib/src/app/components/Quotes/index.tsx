@@ -125,8 +125,8 @@ export function Quotes({ onClose, onSelectQuote, Quotes }: any): JSX.Element {
                   </Text>
                   <Avatar size="xs" src={getAssetAvatar(quote.quote.buyAsset)} />
                 </Flex>
-                <Text isTruncated>PRO: {formatNumber(quote.quote.proTokenEarned)} ({formatUSD(quote.quote.proTokenEarnedUsd)} USD)</Text>
-                <Text isTruncated>Total Value OUT: {formatUSD(quote.quote.buyAssetValueUsd + quote.quote.proTokenEarnedUsd)}</Text>
+                {/*<Text isTruncated>PRO: {formatNumber(quote.quote.proTokenEarned)} ({formatUSD(quote.quote.proTokenEarnedUsd)} USD)</Text>*/}
+                {/*<Text isTruncated>Total Value OUT: {formatUSD(quote.quote.buyAssetValueUsd + quote.quote.proTokenEarnedUsd)}</Text>*/}
               </VStack>
             </Flex>
           </Box>
