@@ -2,7 +2,6 @@ export enum Chain {
   Arbitrum = 'ARB',
   Avalanche = 'AVAX',
   Base = 'BASE',
-  Binance = 'BNB',
   BinanceSmartChain = 'BSC',
   Bitcoin = 'BTC',
   BitcoinCash = 'BCH',
@@ -31,8 +30,6 @@ export function getChainEnumValue(chainStr) {
       return Chain.Avalanche;
     case 'BASE':
       return Chain.Base;
-    case 'BNB':
-      return Chain.Binance;
     case 'BSC':
       return Chain.BinanceSmartChain;
     case 'BTC':
@@ -78,7 +75,6 @@ export const ChainToNetworkId: Record<Chain, string> = {
   [Chain.Arbitrum]: 'eip155:42161',
   [Chain.Avalanche]: 'eip155:43114',
   [Chain.BinanceSmartChain]: 'eip155:56',
-  [Chain.Binance]: 'binance:bnb-beacon-chain',
   [Chain.BitcoinCash]: 'bip122:000000000000000000651ef99cb9fcbe',
   [Chain.Bitcoin]: 'bip122:000000000019d6689c085ae165831e93',
   [Chain.Base]: 'eip155:8453',
@@ -123,7 +119,6 @@ export enum DerivationPath {
   AVAX = "m/44'/60'/0'/0/0",
   BASE = "m/44'/60'/0'/0/0",
   BCH = "m/44'/145'/0'/0/0",
-  BNB = "m/44'/714'/0'/0/0",
   BSC = "m/44'/60'/0'/0/0",
   BTC = "m/84'/0'/0'/0/0",
   DOGE = "m/44'/3'/0'/0/0",
@@ -150,7 +145,6 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   AVAX: [44, 60, 0, 0, 0],
   BASE: [44, 60, 0, 0, 0],
   BCH: [44, 145, 0, 0, 0],
-  BNB: [44, 714, 0, 0, 0],
   BSC: [44, 60, 0, 0, 0],
   BTC: [84, 0, 0, 0, 0],
   DASH: [44, 5, 0, 0, 0],
@@ -174,7 +168,6 @@ export enum BaseDecimal {
   ARB = 18,
   AVAX = 18,
   BCH = 8,
-  BNB = 8,
   BSC = 18,
   BTC = 8,
   DASH = 8,
@@ -237,20 +230,17 @@ export type CosmosChain =
   | Chain.Cosmos
   | Chain.Osmosis
   | Chain.THORChain
-  | Chain.Binance
   | Chain.Mayachain
   | Chain.Kujira;
 
 export const CosmosChainList: CosmosChain[] = [
   Chain.Cosmos,
   Chain.THORChain,
-  Chain.Binance,
   Chain.Osmosis,
 ];
 
 export const TCSupportedChainList = [
   Chain.Avalanche,
-  Chain.Binance,
   Chain.BinanceSmartChain,
   Chain.Bitcoin,
   Chain.BitcoinCash,
@@ -267,7 +257,6 @@ export enum ChainId {
   Avalanche = '43114',
   AvalancheHex = '0xa86a',
   Base = '8453',
-  Binance = 'Binance-Chain-Tigris',
   BinanceSmartChain = '56',
   BinanceSmartChainHex = '0x38',
   Bitcoin = 'bitcoin',
@@ -296,7 +285,6 @@ export enum RPCUrl {
   Avalanche = 'https://avalanche-c-chain-rpc.publicnode.com',
   // Avalanche = 'https://node-router.thorswap.net/avalanche-c',
   // Avalanche = 'https://daemon.avalanche.shapeshift.com/ext/bc/C/rpc', //BROKE??
-  Binance = 'https://binance.llamarpc.com',
   // BinanceSmartChain = 'https://bsc-dataseed.binance.org',
   BinanceSmartChain = 'https://binance.llamarpc.com',
   Base = 'https://developer-access-mainnet.base.org',
@@ -377,7 +365,6 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Avalanche]: Chain.Avalanche,
   [ChainId.BinanceSmartChainHex]: Chain.BinanceSmartChain,
   [ChainId.BinanceSmartChain]: Chain.BinanceSmartChain,
-  [ChainId.Binance]: Chain.Binance,
   [ChainId.BitcoinCash]: Chain.BitcoinCash,
   [ChainId.Bitcoin]: Chain.Bitcoin,
   [ChainId.Cosmos]: Chain.Cosmos,
@@ -403,7 +390,6 @@ export const ChainToExplorerUrl: Record<Chain, string> = {
   [Chain.Arbitrum]: 'https://arbiscan.io',
   [Chain.Avalanche]: 'https://snowtrace.io',
   [Chain.BinanceSmartChain]: 'https://bscscan.com',
-  [Chain.Binance]: 'https://explorer.binance.org',
   [Chain.BitcoinCash]: 'https://www.blockchain.com/bch',
   [Chain.Bitcoin]: 'https://blockstream.info',
   [Chain.Base]: 'https://basescan.org',

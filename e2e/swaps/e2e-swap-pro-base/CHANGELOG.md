@@ -1,5 +1,44 @@
 # @coinmasters/e2e-swap-dash-rune
 
+## 1.7.59
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.59
+  - @coinmasters/wallet-keystore@11.0.59
+  - @coinmasters/wallet-keepkey@13.0.59
+  - @coinmasters/types@4.7.59
+  - @coinmasters/core@11.0.59
+
+## 1.7.58
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.58
+  - @coinmasters/wallet-keystore@11.0.58
+  - @coinmasters/wallet-keepkey@13.0.58
+  - @coinmasters/types@4.7.58
+  - @coinmasters/core@11.0.58
+
+## 1.7.57
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.57
+  - @coinmasters/wallet-keystore@11.0.57
+  - @coinmasters/wallet-keepkey@13.0.57
+  - @coinmasters/types@4.7.57
+  - @coinmasters/core@11.0.57
+
 ## 1.7.56
 
 ### Patch Changes

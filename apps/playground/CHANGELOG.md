@@ -1,5 +1,50 @@
 # pioneer-template
 
+## 0.2.51
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@11.0.59
+  - @coinmasters/pioneer-react@0.7.59
+  - @coinmasters/wallet-metamask@10.0.59
+  - @coinmasters/wallet-keepkey@13.0.59
+  - @coinmasters/types@4.7.59
+  - @coinmasters/wallet-wc@11.0.59
+  - @coinmasters/pioneer-lib@0.1.70
+
+## 0.2.50
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@11.0.58
+  - @coinmasters/pioneer-react@0.7.58
+  - @coinmasters/wallet-metamask@10.0.58
+  - @coinmasters/wallet-keepkey@13.0.58
+  - @coinmasters/types@4.7.58
+  - @coinmasters/wallet-wc@11.0.58
+  - @coinmasters/pioneer-lib@0.1.69
+
+## 0.2.49
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/wallet-evm-extensions@11.0.57
+  - @coinmasters/pioneer-react@0.7.57
+  - @coinmasters/wallet-metamask@10.0.57
+  - @coinmasters/wallet-keepkey@13.0.57
+  - @coinmasters/types@4.7.57
+  - @coinmasters/wallet-wc@11.0.57
+  - @coinmasters/pioneer-lib@0.1.68
+
 ## 0.2.48
 
 ### Patch Changes

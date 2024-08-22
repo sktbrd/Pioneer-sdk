@@ -10,7 +10,6 @@ export const list = {
     { chain: 'MATIC', identifier: 'MATIC.MATIC', decimals: 18 },
     { chain: 'OP', identifier: 'OP.ETH', decimals: 18 },
     { chain: 'BCH', identifier: 'BCH.BCH', decimals: 8 },
-    { chain: 'BNB', identifier: 'BNB.BNB', decimals: 8 },
     { chain: 'BSC', identifier: 'BSC.BNB', decimals: 18 },
     { chain: 'BTC', identifier: 'BTC.BTC', decimals: 8 },
     { chain: 'DOGE', identifier: 'DOGE.DOGE', decimals: 8 },

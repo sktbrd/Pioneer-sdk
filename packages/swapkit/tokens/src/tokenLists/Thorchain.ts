@@ -12,7 +12,6 @@ export const list = {
       decimals: 6,
     },
     { chain: 'BCH', identifier: 'BCH.BCH', decimals: 8 },
-    { chain: 'BNB', identifier: 'BNB.BNB', decimals: 8 },
     { chain: 'BSC', identifier: 'BSC.BNB', decimals: 8 },
     {
       address: '0x8AC76A51CC950D9822D68B83FE1AD97B32CD580D',

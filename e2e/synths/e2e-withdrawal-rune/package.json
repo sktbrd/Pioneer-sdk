@@ -1,6 +1,6 @@
 {
   "name": "@coinmasters/e2e-synth-withdrawal-rune",
-  "version": "1.7.56",
+  "version": "1.7.59",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {

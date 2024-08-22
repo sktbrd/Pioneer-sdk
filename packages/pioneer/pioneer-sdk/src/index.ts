@@ -1171,7 +1171,7 @@ export class SDK {
         // Get ETH address
         let pubkeys = this.pubkeys.filter((e: any) => e.networks.includes('eip155:*'));
         //console.log(tag, 'pubkeys: ', pubkeys);
-        if (!pubkeys[8]) {
+        if (!pubkeys[0]) {
           console.error(tag, 'No ETH address found, not charting');
           return [];
         }
