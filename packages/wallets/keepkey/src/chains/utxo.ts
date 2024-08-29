@@ -81,7 +81,7 @@ export const utxoWalletMethods = async ({
   if (!apiKey) throw new Error('UTXO API key not found');
   const { toolbox, segwit } = getToolbox({ chain, apiClient, apiKey });
 
-  const scriptType = segwit ? 'p2sh' : 'p2pkh';
+  const scriptType = segwit ? 'p2wpkh' : 'p2pkh';
   if (!ChainToKeepKeyName[chain]) throw Error('ChainToKeepKeyName: unknown chain: ' + chain);
   // const addressInfo = {
   //   coin: ChainToKeepKeyName[chain],
@@ -98,10 +98,13 @@ export const utxoWalletMethods = async ({
       script_type: scriptType,
       address_n: bip32ToAddressNList(DerivationPath[chain]),
     };
+    console.log(tag, 'customAddressInfo: ', customAddressInfo);
+    console.log(tag, 'defaultAddressInfo: ', defaultAddressInfo);
     const addressInfo = customAddressInfo || defaultAddressInfo;
-    //console.log(tag, 'addressInfo: ', addressInfo.coin);
-    //console.log(tag, 'addressInfo: ', addressInfo.script_type);
+    console.log(tag, 'addressInfo: ', addressInfo.coin);
+    console.log(tag, 'addressInfo: ', addressInfo.script_type);
     const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
+    console.log(tag, 'walletAddress: ', walletAddress);
     return walletAddress as string;
   };
 
@@ -201,8 +204,13 @@ export const utxoWalletMethods = async ({
         }
 
         if (change || address === walletAddress) {
+          const defaultAddressInfo = {
+            coin: ChainToKeepKeyName[chain],
+            script_type: scriptType,
+            address_n: bip32ToAddressNList(DerivationPath[chain]),
+          };
           return {
-            addressNList: addressInfo.address_n,
+            addressNList: defaultAddressInfo.address_n,
             isChange: true,
             addressType: 'change',
             amount: value,
@@ -386,9 +394,20 @@ export const utxoWalletMethods = async ({
   //   return toolbox.broadcastTx(txHex);
   // };
 
+  const listUnspent = async (xpub: string) => {
+    try {
+      let result = await toolbox.listUnspent(xpub, chain);
+
+      return result;
+    } catch (e) {
+      console.error();
+    }
+  };
+
   return {
     ...toolbox,
     getPubkeys,
+    listUnspent,
     // getInputsForPubkey,
     getAddress,
     signTransaction,

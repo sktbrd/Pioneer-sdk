@@ -1,5 +1,31 @@
 # @coinmasters/e2e-swap-eth-maya
 
+## 1.7.61
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.61
+  - @coinmasters/wallet-keystore@11.0.61
+  - @coinmasters/wallet-keepkey@13.0.61
+  - @coinmasters/types@4.7.61
+  - @coinmasters/core@11.0.61
+
+## 1.7.60
+
+### Patch Changes
+
+- bump
+
+- Updated dependencies []:
+  - @coinmasters/pioneer-sdk@4.7.60
+  - @coinmasters/wallet-keystore@11.0.60
+  - @coinmasters/wallet-keepkey@13.0.60
+  - @coinmasters/types@4.7.60
+  - @coinmasters/core@11.0.60
+
 ## 1.7.59
 
 ### Patch Changes

@@ -8,6 +8,7 @@ import { Transfer } from '../Transfer';
 import { Receive } from '../Receive';
 import { Paths } from '../Paths';
 import { Pubkeys } from '../Pubkeys';
+import { Inputs } from '../Inputs';
 import Balances from '../Balances';
 
 export function Asset({ usePioneer, onClose, asset }: any) {
@@ -116,7 +117,8 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                   }}>
                     <TabList>
                       <Tab>Paths</Tab>
-                      <Tab>Accounts</Tab>
+                      <Tab>Xpubs</Tab>
+                      <Tab>UTXOs</Tab>
                       {/*{showAdvanced && asset.networkId.includes('eip155') && (*/}
                       {/*  <>*/}
                       {/*    <Tab>Tokens</Tab>*/}
@@ -131,6 +133,9 @@ export function Asset({ usePioneer, onClose, asset }: any) {
                       </TabPanel>
                       <TabPanel>
                         <Pubkeys usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
+                      </TabPanel>
+                      <TabPanel>
+                        <Inputs usePioneer={usePioneer} networkId={app?.assetContext?.networkId}/>
                       </TabPanel>
                       {/*{showAdvanced && asset.networkId.includes('eip155') && (*/}
                       {/*  <>*/}

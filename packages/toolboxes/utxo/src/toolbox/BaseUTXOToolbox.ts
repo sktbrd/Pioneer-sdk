@@ -481,10 +481,11 @@ const buildTx = async ({
   utxos: UTXOType[];
   inputs: UTXOType[];
 }> => {
+  let tag = TAG + ' | buildTx | ';
   const compiledMemo = memo ? compileMemo(memo) : null;
 
-  //console.log('Checkpoint buildTx');
-  //console.log('pubkeys: ', pubkeys);
+  console.log('Checkpoint buildTx');
+  console.log('pubkeys: ', pubkeys);
 
   const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
@@ -537,16 +538,21 @@ const buildTx = async ({
   //console.log('outputs: ', outputs);
 
   // .inputs and .outputs will be undefined if no solution was found
-  if (!inputs || !outputs) throw new Error('Insufficient Balance for transaction');
+  if (!inputs) {
+    console.error(tag, '(DEBUG) pubkeys: ', pubkeys);
+  }
+  if (!inputs) throw new Error('0 inputs found for pubkeys: ' + pubkeys.length);
+  if (!outputs) throw new Error('Invalid transaction outputs required!');
   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
 
   if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
 
   let inputMap = new Map();
   inputs.forEach((utxo: UTXOType) => {
+    console.log('utxo: ', utxo);
     const inputOptions: any = {
-      hash: utxo.txid,
-      index: utxo.vout,
+      hash: utxo.txid || utxo.hash,
+      index: utxo.vout || utxo.index,
     };
 
     // Explicitly set Dogecoin transactions as non-SegWit.
@@ -621,7 +627,9 @@ const buildTx = async ({
   //   }),
   // );
 
+  console.log(tag, 'checkpoint: 3');
   outputs.forEach((output: any) => {
+    console.log(tag, 'output: ', output);
     if (!output.address) {
       //an empty address means this is the change address
       output.address = sender; //TODO use new change address
@@ -717,54 +725,58 @@ export const estimateMaxSendableAmount = async ({
       });
       utxos = utxos.concat(utxoSet.map(transformInput));
     }
-    if (utxos.length === 0) throw new Error('No UTXOs found for the provided pubkeys');
+    if (utxos.length === 0) {
+      //@ts-ignore
+      return AssetValue.fromChainOrSignature(chain, 0);
+    } else {
+      let effectiveFeeRate = getDefaultTxFeeByChain(chain);
 
-    let effectiveFeeRate = getDefaultTxFeeByChain(chain);
+      // Start with the total balance of all UTXOs as the initial sendable amount
+      let totalInputValue = utxos.reduce((acc, utxo) => acc + utxo.value, 0);
 
-    // Start with the total balance of all UTXOs as the initial sendable amount
-    let totalInputValue = utxos.reduce((acc, utxo) => acc + utxo.value, 0);
+      let maxSendableValue = totalInputValue;
+      let estimatedFee;
+      let tryCount = 0;
+      let success = false;
 
-    let maxSendableValue = totalInputValue;
-    let estimatedFee;
-    let tryCount = 0;
-    let success = false;
+      // Try to find a viable spendable amount by reducing the sendable value until it works or a limit is reached
+      while (!success && tryCount < 100) {
+        // Prevent infinite loops
+        const estimatedTxSize = utxos.length * 148 + 2 * 34 + 10; // Basic estimation, adjust as needed
+        estimatedFee = estimatedTxSize * effectiveFeeRate;
+        maxSendableValue = totalInputValue - estimatedFee;
 
-    // Try to find a viable spendable amount by reducing the sendable value until it works or a limit is reached
-    while (!success && tryCount < 100) {
-      // Prevent infinite loops
-      const estimatedTxSize = utxos.length * 148 + 2 * 34 + 10; // Basic estimation, adjust as needed
-      estimatedFee = estimatedTxSize * effectiveFeeRate;
-      maxSendableValue = totalInputValue - estimatedFee;
+        if (maxSendableValue <= 0) {
+          throw new Error('Insufficient funds for transaction after accounting for fees');
+        }
 
-      if (maxSendableValue <= 0) {
-        throw new Error('Insufficient funds for transaction after accounting for fees');
+        // Simulate a transaction to check if the selection works
+        const { inputs, outputs } = coinSelect.default(
+          utxos,
+          [{ address: recipient, value: maxSendableValue }],
+          effectiveFeeRate,
+        );
+
+        if (inputs && outputs) {
+          success = true; // A viable set of inputs and outputs was found
+        } else {
+          totalInputValue -= estimatedFee; // Reduce the total input value and try again
+          tryCount++;
+        }
       }
 
-      // Simulate a transaction to check if the selection works
-      const { inputs, outputs } = coinSelect.default(
-        utxos,
-        [{ address: recipient, value: maxSendableValue }],
-        effectiveFeeRate,
+      if (!success) {
+        throw new Error('Unable to find a viable transaction amount after multiple attempts');
+      }
+
+      console.log(
+        tag,
+        `Successfully estimated max sendable amount for chain ${chain}:`,
+        maxSendableValue,
       );
-
-      if (inputs && outputs) {
-        success = true; // A viable set of inputs and outputs was found
-      } else {
-        totalInputValue -= estimatedFee; // Reduce the total input value and try again
-        tryCount++;
-      }
+      //@ts-ignore
+      return AssetValue.fromChainOrSignature(chain, maxSendableValue / 100000000);
     }
-
-    if (!success) {
-      throw new Error('Unable to find a viable transaction amount after multiple attempts');
-    }
-
-    console.log(
-      tag,
-      `Successfully estimated max sendable amount for chain ${chain}:`,
-      maxSendableValue,
-    );
-    return AssetValue.fromChainOrSignature(chain, maxSendableValue / 100000000);
   } catch (error) {
     console.error(`${TAG} Error estimating max sendable amount:`, error);
     throw error;

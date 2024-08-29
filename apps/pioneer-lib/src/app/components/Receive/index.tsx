@@ -26,6 +26,7 @@ export function Receive({ usePioneer, onClose }: any) {
   const [avatarUrl, setAvatarUrl] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
   const [pubkeys, setPubkeys] = useState([]);
+  const [hasDisplayed, setHasDisplayed] = useState(false);
   const { hasCopied, onCopy } = useClipboard(selectedAddress);
 
   useEffect(() => {
@@ -58,13 +59,23 @@ export function Receive({ usePioneer, onClose }: any) {
       });
       setPubkeys(filteredPubkeys);
       if (filteredPubkeys.length > 0) {
-        setSelectedAddress(filteredPubkeys[0].address || filteredPubkeys[0].master);
+        setSelectedAddress(filteredPubkeys[1].address || filteredPubkeys[1].master);
       }
     }
   }, [app.pubkeys, assetContext]);
 
   const handleAddressChange = (event: any) => {
     setSelectedAddress(event.target.value);
+  };
+
+  const viewOnDevice = async () => {
+    try {
+      await app.swapKit.getAddress(assetContext?.chain); // Ensure you pass the correct coin identifier
+      setHasDisplayed(true);
+    } catch (error) {
+      console.error('Error displaying address on device:', error);
+      setHasDisplayed(false);
+    }
   };
 
   return (
@@ -89,9 +100,6 @@ export function Receive({ usePioneer, onClose }: any) {
           <Tr>
             <Td>Address</Td>
             <Td>
-              {/*{pubkeys.map((pubkey: any, index: any) => (*/}
-              {/*  <Pubkey key={index} usePioneer={usePioneer} pubkey={pubkey} />*/}
-              {/*))}*/}
               <Select value={selectedAddress} onChange={handleAddressChange}>
                 {pubkeys.map((pubkey: any, index: any) => (
                   <option key={index} value={pubkey.address || pubkey.master}>
@@ -103,6 +111,10 @@ export function Receive({ usePioneer, onClose }: any) {
           </Tr>
         </Tbody>
       </Table>
+
+      {/*<Flex align="center" justify="center" my={4}>*/}
+      {/*  <Button onClick={viewOnDevice} mx={2}>{hasDisplayed ? 'Displayed' : 'View On Device'}</Button>*/}
+      {/*</Flex>*/}
 
       {selectedAddress && (
         <Flex align="center" justify="center" my={4}>

@@ -95,6 +95,7 @@ export function Classic({ usePioneer }: any) {
       await app.setPaths(paths);
       await app.getAssets();
       await app.getPubkeys();
+      await app.getBalances();
       console.log('assetsMap: ', app.assetsMap);
       console.log("assets: ", assets);
     }
@@ -111,9 +112,9 @@ export function Classic({ usePioneer }: any) {
     const smallPart = decimal?.slice(4, 8);
     return { integer, largePart, smallPart };
   };
-
+  console.log('assets: ', assets);
   const sortedAssets = [...assets.values()]
-    .filter(asset => asset.type === 'native')
+    .filter(asset => asset.type === 'native' && app.blockchains.includes(asset.networkId))
     .sort((a: any, b: any) => {
       const balanceA = app.balances.find((balance: any) => balance.caip === a.caip);
       const balanceB = app.balances.find((balance: any) => balance.caip === b.caip);
@@ -196,7 +197,27 @@ export function Classic({ usePioneer }: any) {
                                   <Badge colorScheme="green">USD {formatUsd(balance.valueUsd)}</Badge>
                                 </Text>
                               );
-                            })}
+                            }).length === 0 ? (
+                            <Spinner size="sm" />
+                          ) : (
+                            app.balances
+                              .filter((balance: any) => balance.caip === asset.caip)
+                              .map((balance: any, index: any) => {
+                                const { integer, largePart, smallPart } = formatBalance(balance.balance);
+                                return (
+                                  <Text key={index}>
+                                    {integer}.
+                                    <Text as="span" fontSize="lg">{largePart}</Text>
+                                    {largePart === '0000' && (
+                                      <Text as="span" fontSize="sm">{smallPart}</Text>
+                                    )}
+                                    <Badge ml={2} colorScheme="teal">{asset.symbol}</Badge>
+                                    <br/>
+                                    <Badge colorScheme="green">USD {formatUsd(balance.valueUsd)}</Badge>
+                                  </Text>
+                                );
+                              })
+                          )}
                         </Box>
                         <Button ml="auto" onClick={() => onSelect(asset)} size='md'>
                           Select

@@ -8,10 +8,11 @@ import {
   Input,
   useToast,
   IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
-import { WalletOption, availableChainsByWallet, Chain } from '@coinmasters/types';
 import { CopyIcon } from '@chakra-ui/icons';
 // Assuming AssetValue is used somewhere else
+import { Chain } from '@coinmasters/types';
 import { AssetValue } from '@pioneer-platform/helpers';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
@@ -24,7 +25,6 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
   const [address, setAddress] = useState('');
 
   useEffect(() => {
-    // Update the assetContext whenever state.app.assetContext changes
     if (app?.assetContext) {
       setCurrentAssetContext(app?.assetContext);
     } else {
@@ -33,7 +33,6 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
   }, [app?.assetContext]);
 
   useEffect(() => {
-    // Fetch the address based on the current asset context
     const fetchAddress = async () => {
       try {
         if (currentAssetContext.name === 'Ethereum') {
@@ -42,6 +41,7 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
             setAddress(fromAddress);
           }
         } else {
+          console.log('currentAssetContext: ',currentAssetContext)
           if (currentAssetContext.pubkeys && currentAssetContext.pubkeys.length > 0) {
             const initialAddress = currentAssetContext.pubkeys[0].address || currentAssetContext.pubkeys[0].master;
             setAddress(initialAddress);
@@ -50,6 +50,7 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
           }
         }
       } catch (error) {
+        console.error('error: ',error)
         toast({
           title: 'Error fetching address',
           description: 'There was an error fetching the address',

@@ -289,7 +289,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       let tag = TAG + ' | connectWallet | ';
       try {
         if (state && state?.app) {
-
           let pairParams: any = {
             type: wallet,
             blockchains: state.blockchains,
@@ -524,6 +523,35 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
       });
 
+      paths.push({
+        note: 'Bitcoin account 0 non-native segwit (p2sh-p2wpkh)',
+        blockchain: 'bitcoin',
+        symbol: 'BTC',
+        symbolSwapKit: 'BTC',
+        networks: ['bip122:000000000019d6689c085ae165831e93'],
+        script_type: 'p2sh-p2wpkh',
+        available_scripts_types: ['p2pkh', 'p2sh', 'p2wpkh', 'p2sh-p2wpkh'],
+        type: 'xpub',
+        addressNList: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0],
+        addressNListMaster: [0x80000000 + 49, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+        curve: 'secp256k1',
+        showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+      });
+
+      // paths.push({
+      //   note: 'Bitcoin account 0 (EXTRACTION) segwit path on legacy account',
+      //   blockchain: 'bitcoin',
+      //   symbol: 'BTC',
+      //   symbolSwapKit: 'BTC',
+      //   networks: ['bip122:000000000019d6689c085ae165831e93'],
+      //   script_type: 'p2pkh',
+      //   available_scripts_types: ['p2pkh', 'p2sh', 'p2wpkh', 'p2sh-p2wpkh'],
+      //   type: 'xpub',
+      //   addressNList: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 0],
+      //   addressNListMaster: [0x80000000 + 84, 0x80000000 + 0, 0x80000000 + 0, 0, 0],
+      //   curve: 'secp256k1',
+      //   showDisplay: false, // Not supported by TrezorConnect or Ledger, but KeepKey should do it
+      // });
       //TODO get user added paths
 
       const spec =
@@ -676,52 +704,6 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         console.log('auto-connect');
         await appInit.setContext(lastConnectedWallet);
         await connectWallet(lastConnectedWallet);
-
-        // if (!appInit.pubkeys || appInit.pubkeys.length === 0) {
-        //   await appInit.getPubkeys();
-        //
-        //   if (appInit.pubkeys.length > 0) {
-        //     // @ts-ignore
-        //     dispatch({ type: WalletActions.SET_PUBKEYS, payload: appInit.pubkeys });
-        //   }
-        // }
-        //
-        // if (!appInit.balances || appInit.balances.length === 0) {
-        //   await appInit.getBalances();
-        //   if (appInit.balances.length > 0) {
-        //     console.log('Setting balances: ', appInit.balances);
-        //     // @ts-ignore
-        //     dispatch({ type: WalletActions.SET_BALANCES, payload: appInit.balances });
-        //   }
-        // }
-
-        // //get wallet type
-        // const walletType = lastConnectedWallet.split(':')[0];
-        // await appInit.setContextType(walletType);
-        // let blockchainsCached = JSON.parse(
-        //   localStorage.getItem('cache:blockchains:' + walletType) || '[]',
-        // );
-        // await appInit.setBlockchains(blockchainsCached);
-        // console.log('blockchainsCached: ', blockchainsCached);
-        // //get paths for wallet
-        // let paths = getPaths(blockchainsCached);
-        //
-        // //get paths for blockchains
-        // let addedChainsStr = localStorage.getItem(walletType + ':paths:add');
-        // let addedChains;
-        //
-        // // Safely parse addedChainsStr, ensuring it's not null before parsing
-        // if (addedChainsStr) {
-        //   addedChains = JSON.parse(addedChainsStr);
-        // } else {
-        //   addedChains = [];
-        // }
-        // //fitler by chain
-        // addedChains = addedChains.filter((chain: any) => blockchainsCached.includes(chain.network));
-        // paths = paths.concat(addedChains);
-        // console.log('onStart paths: ', paths);
-
-        // appInit.setPaths(paths);
       }
     } catch (e) {
       console.error(e);

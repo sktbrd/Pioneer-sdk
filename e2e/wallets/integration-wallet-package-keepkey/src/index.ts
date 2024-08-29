@@ -27,34 +27,53 @@ import {
 let BLOCKCHAIN = 'THOR'
 
 const syncWalletByChain = async (keepkey:any, chain:any) => {
-    if (!keepkey[chain]) return null;
-
-    const walletMethods = keepkey[chain].walletMethods;
-    const address = await walletMethods.getAddress();
-    if (!address) return null;
-
-    let balance = [];
-    let pubkeys = [];
-    if (walletMethods.getPubkeys) {
-        pubkeys = await walletMethods.getPubkeys();
-        log.info("pubkeys: ", pubkeys);
-        for (const pubkey of pubkeys) {
-            const pubkeyBalance = await walletMethods.getBalance([{ pubkey }]);
-            log.info("**** "+pubkey+ " pubkeyBalance: ",Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0)
-            balance.push(Number(pubkeyBalance[0].toFixed(pubkeyBalance[0].decimal)) || 0);
-        }
-        //create assetVaule
-        let assetValue = AssetValue.fromChainOrSignature(
-          chain,
-          balance.reduce((a, b) => a + b, 0),
-        );
-        balance = [assetValue];
-
-    } else {
-        balance = await walletMethods.getBalance([{address}]);
+    if (!keepkey[chain]) throw Error('Missing chain! chain: ' + chain);
+    console.log('syncing chain: ', chain);
+    let balance:any = [];
+    const address = await keepkey[chain].walletMethods.getAddress();
+    console.log('address: ', address);
+    const pubkeys = await keepkey[chain].walletMethods?.getPubkeys();
+    console.log('pubkeys: ', pubkeys);
+    if (!address) {
+        console.error('Failed to get address for chain! chain: ' + chain);
+    }
+    if (pubkeys.length <= 0) {
+        console.error('Failed to get pubkeys for chain! chain: ' + chain);
     }
 
-    return { address, pubkeys, balance };
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < pubkeys.length; i++) {
+        let pubkey = pubkeys[i];
+        //console.log(tag, 'pubkey: ', pubkey);
+        if (!pubkey || !pubkey.networks) continue;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let j = 0; j < pubkey.networks.length; j++) {
+            let networkId = pubkey.networks[j];
+            //console.log(tag, 'networkId: ', networkId);
+            if (networkId.includes('eip155') || pubkey.type === 'address') {
+                //console.log(tag, 'network includes eip155 or is marked address');
+                let balance = await keepkey[Chain.Bitcoin].walletMethods?.getBalance([{ address }]);
+                //console.log(tag, 'balance: ', balance);
+                balance.push(balance);
+            } else {
+                //console.log(tag, 'Scan Xpub or other public key type');
+                let pubkeyBalances: AssetValue[] = await keepkey[Chain.Bitcoin].walletMethods?.getBalance([
+                    { pubkey },
+                ]);
+                //console.log(tag, 'pubkeyBalances: ', pubkeyBalances);
+                pubkeyBalances.forEach((pubkeyBalance) => {
+                    balance.push(pubkeyBalance);
+                });
+            }
+        }
+    }
+
+    return {
+        address,
+        pubkeys,
+        balance,
+        walletType: WalletOption.KEEPKEY,
+    };
 };
 
 
@@ -178,17 +197,19 @@ const test_service = async function (this: any) {
             addChain,
             config: { keepkeyConfig, covalentApiKey, ethplorerApiKey, utxoApiKey },
         }
-        let chains =  [
-            BLOCKCHAIN
-        ]
         // let chains =  [
-        //     'ARB',  'AVAX', 'BNB',
-        //     'BSC',  'BTC',  'BCH',
-        //     'GAIA', 'OSMO', 'XRP',
-        //     'DOGE', 'DASH', 'ETH',
-        //     'LTC',  'OP',   'MATIC',
-        //     'THOR'
+        //     BLOCKCHAIN
         // ]
+
+        let chains =  [
+            'ARB',  'AVAX',
+            'BSC',  'BTC',  'BCH',
+            'GAIA', 'OSMO', 'XRP',
+            'DOGE', 'DASH', 'ETH',
+            'LTC',  'OP',   'MATIC',
+            'THOR'
+        ]
+
         // Step 1: Invoke the outer function with the input object
         const connectFunction = walletKeepKey.wallet.connect(input);
         let networkId = ChainToNetworkId[BLOCKCHAIN]
@@ -265,33 +286,33 @@ const test_service = async function (this: any) {
                SYNTH RUNE
          */
 
-
-        //deposit maya
-        //get assetValue for asset
-        // let assetString = 'ETH.USDT'
-        let assetString = 'THOR.RUNE'
-        // create assetValue
-        // const assetString = `${ASSET}.${ASSET}`;
-       log.info('assetString: ', assetString);
-        let TEST_AMOUNT = "0.01"
-        // await AssetValue.loadStaticAssets();
-        log.info("TEST_AMOUNT: ",TEST_AMOUNT)
-        log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
-        let assetValue = await AssetValue.fromString(
-          assetString,
-          parseFloat(TEST_AMOUNT),
-        );
-        log.info("assetValue: ",assetValue)
-        let memo = '=:r:thor1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfhgnzx'
-        //send
-        let sendPayload = {
-            assetValue,
-            memo
-        }
-        log.info("sendPayload: ",sendPayload)
-        const txHash = await  keepkey[Chain.THORChain].walletMethods.deposit(sendPayload);
-        log.info("txHash: ",txHash)
-        assert(txHash)
+       //
+       //  //deposit maya
+       //  //get assetValue for asset
+       //  // let assetString = 'ETH.USDT'
+       //  let assetString = 'THOR.RUNE'
+       //  // create assetValue
+       //  // const assetString = `${ASSET}.${ASSET}`;
+       // log.info('assetString: ', assetString);
+       //  let TEST_AMOUNT = "0.01"
+       //  // await AssetValue.loadStaticAssets();
+       //  log.info("TEST_AMOUNT: ",TEST_AMOUNT)
+       //  log.info("TEST_AMOUNT: ",typeof(TEST_AMOUNT))
+       //  let assetValue = await AssetValue.fromString(
+       //    assetString,
+       //    parseFloat(TEST_AMOUNT),
+       //  );
+       //  log.info("assetValue: ",assetValue)
+       //  let memo = '=:r:thor1g9el7lzjwh9yun2c4jjzhy09j98vkhfxfhgnzx'
+       //  //send
+       //  let sendPayload = {
+       //      assetValue,
+       //      memo
+       //  }
+       //  log.info("sendPayload: ",sendPayload)
+       //  const txHash = await  keepkey[Chain.THORChain].walletMethods.deposit(sendPayload);
+       //  log.info("txHash: ",txHash)
+       //  assert(txHash)
 
         /*
                 SEND MAYA

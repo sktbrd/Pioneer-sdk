@@ -76,6 +76,9 @@ export function Pubkeys({ usePioneer, networkId, pubkey }: any) {
             width="100%"
           >
             <Box mb={2}>
+              <Text fontWeight="bold"><Badge colorScheme='green'>{key.note}</Badge></Text>
+            </Box>
+            <Box mb={2}>
               <Text fontWeight="bold">Type: <Badge colorScheme='green'>{key.type}</Badge></Text>
             </Box>
             <Box mb={2} width="100%">
