@@ -26,7 +26,7 @@ import {
   Button,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaWallet, FaLock } from 'react-icons/fa';
+import { FaWallet, FaLock, FaDollarSign } from 'react-icons/fa';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
@@ -265,7 +265,7 @@ export function Pioneer({ usePioneer }: any) {
             <IconButton
               aria-label="Portfolio"
               colorScheme="green"
-              icon={<FaRegMoneyBillAlt />}
+              icon={<FaDollarSign />}
               onClick={() => modalSelected('PORTFOLIO')}
               rounded="full"
               size="md"

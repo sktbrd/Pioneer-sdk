@@ -138,7 +138,7 @@ export function Classic({ usePioneer }: any) {
   };
 
   return (
-    <Flex direction="column" width="100%" height="100vh" overflow="hidden">
+    <Flex direction="column" width="100%" height="100vh" overflow="auto" sx={{ '*::-webkit-scrollbar': { display: 'none' } }}>
       <Flex alignItems="center" p={4} borderBottom="1px solid #ccc" width="100%">
         {assetContext ? (
           <IconButton

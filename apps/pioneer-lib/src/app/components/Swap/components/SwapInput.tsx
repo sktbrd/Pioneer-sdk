@@ -92,7 +92,7 @@ function SwapInput({ usePioneer, setAmountSelected, setInputAmount }: any) {
 
   return (
     <Flex direction="column" align="center">
-      <Box borderRadius="lg" maxWidth="sm" padding={6} color="white" bg="gray.800" width="100%" mx="auto">
+      <Box borderRadius="lg" maxWidth="sm" padding={4} color="white" bg="gray.800" width="100%" mx="auto">
         <VStack spacing={4}>
           <FormControl isInvalid={!isValid}>
             <Box width="full">

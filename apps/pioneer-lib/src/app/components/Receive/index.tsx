@@ -59,7 +59,7 @@ export function Receive({ usePioneer, onClose }: any) {
       });
       setPubkeys(filteredPubkeys);
       if (filteredPubkeys.length > 0) {
-        setSelectedAddress(filteredPubkeys[1].address || filteredPubkeys[1].master);
+        setSelectedAddress(filteredPubkeys[1]?.address || filteredPubkeys[1]?.master);
       }
     }
   }, [app.pubkeys, assetContext]);

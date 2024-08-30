@@ -84,7 +84,7 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
     app.setAssetContext();
     setAssetContext();
     setCurrentAssetContext({ icon: 'https://pioneers.dev/coins/ethereum.png', name: 'Ethereum' });
-    setAddress(await app.swapkit.getAddress('ETH'));
+    setAddress(await app?.swapKit?.getAddress('ETH'));
   };
 
   return (
@@ -99,7 +99,7 @@ const Context = ({ usePioneer, openModal, setAssetContext }: any) => {
           _hover={{ bg: 'gray.200' }}
           transition="background-color 0.2s"
         >
-          <Avatar size="md" src={currentAssetContext?.icon} mb="2" />
+          <Avatar size="md" src={currentAssetContext?.icon} />
         </Box>
         <Box flex="1" />
         <Flex align="center" width="100%">

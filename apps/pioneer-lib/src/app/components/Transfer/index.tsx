@@ -247,7 +247,7 @@ export function Transfer({ usePioneer }: any): JSX.Element {
   return (
     <>
       <VStack align="start" borderRadius="md" p={6} spacing={5} bg={bgColor} margin="0 auto">
-        <Heading as="h1" mb={4} size="lg" color={headingColor}>
+        <Heading as="h1" mb={4} size="lg" color="green.200">
           Send Crypto!
         </Heading>
 

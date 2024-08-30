@@ -134,13 +134,13 @@ export function Charts({usePioneer}: any) {
           <Center bottom="0" left="0">
             <Box height="100px" width="100px" position="relative">
               <Doughnut data={chartData} options={options} />
-              <Center bottom="0" left="0" position="absolute" right="0" top="0">
-              </Center>
             </Box>
-            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+              <Center>
+            <Text fontSize="lg" fontWeight="bold" >
               Total Value:
               <br/>{totalValueUsd.toFixed(2)}
             </Text>
+              </Center>
           </Center>
         </div>
       )}

@@ -58,7 +58,6 @@ export function Swap({usePioneer}:any): JSX.Element {
   // steps
   const [step, setStep] = useState(0);
   const [modalType, setModalType] = useState(null);
-  const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState(null);
   const [quoteId, setQuoteId] = useState('');
   const [memoless, setMemoless] = useState<any>(null);
@@ -80,7 +79,7 @@ export function Swap({usePioneer}:any): JSX.Element {
   const [continueButtonContent, setContinueButtonContent] = useState('Continue'); // Initial continue button content is "Continue"
 
   const isStartCalled = useRef(false);
-  //TODO I think this is spammy? figure out how to only run on startup
+  // TODO: I think this is spammy? figure out how to only run on startup
   let onStart = async function () {
     if (app && app.pairWallet && !isConnecting) {
       console.log('App loaded... connecting');
@@ -470,10 +469,10 @@ export function Swap({usePioneer}:any): JSX.Element {
   return (
     <Box>
       {/* <ForkMeBanner /> */}
-      <Modal isOpen={isOpen} onClose={() => onClose()} size="xl">
+    {isOpen &&  <Modal isOpen={isOpen} onClose={() => onClose()} size="xl">
         <ModalOverlay />
         <ModalContent bg="black">
-          <ModalHeader>{modalType}</ModalHeader>
+          <ModalHeader color={"white"}>{modalType}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* Render content based on modalType */}
@@ -539,12 +538,29 @@ export function Swap({usePioneer}:any): JSX.Element {
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
-
-      <Box bg="black" mx="auto">
+      </Modal> }
+      <Box bg="transparent" mx="auto" border={'1px solid white'} borderRadius={5}>
         {renderStepContent()}
+        <Flex alignItems="center" p={4} width="100%" justifyContent={"right"}>
+        {showGoBack && (
+          <div>
+            <Button onClick={goBack}>Go Back</Button>
+          </div>
+        )}
+        {isContinueVisable && (
+          <Button
+            colorScheme="blue"
+            isDisabled={isContinueDisabled}
+            leftIcon={<AddIcon />}
+            onClick={() => handleClickContinue()}
+          >
+            {continueButtonContent}
+          </Button>
+        )}
+        </Flex>
       </Box>
-      <Flex alignItems="center" bg="black" flexDirection="column" mx="auto">
+      
+      <Flex alignItems="center" flexDirection="column" mx="auto">
         {(app?.outboundAssetContext && !app?.outboundAssetContext?.address && amountSelected) && (
           <Box
             p={4}
@@ -575,6 +591,7 @@ export function Swap({usePioneer}:any): JSX.Element {
             {/*)}*/}
             </Flex>
           </VStack>
+          
           </Box>
         )}
 
@@ -586,22 +603,7 @@ export function Swap({usePioneer}:any): JSX.Element {
         {/*  </Box>*/}
         {/*</>)}*/}
 
-        {showGoBack && (
-          <div>
-            <Button onClick={goBack}>Go Back</Button>
-          </div>
-        )}
-        {isContinueVisable && (
-          <Button
-            colorScheme="blue"
-            isDisabled={isContinueDisabled}
-            leftIcon={<AddIcon />}
-            mt={4}
-            onClick={() => handleClickContinue()}
-          >
-            {continueButtonContent}
-          </Button>
-        )}
+
       </Flex>
     </Box>
   );

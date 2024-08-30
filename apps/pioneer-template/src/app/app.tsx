@@ -1,8 +1,7 @@
 "use client";
-import { Select, Box, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
+import { Select, Image } from '@chakra-ui/react';
 import * as React from 'react';
 import { usePioneer } from "@coinmasters/pioneer-react"
-import { availableChainsByWallet, WalletOption } from '@coinmasters/types';
 import { useState, useEffect } from 'react';
 
 //components
@@ -48,7 +47,7 @@ import {
 //   //@ts-ignore
 // } from '@coinmasters/pioneer-lib';
 
-import Image from 'next/image';
+
 import { useOnStartApp } from "../utils/onStart";
 
 export default function App() {
@@ -182,10 +181,10 @@ export default function App() {
   return (
     <>
       {/* Header */}
-      <header className="flex justify-between items-center w-full px-10 py-5 bg-gray-100 dark:bg-gray-800">
-        <div className="flex items-center gap-4">
+      <header className="flex justify-between items-center w-full px-10 py-5 bg-transparent dark:bg-gray-900 rounded-lg">
+        <div className="flex items-center gap-4  ">
           {/* Avatar logo */}
-          <Image src="/png/pioneerMan.png" alt="Logo" width={180} height={150} className="rounded-full" />
+          <Image src="/png/pioneerMan.png" alt="Logo" boxSize={'160px'} className="rounded-full" />
           {/* Website title */}
           <span className="text-xl font-bold">Pioneer SDK</span>
           <Select onChange={handleIntentChange} placeholder="Select Component" width="auto">

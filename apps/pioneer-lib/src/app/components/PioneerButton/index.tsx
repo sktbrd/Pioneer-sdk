@@ -31,7 +31,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
+import { FaCog, FaDollarSign, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
 import { availableChainsByWallet, ChainToNetworkId, getChainEnumValue, NetworkIdToChain } from '@coinmasters/types';
 //@ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
@@ -213,7 +213,7 @@ export function PioneerButton({ children, usePioneer }: any): JSX.Element {
 
   return (
     <div>
-      <Modal isOpen={isOpen} onClose={() => closeModal()} size="xl">
+      <Modal isOpen={isOpen} onClose={() => closeModal()} size="2xl">
         <ModalOverlay />
         <ModalContent bg="black">
           <ModalHeader>{modalType}</ModalHeader>
@@ -402,11 +402,11 @@ export function PioneerButton({ children, usePioneer }: any): JSX.Element {
             </MenuItem>
             <MenuItem>
               <Flex align="center" justify="center" width="100%">
-                  <Flex justify="center" direction="column" m={2}>
+                  <Flex justify="center" direction="column" m={1}>
                     <IconButton
                       aria-label="Portfolio"
                       colorScheme="green"
-                      icon={<FaRegMoneyBillAlt />}
+                      icon={<FaDollarSign />}
                       onClick={() => modalSelected('PORTFOLIO')}
                       rounded="full"
                       size="md"
@@ -416,7 +416,7 @@ export function PioneerButton({ children, usePioneer }: any): JSX.Element {
                   </Flex>
                   <Flex align="center" direction="column" m={2}>
                     <IconButton
-                      aria-label="Send"
+                      aria-label="Send Token"
                       colorScheme="green"
                       icon={<FaPaperPlane />}
                       onClick={() => modalSelected('TRANSFER')}
@@ -441,7 +441,13 @@ export function PioneerButton({ children, usePioneer }: any): JSX.Element {
               </Flex>
             </MenuItem>
             <MenuItem>
-              <Box display="flex" justifyContent="center" maxH="300px" overflowY="auto">
+                <Box display="flex" justifyContent="center" maxH="300px" overflowY="auto" sx={
+                  {
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  }
+                }>
                 <Tabs justifyContent="center">
                   <TabList justifyContent="center">
                     <Tab>Assets</Tab>

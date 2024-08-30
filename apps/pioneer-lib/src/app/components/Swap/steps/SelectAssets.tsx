@@ -98,12 +98,14 @@ const BeginSwap: any = ({
         display="flex"
         alignItems="center"
         justifyContent="center"
-        p="4" // Padding around the text
-        border="1px solid #ccc" // Change the color and thickness as needed
-        borderRadius="md" // Rounded corners
-        m="4" // Margin around the box
-        width="auto" // Adjust width based on content or set a specific width
-      > {outputQuote} </Box>
+        p="2" // Padding around the text
+        border="1px solid #ccc" 
+        borderRadius="md" 
+        m="4" 
+        width="auto" 
+      > 
+      {outputQuote} 
+      </Box>
       <Flex justifyContent="center" mx="auto" p="2rem">
         <HStack maxWidth="35rem" width="100%">
           {/* Asset selection box */}
